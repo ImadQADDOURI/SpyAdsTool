@@ -1,0 +1,42 @@
+#install pnpm first
+
+---
+
+npx create-next-app my-saas-project --example "https://github.com/mickasmt/next-saas-stripe-starter"
+
+---
+
+cd my-saas-project
+pnpm install
+
+---
+
+Create a .env file
+
+---
+
+npx auth secret
+
+---
+
+npx prisma db push
+npx prisma studio ---<> Open a ui to see database
+
+---
+
+pnpm dlx shadcn@latest add carousel
+
+---
+
+pnpm add puppeteer # Downloads compatible Chrome during installation.
+pnpm add puppeteer-core # Alternatively, install as a library, without downloading Chrome.
+
+---
+
+pnpm add html-react-parser
+
+---
+
+pnpm add @google/generative-ai
+
+---

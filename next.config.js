@@ -20,6 +20,22 @@ const nextConfig = {
         protocol: "https",
         hostname: "randomuser.me",
       },
+      {
+        protocol: "https",
+        hostname: "scontent.*.fna.fbcdn.net",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "scontent.cdninstagram.com",
+        pathname: "/**",
+      },
+      //https://static.xx.fbcdn.net
+      {
+        protocol: "https",
+        hostname: "static.xx.fbcdn.net",
+        pathname: "/**",
+      },
     ],
   },
   experimental: {
