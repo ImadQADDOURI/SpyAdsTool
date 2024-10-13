@@ -1,4 +1,4 @@
-// app/lib/Meta-GraphQL-Queries.ts
+// @/actions/Meta-GraphQL-Queries.ts
 
 import { metaGraphQLApi } from "@/actions/Meta-GraphQL-Api";
 
