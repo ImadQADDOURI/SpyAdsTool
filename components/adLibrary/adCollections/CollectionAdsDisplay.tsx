@@ -2,8 +2,8 @@
 "use client";
 
 import React from "react";
+import { formatTimeAgo } from "@/utils/formatTimeAgo";
 
-import { formatTimeAgo } from "@/lib/formatTimeAgo";
 import { AdsList } from "@/components/adsLibrary/AdsList";
 
 import { ScrollButtons } from "../microComponents/ScrollButtons";

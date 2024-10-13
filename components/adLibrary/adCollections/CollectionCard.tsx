@@ -3,9 +3,9 @@
 
 import React from "react";
 import Link from "next/link";
+import { formatTimeAgo } from "@/utils/formatTimeAgo";
 import { Clock, Image } from "lucide-react";
 
-import { formatTimeAgo } from "@/lib/formatTimeAgo";
 import { Card, CardContent } from "@/components/ui/card";
 import { CollectionOptions } from "@/components/adsLibrary/AdsCollections/CollectionOptions";
 

@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { createCollection, saveAd } from "@/actions/collectionActions";
 import { Plus } from "lucide-react";
 
 import { Ad } from "@/types/ad";
@@ -16,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { createCollection, saveAd } from "@/app/actions/collectionActions";
 
 interface CreateCollectionButtonProps {
   ad?: Ad;
