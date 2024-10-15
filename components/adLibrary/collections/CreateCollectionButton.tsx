@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { saveAd } from "@/actions/ad";
 import { createCollection } from "@/actions/collection";
 import { Loader2, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 import { AdData } from "@/types/ad";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
 
 interface CreateCollectionButtonProps {
   ad?: AdData;
@@ -27,16 +27,11 @@ export function CreateCollectionButton({
   const [isOpen, setIsOpen] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
 
   const handleCreateCollection = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCollectionName.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a collection name",
-        variant: "destructive",
-      });
+      toast.error("Please enter a collection name");
       return;
     }
 
@@ -45,10 +40,7 @@ export function CreateCollectionButton({
       const result = await createCollection(newCollectionName);
       if (result) {
         setIsOpen(false);
-        toast({
-          title: "Success",
-          description: "Collection created successfully",
-        });
+        toast.success("Collection created successfully");
 
         if (onCollectionCreated) {
           onCollectionCreated({
@@ -61,23 +53,13 @@ export function CreateCollectionButton({
           // If an ad is provided, save it to the new collection
           await saveAd(ad, result.id);
           // No need to Update the collection's image URL it's handled in the save ad server action
-          toast({
-            title: "Success",
-            description: "Ad saved to the new collection",
-          });
+          toast.success("Ad saved successfully");
         }
 
         setNewCollectionName("");
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to create collection",
-        variant: "destructive",
-      });
+      toast.error("Failed to create collection");
     } finally {
       setIsLoading(false);
     }

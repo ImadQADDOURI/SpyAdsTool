@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { getUserCollections } from "@/actions/collection";
 import { Loader2 } from "lucide-react";
-
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 import { CollectionCard } from "./CollectionCard";
 import { CreateCollectionButton } from "./CreateCollectionButton";
@@ -12,7 +11,6 @@ import { CreateCollectionButton } from "./CreateCollectionButton";
 export function UserCollections() {
   const [collections, setCollections] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
 
   const fetchCollections = async () => {
     setIsLoading(true);
@@ -20,11 +18,7 @@ export function UserCollections() {
       const userCollections = await getUserCollections();
       setCollections(userCollections);
     } catch (error) {
-      toast({
-        title: "Error fetching collections",
-        description: "Failed to load your collections. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to fetch collections");
     } finally {
       setIsLoading(false);
     }

@@ -14,6 +14,7 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -34,7 +35,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
 
 interface CollectionCardProps {
   collection: {
@@ -62,7 +62,6 @@ export function CollectionCard({
     null,
   );
   const [isMoveLoading, setIsMoveLoading] = useState(false);
-  const { toast } = useToast();
 
   const lastUpdated = new Date(
     Math.max(
@@ -74,30 +73,27 @@ export function CollectionCard({
   const handleRename = async () => {
     try {
       await renameCollection(collection.id, newName);
-      toast({ title: "Collection renamed successfully" });
+      toast.success("Collection renamed successfully");
       setIsRenaming(false);
       onUpdate();
     } catch (error) {
-      toast({ title: "Failed to rename collection", variant: "destructive" });
+      toast.error("Failed to rename collection");
     }
   };
 
   const handleDelete = async () => {
     try {
       await deleteCollection(collection.id);
-      toast({ title: "Collection deleted successfully" });
+      toast.success("Collection deleted successfully");
       onUpdate();
     } catch (error) {
-      toast({ title: "Failed to delete collection", variant: "destructive" });
+      toast.error("Failed to delete collection");
     }
   };
 
   const handleMoveAllAds = async () => {
     if (!selectedDestination) {
-      toast({
-        title: "Please select a destination collection",
-        variant: "destructive",
-      });
+      toast.error("Please select a destination collection");
       return;
     }
 
@@ -105,7 +101,7 @@ export function CollectionCard({
     try {
       const result = await moveAllAds(collection.id, selectedDestination);
       if (result.success) {
-        toast({ title: "Ads moved successfully" });
+        toast.success("Ads moved successfully");
         setIsMoving(false);
         setSelectedDestination(null);
         onUpdate();
@@ -113,12 +109,7 @@ export function CollectionCard({
         throw new Error(result.message);
       }
     } catch (error) {
-      toast({
-        title: "Failed to move ads",
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
-        variant: "destructive",
-      });
+      toast.error("Failed to move ads");
     } finally {
       setIsMoveLoading(false);
     }

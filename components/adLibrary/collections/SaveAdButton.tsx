@@ -5,6 +5,7 @@ import {
   updateCollectionImageUrl,
 } from "@/actions/collection";
 import { ChevronDown, Heart, Plus, Search, X } from "lucide-react";
+import { toast } from "sonner";
 
 import { AdData } from "@/types/ad";
 import {
@@ -26,7 +27,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
 
 import { CreateCollectionButton } from "./CreateCollectionButton";
 
@@ -62,7 +62,6 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
   }>({ isOpen: false, collectionId: null });
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
-  const { toast } = useToast();
 
   const handleOpenChange = async (open: boolean) => {
     if (open) {
@@ -101,12 +100,7 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
 
       setIsAdSaved(saveStatusResult.isSaved);
     } catch (error) {
-      toast({
-        title: "Error fetching data",
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
-        variant: "destructive",
-      });
+      toast.error("Failed to fetch collections");
     } finally {
       setIsLoading(false);
     }
@@ -118,22 +112,14 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
       const result = await saveAd(ad, collectionId);
       if (result.success) {
         await updateCollectionImageUrl(collectionId);
-        toast({
-          title: "Ad saved successfully",
-          description: `The ad has been saved to your collection.`,
-        });
+        toast.success("Ad saved successfully");
         updateCollectionSaveStatus(collectionId, true);
         setIsAdSaved(true);
       } else {
         throw new Error(result.message || "Failed to save ad");
       }
     } catch (error) {
-      toast({
-        title: "Error saving ad",
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
-        variant: "destructive",
-      });
+      toast.error("Failed to save ad");
     } finally {
       setIsLoading(false);
     }
@@ -145,21 +131,13 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
       const result = await unsaveAd(ad.ad_archive_id, collectionId);
       if (result.success) {
         await updateCollectionImageUrl(collectionId);
-        toast({
-          title: "Ad unsaved successfully",
-          description: `The ad has been removed from your collection.`,
-        });
+        toast.success("Ad unsaved successfully");
         updateCollectionSaveStatus(collectionId, false);
       } else {
         throw new Error(result.message || "Failed to unsave ad");
       }
     } catch (error) {
-      toast({
-        title: "Error unsaving ad",
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
-        variant: "destructive",
-      });
+      toast.error("Failed to unsave ad");
     } finally {
       setIsLoading(false);
       setUnsaveConfirmation({ isOpen: false, collectionId: null });
