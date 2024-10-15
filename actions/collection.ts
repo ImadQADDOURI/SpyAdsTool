@@ -157,44 +157,34 @@ export async function moveAllAds(
         orderBy: { createdAt: "desc" },
       });
 
-      // Get all ad_archive_ids from the destination collection
-      const destinationAdIds = new Set(
-        (
-          await tx.savedAd.findMany({
-            where: { collectionId: destinationCollectionId },
-            select: { ad_archive_id: true },
-          })
-        ).map((ad) => ad.ad_archive_id),
-      );
-
-      let movedAdsCount = 0;
-      let latestAdImageUrl: string | null = null;
-
       // Move non-duplicate ads to the destination collection
       for (const ad of sourceAds) {
-        if (!destinationAdIds.has(ad.ad_archive_id)) {
-          await tx.savedAd.update({
-            where: {
-              ad_archive_id_collectionId: {
-                ad_archive_id: ad.ad_archive_id,
-                collectionId: sourceCollectionId,
-              },
+        await tx.savedAd.upsert({
+          where: {
+            ad_archive_id_collectionId: {
+              ad_archive_id: ad.ad_archive_id,
+              collectionId: destinationCollectionId,
             },
-            data: { collectionId: destinationCollectionId },
-          });
-          movedAdsCount++;
-          if (!latestAdImageUrl) latestAdImageUrl = ad.imageUrl;
-        } else {
-          // Delete duplicate ads from the source collection
-          await tx.savedAd.delete({
-            where: {
-              ad_archive_id_collectionId: {
-                ad_archive_id: ad.ad_archive_id,
-                collectionId: sourceCollectionId,
-              },
+          },
+          update: {}, // If it exists, do nothing
+          create: {
+            ad_archive_id: ad.ad_archive_id,
+            collectionId: destinationCollectionId,
+            adData: ad.adData as any,
+            imageUrl: ad.imageUrl,
+            collation_id: ad.collation_id,
+          },
+        });
+
+        // Delete the ad from the source collection
+        await tx.savedAd.delete({
+          where: {
+            ad_archive_id_collectionId: {
+              ad_archive_id: ad.ad_archive_id,
+              collectionId: sourceCollectionId,
             },
-          });
-        }
+          },
+        });
       }
 
       // Update source collection
@@ -203,24 +193,28 @@ export async function moveAllAds(
         data: {
           savedAdsCount: 0,
           lastSavedAt: new Date(),
-          imageUrl: null, // Clear image URL as all ads are moved/deleted
+          imageUrl: null,
           updatedAt: new Date(),
         },
       });
 
       // Update destination collection
-      const destinationCollection = await tx.collection.findUnique({
-        where: { id: destinationCollectionId },
-        select: { savedAdsCount: true, imageUrl: true },
+      const destinationAdsCount = await tx.savedAd.count({
+        where: { collectionId: destinationCollectionId },
+      });
+
+      const latestAd = await tx.savedAd.findFirst({
+        where: { collectionId: destinationCollectionId },
+        orderBy: { createdAt: "desc" },
+        select: { imageUrl: true },
       });
 
       await tx.collection.update({
         where: { id: destinationCollectionId },
         data: {
-          savedAdsCount:
-            (destinationCollection?.savedAdsCount || 0) + movedAdsCount,
+          savedAdsCount: destinationAdsCount,
           lastSavedAt: new Date(),
-          imageUrl: destinationCollection?.imageUrl || latestAdImageUrl, // Use existing image URL if available, otherwise use the latest moved ad's image
+          imageUrl: latestAd?.imageUrl || null,
           updatedAt: new Date(),
         },
       });
@@ -230,7 +224,7 @@ export async function moveAllAds(
     return { success: true, message: "Ads moved successfully" };
   } catch (error) {
     console.error("Failed to move ads:", error);
-    throw new Error("Failed to move ads");
+    return { success: false, message: "Failed to move ads" };
   }
 }
 

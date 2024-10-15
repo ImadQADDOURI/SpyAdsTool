@@ -1422,6 +1422,6 @@ Dark Mode: Inverted color scheme
 Animations: Smooth transitions, slide-in/out panels
 Special Features: Gradient text, subtle background patterns
 The final deliverable should follow these best practices with well-documented, efficient, and clean code.
-with notification of user using alerts or toasts.
+user feedback through notifications using toasts.
 
 are you rady for some tasks ?

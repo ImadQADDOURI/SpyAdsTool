@@ -36,64 +36,66 @@ export async function saveAd(ad: AdData, collectionId: string) {
   }
 
   try {
-    await prisma.$transaction(async (tx) => {
-      // Check if the collection belongs to the user
-      const collection = await tx.collection.findFirst({
-        where: {
-          id: collectionId,
-          userId: session.user.id,
-        },
-      });
+    // Check if the collection belongs to the user
+    const collection = await prisma.collection.findFirst({
+      where: {
+        id: collectionId,
+        userId: session.user.id,
+      },
+    });
 
-      if (!collection) {
-        throw new Error("Collection not found or doesn't belong to the user");
-      }
+    if (!collection) {
+      return {
+        success: false,
+        message: "Collection not found or doesn't belong to the user",
+      };
+    }
 
-      // Check if the ad is already saved in this collection
-      const existingAd = await tx.savedAd.findFirst({
-        where: {
-          ad_archive_id: ad.ad_archive_id,
-          collectionId: collectionId,
-        },
-      });
+    // Check if the ad is already saved in this collection
+    const existingAd = await prisma.savedAd.findFirst({
+      where: {
+        ad_archive_id: ad.ad_archive_id,
+        collectionId: collectionId,
+      },
+    });
 
-      if (existingAd) {
-        return {
-          success: true,
-          message: "Ad already saved in this collection",
-        };
-      }
+    if (existingAd) {
+      return {
+        success: false,
+        message: "Ad already exists in this collection",
+      };
+    }
 
-      // Extract image URL from ad data
-      const imageUrl = extractImageFromAd(ad);
+    // Extract image URL from ad data
+    const imageUrl = extractImageFromAd(ad);
 
-      // Save the ad
-      await tx.savedAd.create({
-        data: {
-          ad_archive_id: ad.ad_archive_id,
-          collectionId: collectionId,
-          adData: ad as any,
-          imageUrl: imageUrl,
-          collation_id: ad.collation_id,
-        },
-      });
+    // Save the ad
+    await prisma.savedAd.create({
+      data: {
+        ad_archive_id: ad.ad_archive_id,
+        collectionId: collectionId,
+        adData: ad as any,
+        imageUrl: imageUrl,
+        collation_id: ad.collation_id,
+      },
+    });
 
-      // Update the collection's savedAdsCount, lastSavedAt, and imageUrl if it's the first ad
-      await tx.collection.update({
-        where: { id: collectionId },
-        data: {
-          savedAdsCount: { increment: 1 },
-          lastSavedAt: new Date(),
-          imageUrl: collection.savedAdsCount === 0 ? imageUrl : undefined,
-        },
-      });
+    // Update the collection's savedAdsCount, lastSavedAt, and imageUrl if it's the first ad
+    await prisma.collection.update({
+      where: { id: collectionId },
+      data: {
+        savedAdsCount: { increment: 1 },
+        lastSavedAt: new Date(),
+        imageUrl: collection.savedAdsCount === 0 ? imageUrl : undefined,
+        updatedAt: new Date(),
+      },
     });
 
     revalidatePath("/collections");
     return { success: true, message: "Ad saved successfully" };
   } catch (error) {
     console.error("Failed to save ad:", error);
-    throw new Error("Failed to save ad");
+    return { success: false, message: "Failed to save ad" };
   }
 }
 
@@ -104,57 +106,57 @@ export async function unsaveAd(adArchiveId: string, collectionId: string) {
   }
 
   try {
-    await prisma.$transaction(async (tx) => {
-      // Check if the collection belongs to the user
-      const collection = await tx.collection.findFirst({
-        where: {
-          id: collectionId,
-          userId: session.user.id,
+    // Check if the collection belongs to the user
+    const collection = await prisma.collection.findFirst({
+      where: {
+        id: collectionId,
+        userId: session.user.id,
+      },
+      include: {
+        savedAds: {
+          orderBy: { createdAt: "desc" },
+          take: 2, // Fetch the to-be-deleted ad and the potential new latest ad
         },
-        include: {
-          savedAds: {
-            orderBy: { createdAt: "desc" },
-            take: 2, // Fetch the to-be-deleted ad and the potential new latest ad
-          },
-        },
-      });
+      },
+    });
 
-      if (!collection) {
-        throw new Error("Collection not found or doesn't belong to the user");
-      }
+    if (!collection) {
+      throw new Error("Collection not found or doesn't belong to the user");
+    }
 
-      // Remove the ad from the collection
-      await tx.savedAd.delete({
-        where: {
-          ad_archive_id_collectionId: {
-            ad_archive_id: adArchiveId,
-            collectionId: collectionId,
-          },
-        },
-      });
+    // Find and delete the saved ad
+    const deletedAd = await prisma.savedAd.deleteMany({
+      where: {
+        ad_archive_id: adArchiveId,
+        collectionId: collectionId,
+      },
+    });
 
-      // Determine the new imageUrl for the collection
-      let newImageUrl: string | null = null;
-      if (
-        collection.savedAds[0].ad_archive_id === adArchiveId &&
-        collection.savedAds.length > 1
-      ) {
-        // If the deleted ad was the latest, use the image from the next latest ad
-        newImageUrl = collection.savedAds[1].imageUrl;
-      } else if (collection.savedAds.length === 1) {
-        // If this was the last ad, set imageUrl to null
-        newImageUrl = null;
-      }
+    if (deletedAd.count === 0) {
+      return { success: false, message: "Ad not found in this collection" };
+    }
 
-      // Update the collection's savedAdsCount, lastSavedAt, and potentially imageUrl
-      await tx.collection.update({
-        where: { id: collectionId },
-        data: {
-          savedAdsCount: { decrement: 1 },
-          lastSavedAt: new Date(),
-          imageUrl: newImageUrl,
-        },
-      });
+    // Determine the new imageUrl for the collection
+    let newImageUrl: string | null = null;
+    if (
+      collection.savedAds[0].ad_archive_id === adArchiveId &&
+      collection.savedAds.length > 1
+    ) {
+      // If the deleted ad was the latest, use the image from the next latest ad
+      newImageUrl = collection.savedAds[1].imageUrl;
+    } else if (collection.savedAds.length === 1) {
+      // If this was the last ad, set imageUrl to null
+      newImageUrl = null;
+    }
+
+    // Update the collection's savedAdsCount, lastSavedAt, and potentially imageUrl
+    await prisma.collection.update({
+      where: { id: collectionId },
+      data: {
+        savedAdsCount: { decrement: 1 },
+        lastSavedAt: new Date(),
+        imageUrl: newImageUrl,
+      },
     });
 
     revalidatePath("/collections");
@@ -162,97 +164,6 @@ export async function unsaveAd(adArchiveId: string, collectionId: string) {
   } catch (error) {
     console.error("Failed to unsave ad:", error);
     throw new Error("Failed to unsave ad");
-  }
-}
-
-export async function moveAllAds(
-  sourceCollectionId: string,
-  destinationCollectionId: string,
-) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    throw new Error("User not authenticated");
-  }
-
-  try {
-    await prisma.$transaction(async (tx) => {
-      // Get all ads from the source collection
-      const sourceAds = await tx.savedAd.findMany({
-        where: { collectionId: sourceCollectionId },
-      });
-
-      // Get all ad_archive_ids from the destination collection
-      const destinationAdIds = new Set(
-        (
-          await tx.savedAd.findMany({
-            where: { collectionId: destinationCollectionId },
-            select: { ad_archive_id: true },
-          })
-        ).map((ad) => ad.ad_archive_id),
-      );
-
-      let movedAdsCount = 0;
-      let latestAdImageUrl: string | null = null;
-
-      // Move non-duplicate ads to the destination collection
-      for (const ad of sourceAds) {
-        if (!destinationAdIds.has(ad.ad_archive_id)) {
-          await tx.savedAd.update({
-            where: {
-              ad_archive_id_collectionId: {
-                ad_archive_id: ad.ad_archive_id,
-                collectionId: sourceCollectionId,
-              },
-            },
-            data: { collectionId: destinationCollectionId },
-          });
-          movedAdsCount++;
-          latestAdImageUrl = ad.imageUrl || latestAdImageUrl;
-        } else {
-          // Delete duplicate ads from the source collection
-          await tx.savedAd.delete({
-            where: {
-              ad_archive_id_collectionId: {
-                ad_archive_id: ad.ad_archive_id,
-                collectionId: sourceCollectionId,
-              },
-            },
-          });
-        }
-      }
-
-      // Update source collection
-      await tx.collection.update({
-        where: { id: sourceCollectionId },
-        data: {
-          savedAdsCount: 0,
-          lastSavedAt: new Date(),
-          imageUrl: null, // Clear image URL as all ads are moved/deleted
-        },
-      });
-
-      // Update destination collection
-      const destinationCollection = await tx.collection.findUnique({
-        where: { id: destinationCollectionId },
-        select: { savedAdsCount: true, imageUrl: true },
-      });
-
-      await tx.collection.update({
-        where: { id: destinationCollectionId },
-        data: {
-          savedAdsCount:
-            (destinationCollection?.savedAdsCount || 0) + movedAdsCount,
-          lastSavedAt: new Date(),
-          imageUrl: destinationCollection?.imageUrl || latestAdImageUrl, // Use existing image URL if available, otherwise use the latest moved ad's image
-        },
-      });
-    });
-
-    revalidatePath("/collections");
-    return { success: true, message: "Ads moved successfully" };
-  } catch (error) {
-    console.error("Failed to move ads:", error);
-    throw new Error("Failed to move ads");
   }
 }
 

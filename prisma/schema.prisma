@@ -97,7 +97,8 @@ model Collection {
 }
 
 model SavedAd {
-  ad_archive_id String     @id
+  id            String     @id @default(cuid())
+  ad_archive_id String
   collectionId  String
   collection    Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   adData        Json

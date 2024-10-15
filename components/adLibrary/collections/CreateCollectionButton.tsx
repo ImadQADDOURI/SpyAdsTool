@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { saveAd } from "@/actions/ad";
-import {
-  createCollection,
-  updateCollectionImageUrl,
-} from "@/actions/collection";
+import { createCollection } from "@/actions/collection";
 import { Loader2, Plus } from "lucide-react";
 
 import { AdData } from "@/types/ad";
@@ -47,30 +44,30 @@ export function CreateCollectionButton({
     try {
       const result = await createCollection(newCollectionName);
       if (result) {
-        if (ad) {
-          // If an ad is provided, save it to the new collection
-          await saveAd(ad, result.id);
-          // Update the collection's image URL
-          await updateCollectionImageUrl(result.id);
-        }
-
+        setIsOpen(false);
         toast({
           title: "Success",
           description: "Collection created successfully",
         });
-        setNewCollectionName("");
-        setIsOpen(false);
 
         if (onCollectionCreated) {
-          onCollectionCreated({ id: result.id, name: result.name });
+          onCollectionCreated({
+            id: result.id,
+            name: result.name,
+          });
         }
 
         if (ad) {
+          // If an ad is provided, save it to the new collection
+          await saveAd(ad, result.id);
+          // No need to Update the collection's image URL it's handled in the save ad server action
           toast({
             title: "Success",
             description: "Ad saved to the new collection",
           });
         }
+
+        setNewCollectionName("");
       }
     } catch (error) {
       toast({

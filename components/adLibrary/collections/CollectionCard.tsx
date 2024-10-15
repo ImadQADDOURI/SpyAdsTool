@@ -6,6 +6,7 @@ import {
 } from "@/actions/collection";
 import { formatDate } from "@/utils/dateFormatting";
 import {
+  Check,
   Clock,
   Folder,
   MoreVertical,
@@ -40,7 +41,8 @@ interface CollectionCardProps {
     id: string;
     name: string;
     savedAdsCount: number;
-    lastSavedAt: string | Date;
+    lastSavedAt: Date;
+    updatedAt: Date;
     imageUrl: string | null;
   };
   allCollections: { id: string; name: string }[];
@@ -56,7 +58,18 @@ export function CollectionCard({
   const [newName, setNewName] = useState(collection.name);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
+  const [selectedDestination, setSelectedDestination] = useState<string | null>(
+    null,
+  );
+  const [isMoveLoading, setIsMoveLoading] = useState(false);
   const { toast } = useToast();
+
+  const lastUpdated = new Date(
+    Math.max(
+      new Date(collection.lastSavedAt).getTime(),
+      new Date(collection.updatedAt).getTime(),
+    ),
+  );
 
   const handleRename = async () => {
     try {
@@ -79,13 +92,35 @@ export function CollectionCard({
     }
   };
 
-  const handleMoveAllAds = async (destinationId: string) => {
+  const handleMoveAllAds = async () => {
+    if (!selectedDestination) {
+      toast({
+        title: "Please select a destination collection",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsMoveLoading(true);
     try {
-      await moveAllAds(collection.id, destinationId);
-      toast({ title: "Ads moved successfully" });
-      onUpdate();
+      const result = await moveAllAds(collection.id, selectedDestination);
+      if (result.success) {
+        toast({ title: "Ads moved successfully" });
+        setIsMoving(false);
+        setSelectedDestination(null);
+        onUpdate();
+      } else {
+        throw new Error(result.message);
+      }
     } catch (error) {
-      toast({ title: "Failed to move ads", variant: "destructive" });
+      toast({
+        title: "Failed to move ads",
+        description:
+          error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsMoveLoading(false);
     }
   };
 
@@ -143,7 +178,7 @@ export function CollectionCard({
         </h3>
         <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
           <Clock className="mr-2 h-4 w-4" />
-          <span>Updated {formatDate(collection.lastSavedAt)}</span>
+          <span>{formatDate(lastUpdated)}</span>
         </div>
         <div className="mt-1 flex items-center text-sm text-gray-500 dark:text-gray-400">
           <Folder className="mr-2 h-4 w-4" />
@@ -215,30 +250,40 @@ export function CollectionCard({
               Select a destination collection to move all ads
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full rounded-full">
-                Select Destination
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-full">
-              {allCollections
-                .filter((c) => c.id !== collection.id)
-                .map((c) => (
-                  <DropdownMenuItem
-                    key={c.id}
-                    onSelect={() => handleMoveAllAds(c.id)}
-                    className="cursor-pointer"
-                  >
-                    {c.name}
-                  </DropdownMenuItem>
-                ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="max-h-60 overflow-y-auto">
+            {allCollections
+              .filter((c) => c.id !== collection.id)
+              .map((c) => (
+                <Button
+                  key={c.id}
+                  onClick={() => setSelectedDestination(c.id)}
+                  className={`mb-2 w-full justify-between rounded-full ${
+                    selectedDestination === c.id
+                      ? "bg-purple-600 text-white"
+                      : "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                  }`}
+                >
+                  {c.name}
+                  {selectedDestination === c.id && (
+                    <Check className="h-4 w-4" />
+                  )}
+                </Button>
+              ))}
+          </div>
           <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-full">
+            <AlertDialogCancel
+              className="rounded-full"
+              onClick={() => setSelectedDestination(null)}
+            >
               Cancel
             </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleMoveAllAds}
+              disabled={!selectedDestination || isMoveLoading}
+              className="rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white transition-all duration-200 hover:opacity-90 hover:shadow-md"
+            >
+              {isMoveLoading ? "Moving..." : "Move Ads"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

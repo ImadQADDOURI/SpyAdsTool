@@ -119,6 +119,7 @@ export interface Collection {
 }
 
 export interface SavedAd {
+  id: string;
   ad_archive_id: string;
   collectionId: string;
   adData: any;
