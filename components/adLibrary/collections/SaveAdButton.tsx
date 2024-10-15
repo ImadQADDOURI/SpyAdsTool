@@ -1,10 +1,12 @@
-// components/SaveAdButton.tsx
-"use client";
-
 import React, { useCallback, useEffect, useState } from "react";
+import { checkAdSaveStatus, saveAd, unsaveAd } from "@/actions/ad";
+import {
+  getUserCollections,
+  updateCollectionImageUrl,
+} from "@/actions/collection";
 import { ChevronDown, Heart, Plus, Search, X } from "lucide-react";
 
-import { Ad } from "@/types/ad";
+import { AdData } from "@/types/ad";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,22 +27,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { CreateCollectionButton } from "@/components/adsLibrary/AdsCollections/CreateCollectionButton";
-import {
-  checkAdSaveStatus,
-  getCollections,
-  saveAd,
-  unsaveAd,
-} from "@/app/actions/collectionActions";
+
+import { CreateCollectionButton } from "./CreateCollectionButton";
 
 interface SaveAdButtonProps {
-  ad: Ad;
+  ad: AdData;
 }
 
 interface CollectionWithSaveStatus {
   id: string;
   name: string;
   isSaved: boolean;
+  imageUrl: string | null;
 }
 
 const COLLECTIONS_PER_PAGE = 10;
@@ -80,20 +78,17 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
     setIsLoading(true);
     try {
       const [collectionsResult, saveStatusResult] = await Promise.all([
-        getCollections(),
-        checkAdSaveStatus(ad.adArchiveID),
+        getUserCollections(),
+        checkAdSaveStatus(ad.ad_archive_id),
       ]);
 
-      if (
-        collectionsResult.success &&
-        Array.isArray(collectionsResult.collections)
-      ) {
+      if (collectionsResult) {
         const collectionsWithSaveStatus: CollectionWithSaveStatus[] =
-          collectionsResult.collections.map((collection) => ({
+          collectionsResult.map((collection) => ({
             ...collection,
-            isSaved:
-              Array.isArray(saveStatusResult.savedCollectionIds) &&
-              saveStatusResult.savedCollectionIds.includes(collection.id),
+            isSaved: saveStatusResult.savedCollectionIds.includes(
+              collection.id,
+            ),
           }));
         setCollections(collectionsWithSaveStatus);
         setFilteredCollections(collectionsWithSaveStatus);
@@ -101,12 +96,10 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
           collectionsWithSaveStatus.slice(0, COLLECTIONS_PER_PAGE),
         );
       } else {
-        throw new Error(
-          collectionsResult.error || "Failed to fetch collections",
-        );
+        throw new Error("Failed to fetch collections");
       }
 
-      setIsAdSaved(saveStatusResult.isSaved === true);
+      setIsAdSaved(saveStatusResult.isSaved);
     } catch (error) {
       toast({
         title: "Error fetching data",
@@ -124,6 +117,7 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
     try {
       const result = await saveAd(ad, collectionId);
       if (result.success) {
+        await updateCollectionImageUrl(collectionId);
         toast({
           title: "Ad saved successfully",
           description: `The ad has been saved to your collection.`,
@@ -131,7 +125,7 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
         updateCollectionSaveStatus(collectionId, true);
         setIsAdSaved(true);
       } else {
-        throw new Error(result.error || "Failed to save ad");
+        throw new Error(result.message || "Failed to save ad");
       }
     } catch (error) {
       toast({
@@ -148,15 +142,16 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
   const handleUnsaveAd = async (collectionId: string) => {
     setIsLoading(true);
     try {
-      const result = await unsaveAd(ad.adArchiveID, collectionId);
+      const result = await unsaveAd(ad.ad_archive_id, collectionId);
       if (result.success) {
+        await updateCollectionImageUrl(collectionId);
         toast({
           title: "Ad unsaved successfully",
           description: `The ad has been removed from your collection.`,
         });
         updateCollectionSaveStatus(collectionId, false);
       } else {
-        throw new Error(result.error || "Failed to unsave ad");
+        throw new Error(result.message || "Failed to unsave ad");
       }
     } catch (error) {
       toast({
@@ -187,20 +182,6 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
     setIsAdSaved(updatedCollections.some((c) => c.isSaved));
   };
 
-  const handleNewCollectionCreated = (newCollection: {
-    id: string;
-    name: string;
-  }) => {
-    const updatedCollections = [
-      { ...newCollection, isSaved: true },
-      ...collections,
-    ];
-    setCollections(updatedCollections);
-    setFilteredCollections(updatedCollections);
-    setDisplayedCollections(updatedCollections.slice(0, COLLECTIONS_PER_PAGE));
-    setIsAdSaved(true);
-  };
-
   const handleSearch = useCallback(
     (searchTerm: string) => {
       setSearchTerm(searchTerm);
@@ -228,6 +209,21 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
     handleSearch(searchTerm);
   }, [searchTerm, handleSearch]);
 
+  const handleNewCollectionCreated = (newCollection: {
+    id: string;
+    name: string;
+    imageUrl: string | null;
+  }) => {
+    const updatedCollections = [
+      { ...newCollection, isSaved: true },
+      ...collections,
+    ];
+    setCollections(updatedCollections);
+    setFilteredCollections(updatedCollections);
+    setDisplayedCollections(updatedCollections.slice(0, COLLECTIONS_PER_PAGE));
+    setIsAdSaved(true);
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -235,44 +231,51 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="rounded-full transition-colors duration-200 hover:bg-purple-100 dark:hover:bg-purple-900"
+            className="rounded-full transition-all duration-200 hover:scale-110 hover:bg-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:hover:bg-purple-900"
+            aria-label={isAdSaved ? "Unsave ad" : "Save ad"}
           >
             <Heart
-              className={`h-4 w-4 ${isAdSaved ? "fill-current text-pink-500" : "text-gray-600 dark:text-gray-300"}`}
+              className={`h-5 w-5 ${
+                isAdSaved
+                  ? "fill-current text-pink-500"
+                  : "text-gray-600 dark:text-gray-300"
+              }`}
             />
           </Button>
         </DialogTrigger>
-        <DialogContent className="rounded-2xl bg-white dark:bg-gray-800 sm:max-w-[425px]">
+        <DialogContent className="rounded-xl bg-white shadow-lg transition-all duration-200 dark:bg-gray-800 sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-2xl font-bold text-transparent">
               Manage Ad in Collections
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <Search className="ml-2 h-6 w-6 text-gray-400" />
-              <Input
-                placeholder="Search collections..."
-                value={searchTerm}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="flex-grow rounded-full border-2 border-gray-300 bg-transparent focus:ring-2 focus:ring-purple-500 dark:border-gray-700"
-              />
-              {searchTerm && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleSearch("")}
-                  className="rounded-full hover:bg-purple-100 dark:hover:bg-purple-900"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
+            <div className="flex items-center space-x-2">
+              <div className="relative flex-grow">
+                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
+                <Input
+                  placeholder="Search collections..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="w-full rounded-full border-2 border-gray-300 bg-transparent py-2 pl-10 pr-10 transition-all duration-200 focus:ring-2 focus:ring-purple-500 dark:border-gray-700"
+                />
+                {searchTerm && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleSearch("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-full transition-all duration-200 hover:bg-purple-100 dark:hover:bg-purple-900"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
               <CreateCollectionButton
                 ad={ad}
                 onCollectionCreated={handleNewCollectionCreated}
               />
             </div>
-            <div className="max-h-[300px] space-y-2 overflow-y-auto">
+            <div className="max-h-[300px] space-y-2 overflow-y-auto pr-2">
               {displayedCollections.map((collection) => (
                 <Button
                   key={collection.id}
@@ -284,11 +287,20 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
                         })
                       : handleSaveAd(collection.id)
                   }
-                  className="w-full justify-between rounded-full"
+                  className="w-full justify-between rounded-full transition-all duration-200 hover:shadow-md"
                   disabled={isLoading}
                   variant={collection.isSaved ? "destructive" : "default"}
                 >
-                  {collection.name}
+                  <span className="flex items-center">
+                    {collection.imageUrl && (
+                      <img
+                        src={collection.imageUrl}
+                        alt={collection.name}
+                        className="mr-2 h-6 w-6 rounded-full object-cover"
+                      />
+                    )}
+                    {collection.name}
+                  </span>
                   {collection.isSaved ? (
                     <X className="ml-2 h-4 w-4" />
                   ) : (
@@ -300,9 +312,9 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
                 <Button
                   onClick={loadMoreCollections}
                   variant="outline"
-                  className="w-full rounded-full"
+                  className="w-full rounded-full transition-all duration-200 hover:bg-purple-50 dark:hover:bg-purple-900"
                 >
-                  Load More <ChevronDown className="ml-2 h-6 w-6" />
+                  Load More <ChevronDown className="ml-2 h-5 w-5" />
                 </Button>
               )}
             </div>
@@ -316,7 +328,7 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
           setUnsaveConfirmation({ ...unsaveConfirmation, isOpen })
         }
       >
-        <AlertDialogContent className="rounded-2xl bg-white dark:bg-gray-800">
+        <AlertDialogContent className="rounded-xl bg-white shadow-lg transition-all duration-200 dark:bg-gray-800">
           <AlertDialogHeader>
             <AlertDialogTitle className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-2xl font-bold text-transparent">
               Confirm Unsave
@@ -326,11 +338,11 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-full">
+            <AlertDialogCancel className="rounded-full transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              className="rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white transition-opacity hover:opacity-90"
+              className="rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white transition-all duration-200 hover:opacity-90 hover:shadow-md"
               onClick={() =>
                 unsaveConfirmation.collectionId &&
                 handleUnsaveAd(unsaveConfirmation.collectionId)

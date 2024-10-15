@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum UserRole {
@@ -61,6 +61,7 @@ model User {
 
   accounts Account[]
   sessions Session[]
+  collections Collection[]
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
@@ -77,4 +78,35 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map(name: "verification_tokens")
+}
+
+model Collection {
+  id            String   @id @default(cuid())
+  name          String
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  savedAds      SavedAd[]
+  savedAdsCount Int      @default(0)
+  lastSavedAt   DateTime @default(now())
+  imageUrl      String? 
+
+  @@index([userId])
+  @@map(name: "collections")
+}
+
+model SavedAd {
+  ad_archive_id String     @id
+  collectionId  String
+  collection    Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  adData        Json
+  imageUrl      String?
+  collation_id  String?    
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@unique([ad_archive_id, collectionId])
+  @@index([collectionId])
+  @@map(name: "saved_ads")
 }

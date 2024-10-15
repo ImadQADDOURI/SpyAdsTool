@@ -23,8 +23,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "../ui/carousel";
-import { SaveAdButton } from "./adCollections/SaveAdButton";
 import { AdDetails } from "./AdDetails";
+import { SaveAdButton } from "./collections/SaveAdButton";
 import DisplayPixelPlatformPayment from "./microComponents/DisplayPixelPlatformPayment";
 import ExpandableText from "./microComponents/expandableText";
 import PageNameWithPopover from "./microComponents/PageNameWithPopover";
@@ -161,7 +161,7 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
           alt="Audience Network Facebook"
           width={24}
           height={24}
-          className="h-5 w-5 "
+          className="h-5 w-5"
         />
       ),
     };
@@ -199,7 +199,7 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
         <div className="mb-4 flex items-center justify-between">
           <div className="text-xs text-gray-500">ID: {ad_archive_id}</div>
           <div className="flex space-x-2">
-            {/* <SaveAdButton ad={ad} /> */}
+            <SaveAdButton ad={ad} />{" "}
             <Button variant="ghost" size="sm">
               <ExternalLink className="h-4 w-4" />
             </Button>
@@ -286,8 +286,8 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
                   ADs
                 </span>
               </div>
-              <div className="flex items-center space-x-2 ">
-                <span className="text-2xl font-extrabold text-white drop-shadow-md ">
+              <div className="flex items-center space-x-2">
+                <span className="text-2xl font-extrabold text-white drop-shadow-md">
                   {ad.collation_count || 0}
                 </span>
                 {ad.collation_count > 5 && (
@@ -330,7 +330,7 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
         </div>
         {snapshot?.body?.text &&
           snapshot?.body?.text !== "&#123;&#123;product.brand&#125;&#125;" && (
-            <div className=" text-xs">
+            <div className="text-xs">
               <ExpandableText text={snapshot.body.text || ""} maxLength={50} />
             </div>
           )}

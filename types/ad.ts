@@ -106,3 +106,24 @@ export interface Media {
   watermarked_video_hd_url?: string;
   watermarked_video_sd_url?: string;
 }
+
+export interface Collection {
+  id: string;
+  name: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  savedAdsCount: number;
+  lastSavedAt: Date;
+  savedAds?: SavedAd[];
+}
+
+export interface SavedAd {
+  ad_archive_id: string;
+  collectionId: string;
+  adData: any;
+  imageUrl?: string | null;
+  collation_id?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}

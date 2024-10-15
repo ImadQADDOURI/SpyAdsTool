@@ -18,5 +18,9 @@ export const marketingConfig: MarketingConfig = {
       title: "AdLibrary",
       href: "/adlibrary",
     },
+    {
+      title: "Collections",
+      href: "/collections",
+    },
   ],
 };
