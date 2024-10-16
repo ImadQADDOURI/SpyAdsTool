@@ -8,6 +8,8 @@ import { toast } from "sonner";
 
 import { AdCardGrid } from "@/components/adLibrary/microComponents/AdCardGrid";
 
+import { Loading } from "../microComponents/Loading";
+
 interface CollectionDetailsProps {
   collectionId: string;
 }
@@ -34,9 +36,7 @@ export function CollectionDetails({ collectionId }: CollectionDetailsProps) {
   }, [collectionId]);
 
   if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center">Loading...</div>
-    );
+    return <Loading message="Fetching data..." size="large" />;
   }
 
   if (!collection) {
@@ -51,21 +51,23 @@ export function CollectionDetails({ collectionId }: CollectionDetailsProps) {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-3xl font-bold text-transparent">
-        {collection.name}
-      </h1>
-      <div className="mb-4 flex items-center text-gray-600 dark:text-gray-300">
-        <Clock className="mr-2 h-5 w-5" />
-        <span>Updated {formatDate(lastUpdated)}</span>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-800">
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-3xl font-bold text-transparent">
+          {collection.name}
+        </h1>
+        <div className="mb-4 flex items-center text-gray-600 dark:text-gray-300">
+          <Clock className="mr-2 h-5 w-5" />
+          <span>Updated {formatDate(lastUpdated)}</span>
+        </div>
+        <div className="mb-6 flex items-center text-gray-600 dark:text-gray-300">
+          <Folder className="mr-2 h-5 w-5" />
+          <span>{collection.savedAdsCount} saved ads</span>
+        </div>
+        <AdCardGrid
+          ads={collection.savedAds.map((savedAd: any) => savedAd.adData)}
+        />
       </div>
-      <div className="mb-6 flex items-center text-gray-600 dark:text-gray-300">
-        <Folder className="mr-2 h-5 w-5" />
-        <span>{collection.savedAdsCount} saved ads</span>
-      </div>
-      <AdCardGrid
-        ads={collection.savedAds.map((savedAd: any) => savedAd.adData)}
-      />
     </div>
   );
 }

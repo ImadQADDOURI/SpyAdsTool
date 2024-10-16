@@ -71,7 +71,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         onClick={() => onSearch(searchQuery)}
         disabled={isLoading}
         aria-label="Search ads"
-        className="relative overflow-hidden rounded-full bg-white bg-opacity-20 p-0.5 text-white transition-all hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 "
+        className="relative overflow-hidden rounded-full bg-white bg-opacity-20 p-0.5 text-white transition-all hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
       >
         <span className="relative flex items-center px-4 py-2">
           {isLoading ? (

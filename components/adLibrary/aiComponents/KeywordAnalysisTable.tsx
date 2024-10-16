@@ -12,6 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { Loading } from "../microComponents/Loading";
+
 interface KeywordAnalysisTableProps {
   data: AdAnalysis | null;
   isLoading: boolean;
@@ -26,12 +28,7 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
   const [expanded, setExpanded] = useState(false);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-8 text-gray-500 dark:text-gray-400">
-        <div className="mr-3 h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-purple-500"></div>
-        Analyzing keywords...
-      </div>
-    );
+    return <Loading message="Analyzing keywords..." size="small" />;
   }
 
   if (error) {

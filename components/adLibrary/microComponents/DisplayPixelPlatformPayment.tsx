@@ -28,6 +28,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { Loading } from "./Loading";
+
 interface TrackingDetectorProps {
   url?: string | undefined;
   usePuppeteer?: boolean;
@@ -158,11 +160,7 @@ export default function DisplayPixelPlatformPayment({
   }
 
   if (isLoading) {
-    return (
-      <div className="flex items-center">
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Analyzing website...
-      </div>
-    );
+    return <Loading size="small" />;
   }
 
   if (error) {

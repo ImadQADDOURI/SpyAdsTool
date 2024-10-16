@@ -2,6 +2,7 @@
 import { Suspense } from "react";
 
 import { AdBrowser } from "@/components/adLibrary/AdBrowser";
+import { Loading } from "@/components/adLibrary/microComponents/Loading";
 
 interface SearchParams {
   pageId?: string;
@@ -15,7 +16,7 @@ export default function AdLibraryPage({
   const pageId = searchParams?.pageId;
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading message="Loading content..." size="large" />}>
       <AdBrowser />
     </Suspense>
   );

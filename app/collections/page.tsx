@@ -1,9 +1,12 @@
+import { Suspense } from "react";
+
 import { UserCollections } from "@/components/adLibrary/collections/UserCollections";
+import { Loading } from "@/components/adLibrary/microComponents/Loading";
 
 export default function CollectionsPage() {
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-800">
+    <Suspense fallback={<Loading message="Loading content..." size="large" />}>
       <UserCollections />
-    </div>
+    </Suspense>
   );
 }

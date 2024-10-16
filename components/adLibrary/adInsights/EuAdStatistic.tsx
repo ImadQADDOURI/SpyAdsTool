@@ -7,6 +7,8 @@ import AgeBarChart from "@/components/adLibrary/adInsights/AgeBarChart";
 import CountryBarChart from "@/components/adLibrary/adInsights/CountryBarChart";
 import GenderPieChart from "@/components/adLibrary/adInsights/GenderPieChart";
 
+import { Loading } from "../microComponents/Loading";
+
 interface EuAdStatisticProps {
   data: any;
   isLoading: boolean;
@@ -19,12 +21,7 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
   error,
 }) => {
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-8 text-gray-500 dark:text-gray-400">
-        <div className="mr-3 h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-purple-500"></div>
-        Loading Statistics...
-      </div>
-    );
+    return <Loading message="Loading Statistics..." size="small" />;
   }
 
   if (error) {

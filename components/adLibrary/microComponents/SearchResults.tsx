@@ -5,6 +5,7 @@ import { AdData } from "@/types/ad";
 import { Button } from "@/components/ui/button";
 
 import { AdCardGrid } from "./AdCardGrid";
+import { Loading } from "./Loading";
 import LoadingTrigger from "./LoadingTrigger";
 
 interface SearchResultsProps {
@@ -16,15 +17,6 @@ interface SearchResultsProps {
   remainingCount: number | null;
   handleLoadMore: () => void;
 }
-
-const LoadingIndicator = ({ message }: { message: string }) => (
-  <div className="flex flex-col items-center justify-center py-8">
-    <div className="mb-4 h-16 w-16 animate-spin rounded-full border-b-4 border-purple-500"></div>
-    <p className="animate-pulse text-lg font-semibold text-purple-600">
-      {message}
-    </p>
-  </div>
-);
 
 export const SearchResults: React.FC<SearchResultsProps> = ({
   isLoading,
@@ -38,7 +30,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   return (
     <div className="container mx-auto p-4">
       {/* Initial Loading indicator */}
-      {isLoading && <LoadingIndicator message="" />}
+      {isLoading && <Loading size="large" />}
 
       {error && (
         <div
@@ -88,7 +80,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 </Button>
               )}
               {/* Loading More indicator */}
-              {isLoading && <LoadingIndicator message="" />}
+              {isLoading && <Loading size="medium" />}
             </div>
           )}
         </div>

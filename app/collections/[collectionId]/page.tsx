@@ -1,5 +1,8 @@
 // app/collections/[collectionId]/page.tsx
+import { Suspense } from "react";
+
 import { CollectionDetails } from "@/components/adLibrary/collections/CollectionDetails";
+import { Loading } from "@/components/adLibrary/microComponents/Loading";
 
 interface CollectionPageProps {
   params: {
@@ -9,8 +12,8 @@ interface CollectionPageProps {
 
 export default function CollectionPage({ params }: CollectionPageProps) {
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-800">
+    <Suspense fallback={<Loading message="Loading content..." size="large" />}>
       <CollectionDetails collectionId={params.collectionId} />
-    </div>
+    </Suspense>
   );
 }
