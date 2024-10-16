@@ -55,7 +55,7 @@ export function UserCollections() {
       ) : collections.length === 0 ? (
         <div className="py-12 text-center">
           <p className="text-xl text-gray-600 dark:text-gray-400">
-            You don't have any collections yet.
+            You don&apos;t have any collections yet.
           </p>
           <p className="mt-2 text-gray-500 dark:text-gray-500">
             Create a new collection to get started!

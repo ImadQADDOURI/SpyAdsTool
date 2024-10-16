@@ -105,12 +105,7 @@ export function NavBar({ scroll = false }: NavBarProps) {
               href={session.user.role === "ADMIN" ? "/admin" : "/dashboard"}
               className="hidden md:block"
             >
-              <Button
-                className="gap-2 px-5"
-                variant="default"
-                size="sm"
-                rounded="full"
-              >
+              <Button className="gap-2 px-5" variant="default" size="sm">
                 <span>Dashboard</span>
               </Button>
             </Link>
@@ -119,7 +114,6 @@ export function NavBar({ scroll = false }: NavBarProps) {
               className="hidden gap-2 px-5 md:flex"
               variant="default"
               size="sm"
-              rounded="full"
               onClick={() => setShowSignInModal(true)}
             >
               <span>Sign In</span>
