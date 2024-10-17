@@ -80,7 +80,9 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 </Button>
               )}
               {/* Loading More indicator */}
-              {isLoading && <Loading size="medium" />}
+              {isLoading && (
+                <Loading size="medium" message="Loading more ads..." />
+              )}
             </div>
           )}
         </div>
