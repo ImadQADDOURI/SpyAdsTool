@@ -215,13 +215,13 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
   };
 
   return (
-    <Card className="relative w-full max-w-sm overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl">
+    <Card className="relative flex h-full w-full max-w-sm flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl">
       {/* Top section */}
       <div className="absolute left-0 right-0 top-0 flex h-12 w-full items-center justify-between">
         {/* Left: Collation count */}
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger className="flex h-full items-center rounded-br-2xl bg-gradient-to-r from-blue-500 to-purple-500 px-4 py-2 text-white transition-colors duration-300 hover:from-blue-600 hover:to-purple-600">
+            <TooltipTrigger className="flex h-full items-center rounded-br-2xl bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-5 py-2 text-white transition-colors duration-300 hover:from-[#5455E0] hover:to-[#A866E7]">
               <span className="font-semibold">{collation_count || 0}</span>
             </TooltipTrigger>
             <TooltipContent>
@@ -290,40 +290,50 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
         </div>
       </div>
 
-      <CardContent className="mt-12 p-4">
-        {/* Page name */}
-        <div className="mb-4">
-          <PageNameWithPopover snapshot={snapshot} />
-        </div>
-
-        {/* Media carousel */}
-        {renderMedia()}
-
-        {/* Date and Platform information */}
-        <div className="mb-4 space-y-2 text-sm">
-          <div className="flex items-center text-gray-600 dark:text-gray-400">
-            <span>{renderDate()}</span>
+      <CardContent className="flex flex-grow flex-col justify-between p-4">
+        <div>
+          {/* Page name */}
+          <div className="mb-4 mt-12">
+            <PageNameWithPopover snapshot={snapshot} />
           </div>
-          <div className="flex items-center">{renderPlatformIcons()}</div>
-        </div>
 
-        {/* Pixel, Platform, Payment info */}
-        <DisplayPixelPlatformPayment
-          url={snapshot?.link_url || undefined}
-          usePuppeteer={true}
-          keepBrowserOpen={true}
-          useCache={true}
-          dynamicTimeout={1000}
-          autoDetect={false}
-        />
+          {/* Media carousel */}
+          {renderMedia()}
+
+          {/* Divider */}
+          <hr className="my-4 border-t border-gray-200 dark:border-gray-700" />
+
+          {/* Date and Platform information */}
+          <div className="mb-4 space-y-2 text-sm">
+            <div className="flex items-center text-gray-600 dark:text-gray-400">
+              <span>{renderDate()}</span>
+            </div>
+            <div className="flex items-center">{renderPlatformIcons()}</div>
+          </div>
+
+          {/* Pixel, Platform, Payment info */}
+          <DisplayPixelPlatformPayment
+            url={snapshot?.link_url || undefined}
+            usePuppeteer={true}
+            keepBrowserOpen={true}
+            useCache={true}
+            dynamicTimeout={1000}
+            autoDetect={false}
+          />
+        </div>
 
         {/* Ad details button */}
-        <Button
-          className="group relative mb-4 mt-4 w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white transition-all duration-300 hover:from-blue-600 hover:to-purple-600"
-          onClick={() => setShowAdDetails(true)}
-        >
-          See ad details
-        </Button>
+        <div className="mt-4">
+          <Button
+            className="group relative w-full overflow-hidden rounded-lg bg-gradient-to-r from-[#6566F1] to-[#B977F8] p-[2px] transition-all duration-300 hover:from-[#5455E0] hover:to-[#A866E7]"
+            onClick={() => setShowAdDetails(true)}
+          >
+            <span className="relative flex w-full items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-900 transition-all duration-300 group-hover:bg-opacity-0 group-hover:text-white dark:bg-gray-900 dark:text-white">
+              See ad details
+              <Info className="ml-2 h-4 w-4" />
+            </span>
+          </Button>
+        </div>
       </CardContent>
 
       {/* Ad details modal */}
