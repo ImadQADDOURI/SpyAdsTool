@@ -72,6 +72,7 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
           <CarouselContent>
             {mediaItems.map((item, index) => (
               <CarouselItem key={index}>
+                {/* Media Image or Video */}
                 <div className="relative aspect-video w-full overflow-hidden rounded-md">
                   {item.resized_image_url && (
                     <Image
@@ -107,6 +108,8 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
                     </>
                   )}
                 </div>
+
+                {/* Card Ad Title, Body and CTA */}
                 <div className="flex flex-col items-center justify-center p-2">
                   <div>
                     {item.title && (
@@ -128,7 +131,7 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            {item.cta_text || "Learn More"}
+                            {item.cta_text}
                           </a>
                         </span>
                       </button>
@@ -313,6 +316,11 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
             </span>
           </div>
         )}
+
+        {showAdDetails && (
+          <AdDetails ad={ad} onClose={() => setShowAdDetails(false)} />
+        )}
+
         <div className="mb-2 flex items-center">
           {snapshot?.page_profile_picture_url && (
             <Image
@@ -336,6 +344,8 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
           )}
         {renderMedia()}
       </CardFooter>
+
+      {/* Ad General CTA */}
       <CardFooter>
         {snapshot?.link_url && (
           <a
@@ -348,9 +358,6 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
           </a>
         )}
       </CardFooter>
-      {showAdDetails && (
-        <AdDetails ad={ad} onClose={() => setShowAdDetails(false)} />
-      )}
     </Card>
   );
 };

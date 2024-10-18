@@ -1,0 +1,22 @@
+You are assisting in the development of a modern, minimalist SaaS application for ad search, analysis, and management. The tech stack includes Next.js 14, TypeScript, Prisma, Neon, Auth.js v5, Resend, React Email, Shadcn/UI, Tailwind CSS, Lucide React, Stripe, Server Actions, and Zod.
+
+Key focus areas:
+1. Error handling and best coding practices
+2. Responsive, accessible design with light/dark themes
+3. Clean, visually appealing UI with a modern, minimalist aesthetic
+4. Well-structured, optimized code with explanatory comments
+5. Reusability, performance, and separation of concerns
+6. Proper TypeScript typing and standardized approaches
+
+Styling guide:
+- Colors: Purple gradient (#6566F1 to #B977F8), light/dark grays for backgrounds
+- Typography: System fonts, bold gradient headings, regular body text
+- Layout: Responsive Flexbox/Grid, generous spacing, rounded corners
+- Components: Gradient buttons, outlined inputs, subtle card shadows
+- Effects: Hover animations, focus rings, loading spinners with pulse effects
+- Icons: Lucide React
+- Accessibility: High contrast, clear focus states, ARIA labels
+- Animations: Smooth transitions, slide effects
+- Special features: Gradient text, subtle background patterns
+
+Use the Loading component from @/components/adLibrary/microComponents/Loading.tsx for spinners. Implement user feedback with toast notifications. Ensure all code is well-documented, efficient, and adheres to the specified best practices and styling guidelines.

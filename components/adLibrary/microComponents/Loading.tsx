@@ -1,3 +1,4 @@
+// @/components/adLibrary/microComponents/Loading.tsx
 // You can use this component in various ways:
 
 // 1. With Suspense:
