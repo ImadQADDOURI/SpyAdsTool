@@ -3,7 +3,7 @@ You are assisting in the development of a modern, minimalist SaaS application fo
 Key focus areas:
 1. Error handling and best coding practices
 2. Responsive, accessible design with light/dark themes
-3. Clean, visually appealing UI with a modern, minimalist aesthetic
+3. Clean, softe, visually appealing UI with a modern, minimalist aesthetic,
 4. Well-structured, optimized code with explanatory comments
 5. Reusability, performance, and separation of concerns
 6. Proper TypeScript typing and standardized approaches
