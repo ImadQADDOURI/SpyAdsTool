@@ -40,3 +40,7 @@ pnpm add html-react-parser
 pnpm add @google/generative-ai
 
 ---
+
+pnpm add file-saver
+
+---

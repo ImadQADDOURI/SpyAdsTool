@@ -4,6 +4,8 @@ import Image from "next/image";
 import {
   Calendar,
   CheckCircle,
+  ChevronLeft,
+  ChevronRight,
   Circle,
   CircleCheck,
   CircleX,
@@ -24,6 +26,7 @@ import {
 } from "lucide-react";
 
 import { AdData } from "@/types/ad";
+import { cn } from "@/lib/utils";
 
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
@@ -43,6 +46,7 @@ import {
 import { AdDetails } from "./AdDetails";
 import { SaveAdButton } from "./collections/SaveAdButton";
 import DisplayPixelPlatformPayment from "./microComponents/DisplayPixelPlatformPayment";
+import DownloadMedia from "./microComponents/DownloadMedia";
 import ExpandableText from "./microComponents/expandableText";
 import PageNameWithPopover from "./microComponents/PageNameWithPopover";
 
@@ -74,6 +78,7 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
       year: "numeric",
     });
   };
+
   const renderMedia = () => {
     if (!snapshot) return null;
 
@@ -86,113 +91,144 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
     if (mediaItems.length === 0) return null;
 
     return (
-      <Carousel className="w-full rounded-lg bg-gray-50 dark:bg-gray-800">
-        <CarouselContent>
-          {mediaItems.map((item, index) => (
-            <CarouselItem key={index} className="flex flex-col space-y-4 p-4">
-              {/* Top: Image or Video */}
-              <div className="relative aspect-video w-full overflow-hidden rounded-md">
-                {item.resized_image_url && (
-                  <Image
-                    src={item.resized_image_url}
-                    alt={item.title || `Ad image ${index + 1}`}
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                )}
-                {item.video_preview_image_url && (
-                  <>
-                    {playingVideo === index ? (
-                      <video
-                        src={item.video_sd_url || undefined}
-                        controls
-                        autoPlay
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <>
-                        <Image
-                          src={item.video_preview_image_url}
-                          alt={`Video preview ${index + 1}`}
-                          layout="fill"
-                          objectFit="cover"
-                        />
-                        <Play
-                          className="absolute inset-0 m-auto h-12 w-12 cursor-pointer text-white opacity-80 hover:opacity-100"
-                          onClick={() => setPlayingVideo(index)}
-                        />
-                      </>
-                    )}
-                  </>
-                )}
-              </div>
-
-              {/* Middle: Expandable Text */}
-              <div className="flex-grow">
-                <ExpandableText
-                  text={item.body || snapshot.body?.text || ""}
-                  maxLength={100}
-                />
-              </div>
-
-              {/* Bottom: Ad Details */}
-              <div className="flex flex-col space-y-2">
-                {/* Caption, Title, Link Description */}
-                <div className="flex flex-col space-y-1 text-sm">
-                  {item.caption ||
-                  snapshot.caption ||
-                  item.title ||
-                  snapshot.title ||
-                  item.link_description ||
-                  snapshot.link_description ? (
+      <div className="relative w-full">
+        <Carousel className="w-full overflow-hidden rounded-lg">
+          <CarouselContent>
+            {mediaItems.map((item, index) => (
+              <CarouselItem key={index} className="p-0">
+                {/* Image or Video */}
+                <div className="relative aspect-video w-full">
+                  {item.resized_image_url && (
+                    <Image
+                      src={item.resized_image_url}
+                      alt={item.title || `Ad image ${index + 1}`}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-t-lg"
+                    />
+                  )}
+                  {item.video_preview_image_url && (
                     <>
-                      {(item.caption || snapshot.caption) && (
-                        <p className="font-semibold">
-                          {item.caption || snapshot.caption}
-                        </p>
-                      )}
-                      {(item.title || snapshot.title) && (
-                        <p>{item.title || snapshot.title}</p>
-                      )}
-                      {(item.link_description || snapshot.link_description) && (
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {item.link_description || snapshot.link_description}
-                        </p>
+                      {playingVideo === index ? (
+                        <video
+                          src={item.video_sd_url || undefined}
+                          controls
+                          autoPlay
+                          className="h-full w-full rounded-t-lg object-cover"
+                        />
+                      ) : (
+                        <>
+                          <Image
+                            src={item.video_preview_image_url}
+                            alt={`Video preview ${index + 1}`}
+                            layout="fill"
+                            objectFit="cover"
+                            className="rounded-t-lg"
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="absolute inset-0 m-auto h-12 w-12 rounded-full bg-black bg-opacity-50 text-white hover:bg-opacity-70"
+                            onClick={() => setPlayingVideo(index)}
+                          >
+                            <Play className="h-6 w-6" />
+                          </Button>
+                        </>
                       )}
                     </>
-                  ) : (
-                    <p>{snapshot.page_name}</p>
                   )}
                 </div>
 
-                {/* CTA Button */}
-                {(item.link_url || snapshot.link_url) && (
-                  <div className="flex justify-center">
-                    <button className="group relative inline-flex w-full max-w-[200px] items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-[#6566F1] to-[#B977F8] p-0.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-4 focus:ring-purple-200 group-hover:from-purple-500 group-hover:to-pink-500 dark:text-white dark:focus:ring-purple-800">
-                      <span className="relative flex w-full items-center justify-center rounded-md bg-white px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0 dark:bg-gray-900">
-                        <a
-                          href={item.link_url || snapshot.link_url || ""}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="truncate"
-                        >
-                          {item.cta_text || snapshot.cta_text || "Learn More"}
-                        </a>
-                      </span>
-                    </button>
+                {/* Text Content */}
+                <div className="space-y-2 rounded-b-lg bg-white p-4 dark:bg-gray-800">
+                  <ExpandableText
+                    text={item.caption || snapshot.caption || ""}
+                    maxLength={50}
+                  />
+                  <ExpandableText
+                    text={item.title || snapshot.title || ""}
+                    maxLength={50}
+                  />
+                  <ExpandableText
+                    text={
+                      item.link_description || snapshot.link_description || ""
+                    }
+                    maxLength={50}
+                  />
+                  <ExpandableText
+                    text={item.body || snapshot.body?.text || ""}
+                    maxLength={100}
+                  />
+
+                  {/* CTA and Download Buttons */}
+                  <div className="mt-3 flex items-center justify-between">
+                    <DownloadMedia item={item} />
+                    {(item.link_url || snapshot.link_url) && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 w-24 text-xs"
+                              asChild
+                            >
+                              <a
+                                href={item.link_url || snapshot.link_url || ""}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center"
+                              >
+                                <span className="truncate">
+                                  {item.cta_text ||
+                                    snapshot.cta_text ||
+                                    "Learn More"}
+                                </span>
+                                <ExternalLink className="ml-1 h-3 w-3 flex-shrink-0" />
+                              </a>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>
+                              {item.cta_text ||
+                                snapshot.cta_text ||
+                                "Learn More"}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
                   </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          {mediaItems.length > 1 && (
+            <>
+              <CarouselPrevious
+                className={cn(
+                  "absolute left-2 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800",
+                  "rounded-full p-2 opacity-70 transition-opacity hover:opacity-100",
+                  "focus:outline-none focus:ring-2 focus:ring-purple-500",
+                  "text-gray-800 dark:text-gray-200",
                 )}
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        {mediaItems.length > 1 && (
-          <>
-            <CarouselPrevious />
-            <CarouselNext />
-          </>
-        )}
-      </Carousel>
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </CarouselPrevious>
+              <CarouselNext
+                className={cn(
+                  "absolute right-2 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800",
+                  "rounded-full p-2 opacity-70 transition-opacity hover:opacity-100",
+                  "focus:outline-none focus:ring-2 focus:ring-purple-500",
+                  "text-gray-800 dark:text-gray-200",
+                )}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </CarouselNext>
+            </>
+          )}
+        </Carousel>
+      </div>
     );
   };
 
