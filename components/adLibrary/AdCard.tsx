@@ -290,36 +290,36 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
         </div>
       </div>
 
-      <CardContent className="flex flex-grow flex-col justify-between p-4">
-        <div>
-          {/* Page name */}
-          <div className="mb-4 mt-12">
-            <PageNameWithPopover snapshot={snapshot} />
-          </div>
-
-          {/* Media carousel */}
-          {renderMedia()}
-
-          {/* Divider */}
-          <hr className="my-4 border-t border-gray-200 dark:border-gray-700" />
-
-          {/* Date and Platform information */}
-          <div className="mb-4 space-y-2 text-sm">
-            <div className="flex items-center text-gray-600 dark:text-gray-400">
+      <CardContent className="mt-12 flex flex-grow flex-col justify-between p-4">
+        <div className="flex flex-grow flex-col justify-between">
+          <div className="mb-2 space-y-2">
+            {/* Date */}
+            <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
               <span>{renderDate()}</span>
             </div>
+            {/* Page name */}
+            <div className="">
+              <PageNameWithPopover snapshot={snapshot} />
+            </div>
+            {/*  Platform information */}
             <div className="flex items-center">{renderPlatformIcons()}</div>
+            {/* Media carousel */}
+            {renderMedia()}
           </div>
+          <div className="">
+            {/* Divider */}
+            <hr className="my-4 border-t border-gray-200 dark:border-gray-700" />
 
-          {/* Pixel, Platform, Payment info */}
-          <DisplayPixelPlatformPayment
-            url={snapshot?.link_url || undefined}
-            usePuppeteer={true}
-            keepBrowserOpen={true}
-            useCache={true}
-            dynamicTimeout={1000}
-            autoDetect={false}
-          />
+            {/* Pixel, Platform, Payment info */}
+            <DisplayPixelPlatformPayment
+              url={snapshot?.link_url || undefined}
+              usePuppeteer={true}
+              keepBrowserOpen={true}
+              useCache={true}
+              dynamicTimeout={1000}
+              autoDetect={false}
+            />
+          </div>
         </div>
 
         {/* Ad details button */}
