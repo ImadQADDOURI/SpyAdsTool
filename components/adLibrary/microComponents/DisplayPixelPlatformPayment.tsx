@@ -242,7 +242,7 @@ export default function DisplayPixelPlatformPayment({
           ? detectFeatures
           : undefined
       }
-      className={`flex items-center justify-between rounded-lg py-1 transition-all duration-300 ${getComponentStyle()}`}
+      className={`flex items-center justify-between rounded-lg px-0 py-0.5 transition-all duration-300 ${getComponentStyle()}`}
     >
       <div className="flex flex-1 flex-col space-y-1 pl-1">
         {renderCategoryIcons("pixels", <Radio className="h-5 w-5" />, "Pixel")}
