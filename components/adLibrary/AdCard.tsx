@@ -74,7 +74,6 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
       year: "numeric",
     });
   };
-
   const renderMedia = () => {
     if (!snapshot) return null;
 
@@ -84,91 +83,117 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
       ...(snapshot.videos || []),
     ];
 
-    if (mediaItems.length > 0) {
-      return (
-        <Carousel className="w-full rounded-lg bg-gray-50 dark:bg-gray-800">
-          <CarouselContent>
-            {mediaItems.map((item, index) => (
-              <CarouselItem key={index}>
-                {/* Media Image or Video */}
-                <div className="relative aspect-video w-full overflow-hidden rounded-md">
-                  {item.resized_image_url && (
-                    <Image
-                      src={item.resized_image_url}
-                      alt={item.title || `Ad image ${index + 1}`}
-                      layout="fill"
-                      objectFit="cover"
-                    />
-                  )}
-                  {item.video_preview_image_url && (
-                    <>
-                      {playingVideo === index ? (
-                        <video
-                          src={item.video_sd_url || undefined}
-                          controls
-                          autoPlay
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <>
-                          <Image
-                            src={item.video_preview_image_url}
-                            alt={`Video preview ${index + 1}`}
-                            layout="fill"
-                            objectFit="cover"
-                          />
-                          <Play
-                            className="absolute inset-0 m-auto h-12 w-12 cursor-pointer text-white opacity-80 hover:opacity-100"
-                            onClick={() => setPlayingVideo(index)}
-                          />
-                        </>
-                      )}
-                    </>
-                  )}
-                </div>
+    if (mediaItems.length === 0) return null;
 
-                {/* Card Ad Title, Body and CTA */}
-                <div className="flex flex-col items-center justify-center p-2">
-                  <div>
-                    {item.title && (
+    return (
+      <Carousel className="w-full rounded-lg bg-gray-50 dark:bg-gray-800">
+        <CarouselContent>
+          {mediaItems.map((item, index) => (
+            <CarouselItem key={index} className="flex flex-col space-y-4 p-4">
+              {/* Top: Image or Video */}
+              <div className="relative aspect-video w-full overflow-hidden rounded-md">
+                {item.resized_image_url && (
+                  <Image
+                    src={item.resized_image_url}
+                    alt={item.title || `Ad image ${index + 1}`}
+                    layout="fill"
+                    objectFit="cover"
+                  />
+                )}
+                {item.video_preview_image_url && (
+                  <>
+                    {playingVideo === index ? (
+                      <video
+                        src={item.video_sd_url || undefined}
+                        controls
+                        autoPlay
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
                       <>
-                        <p className="text-sm font-bold">{item.title}</p>
-
-                        {item.body && (
-                          <ExpandableText text={item.body} maxLength={25} />
-                        )}
+                        <Image
+                          src={item.video_preview_image_url}
+                          alt={`Video preview ${index + 1}`}
+                          layout="fill"
+                          objectFit="cover"
+                        />
+                        <Play
+                          className="absolute inset-0 m-auto h-12 w-12 cursor-pointer text-white opacity-80 hover:opacity-100"
+                          onClick={() => setPlayingVideo(index)}
+                        />
                       </>
                     )}
-                  </div>
-                  <div>
-                    {item.link_url && (
-                      <button className="group relative mt-1 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-red-200 via-red-300 to-yellow-200 p-0.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-4 focus:ring-red-100 group-hover:from-red-200 group-hover:via-red-300 group-hover:to-yellow-200 dark:text-white dark:hover:text-gray-900 dark:focus:ring-red-400">
-                        <span className="relative rounded-md bg-white px-5 py-1 transition-all duration-75 ease-in group-hover:bg-opacity-0 dark:bg-gray-900">
-                          <a
-                            href={item.link_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {item.cta_text}
-                          </a>
-                        </span>
-                      </button>
-                    )}
-                  </div>
+                  </>
+                )}
+              </div>
+
+              {/* Middle: Expandable Text */}
+              <div className="flex-grow">
+                <ExpandableText
+                  text={item.body || snapshot.body?.text || ""}
+                  maxLength={100}
+                />
+              </div>
+
+              {/* Bottom: Ad Details */}
+              <div className="flex flex-col space-y-2">
+                {/* Caption, Title, Link Description */}
+                <div className="flex flex-col space-y-1 text-sm">
+                  {item.caption ||
+                  snapshot.caption ||
+                  item.title ||
+                  snapshot.title ||
+                  item.link_description ||
+                  snapshot.link_description ? (
+                    <>
+                      {(item.caption || snapshot.caption) && (
+                        <p className="font-semibold">
+                          {item.caption || snapshot.caption}
+                        </p>
+                      )}
+                      {(item.title || snapshot.title) && (
+                        <p>{item.title || snapshot.title}</p>
+                      )}
+                      {(item.link_description || snapshot.link_description) && (
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {item.link_description || snapshot.link_description}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <p>{snapshot.page_name}</p>
+                  )}
                 </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          {mediaItems.length > 1 && (
-            <>
-              <CarouselPrevious />
-              <CarouselNext />
-            </>
-          )}
-        </Carousel>
-      );
-    }
-    return null;
+
+                {/* CTA Button */}
+                {(item.link_url || snapshot.link_url) && (
+                  <div className="flex justify-center">
+                    <button className="group relative inline-flex w-full max-w-[200px] items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-[#6566F1] to-[#B977F8] p-0.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-4 focus:ring-purple-200 group-hover:from-purple-500 group-hover:to-pink-500 dark:text-white dark:focus:ring-purple-800">
+                      <span className="relative flex w-full items-center justify-center rounded-md bg-white px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0 dark:bg-gray-900">
+                        <a
+                          href={item.link_url || snapshot.link_url || ""}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="truncate"
+                        >
+                          {item.cta_text || snapshot.cta_text || "Learn More"}
+                        </a>
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        {mediaItems.length > 1 && (
+          <>
+            <CarouselPrevious />
+            <CarouselNext />
+          </>
+        )}
+      </Carousel>
+    );
   };
 
   const renderPlatformIcons = () => {
