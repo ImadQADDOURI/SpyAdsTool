@@ -1,7 +1,5 @@
-// app/components/adsLibrary/DisplayPixelPlatformPayment.tsx
-"use client";
-
-import { useEffect, useRef, useState } from "react";
+// @/components/adLibrary/microComponents/DisplayPixelPlatformPayment.tsx
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { detectPixelPlatformPayment } from "@/actions/detectPixelPlatformPayment";
 import {
@@ -12,12 +10,14 @@ import {
 } from "@/utils/Scrape_Detectorpatterns_NonTrackableWebsites";
 import {
   AlertCircle,
-  FileQuestion,
+  ChevronLeft,
+  ChevronRight,
+  CreditCard,
   FileScan,
   FileWarning,
   Info,
-  Loader2,
-  Search,
+  Layers,
+  Radio,
   XCircle,
 } from "lucide-react";
 
@@ -60,11 +60,17 @@ export default function DisplayPixelPlatformPayment({
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showButton, setShowButton] = useState(true);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [isAnalyzed, setIsAnalyzed] = useState(false);
+  const componentRef = useRef<HTMLDivElement>(null);
+
+  const [currentIndex, setCurrentIndex] = useState({
+    pixels: 0,
+    platforms: 0,
+    payments: 0,
+  });
 
   useEffect(() => {
-    if (autoDetect && buttonRef.current) {
+    if (autoDetect && componentRef.current) {
       const observer = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting) {
@@ -74,29 +80,21 @@ export default function DisplayPixelPlatformPayment({
         { threshold: 1.0 },
       );
 
-      observer.observe(buttonRef.current);
+      observer.observe(componentRef.current);
 
       return () => observer.disconnect();
     }
   }, [autoDetect, url]);
 
   const detectFeatures = async () => {
-    if (!url) {
-      console.log("No URL provided, exiting.");
-      return;
-    }
-
-    if (isLoading) {
-      console.log("Already loading, exiting.");
-      return;
-    }
+    if (!url || isLoading || isNonTrackableWebsite(url)) return;
 
     setIsLoading(true);
-    setShowButton(false);
     try {
       const result = await detectPixelPlatformPayment(url);
       setDetectedFeatures(result);
       setError(null);
+      setIsAnalyzed(true);
     } catch (err) {
       console.error("Detection failed:", err);
       setError(
@@ -107,142 +105,180 @@ export default function DisplayPixelPlatformPayment({
     }
   };
 
-  if (showButton) {
-    return (
-      <div className="mb-2 flex items-center text-sm text-gray-700 dark:text-gray-100">
-        <span className="mr-2">Analyze Website</span>
-        {url ? (
-          isNonTrackableWebsite(url) ? (
-            // Notify the user if non Trackable Websites
+  const renderCategoryIcons = (
+    category: keyof DetectionResult,
+    icon: React.ReactNode,
+    label: string,
+  ) => {
+    const features = detectedFeatures[category];
+    const startIndex = currentIndex[category];
+    const visibleFeatures = features.slice(startIndex, startIndex + 5);
 
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="flex items-center text-sm text-yellow-500">
-                    <Info className="mr-1 h-5 w-5" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    This is a known platform where tracking is not applicable
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            <button
-              ref={buttonRef}
-              onClick={detectFeatures}
-              className="relative z-30 inline-flex items-center justify-center rounded-lg bg-gradient-to-br from-teal-300 to-lime-300 p-1 text-sm font-medium text-gray-900 transition-transform duration-300 hover:scale-105 hover:text-white focus:outline-none focus:ring-4 focus:ring-lime-200"
-            >
-              <span title="Analyze the Pixels Frameworks & Payments used in the website">
-                <FileScan className="h-5 w-5" />
-              </span>
-            </button>
-          )
+    return (
+      <div className="flex items-center space-x-1">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 p-1.5 text-gray-700 transition-colors duration-300 hover:bg-white/40 dark:text-gray-200">
+                {icon}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{label}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        {!isAnalyzed ? (
+          <span className="w-20 text-sm font-medium text-gray-700 dark:text-gray-200">
+            {label}
+          </span>
         ) : (
-          // Notify the user if no URL is provided
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="flex items-center text-sm text-gray-500">
-                  <FileWarning className="h-5 w-5" />
-                </span>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>No URL to analyze</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <div className="flex w-20 items-center space-x-1">
+            {features.length === 0 ? (
+              <XCircle className="h-5 w-5 text-gray-400" />
+            ) : (
+              <>
+                {features.length > 5 && startIndex > 0 && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentIndex({
+                        ...currentIndex,
+                        [category]: startIndex - 1,
+                      });
+                    }}
+                    className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                )}
+                {visibleFeatures.map((featureName, index) => {
+                  const feature = [
+                    ...trackingPixelDetectors,
+                    ...platformDetectors,
+                    ...paymentDetectors,
+                  ].find((d) => d.name === featureName);
+                  return (
+                    <TooltipProvider key={index}>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 p-1 transition-all duration-300 hover:scale-110 hover:bg-white/40">
+                            {feature && feature.icon ? (
+                              <Image
+                                src={feature.icon}
+                                alt={featureName}
+                                width={20}
+                                height={20}
+                              />
+                            ) : (
+                              <span className="text-xs font-medium text-gray-700 dark:text-gray-200">
+                                {featureName.charAt(0)}
+                              </span>
+                            )}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{featureName}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  );
+                })}
+                {features.length > 5 && startIndex < features.length - 5 && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentIndex({
+                        ...currentIndex,
+                        [category]: startIndex + 1,
+                      });
+                    }}
+                    className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                )}
+              </>
+            )}
+          </div>
         )}
       </div>
     );
-  }
+  };
 
-  if (isLoading) {
-    return <Loading size="small" />;
-  }
+  const getComponentStyle = () => {
+    if (!url) {
+      return "bg-gray-100 dark:bg-gray-800";
+    } else if (isNonTrackableWebsite(url)) {
+      return "bg-gray-100 dark:bg-gray-800";
+    } else {
+      return "bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-700 cursor-pointer hover:from-purple-100 hover:to-pink-100 dark:hover:from-gray-700 dark:hover:to-gray-600";
+    }
+  };
+
+  const getAnalyzeIcon = () => {
+    if (!url) {
+      return <FileWarning className="h-8 w-8 text-gray-400" />;
+    } else if (isNonTrackableWebsite(url)) {
+      return <Info className="h-8 w-8 text-yellow-400" />;
+    } else {
+      return <FileScan className="h-8 w-8 text-purple-500" />;
+    }
+  };
 
   if (error) {
     return (
-      <div className="flex items-center text-red-500">
+      <div className="flex items-center rounded-lg bg-red-50 p-2 text-red-500 dark:bg-red-900 dark:text-red-200">
         <AlertCircle className="mr-2 h-4 w-4" /> {error}
       </div>
     );
   }
 
-  const renderFeatureSection = (title: string, features: string[]) => (
-    <div className="mb-2 flex flex-row items-center">
-      <span className="mr-2">{title}</span>
-      {features.length === 0 ? (
-        <div className="flex items-center text-gray-500">
-          <XCircle className="h-4 w-4" />
-        </div>
-      ) : (
-        <div className="flex flex-row gap-2">
-          {features.map((featureName, index) => {
-            const feature = [
-              ...trackingPixelDetectors,
-              ...platformDetectors,
-              ...paymentDetectors,
-            ].find((d) => d.name === featureName);
-            return (
-              <div key={index} className="group relative flex items-center">
-                {feature && feature.icon ? (
-                  <div className="relative">
-                    <Image
-                      src={feature.icon}
-                      alt={featureName}
-                      width={24}
-                      height={24}
-                      className="transition-transform group-hover:scale-110"
-                    />
-                    <span className="absolute left-1/2 z-10 min-w-max -translate-x-1/2 rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                      {featureName}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="mr-2 h-4 w-4 rounded-full bg-gray-200">
-                    <span>{featureName}</span>
-                  </div>
-                )}
+  return (
+    <div
+      ref={componentRef}
+      onClick={
+        !isAnalyzed && url && !isNonTrackableWebsite(url)
+          ? detectFeatures
+          : undefined
+      }
+      className={`flex items-center justify-between rounded-lg py-1 transition-all duration-300 ${getComponentStyle()}`}
+    >
+      <div className="flex flex-1 flex-col space-y-1 pl-1">
+        {renderCategoryIcons("pixels", <Radio className="h-5 w-5" />, "Pixel")}
+        {renderCategoryIcons(
+          "platforms",
+          <Layers className="h-5 w-5" />,
+          "Platform",
+        )}
+        {renderCategoryIcons(
+          "payments",
+          <CreditCard className="h-5 w-5" />,
+          "Payment",
+        )}
+      </div>
+      <div className="flex items-center justify-center pr-4">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div
+                className={`flex h-12 w-12 items-center justify-center rounded-full bg-white/20 transition-all duration-300 hover:bg-white/40 ${isAnalyzed ? "opacity-0" : "opacity-100"}`}
+              >
+                {isLoading ? <Loading size="small" /> : getAnalyzeIcon()}
               </div>
-            );
-          })}
-        </div>
-      )}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                {!url
+                  ? "No URL to analyze"
+                  : isNonTrackableWebsite(url)
+                    ? "This is a known platform where tracking is not applicable"
+                    : "Analyze the Pixels, Platforms & Payments used in the website"}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     </div>
   );
-
-  return (
-    <div>
-      {renderFeatureSection("Pixel", detectedFeatures.pixels)}
-      {renderFeatureSection("Framework", detectedFeatures.platforms)}
-      {renderFeatureSection("Payment", detectedFeatures.payments)}
-    </div>
-  );
-}
-
-// how to use DisplayPixelPlatformPayment
-
-{
-  /*
-    import DisplayPixelPlatformPayment from "@/components/adsLibrary/DisplayPixelPlatformPayment";
-
-export default function SomePage() {
-  return (
-    <div>
-      <h1>Website Analysis</h1>
-      <DisplayPixelPlatformPayment
-        url="https://example.com"
-        usePuppeteer={true}
-        keepBrowserOpen={true}
-        useCache={true}
-        dynamicTimeout={2000}
-        autoDetect={false}
-      />
-    </div>
-  );
-}
-    */
 }
