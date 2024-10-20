@@ -10,7 +10,7 @@ interface AdCardGridProps {
 
 export const AdCardGrid: React.FC<AdCardGridProps> = ({ ads }) => {
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
+    <div className="xs:grid-cols-1 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
       {ads.map(
         (ad) =>
           ad.collation_count && ( // to display only ads with collationCount > 0
