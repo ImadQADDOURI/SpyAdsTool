@@ -99,7 +99,7 @@ const PageNameWithHoverCard: React.FC<PageNameWithHoverCardProps> = ({
         {page_profile_uri && (
           <div className="mt-4 flex justify-end space-x-2">
             <Link href={`/adlibrary/${page_id}`} passHref>
-              <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 ease-in-out hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+              <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 ease-in-out hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
                 <Eye className="mr-2 h-4 w-4" />
                 View Ads
               </button>
