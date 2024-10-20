@@ -193,7 +193,7 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
           </div>
           <div className="">
             {/* Divider */}
-            <hr className="m-2 border-t border-gray-200 dark:border-gray-700" />
+            <hr className="m-0.5 border-t border-gray-200 dark:border-gray-700" />
 
             {/* Pixel, Platform, Payment info */}
             <DisplayPixelPlatformPayment

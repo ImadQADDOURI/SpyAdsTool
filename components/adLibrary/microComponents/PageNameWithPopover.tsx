@@ -1,27 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, Eye, Globe, ThumbsUp } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface PageNameWithPopoverProps {
-  snapshot: {
-    page_name: string;
-    page_categories?: Record<string, string>;
-    page_like_count?: number;
-    link_url?: string;
-    page_profile_uri?: string;
-    page_profile_picture_url?: string;
-    page_id: string;
-  };
+interface PageNameWithHoverCardProps {
+  snapshot: any;
 }
 
-const PageNameWithPopover: React.FC<PageNameWithPopoverProps> = ({
+const PageNameWithHoverCard: React.FC<PageNameWithHoverCardProps> = ({
   snapshot,
 }) => {
   const {
@@ -39,145 +33,96 @@ const PageNameWithPopover: React.FC<PageNameWithPopoverProps> = ({
     : "";
   const domain = link_url ? new URL(link_url).hostname : "";
 
-  const [isOpen, setIsOpen] = useState(false);
-  const timeoutRef = useRef<number | null>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    setIsOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    timeoutRef.current = window.setTimeout(() => {
-      setIsOpen(false);
-    }, 300); // Close after 300ms
-  };
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        !triggerRef.current?.contains(event.target as Node) &&
-        !contentRef.current?.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   return (
-    <div className="inline-flex items-center">
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
-          <button
-            ref={triggerRef}
-            className="inline-flex items-center space-x-2 rounded-full bg-gray-50 pr-2 transition-all duration-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:bg-gray-800 dark:hover:bg-gray-700"
-            onClick={() => setIsOpen(!isOpen)}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            {page_profile_picture_url && (
-              <Image
-                src={page_profile_picture_url}
-                alt={page_name || "Page profile"}
-                width={24}
-                height={24}
-                className="rounded-full"
-              />
-            )}
-            <span className="text-sm font-medium text-gray-800 hover:underline dark:text-gray-200">
-              {page_name || "Unknown Page"}
-            </span>
-          </button>
-        </PopoverTrigger>
-        <PopoverContent
-          ref={contentRef}
-          className="w-80 rounded-lg border-none bg-white p-4 shadow-lg dark:bg-gray-800"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div className="flex items-start space-x-4">
-            {page_profile_picture_url && (
-              <Image
-                src={page_profile_picture_url}
-                alt={page_name || "Page profile"}
-                width={60}
-                height={60}
-                className="rounded-full"
-              />
-            )}
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
-                {page_name}
-              </h3>
-              {categories && (
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {categories}
-                </p>
-              )}
-              {page_like_count !== undefined && (
-                <p className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-                  <ThumbsUp className="mr-1 h-4 w-4" />
-                  {page_like_count.toLocaleString()} likes
-                </p>
-              )}
-              {domain && (
-                <p className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-                  <Globe className="mr-1 h-4 w-4" />
-                  <a
-                    href={link_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                  >
-                    {domain}
-                  </a>
-                </p>
-              )}
-            </div>
-          </div>
-          {page_profile_uri && (
-            <div className="mt-4 flex justify-end space-x-2">
-              <Link
-                href={`/adlibrary/${page_id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-md bg-purple-600 px-3 py-1.5 text-xs font-medium text-white transition-colors duration-200 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-              >
-                <Eye className="mr-1 h-3 w-3" />
-                View Ads
-              </Link>
-              <a
-                href={page_profile_uri}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-md bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-              >
-                <ExternalLink className="mr-1 h-3 w-3" />
-                Go to Page
-              </a>
-            </div>
+    <HoverCard openDelay={300} closeDelay={200}>
+      <HoverCardTrigger asChild>
+        <button className="duration-50 group flex items-center space-x-2 rounded-full pr-2 transition-all ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500">
+          {page_profile_picture_url ? (
+            <Image
+              src={page_profile_picture_url}
+              alt={page_name || "Page profile"}
+              width={24}
+              height={24}
+              className="rounded-full border border-gray-200 transition-transform duration-200 group-hover:scale-110 dark:border-gray-700"
+            />
+          ) : (
+            <Skeleton className="h-6 w-6 rounded-full" />
           )}
-        </PopoverContent>
-      </Popover>
-    </div>
+          <span className="font-medium text-gray-800 transition-colors duration-200 group-hover:text-purple-600 dark:text-gray-200 dark:group-hover:text-purple-400">
+            {page_name || "Unknown Page"}
+          </span>
+        </button>
+      </HoverCardTrigger>
+      <HoverCardContent className="w-80 rounded-lg border border-gray-200 bg-white/85 p-4 shadow-lg backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/85">
+        <div className="flex items-start space-x-4">
+          {page_profile_picture_url ? (
+            <Image
+              src={page_profile_picture_url}
+              alt={page_name || "Page profile"}
+              width={60}
+              height={60}
+              className="rounded-full border-2 border-gray-200 shadow-md dark:border-gray-600"
+            />
+          ) : (
+            <Skeleton className="h-16 w-16 rounded-full" />
+          )}
+          <div className="min-w-0 flex-1">
+            <h3 className="truncate text-lg font-bold text-gray-800 dark:text-gray-200">
+              {page_name}
+            </h3>
+            {categories && (
+              <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                {categories}
+              </p>
+            )}
+            {page_like_count !== undefined && (
+              <p className="mt-1 flex items-center text-sm text-gray-600 dark:text-gray-300">
+                <ThumbsUp className="mr-1 h-4 w-4 text-blue-500" />
+                {page_like_count.toLocaleString()} likes
+              </p>
+            )}
+            {domain && (
+              <p className="mt-1 flex items-center truncate text-sm text-gray-600 dark:text-gray-300">
+                <Globe className="mr-1 h-4 w-4 text-green-500" />
+                <a
+                  href={link_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 transition-colors duration-200 hover:text-blue-600 hover:underline"
+                >
+                  {domain}
+                </a>
+              </p>
+            )}
+          </div>
+        </div>
+        {page_profile_uri && (
+          <div className="mt-4 flex justify-end space-x-2">
+            <Link href={`/adlibrary/${page_id}`} passHref>
+              <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 ease-in-out hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                <Eye className="mr-2 h-4 w-4" />
+                View Ads
+              </button>
+            </Link>
+            <a
+              href={page_profile_uri}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-full shadow-sm transition-shadow duration-200 hover:shadow"
+              >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Go to Page
+              </Button>
+            </a>
+          </div>
+        )}
+      </HoverCardContent>
+    </HoverCard>
   );
 };
 
-export default PageNameWithPopover;
+export default PageNameWithHoverCard;
