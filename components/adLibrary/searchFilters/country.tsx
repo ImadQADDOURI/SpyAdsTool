@@ -8,14 +8,7 @@ import { Check, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -24,6 +17,7 @@ import {
 
 export const Country: React.FC = () => {
   const [open, setOpen] = React.useState(false);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -42,24 +36,39 @@ export const Country: React.FC = () => {
     [router, searchParams],
   );
 
-  const handleSelect = (countryCode: string) => {
-    const newSelection = selectedCountries.includes(countryCode)
-      ? selectedCountries.filter((code) => code !== countryCode)
-      : [...selectedCountries, countryCode];
-    updateURL(newSelection);
-  };
+  const handleSelect = React.useCallback(
+    (countryCode: string) => {
+      const newSelection = selectedCountries.includes(countryCode)
+        ? selectedCountries.filter((code) => code !== countryCode)
+        : [...selectedCountries, countryCode];
+      updateURL(newSelection);
+    },
+    [selectedCountries, updateURL],
+  );
 
-  const handleRemove = (countryCode: string) => {
-    const newSelection = selectedCountries.filter(
-      (code) => code !== countryCode,
+  const handleRemove = React.useCallback(
+    (countryCode: string) => {
+      const newSelection = selectedCountries.filter(
+        (code) => code !== countryCode,
+      );
+      updateURL(newSelection);
+    },
+    [selectedCountries, updateURL],
+  );
+
+  const handleDeselectAll = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      updateURL([]);
+    },
+    [updateURL],
+  );
+
+  const filteredCountries = React.useMemo(() => {
+    return countryCodesAlpha2Flag.filter((country) =>
+      country.label.toLowerCase().includes(searchTerm.toLowerCase()),
     );
-    updateURL(newSelection);
-  };
-
-  const handleDeselectAll = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    updateURL([]);
-  };
+  }, [searchTerm]);
 
   const visibleSelections = selectedCountries.slice(0, 2);
   const remainingCount = selectedCountries.length - visibleSelections.length;
@@ -133,16 +142,26 @@ export const Country: React.FC = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[250px] p-0">
-        <Command>
-          <CommandInput placeholder="Search countries..." />
-          <CommandList>
-            <CommandEmpty>No country found.</CommandEmpty>
-            <CommandGroup>
-              {countryCodesAlpha2Flag.map((country) => (
-                <CommandItem
+        <div className="p-2">
+          <Input
+            placeholder="Search countries..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="mb-2"
+            aria-label="Search countries"
+          />
+          <div className="max-h-[300px] overflow-y-auto">
+            {filteredCountries.length === 0 ? (
+              <p className="p-2 text-sm text-muted-foreground">
+                No country found.
+              </p>
+            ) : (
+              filteredCountries.map((country) => (
+                <Button
                   key={country.value}
-                  value={country.label}
-                  onSelect={() => handleSelect(country.value)}
+                  variant="ghost"
+                  className="w-full justify-start"
+                  onClick={() => handleSelect(country.value)}
                 >
                   <Check
                     className={cn(
@@ -158,11 +177,11 @@ export const Country: React.FC = () => {
                     className="mr-2 inline-block h-5 w-5 rounded-sm"
                   />
                   {country.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+                </Button>
+              ))
+            )}
+          </div>
+        </div>
       </PopoverContent>
     </Popover>
   );

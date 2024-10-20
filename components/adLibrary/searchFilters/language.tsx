@@ -8,14 +8,7 @@ import { Check, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -24,6 +17,7 @@ import {
 
 export const Language: React.FC = () => {
   const [open, setOpen] = React.useState(false);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -43,24 +37,39 @@ export const Language: React.FC = () => {
     [router, searchParams],
   );
 
-  const handleSelect = (languageCode: string) => {
-    const newSelection = selectedLanguages.includes(languageCode)
-      ? selectedLanguages.filter((code) => code !== languageCode)
-      : [...selectedLanguages, languageCode];
-    updateURL(newSelection);
-  };
+  const handleSelect = React.useCallback(
+    (languageCode: string) => {
+      const newSelection = selectedLanguages.includes(languageCode)
+        ? selectedLanguages.filter((code) => code !== languageCode)
+        : [...selectedLanguages, languageCode];
+      updateURL(newSelection);
+    },
+    [selectedLanguages, updateURL],
+  );
 
-  const handleRemove = (languageCode: string) => {
-    const newSelection = selectedLanguages.filter(
-      (code) => code !== languageCode,
+  const handleRemove = React.useCallback(
+    (languageCode: string) => {
+      const newSelection = selectedLanguages.filter(
+        (code) => code !== languageCode,
+      );
+      updateURL(newSelection);
+    },
+    [selectedLanguages, updateURL],
+  );
+
+  const handleDeselectAll = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      updateURL([]);
+    },
+    [updateURL],
+  );
+
+  const filteredLanguages = React.useMemo(() => {
+    return languages.filter((language) =>
+      language.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
-    updateURL(newSelection);
-  };
-
-  const handleDeselectAll = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    updateURL([]);
-  };
+  }, [searchTerm]);
 
   const visibleSelections = selectedLanguages.slice(0, 2);
   const remainingCount = selectedLanguages.length - visibleSelections.length;
@@ -127,16 +136,26 @@ export const Language: React.FC = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Search languages..." />
-          <CommandList>
-            <CommandEmpty>No language found.</CommandEmpty>
-            <CommandGroup>
-              {languages.map((language) => (
-                <CommandItem
+        <div className="p-2">
+          <Input
+            placeholder="Search languages..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="mb-2"
+            aria-label="Search languages"
+          />
+          <div className="max-h-[300px] overflow-y-auto">
+            {filteredLanguages.length === 0 ? (
+              <p className="p-2 text-sm text-muted-foreground">
+                No language found.
+              </p>
+            ) : (
+              filteredLanguages.map((language) => (
+                <Button
                   key={language.code}
-                  value={language.name}
-                  onSelect={() => handleSelect(language.code)}
+                  variant="ghost"
+                  className="w-full justify-start"
+                  onClick={() => handleSelect(language.code)}
                 >
                   <Check
                     className={cn(
@@ -147,11 +166,11 @@ export const Language: React.FC = () => {
                     )}
                   />
                   {language.name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+                </Button>
+              ))
+            )}
+          </div>
+        </div>
       </PopoverContent>
     </Popover>
   );

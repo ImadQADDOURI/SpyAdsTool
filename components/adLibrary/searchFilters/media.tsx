@@ -1,4 +1,3 @@
-// @/components/adsLibrary/media.tsx
 "use client";
 
 import * as React from "react";
@@ -7,13 +6,6 @@ import { Check, ChevronsUpDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
@@ -35,16 +27,25 @@ export const Media: React.FC = () => {
 
   const selectedMedia = searchParams.get("media_type") || null;
 
-  const handleSelect = (mediaValue: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (selectedMedia === mediaValue) {
-      params.delete("media_type");
-    } else {
-      params.set("media_type", mediaValue);
-    }
-    router.push(`?${params.toString()}`, { scroll: false });
-    setOpen(false);
-  };
+  const handleSelect = React.useCallback(
+    (mediaValue: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (selectedMedia === mediaValue) {
+        params.delete("media_type");
+      } else {
+        params.set("media_type", mediaValue);
+      }
+      router.push(`?${params.toString()}`, { scroll: false });
+      setOpen(false);
+    },
+    [router, searchParams, selectedMedia],
+  );
+
+  const selectedLabel = React.useMemo(() => {
+    return selectedMedia
+      ? mediaTypes.find((media) => media.value === selectedMedia)?.label
+      : "All Media Types";
+  }, [selectedMedia]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -55,37 +56,29 @@ export const Media: React.FC = () => {
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {selectedMedia
-            ? mediaTypes.find((media) => media.value === selectedMedia)?.label
-            : "All Media Types"}
+          {selectedLabel}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0">
-        <Command>
-          <CommandList>
-            <CommandEmpty>No media type found.</CommandEmpty>
-            <CommandGroup>
-              {mediaTypes.map((media) => (
-                <CommandItem
-                  key={media.value}
-                  value={media.value}
-                  onSelect={() => handleSelect(media.value)}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      selectedMedia === media.value
-                        ? "opacity-100"
-                        : "opacity-0",
-                    )}
-                  />
-                  {media.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+      <PopoverContent className="w-[300px] p-0">
+        <div className="max-h-[300px] overflow-y-auto">
+          {mediaTypes.map((media) => (
+            <Button
+              key={media.value}
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => handleSelect(media.value)}
+            >
+              <Check
+                className={cn(
+                  "mr-2 h-4 w-4",
+                  selectedMedia === media.value ? "opacity-100" : "opacity-0",
+                )}
+              />
+              {media.label}
+            </Button>
+          ))}
+        </div>
       </PopoverContent>
     </Popover>
   );

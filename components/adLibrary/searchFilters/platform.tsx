@@ -8,13 +8,6 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -32,8 +25,10 @@ export const Platform: React.FC = () => {
   const searchParams = useSearchParams();
   const [open, setOpen] = React.useState(false);
 
-  const selectedPlatforms =
-    searchParams.get("publisher_platforms")?.split(",") || [];
+  const selectedPlatforms = React.useMemo(
+    () => searchParams.get("publisher_platforms")?.split(",") || [],
+    [searchParams],
+  );
 
   const updateURL = React.useCallback(
     (newPlatforms: string[]) => {
@@ -48,24 +43,33 @@ export const Platform: React.FC = () => {
     [router, searchParams],
   );
 
-  const handleSelect = (platformValue: string) => {
-    const newSelection = selectedPlatforms.includes(platformValue)
-      ? selectedPlatforms.filter((value) => value !== platformValue)
-      : [...selectedPlatforms, platformValue];
-    updateURL(newSelection);
-  };
+  const handleSelect = React.useCallback(
+    (platformValue: string) => {
+      const newSelection = selectedPlatforms.includes(platformValue)
+        ? selectedPlatforms.filter((value) => value !== platformValue)
+        : [...selectedPlatforms, platformValue];
+      updateURL(newSelection);
+    },
+    [selectedPlatforms, updateURL],
+  );
 
-  const handleRemove = (platformValue: string) => {
-    const newSelection = selectedPlatforms.filter(
-      (value) => value !== platformValue,
-    );
-    updateURL(newSelection);
-  };
+  const handleRemove = React.useCallback(
+    (platformValue: string) => {
+      const newSelection = selectedPlatforms.filter(
+        (value) => value !== platformValue,
+      );
+      updateURL(newSelection);
+    },
+    [selectedPlatforms, updateURL],
+  );
 
-  const handleDeselectAll = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    updateURL([]);
-  };
+  const handleDeselectAll = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      updateURL([]);
+    },
+    [updateURL],
+  );
 
   const visibleSelections = selectedPlatforms.slice(0, 2);
   const remainingCount = selectedPlatforms.length - visibleSelections.length;
@@ -132,30 +136,26 @@ export const Platform: React.FC = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandList>
-            <CommandEmpty>No platform found.</CommandEmpty>
-            <CommandGroup>
-              {platforms.map((platform) => (
-                <CommandItem
-                  key={platform.value}
-                  value={platform.value}
-                  onSelect={() => handleSelect(platform.value)}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      selectedPlatforms.includes(platform.value)
-                        ? "opacity-100"
-                        : "opacity-0",
-                    )}
-                  />
-                  {platform.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+        <div className="max-h-[300px] overflow-y-auto">
+          {platforms.map((platform) => (
+            <Button
+              key={platform.value}
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => handleSelect(platform.value)}
+            >
+              <Check
+                className={cn(
+                  "mr-2 h-4 w-4",
+                  selectedPlatforms.includes(platform.value)
+                    ? "opacity-100"
+                    : "opacity-0",
+                )}
+              />
+              {platform.label}
+            </Button>
+          ))}
+        </div>
       </PopoverContent>
     </Popover>
   );

@@ -1,4 +1,3 @@
-// @/components/adsLibrary/status.tsx
 "use client";
 
 import * as React from "react";
@@ -7,13 +6,6 @@ import { Check, ChevronsUpDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
@@ -30,18 +22,30 @@ export const Status: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const selectedStatus = searchParams.get("active_status") || null;
+  const selectedStatus = React.useMemo(
+    () => searchParams.get("active_status") || null,
+    [searchParams],
+  );
 
-  const handleSelect = (statusValue: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (selectedStatus === statusValue) {
-      params.delete("active_status");
-    } else {
-      params.set("active_status", statusValue);
-    }
-    router.push(`?${params.toString()}`, { scroll: false });
-    setOpen(false);
-  };
+  const handleSelect = React.useCallback(
+    (statusValue: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (selectedStatus === statusValue) {
+        params.delete("active_status");
+      } else {
+        params.set("active_status", statusValue);
+      }
+      router.push(`?${params.toString()}`, { scroll: false });
+      setOpen(false);
+    },
+    [router, searchParams, selectedStatus],
+  );
+
+  const selectedLabel = React.useMemo(() => {
+    return selectedStatus
+      ? statuses.find((status) => status.value === selectedStatus)?.label
+      : "Active and Inactive";
+  }, [selectedStatus]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -52,37 +56,29 @@ export const Status: React.FC = () => {
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {selectedStatus
-            ? statuses.find((status) => status.value === selectedStatus)?.label
-            : "Active and Inactive"}
+          {selectedLabel}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
-        <Command>
-          <CommandList>
-            <CommandEmpty>No status found.</CommandEmpty>
-            <CommandGroup>
-              {statuses.map((status) => (
-                <CommandItem
-                  key={status.value}
-                  value={status.value}
-                  onSelect={() => handleSelect(status.value)}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      selectedStatus === status.value
-                        ? "opacity-100"
-                        : "opacity-0",
-                    )}
-                  />
-                  {status.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+        <div className="max-h-[300px] overflow-y-auto">
+          {statuses.map((status) => (
+            <Button
+              key={status.value}
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => handleSelect(status.value)}
+            >
+              <Check
+                className={cn(
+                  "mr-2 h-4 w-4",
+                  selectedStatus === status.value ? "opacity-100" : "opacity-0",
+                )}
+              />
+              {status.label}
+            </Button>
+          ))}
+        </div>
       </PopoverContent>
     </Popover>
   );
