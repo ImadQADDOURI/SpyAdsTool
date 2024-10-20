@@ -20,3 +20,7 @@ Styling guide:
 - Special features: Gradient text, subtle background patterns
 
 Use the Loading component from @/components/adLibrary/microComponents/Loading.tsx for spinners. Implement user feedback with toast notifications. Ensure all code is well-documented, efficient, and adheres to the specified best practices and styling guidelines.
+
+
+-------
+No other changes should be made to the component.

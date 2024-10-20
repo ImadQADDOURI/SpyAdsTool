@@ -173,19 +173,19 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
         </div>
       </div>
 
-      <CardContent className="mt-12 flex flex-grow flex-col justify-between px-2 py-1">
+      <CardContent className="mt-12 flex flex-grow flex-col justify-between px-0.5 py-0">
         <div className="flex flex-grow flex-col justify-between">
-          <div className="space-y-2">
+          <div className="space-y-0.5">
             {/* Date */}
-            <div className="flex items-center px-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center justify-end px-2 text-sm text-gray-600 dark:text-gray-400">
               <span>{renderDate()}</span>
             </div>
             {/* Page name */}
-            <div className="px-2">
+            <div className="pl-1.5">
               <PageNameWithPopover snapshot={snapshot} />
             </div>
             {/*  Platform information */}
-            <div className="flex items-center px-1">
+            <div className="flex items-center justify-end px-1 pb-1.5">
               {renderPlatformIcons()}
             </div>
             {/* Media carousel */}

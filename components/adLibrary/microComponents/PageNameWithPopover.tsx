@@ -41,8 +41,8 @@ const PageNameWithHoverCard: React.FC<PageNameWithHoverCardProps> = ({
             <Image
               src={page_profile_picture_url}
               alt={page_name || "Page profile"}
-              width={24}
-              height={24}
+              width={32}
+              height={32}
               className="rounded-full border border-gray-200 transition-transform duration-200 group-hover:scale-110 dark:border-gray-700"
             />
           ) : (
