@@ -37,12 +37,12 @@ export const EndDate: React.FC = () => {
 
   return (
     <div className="relative flex items-center justify-between space-x-2">
-      <label
+      {/* <label
         htmlFor="end-date"
         className="whitespace-nowrap text-sm font-medium"
       >
         Max :
-      </label>
+      </label> */}
       <div className="relative flex-grow">
         <input
           id="end-date"
@@ -51,10 +51,7 @@ export const EndDate: React.FC = () => {
           onChange={handleDateChange}
           min={startDate || MIN_DATE}
           max={today}
-          className="w-auto rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm 
-                   focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 
-                   dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-400 
-                   dark:focus:ring-blue-400"
+          className="w-auto rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-400"
         />
         {selectedDate && (
           <Button

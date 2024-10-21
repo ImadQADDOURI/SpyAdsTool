@@ -30,6 +30,8 @@ import {
 
 import { Loading } from "./Loading";
 
+const maxFeatures = 7; // max number of features to display for each Pixel, Platform, Payment
+
 interface TrackingDetectorProps {
   url?: string | undefined;
   usePuppeteer?: boolean;
@@ -112,7 +114,10 @@ export default function DisplayPixelPlatformPayment({
   ) => {
     const features = detectedFeatures[category];
     const startIndex = currentIndex[category];
-    const visibleFeatures = features.slice(startIndex, startIndex + 5);
+    const visibleFeatures = features.slice(
+      startIndex,
+      startIndex + maxFeatures,
+    );
 
     return (
       <div className="flex items-center space-x-1">
@@ -129,16 +134,16 @@ export default function DisplayPixelPlatformPayment({
           </Tooltip>
         </TooltipProvider>
         {!isAnalyzed ? (
-          <span className="w-20 text-sm font-medium text-gray-700 dark:text-gray-200">
+          <span className="w-20 text-xs font-medium text-gray-700 dark:text-gray-200">
             {label}
           </span>
         ) : (
           <div className="flex w-20 items-center space-x-1">
             {features.length === 0 ? (
-              <XCircle className="h-5 w-5 text-gray-400" />
+              <XCircle className="h-4 w-4 text-gray-400" />
             ) : (
               <>
-                {features.length > 5 && startIndex > 0 && (
+                {features.length > maxFeatures && startIndex > 0 && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -184,20 +189,21 @@ export default function DisplayPixelPlatformPayment({
                     </TooltipProvider>
                   );
                 })}
-                {features.length > 5 && startIndex < features.length - 5 && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurrentIndex({
-                        ...currentIndex,
-                        [category]: startIndex + 1,
-                      });
-                    }}
-                    className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                )}
+                {features.length > maxFeatures &&
+                  startIndex < features.length - maxFeatures && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentIndex({
+                          ...currentIndex,
+                          [category]: startIndex + 1,
+                        });
+                      }}
+                      className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  )}
               </>
             )}
           </div>
@@ -229,7 +235,7 @@ export default function DisplayPixelPlatformPayment({
   if (error) {
     return (
       <div className="flex items-center rounded-lg bg-red-50 p-2 text-red-500 dark:bg-red-900 dark:text-red-200">
-        <AlertCircle className="mr-2 h-4 w-4" /> {error}
+        <AlertCircle className="mr-2 h-5 w-5" /> {error}
       </div>
     );
   }

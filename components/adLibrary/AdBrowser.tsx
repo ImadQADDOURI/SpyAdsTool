@@ -15,6 +15,7 @@ import LoadingTrigger from "./microComponents/LoadingTrigger";
 import { ScrollButtons } from "./microComponents/ScrollButtons";
 import SearchResults from "./microComponents/SearchResults";
 import StickyWrapper from "./microComponents/StickyWrapper";
+import FilterPanel from "./searchFilters/FilterPanel";
 import { SearchBar } from "./searchFilters/SearchBar";
 
 export const AdBrowser = () => {
@@ -118,7 +119,7 @@ export const AdBrowser = () => {
           </div>
         </div>
       </StickyWrapper>
-
+      <FilterPanel onSearch={handleSearch} variant="full" />
       {/* Search Results */}
       <SearchResults
         isLoading={isLoading}

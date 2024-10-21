@@ -83,7 +83,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       </Button>
 
       {/*Search Filters*/}
-      <FilterPanel onSearch={onSearch} />
+      <FilterPanel onSearch={onSearch} variant="button" />
 
       {/*Display Filters*/}
       <DisplayFilters />

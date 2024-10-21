@@ -1,6 +1,5 @@
-// components/adsLibrary/FilterPanel.tsx
-
-import React from "react";
+import React, { useCallback, useMemo, useState } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFilterReset } from "@/utils/useFilterReset";
 import { Filter } from "lucide-react";
@@ -8,15 +7,13 @@ import { Filter } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 import Category from "./category";
 import CategoryAsKeyword from "./categoryAsKeyword";
@@ -27,15 +24,93 @@ import Media from "./media";
 import NicheAsKeyword from "./nicheAsKeyword";
 import Platform from "./platform";
 import SearchType from "./SearchType";
-import Sort from "./sort";
 import StartDate from "./startDate";
 import Status from "./status";
 
 interface FilterPanelProps {
   onSearch: () => void;
+  variant?: "button" | "full";
 }
 
-// Search Filters
+type FilterComponentType = React.ComponentType<{
+  value?: any;
+  onChange?: (value: any) => void;
+}>;
+
+const filterComponents: {
+  key: string;
+  component: FilterComponentType;
+  label: string;
+  icon: string;
+}[] = [
+  {
+    key: "searchType",
+    component: SearchType,
+    label: "Search Type",
+    icon: "/filters/search-type.svg",
+  },
+  {
+    key: "category",
+    component: Category,
+    label: "Category",
+    icon: "/filters/category.svg",
+  },
+  {
+    key: "country",
+    component: Country,
+    label: "Country",
+    icon: "/filters/country.svg",
+  },
+  {
+    key: "categoryAsKeyword",
+    component: CategoryAsKeyword,
+    label: "Category Keyword",
+    icon: "/filters/category-keyword.svg",
+  },
+  {
+    key: "nicheAsKeyword",
+    component: NicheAsKeyword,
+    label: "Niche Keyword",
+    icon: "/filters/niche-keyword.svg",
+  },
+  {
+    key: "language",
+    component: Language,
+    label: "Language",
+    icon: "/filters/language.svg",
+  },
+  {
+    key: "media",
+    component: Media,
+    label: "Media",
+    icon: "/filters/media.svg",
+  },
+  {
+    key: "platform",
+    component: Platform,
+    label: "Platform",
+    icon: "/filters/platform.svg",
+  },
+  {
+    key: "status",
+    component: Status,
+    label: "Status",
+    icon: "/filters/status.svg",
+  },
+  {
+    key: "startDate",
+    component: StartDate,
+    label: "Start Date",
+    icon: "/filters/start-date.svg",
+  },
+  {
+    key: "endDate",
+    component: EndDate,
+    label: "End Date",
+    icon: "/filters/end-date.svg",
+  },
+];
+
 const filterParams = [
   "ad_type",
   "category_as_keyword",
@@ -51,91 +126,157 @@ const filterParams = [
   "search_type",
 ];
 
-export const FilterPanel: React.FC<FilterPanelProps> = ({ onSearch }) => {
+const FilterActions: React.FC<{
+  onClear: () => void;
+  onApply: () => void;
+  appliedFiltersCount: number;
+}> = React.memo(({ onClear, onApply, appliedFiltersCount }) => (
+  <div className="flex justify-end space-x-4">
+    <Button
+      onClick={onClear}
+      variant="outline"
+      className="rounded-full px-6 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+    >
+      Clear
+    </Button>
+    <Button
+      onClick={onApply}
+      className="rounded-full bg-purple-600 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+    >
+      Apply Filters
+      {appliedFiltersCount > 0 && (
+        <Badge variant="secondary" className="ml-2 bg-white text-purple-600">
+          {appliedFiltersCount}
+        </Badge>
+      )}
+    </Button>
+  </div>
+));
+
+export const FilterPanel: React.FC<FilterPanelProps> = ({
+  onSearch,
+  variant = "button",
+}) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isOpen, setIsOpen] = useState(false);
+  const [filterStates, setFilterStates] = useState<Record<string, any>>({});
 
-  const countAppliedFilters = () => {
-    // count only the search Filters , q & display filters not included
-    const params = new URLSearchParams(searchParams.toString());
-    return filterParams.filter((key) => params.has(key)).length;
-  };
-
-  const applyFilters = () => {
-    onSearch();
-  };
-
-  // Clear all filters
   const { clearFilters } = useFilterReset(filterParams);
 
-  return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button
-          aria-label="Open Search Filters"
-          className="relative overflow-hidden rounded-full bg-white bg-opacity-20 p-0.5 text-white transition-all hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
-        >
-          <span className="relative flex items-center px-4 py-2">
-            <Filter className="h-6 w-6" />
-            {countAppliedFilters() > 0 && (
-              <Badge
-                variant="secondary"
-                className="ml-1 bg-purple-500 text-white"
-              >
-                {countAppliedFilters()}
-              </Badge>
-            )}
-          </span>
-        </Button>
-      </SheetTrigger>
-      <SheetContent side={"left"}>
-        <SheetHeader>
-          <SheetTitle className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-2xl font-bold text-transparent">
-            Search Filters
-          </SheetTitle>
-          <SheetDescription>Adjust your search filters</SheetDescription>
-        </SheetHeader>
-        <div className="space-y-5 py-4">
-          <SearchType />
-          <Category />
-          {/* <Sort /> */}
-          <Country />
-          <CategoryAsKeyword />
-          <NicheAsKeyword />
-          <Language />
-          <Media />
-          <Platform />
-          <Status />
-          <StartDate />
-          <EndDate />
-        </div>
-        <SheetFooter>
-          <div className="flex w-full flex-row space-x-1">
-            <Button
-              onClick={clearFilters}
-              variant="outline"
-              className="w-1/3 rounded-full border-2 border-gray-300 bg-transparent px-6 py-2 text-gray-700 transition-all hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+  const countAppliedFilters = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    return filterParams.filter((key) => params.has(key)).length;
+  }, [searchParams]);
+
+  const applyFilters = useCallback(() => {
+    onSearch();
+    setIsOpen(false);
+  }, [onSearch]);
+
+  const handleClearFilters = useCallback(() => {
+    clearFilters();
+    setFilterStates({});
+    setIsOpen(false);
+  }, [clearFilters]);
+
+  const updateFilterState = useCallback((key: string, value: any) => {
+    setFilterStates((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
+  const FilterTrigger = useMemo(
+    () => () => (
+      <Button
+        aria-label="Open Search Filters"
+        className="relative overflow-hidden rounded-full bg-white bg-opacity-10 p-0.5 text-gray-800 transition-all hover:bg-opacity-20 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 dark:bg-opacity-20 dark:text-white dark:hover:bg-opacity-30"
+        onClick={() => setIsOpen(true)}
+      >
+        <span className="relative flex items-center px-4 py-2">
+          <Filter className="h-5 w-5" />
+          {countAppliedFilters() > 0 && (
+            <Badge
+              variant="secondary"
+              className="ml-2 bg-purple-600 text-white"
             >
-              Clear
-            </Button>
-            <SheetClose asChild>
-              <Button
-                onClick={applyFilters}
-                className="w-2/3 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 px-6 py-2 text-white transition-all hover:from-purple-700 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-              >
-                Apply Filters
-                {countAppliedFilters() > 0 && (
-                  <Badge className="ml-2 bg-white text-purple-500">
-                    {countAppliedFilters()}
-                  </Badge>
-                )}
-              </Button>
-            </SheetClose>
+              {countAppliedFilters()}
+            </Badge>
+          )}
+        </span>
+      </Button>
+    ),
+    [countAppliedFilters],
+  );
+
+  const FilterContent = useMemo(
+    () => () => (
+      <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        {filterComponents.map(({ key, component: Component, label, icon }) => (
+          <div key={key} className="flex flex-col space-y-2">
+            <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300">
+              <Image
+                src={icon}
+                alt={label}
+                width={18}
+                height={18}
+                className="mr-2"
+              />
+              {label}
+            </label>
+            <Component
+              value={filterStates[key]}
+              onChange={(value: any) => updateFilterState(key, value)}
+            />
           </div>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+        ))}
+      </div>
+    ),
+    [filterStates, updateFilterState],
+  );
+
+  if (variant === "full") {
+    return (
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+          <FilterContent />
+          <div className="mt-8">
+            <FilterActions
+              onClear={handleClearFilters}
+              onApply={applyFilters}
+              appliedFiltersCount={countAppliedFilters()}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <FilterTrigger />
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[90%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%]">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+            Search Filters
+          </DialogTitle>
+          <DialogDescription className="text-sm text-gray-500 dark:text-gray-400">
+            Refine your search with these filters
+          </DialogDescription>
+        </DialogHeader>
+        <div className="mt-6 max-h-[60vh] overflow-y-auto px-1 py-4">
+          <FilterContent />
+        </div>
+        <div className="mt-8">
+          <FilterActions
+            onClear={handleClearFilters}
+            onApply={applyFilters}
+            appliedFiltersCount={countAppliedFilters()}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
-export default FilterPanel;
+export default React.memo(FilterPanel);
