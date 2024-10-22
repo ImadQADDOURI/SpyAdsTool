@@ -43,71 +43,72 @@ const filterComponents: {
   label: string;
   icon: string;
 }[] = [
-  {
-    key: "searchType",
-    component: SearchType,
-    label: "Search Type",
-    icon: "/filters/search-type.svg",
-  },
+  // {
+  //   key: "searchType",
+  //   component: SearchType,
+  //   label: "Search Type",
+  //   icon: "/filters/search.svg",
+  // },
   {
     key: "category",
     component: Category,
-    label: "Category",
-    icon: "/filters/category.svg",
+    label: "Type",
+    icon: "/filters/tag.svg",
   },
   {
     key: "country",
     component: Country,
     label: "Country",
-    icon: "/filters/country.svg",
-  },
-  {
-    key: "categoryAsKeyword",
-    component: CategoryAsKeyword,
-    label: "Category Keyword",
-    icon: "/filters/category-keyword.svg",
+    icon: "/filters/location.svg",
   },
   {
     key: "nicheAsKeyword",
     component: NicheAsKeyword,
-    label: "Niche Keyword",
-    icon: "/filters/niche-keyword.svg",
+    label: "Niche",
+    icon: "/filters/target.svg",
   },
+  {
+    key: "categoryAsKeyword",
+    component: CategoryAsKeyword,
+    label: "Category",
+    icon: "/filters/category.svg",
+  },
+
   {
     key: "language",
     component: Language,
     label: "Language",
-    icon: "/filters/language.svg",
+    icon: "/filters/translate.svg",
   },
   {
     key: "media",
     component: Media,
     label: "Media",
-    icon: "/filters/media.svg",
+    icon: "/filters/gallery.svg",
   },
   {
     key: "platform",
     component: Platform,
     label: "Platform",
-    icon: "/filters/platform.svg",
+    icon: "/filters/facebook.svg",
   },
   {
     key: "status",
     component: Status,
     label: "Status",
-    icon: "/filters/status.svg",
+    icon: "/filters/check.svg",
   },
   {
     key: "startDate",
     component: StartDate,
     label: "Start Date",
-    icon: "/filters/start-date.svg",
+    icon: "/filters/play.svg",
   },
   {
     key: "endDate",
     component: EndDate,
     label: "End Date",
-    icon: "/filters/end-date.svg",
+    icon: "/filters/pause.svg",
   },
 ];
 
@@ -216,8 +217,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               <Image
                 src={icon}
                 alt={label}
-                width={18}
-                height={18}
+                width={24}
+                height={24}
                 className="mr-2"
               />
               {label}

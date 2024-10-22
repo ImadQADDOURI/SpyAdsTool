@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" width="512" height="512">
+<g>
+	
+		<linearGradient id="Shutdown_00000142136490202223275310000009926621613685499311_" gradientUnits="userSpaceOnUse" x1="0" y1="256" x2="512" y2="256">
+		<stop offset="0" style="stop-color:#9DD6FC"/>
+		<stop offset="0.0056" style="stop-color:#9DD6FC"/>
+		<stop offset="1" style="stop-color:#D17FF7"/>
+	</linearGradient>
+	
+		<path id="Shutdown" style="fill:none;stroke:url(#Shutdown_00000142136490202223275310000009926621613685499311_);stroke-width:40;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="&#10;&#9;&#9;M492,256c0,132.548-103.452,236-236,236S20,388.548,20,256S123.452,20,256,20S492,123.452,492,256z M171.147,171.147&#10;&#9;&#9;c-46.791,46.791-46.791,122.915,0,169.706s122.915,46.791,169.706,0s46.791-122.915,0-169.706 M256,136v120"/>
+</g>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</svg>

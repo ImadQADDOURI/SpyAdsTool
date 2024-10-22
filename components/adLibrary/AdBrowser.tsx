@@ -111,13 +111,7 @@ export const AdBrowser = () => {
 
       {/* Sticky SearchBar & Filter Section */}
       <StickyWrapper>
-        <div className="bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500 p-1 shadow-2xl">
-          <div className="container mx-auto">
-            <div className="flex flex-col space-y-4">
-              <SearchBar onSearch={handleSearch} isLoading={isLoading} />
-            </div>
-          </div>
-        </div>
+        <SearchBar onSearch={handleSearch} isLoading={isLoading} />
       </StickyWrapper>
       <FilterPanel onSearch={handleSearch} variant="full" />
       {/* Search Results */}
