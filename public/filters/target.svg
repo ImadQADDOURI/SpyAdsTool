@@ -2,8 +2,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" width="512" height="512">
 <g>
 	<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="256" y1="512" x2="256" y2="0">
-		<stop offset="0" style="stop-color:#009EFD"/>
-		<stop offset="1" style="stop-color:#2AF598"/>
+		<stop offset="0" style="stop-color:#4F46E5"/>
+		<stop offset="1" style="stop-color:#E879F9"/>
 	</linearGradient>
 	<path style="fill:none;stroke:url(#SVGID_1_);stroke-width:40;stroke-miterlimit:10;" d="M0,256h120 M256,0v120 M392,256h120&#10;&#9;&#9; M256,512V392 M452,256c0-108.248-87.752-196-196-196S60,147.752,60,256s87.752,196,196,196S452,364.248,452,256z M332,256&#10;&#9;&#9;c0-41.974-34.026-76-76-76s-76,34.026-76,76s34.026,76,76,76S332,297.974,332,256z"/>
 </g>

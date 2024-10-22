@@ -24,6 +24,7 @@ import Media from "./media";
 import NicheAsKeyword from "./nicheAsKeyword";
 import Platform from "./platform";
 import SearchType from "./SearchType";
+import Sort from "./sort";
 import StartDate from "./startDate";
 import Status from "./status";
 
@@ -53,7 +54,7 @@ const filterComponents: {
     key: "category",
     component: Category,
     label: "Type",
-    icon: "/filters/tag.svg",
+    icon: "/filters/search-demography.svg",
   },
   {
     key: "country",
@@ -90,26 +91,32 @@ const filterComponents: {
     key: "platform",
     component: Platform,
     label: "Platform",
-    icon: "/filters/facebook.svg",
+    icon: "/filters/fb.svg",
   },
   {
     key: "status",
     component: Status,
     label: "Status",
-    icon: "/filters/check.svg",
+    icon: "/filters/active.svg",
   },
   {
     key: "startDate",
     component: StartDate,
     label: "Start Date",
-    icon: "/filters/play.svg",
+    icon: "/filters/clock-on.svg",
   },
   {
     key: "endDate",
     component: EndDate,
     label: "End Date",
-    icon: "/filters/pause.svg",
+    icon: "/filters/clock-off.svg",
   },
+  // {
+  //   key: "sort",
+  //   component: Sort,
+  //   label: "Sort",
+  //   icon: "/filters/sort.svg",
+  // },
 ];
 
 const filterParams = [
