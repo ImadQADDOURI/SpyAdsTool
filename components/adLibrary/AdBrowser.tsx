@@ -102,10 +102,17 @@ export const AdBrowser = () => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-800">
       {/* Title & Search Section */}
-      <div className="bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500">
-        <h1 className="p-4 text-center text-3xl font-bold text-white">
-          Ad Browser
-        </h1>
+      <div className="group relative py-6">
+        <div className="relative z-10 flex flex-col items-center justify-center space-y-2">
+          <h1 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text px-4 text-4xl font-bold tracking-tight text-transparent transition-all duration-300 ease-in-out hover:scale-[1.01]">
+            Ad Browser
+          </h1>
+          <div className="relative">
+            <div className="h-0.5 w-16 rounded-full bg-gradient-to-r from-[#6566F1]/40 to-[#B977F8]/40 transition-all duration-300 ease-in-out group-hover:w-24" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 blur-sm" />
+          </div>
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/10 via-transparent to-[#B977F8]/10" />
       </div>
 
       {/* Sticky SearchBar & Filter Section */}
