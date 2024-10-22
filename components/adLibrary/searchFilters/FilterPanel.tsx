@@ -196,20 +196,20 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     () => () => (
       <Button
         aria-label="Open Search Filters"
-        className="relative overflow-hidden rounded-full bg-gradient-to-r from-purple-600 to-pink-500 p-0.5 text-white transition-all hover:from-purple-700 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
+        className="relative h-9 rounded-full bg-white/60 px-3 text-gray-700 transition-all duration-300 hover:bg-white/80 hover:shadow-md dark:bg-gray-900/60 dark:text-gray-200 dark:hover:bg-gray-900/80"
         onClick={() => setIsOpen(true)}
       >
-        <span className="relative flex items-center px-4 py-2">
+        <div className="flex items-center gap-2">
           <Filter className="h-5 w-5" />
           {countAppliedFilters() > 0 && (
             <Badge
               variant="secondary"
-              className="ml-2 bg-white text-purple-600"
+              className="flex h-5 items-center rounded-full bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-2 text-[12px] font-medium text-white"
             >
               {countAppliedFilters()}
             </Badge>
           )}
-        </span>
+        </div>
       </Button>
     ),
     [countAppliedFilters],
@@ -244,7 +244,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   if (variant === "full") {
     return (
       <div className="mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900">
           <h2 className="mb-6 bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-2xl font-bold text-transparent">
             Search Filters
           </h2>
@@ -266,7 +266,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       <DialogTrigger asChild>
         <FilterTrigger />
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[90%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%]">
+      <DialogContent className="bg-white dark:bg-gray-800 sm:max-w-[90%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%]">
         <DialogHeader>
           <DialogTitle className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-2xl font-bold text-transparent">
             Search Filters

@@ -14,7 +14,6 @@ import { AdCardGrid } from "./microComponents/AdCardGrid";
 import LoadingTrigger from "./microComponents/LoadingTrigger";
 import { ScrollButtons } from "./microComponents/ScrollButtons";
 import SearchResults from "./microComponents/SearchResults";
-import StickyWrapper from "./microComponents/StickyWrapper";
 import FilterPanel from "./searchFilters/FilterPanel";
 import { SearchBar } from "./searchFilters/SearchBar";
 
@@ -110,9 +109,9 @@ export const AdBrowser = () => {
       </div>
 
       {/* Sticky SearchBar & Filter Section */}
-      <StickyWrapper>
-        <SearchBar onSearch={handleSearch} isLoading={isLoading} />
-      </StickyWrapper>
+
+      <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+
       <FilterPanel onSearch={handleSearch} variant="full" />
       {/* Search Results */}
       <SearchResults

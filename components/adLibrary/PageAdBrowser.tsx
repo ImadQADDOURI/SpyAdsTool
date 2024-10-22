@@ -20,7 +20,6 @@ import LoadingTrigger from "./microComponents/LoadingTrigger";
 import PageInfoSection from "./microComponents/PageInfoSection";
 import { ScrollButtons } from "./microComponents/ScrollButtons";
 import SearchResults from "./microComponents/SearchResults";
-import StickyWrapper from "./microComponents/StickyWrapper";
 import { SearchBar } from "./searchFilters/SearchBar";
 
 interface PageAdBrowserProps {
@@ -134,7 +133,7 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-800">
+    <div className="min-h-full bg-gray-100 dark:bg-gray-800">
       {/* Page Info Section */}
       {pageInfo && (
         <PageInfoSection
@@ -146,15 +145,7 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
       )}
 
       {/* Sticky SearchBar Section */}
-      <StickyWrapper>
-        <div className="bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500 p-1 shadow-2xl">
-          <div className="container mx-auto">
-            <div className="flex flex-col space-y-4">
-              <SearchBar onSearch={handleSearch} isLoading={isLoading} />
-            </div>
-          </div>
-        </div>
-      </StickyWrapper>
+      <SearchBar onSearch={handleSearch} isLoading={isLoading} />
 
       {/* Search Results */}
       <SearchResults

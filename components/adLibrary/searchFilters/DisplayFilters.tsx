@@ -57,19 +57,19 @@ export const DisplayFilters: React.FC = () => {
       <SheetTrigger asChild>
         <Button
           aria-label="Open Display Filters"
-          className="relative overflow-hidden rounded-full bg-white bg-opacity-20 p-0.5 text-white transition-all hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+          className="relative h-9 rounded-full bg-white/60 px-3 text-gray-700 transition-all duration-300 hover:bg-white/80 hover:shadow-md dark:bg-gray-900/60 dark:text-gray-200 dark:hover:bg-gray-900/80"
         >
-          <span className="relative flex items-center px-4 py-2">
-            <Settings className="h-6 w-6" />
+          <div className="flex items-center gap-2">
+            <Settings className="h-5 w-5" />
             {countAppliedFilters() > 0 && (
               <Badge
                 variant="secondary"
-                className="ml-1 bg-purple-500 text-white"
+                className="flex h-5 items-center rounded-full bg-gradient-to-r from-[#B977F8] to-[#6566F1] px-2 text-[12px] font-medium text-white"
               >
                 {countAppliedFilters()}
               </Badge>
             )}
-          </span>
+          </div>
         </Button>
       </SheetTrigger>
       <SheetContent side={"left"}>
