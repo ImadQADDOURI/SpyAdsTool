@@ -2,7 +2,15 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Check, ChevronsUpDown, X } from "lucide-react";
+import {
+  Check,
+  ChevronsUpDown,
+  Facebook,
+  Instagram,
+  MessageCircle,
+  Users,
+  X,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -14,10 +22,10 @@ import {
 } from "@/components/ui/popover";
 
 const platforms = [
-  { value: "FACEBOOK", label: "Facebook" },
-  { value: "INSTAGRAM", label: "Instagram" },
-  { value: "AUDIENCE_NETWORK", label: "Audience Network" },
-  { value: "MESSENGER", label: "Messenger" },
+  { value: "FACEBOOK", label: "Facebook", icon: Facebook },
+  { value: "INSTAGRAM", label: "Instagram", icon: Instagram },
+  { value: "AUDIENCE_NETWORK", label: "Audience Network", icon: Users },
+  { value: "MESSENGER", label: "Messenger", icon: MessageCircle },
 ];
 
 export const Platform: React.FC = () => {
@@ -88,11 +96,18 @@ export const Platform: React.FC = () => {
               <>
                 {visibleSelections.map((value) => {
                   const platform = platforms.find((p) => p.value === value);
+                  if (!platform) return null;
+                  const Icon = platform.icon;
                   return (
-                    <Badge key={value} variant="secondary" className="mr-1">
-                      {platform?.label}
+                    <Badge
+                      key={value}
+                      variant="secondary"
+                      className="mr-0 inline-flex max-w-[150px] items-center"
+                    >
+                      <Icon className="mr-1 h-4 w-4 flex-shrink-0" />
+                      <span className="truncate">{/* {platform.label} */}</span>
                       <button
-                        className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                        className="ml-1 flex-shrink-0 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             handleRemove(value);
@@ -107,7 +122,7 @@ export const Platform: React.FC = () => {
                           handleRemove(value);
                         }}
                       >
-                        <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                        <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                       </button>
                     </Badge>
                   );
@@ -137,24 +152,28 @@ export const Platform: React.FC = () => {
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <div className="max-h-[300px] overflow-y-auto">
-          {platforms.map((platform) => (
-            <Button
-              key={platform.value}
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => handleSelect(platform.value)}
-            >
-              <Check
-                className={cn(
-                  "mr-2 h-4 w-4",
-                  selectedPlatforms.includes(platform.value)
-                    ? "opacity-100"
-                    : "opacity-0",
-                )}
-              />
-              {platform.label}
-            </Button>
-          ))}
+          {platforms.map((platform) => {
+            const Icon = platform.icon;
+            return (
+              <Button
+                key={platform.value}
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => handleSelect(platform.value)}
+              >
+                <Check
+                  className={cn(
+                    "mr-2 h-4 w-4 flex-shrink-0",
+                    selectedPlatforms.includes(platform.value)
+                      ? "opacity-100"
+                      : "opacity-0",
+                  )}
+                />
+                <Icon className="mr-2 h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{platform.label}</span>
+              </Button>
+            );
+          })}
         </div>
       </PopoverContent>
     </Popover>

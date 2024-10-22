@@ -107,7 +107,7 @@ export const Language: React.FC = () => {
                           handleRemove(code);
                         }}
                       >
-                        <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                        <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                       </button>
                     </Badge>
                   );

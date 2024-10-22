@@ -90,13 +90,13 @@ export const Country: React.FC = () => {
                     (c) => c.value === code,
                   );
                   return (
-                    <Badge key={code} variant="secondary" className="mr-1">
+                    <Badge key={code} variant="secondary" className="mr-0">
                       <img
                         src={country?.icon}
                         alt={`${country?.label} flag`}
                         className="mr-1 inline-block h-5 w-5 rounded-sm"
                       />
-                      {country?.value}
+                      {/* {country?.value} */}
                       <button
                         className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                         onKeyDown={(e) => {
@@ -113,7 +113,7 @@ export const Country: React.FC = () => {
                           handleRemove(code);
                         }}
                       >
-                        <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                        <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                       </button>
                     </Badge>
                   );

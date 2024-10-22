@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Check, ChevronsUpDown } from "lucide-react";
+import {
+  Check,
+  ChevronsUpDown,
+  CircleCheck,
+  CircleDot,
+  CircleSlash,
+  CircleX,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -13,8 +20,8 @@ import {
 } from "@/components/ui/popover";
 
 const statuses = [
-  { value: "ACTIVE", label: "Active" },
-  { value: "INACTIVE", label: "Inactive" },
+  { value: "ACTIVE", label: "Active", icon: CircleCheck },
+  { value: "INACTIVE", label: "Inactive", icon: CircleX },
 ];
 
 export const Status: React.FC = () => {
@@ -41,10 +48,10 @@ export const Status: React.FC = () => {
     [router, searchParams, selectedStatus],
   );
 
-  const selectedLabel = React.useMemo(() => {
+  const selectedOption = React.useMemo(() => {
     return selectedStatus
-      ? statuses.find((status) => status.value === selectedStatus)?.label
-      : "Active and Inactive";
+      ? statuses.find((status) => status.value === selectedStatus)
+      : null;
   }, [selectedStatus]);
 
   return (
@@ -56,8 +63,19 @@ export const Status: React.FC = () => {
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {selectedLabel}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <div className="flex min-w-0 flex-1 items-center">
+            <div className="flex items-center truncate">
+              {selectedOption ? (
+                <>
+                  <selectedOption.icon className="mr-2 h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">{selectedOption.label}</span>
+                </>
+              ) : (
+                <span className="truncate">Active and Inactive</span>
+              )}
+            </div>
+          </div>
+          <ChevronsUpDown className="ml-2 h-4 w-4 flex-shrink-0" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
@@ -71,11 +89,12 @@ export const Status: React.FC = () => {
             >
               <Check
                 className={cn(
-                  "mr-2 h-4 w-4",
+                  "mr-2 h-4 w-4 flex-shrink-0",
                   selectedStatus === status.value ? "opacity-100" : "opacity-0",
                 )}
               />
-              {status.label}
+              <status.icon className="mr-2 h-4 w-4 flex-shrink-0" />
+              <span className="truncate">{status.label}</span>
             </Button>
           ))}
         </div>
