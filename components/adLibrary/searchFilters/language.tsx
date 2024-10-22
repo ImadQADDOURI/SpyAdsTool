@@ -89,7 +89,11 @@ export const Language: React.FC = () => {
                 {visibleSelections.map((code) => {
                   const language = languages.find((lang) => lang.code === code);
                   return (
-                    <Badge key={code} variant="secondary" className="mr-1">
+                    <Badge
+                      key={code}
+                      variant="secondary"
+                      className="mr-1 p-0 pl-0.5"
+                    >
                       {language?.code}
                       <button
                         className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -113,7 +117,9 @@ export const Language: React.FC = () => {
                   );
                 })}
                 {remainingCount > 0 && (
-                  <Badge variant="secondary">+{remainingCount}</Badge>
+                  <Badge className="p-0.5" variant="secondary">
+                    +{remainingCount}
+                  </Badge>
                 )}
               </>
             ) : (

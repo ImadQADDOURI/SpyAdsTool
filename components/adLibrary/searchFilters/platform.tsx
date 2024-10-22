@@ -91,7 +91,7 @@ export const Platform: React.FC = () => {
           aria-expanded={open}
           className="h-auto min-h-[2.5rem] w-full justify-between py-2"
         >
-          <div className="mr-2 flex flex-wrap items-center gap-1">
+          <div className="m-0 flex flex-wrap items-center gap-1">
             {selectedPlatforms.length > 0 ? (
               <>
                 {visibleSelections.map((value) => {
@@ -102,9 +102,9 @@ export const Platform: React.FC = () => {
                     <Badge
                       key={value}
                       variant="secondary"
-                      className="mr-0 inline-flex max-w-[150px] items-center"
+                      className="mr-0 inline-flex max-w-[150px] items-center p-0 pl-0.5"
                     >
-                      <Icon className="mr-1 h-4 w-4 flex-shrink-0" />
+                      <Icon className="mr-0 h-4 w-4 flex-shrink-0" />
                       <span className="truncate">{/* {platform.label} */}</span>
                       <button
                         className="ml-1 flex-shrink-0 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -128,7 +128,9 @@ export const Platform: React.FC = () => {
                   );
                 })}
                 {remainingCount > 0 && (
-                  <Badge variant="secondary">+{remainingCount}</Badge>
+                  <Badge className="p-0.5" variant="secondary">
+                    +{remainingCount}
+                  </Badge>
                 )}
               </>
             ) : (

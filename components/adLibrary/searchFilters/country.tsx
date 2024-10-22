@@ -82,7 +82,7 @@ export const Country: React.FC = () => {
           aria-expanded={open}
           className="h-auto min-h-[2.5rem] w-full justify-between py-2"
         >
-          <div className="mr-2 flex flex-wrap items-center gap-1">
+          <div className="mr-0 flex flex-wrap items-center gap-1">
             {selectedCountries.length > 0 ? (
               <>
                 {visibleSelections.map((code) => {
@@ -90,15 +90,19 @@ export const Country: React.FC = () => {
                     (c) => c.value === code,
                   );
                   return (
-                    <Badge key={code} variant="secondary" className="mr-0">
+                    <Badge
+                      key={code}
+                      variant="secondary"
+                      className="mr-0 p-0 pl-0.5"
+                    >
                       <img
                         src={country?.icon}
                         alt={`${country?.label} flag`}
-                        className="mr-1 inline-block h-5 w-5 rounded-sm"
+                        className="mr-0 inline-block h-5 w-5 rounded-sm"
                       />
                       {/* {country?.value} */}
                       <button
-                        className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                        className="ml-0.5 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             handleRemove(code);
@@ -119,7 +123,9 @@ export const Country: React.FC = () => {
                   );
                 })}
                 {remainingCount > 0 && (
-                  <Badge variant="secondary">+{remainingCount}</Badge>
+                  <Badge className="p-0.5" variant="secondary">
+                    +{remainingCount}
+                  </Badge>
                 )}
               </>
             ) : (
