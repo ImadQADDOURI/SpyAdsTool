@@ -1,7 +1,7 @@
 // app/collections/[collectionId]/page.tsx
 import { Suspense } from "react";
 
-import { CollectionDetails } from "@/components/adLibrary/collections/CollectionDetails";
+import { CollectionDetails } from "@/components/adLibrary/CollectionDetails";
 import { Loading } from "@/components/adLibrary/microComponents/Loading";
 
 interface CollectionPageProps {

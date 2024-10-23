@@ -56,7 +56,7 @@ export function TrendAds() {
   }
 
   return (
-    <div className="min-h-full space-y-8 bg-gray-100 pb-8 dark:bg-gray-800">
+    <div className="min-h-screen space-y-8 bg-gray-100 pb-8 dark:bg-gray-800">
       <FirefliesWrapper intensity={"medium"}>
         {/* Title */}
         <div className="group relative py-6">
