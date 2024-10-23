@@ -38,3 +38,150 @@ Use the Loading component from @/components/adLibrary/microComponents/Loading.ts
 
 -------
 No other changes should be made to the component.
+
+-------------------------------
+# Modern Minimalist UI Style Guide
+
+## 🎨 Core Color Palette
+```css
+/* Primary Gradient */
+from-[#6566F1] to-[#B977F8]  /* Main accent gradient */
+/* Transparency Levels */
+{color}/80  /* Solid elements */
+{color}/40  /* Containers */
+{color}/20  /* Hover effects */
+{color}/10  /* Backgrounds */
+```
+
+## 💫 Key Design Principles
+
+### 1. Container Structure
+```css
+/* Base Container */
+relative overflow-hidden rounded-2xl
+bg-white/40 dark:bg-gray-900/40
+backdrop-blur-sm
+```
+
+### 2. Interactive Elements
+```css
+/* Button/Interactive Item */
+group relative rounded-full
+bg-white/80 dark:bg-gray-800/80
+hover:bg-white/90 dark:hover:bg-gray-800/90
+transition-all duration-300
+```
+
+### 3. Hover Effects
+```css
+/* Standard Hover Pattern */
+transition-transform duration-300 hover:scale-[1.01]
+/* Icon Hover */
+transition-all duration-300 group-hover:scale-110
+```
+
+## 🎯 Common Patterns
+
+### Text Styling
+```css
+/* Gradient Text */
+bg-gradient-to-r from-[#6566F1] to-[#B977F8]
+bg-clip-text text-transparent
+
+/* Body Text */
+text-gray-700 dark:text-gray-200  /* Primary */
+text-gray-600 dark:text-gray-300  /* Secondary */
+```
+
+### Component Structure
+```css
+/* Wrapper */
+relative mx-auto max-w-6xl px-4
+
+/* Content Layer */
+relative z-10 p-5
+
+/* Background Layer */
+absolute inset-0 bg-gradient-to-r 
+from-[#6566F1]/15 to-[#B977F8]/15
+```
+
+## 🔄 Animation Patterns
+
+### Transitions
+```css
+/* Standard Transition */
+transition-all duration-300 ease-in-out
+
+/* Hover Growth */
+hover:scale-[1.01]  /* Subtle */
+hover:scale-110    /* Prominent */
+```
+
+## 📱 Responsive Patterns
+```css
+/* Container Queries */
+sm:flex-row        /* Layout shifts */
+sm:text-left      /* Text alignment */
+sm:justify-start  /* Alignment changes */
+
+/* Spacing */
+space-y-2 sm:space-y-0  /* Responsive spacing */
+gap-2 sm:gap-3         /* Flexible gaps */
+```
+
+## 🎆 Visual Effects
+
+### Decorative Elements
+```css
+/* Bottom Line */
+h-0.5 w-32 rounded-full
+bg-gradient-to-r from-[#6566F1]/25 to-[#B977F8]/25
+group-hover:w-40
+
+/* Glow Effect */
+absolute blur-sm
+bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20
+```
+
+### Interactive States
+```css
+/* Button States */
+disabled:opacity-50
+hover:shadow-md
+focus:ring-2 focus:ring-[#6566F1]
+
+/* Group Hover */
+opacity-0 group-hover:opacity-100
+```
+
+## 📐 Layout Guidelines
+
+### Spacing
+- Consistent padding: `p-5` for containers
+- Gap spacing: `gap-2` to `gap-4`
+- Vertical rhythm: `space-y-2` to `space-y-4`
+
+### Width Control
+- Container max-width: `max-w-6xl`
+- Content padding: `px-4`
+- Button padding: `px-3.5 py-1.5`
+
+### Z-Index Layers
+```css
+z-10  /* Content */
+z-20  /* Interactive elements */
+z-50  /* Tooltips/Popovers */
+```
+
+## 🌓 Dark Mode
+```css
+/* Background */
+bg-white/80 dark:bg-gray-800/80
+
+/* Text */
+text-gray-700 dark:text-gray-200
+
+/* Borders */
+border-gray-200/50 dark:border-gray-700/50
+```

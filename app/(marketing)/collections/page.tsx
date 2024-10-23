@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
-import { UserCollections } from "@/components/adLibrary/collections/UserCollections";
 import { Loading } from "@/components/adLibrary/microComponents/Loading";
+import { UserCollections } from "@/components/adLibrary/UserCollections";
 
 export default function CollectionsPage() {
   return (

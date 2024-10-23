@@ -133,7 +133,7 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
   }, []);
 
   return (
-    <div className="min-h-full bg-gray-100 dark:bg-gray-800">
+    <div className="min-h-full bg-gray-100 pb-8 dark:bg-gray-800">
       {/* Page Info Section */}
       {pageInfo && (
         <PageInfoSection

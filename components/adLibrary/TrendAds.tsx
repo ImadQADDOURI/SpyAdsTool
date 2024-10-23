@@ -9,6 +9,9 @@ import { AdCardGrid } from "@/components/adLibrary/microComponents/AdCardGrid";
 import { Loading } from "@/components/adLibrary/microComponents/Loading";
 import LoadingTrigger from "@/components/adLibrary/microComponents/LoadingTrigger";
 
+import FirefliesWrapper from "./microComponents/FirefliesWrapper";
+import { ScrollButtons } from "./microComponents/ScrollButtons";
+
 export function TrendAds() {
   const [ads, setAds] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,24 +56,32 @@ export function TrendAds() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-800">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-3xl font-bold text-transparent">
-          Trending Ads
-        </h1>
-        <AdCardGrid ads={ads} />
-        {hasMore && (
-          <div className="mt-8">
-            <LoadingTrigger
-              onIntersect={handleLoadMore}
-              isLoading={isLoading}
-            />
-            {isLoading && (
-              <Loading size="medium" message="Loading more ads..." />
-            )}
+    <div className="min-h-full space-y-8 bg-gray-100 pb-8 dark:bg-gray-800">
+      <FirefliesWrapper intensity={"medium"}>
+        {/* Title */}
+        <div className="group relative py-6">
+          <div className="relative z-10 flex flex-col items-center justify-center space-y-2">
+            <h1 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text px-4 text-4xl font-bold tracking-tight text-transparent transition-all duration-300 ease-in-out hover:scale-[1.01]">
+              Trending Ads
+            </h1>
+            <div className="relative">
+              <div className="h-0.5 w-16 rounded-full bg-gradient-to-r from-[#6566F1]/40 to-[#B977F8]/40 transition-all duration-300 ease-in-out group-hover:w-24" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 blur-sm" />
+            </div>
           </div>
-        )}
-      </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/10 via-transparent to-[#B977F8]/10" />
+        </div>
+      </FirefliesWrapper>
+      <AdCardGrid ads={ads} />
+      {hasMore && (
+        <div className="mt-8">
+          <LoadingTrigger onIntersect={handleLoadMore} isLoading={isLoading} />
+          {isLoading && <Loading size="medium" message="Loading more ads..." />}
+        </div>
+      )}
+
+      {/* Scroll buttons */}
+      <ScrollButtons />
     </div>
   );
 }

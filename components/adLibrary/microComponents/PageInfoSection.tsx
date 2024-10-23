@@ -19,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import FirefliesWrapper from "@/components/adLibrary/microComponents/FirefliesWrapper";
 
 interface PageInfoSectionProps {
   page: any;
@@ -50,159 +51,192 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
     tooltip: string;
     badge?: string;
   }) => (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={100}>
       <Tooltip>
-        <TooltipTrigger className="flex items-center space-x-2 rounded-full bg-white bg-opacity-20 px-3 py-1">
-          <Icon className="h-5 w-5 text-white" />
-          <span className="font-semibold text-white">{value}</span>
-          {badge && <Image src={badge} alt="Verified" width={24} height={24} />}
+        <TooltipTrigger className="group relative flex items-center space-x-2.5 rounded-full bg-white/80 px-3.5 py-1.5 shadow-sm transition-all duration-300 hover:bg-white/90 hover:shadow-md dark:bg-gray-800/80 dark:hover:bg-gray-800/90">
+          <div className="absolute inset-px rounded-full bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <Icon className="h-4 w-4 text-[#6566F1] transition-transform duration-300 ease-in-out group-hover:scale-110 dark:text-[#B977F8]" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+            {value}
+          </span>
+          {badge && (
+            <Image
+              src={badge}
+              alt="Verified"
+              width={16}
+              height={16}
+              className="transition-transform group-hover:scale-110"
+            />
+          )}
         </TooltipTrigger>
-        <TooltipContent>
+        <TooltipContent side="top" className="z-50">
           <p>{tooltip}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
 
+  const AdminLocations = () => (
+    <TooltipProvider delayDuration={100}>
+      <Tooltip>
+        <TooltipTrigger className="group relative flex items-center space-x-2.5 rounded-full bg-white/80 px-3.5 py-1.5 shadow-sm transition-all duration-300 hover:bg-white/90 hover:shadow-md dark:bg-gray-800/80 dark:hover:bg-gray-800/90">
+          <div className="absolute inset-px rounded-full bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <MapPin className="h-4 w-4 text-[#6566F1] transition-transform duration-300 ease-in-out group-hover:scale-110 dark:text-[#B977F8]" />
+          <div className="flex items-center space-x-1">
+            {adminLocations.slice(0, 3).map((location, index) => {
+              const countryInfo = countryCodesAlpha2Flag.find(
+                (c) => c.label === location.country.iso_name,
+              );
+              return countryInfo ? (
+                <Image
+                  key={index}
+                  src={countryInfo.icon}
+                  alt={countryInfo.label}
+                  width={18}
+                  height={18}
+                  className="rounded-sm transition-transform duration-300 group-hover:scale-110"
+                />
+              ) : null;
+            })}
+            {adminLocations.length > 3 && (
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                +{adminLocations.length - 3}
+              </span>
+            )}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="z-50">
+          <p className="mb-1 font-semibold">Admin Locations:</p>
+          {adminLocations.map((location, index) => (
+            <p key={index} className="text-sm">
+              {location.country.iso_name}: {location.count}
+            </p>
+          ))}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+
   return (
-    <div className="bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500 p-4">
-      <div className="rounded-lg bg-white bg-opacity-10 p-4 shadow-lg">
-        <div className="flex flex-col gap-4 md:flex-row">
-          {/* Left Section: Profile Info and About */}
-          <div className="flex-1">
-            <div className="flex items-start space-x-4">
-              <Image
-                src={profilePictureUrl || "/icons/user.png"}
-                alt={pageInfo.page_name || page.name}
-                width={80}
-                height={80}
-                className="rounded-full border-2 border-white"
-              />
-              <div>
-                <div className="flex items-center">
-                  <h1 className="mr-2 text-2xl font-bold text-white">
+    <FirefliesWrapper intensity="medium">
+      <div className="relative overflow-hidden py-2">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/15 to-[#B977F8]/15" />
+
+        <div className="relative mx-auto max-w-6xl px-4">
+          <div className="rounded-2xl bg-white/40 p-5 shadow-sm backdrop-blur-sm dark:bg-gray-900/40">
+            {/* Profile Section */}
+            <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
+              {/* Profile Image */}
+              <div className="relative shrink-0">
+                <div className="absolute -inset-1 animate-pulse rounded-full bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 blur-md" />
+                <Image
+                  src={profilePictureUrl || "/icons/user.png"}
+                  alt={pageInfo.page_name || page.name}
+                  width={80}
+                  height={80}
+                  className="relative rounded-full border-2 border-white/90 object-cover shadow-lg transition-transform duration-300 hover:scale-105"
+                />
+              </div>
+
+              {/* Profile Info */}
+              <div className="flex-1 text-center sm:text-left">
+                <div className="flex items-center justify-center space-x-2 sm:justify-start">
+                  <h1 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-2xl font-bold text-transparent">
                     {pageInfo.page_name || page.name}
                   </h1>
                   {pageInfo.page_verification !== "NOT_VERIFIED" && (
                     <Image
                       src="/icons/verified-badge.png"
                       alt="Facebook Verified"
-                      width={20}
-                      height={20}
+                      width={24}
+                      height={24}
+                      className="transition-transform duration-300 hover:scale-110"
                     />
                   )}
                 </div>
-                <div className="mb-2 text-sm text-white">
-                  <span>{pageInfo.page_category || "Uncategorized"}</span>
+                <div className="mt-1 text-sm font-medium text-[#6566F1] dark:text-[#B977F8]">
+                  {pageInfo.page_category || "Uncategorized"}
                 </div>
                 {page.about?.text && (
-                  <p className="max-w-md text-sm text-white opacity-80">
+                  <p className="mt-1 line-clamp-2 max-w-2xl text-sm leading-relaxed text-gray-600 dark:text-gray-300">
                     {page.about.text}
                   </p>
                 )}
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Bottom Section: Metrics and Visit Button */}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap gap-2">
-            <MetricItem
-              icon={ThumbsUp}
-              value={pageInfo.likes?.toLocaleString() || "0"}
-              tooltip="Facebook Likes"
-            />
-            {pageInfo.ig_username && (
-              <MetricItem
-                icon={Instagram}
-                value={pageInfo.ig_followers?.toLocaleString() || "0"}
-                tooltip="Instagram Followers"
-                badge={
-                  pageInfo.ig_verification
-                    ? "/icons/verified-badge.png"
-                    : undefined
-                }
-              />
-            )}
-            <MetricItem
-              icon={Target}
-              value={totalAds.toString()}
-              tooltip="Total Ads"
-            />
-            <MetricItem
-              icon={DollarSign}
-              value={
-                page.ad_library_page_targeting_insight
-                  ?.ad_library_page_targeting_summary?.total_spend_formatted ===
-                "0"
-                  ? "Unknown"
-                  : page.ad_library_page_targeting_insight
+            {/* Metrics Section */}
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-2 border-t border-gray-200/50 pt-4 dark:border-gray-700/50 sm:justify-between">
+              <div className="flex flex-wrap justify-center gap-2">
+                <MetricItem
+                  icon={ThumbsUp}
+                  value={pageInfo.likes?.toLocaleString() || "0"}
+                  tooltip="Facebook Likes"
+                />
+                {pageInfo.ig_username && (
+                  <MetricItem
+                    icon={Instagram}
+                    value={pageInfo.ig_followers?.toLocaleString() || "0"}
+                    tooltip="Instagram Followers"
+                    badge={
+                      pageInfo.ig_verification
+                        ? "/icons/verified-badge.png"
+                        : undefined
+                    }
+                  />
+                )}
+                <MetricItem
+                  icon={Target}
+                  value={totalAds.toString()}
+                  tooltip="Total Ads"
+                />
+                <MetricItem
+                  icon={DollarSign}
+                  value={
+                    page.ad_library_page_targeting_insight
                       ?.ad_library_page_targeting_summary
-                      ?.total_spend_formatted || "Unknown"
-              }
-              tooltip="Total Ad Spend"
-            />
-            {creationDate && (
-              <MetricItem
-                icon={Calendar}
-                value={new Date(creationDate * 1000).toLocaleDateString()}
-                tooltip="Page Creation Date"
-              />
-            )}
-            {adminLocations.length > 0 && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger className="flex items-center space-x-2 rounded-full bg-white bg-opacity-20 px-3 py-1">
-                    <MapPin className="h-5 w-5 text-white" />
-                    <div className="flex">
-                      {adminLocations.slice(0, 3).map((location, index) => {
-                        const countryInfo = countryCodesAlpha2Flag.find(
-                          (c) => c.label === location.country.iso_name,
-                        );
-                        return countryInfo ? (
-                          <Image
-                            key={index}
-                            src={countryInfo.icon}
-                            alt={countryInfo.label}
-                            width={24}
-                            height={24}
-                            className="ml-1 rounded-sm first:ml-0"
-                          />
-                        ) : null;
-                      })}
-                    </div>
-                    {adminLocations.length > 3 && (
-                      <span className="text-xs text-white">
-                        +{adminLocations.length - 3}
-                      </span>
-                    )}
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="mb-1 font-semibold">Admin Locations:</p>
-                    {adminLocations.map((location, index) => (
-                      <p key={index}>
-                        {location.country.iso_name}: {location.count}
-                      </p>
-                    ))}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
+                      ?.total_spend_formatted === "0"
+                      ? "Unknown"
+                      : page.ad_library_page_targeting_insight
+                          ?.ad_library_page_targeting_summary
+                          ?.total_spend_formatted || "Unknown"
+                  }
+                  tooltip="Total Ad Spend"
+                />
+                {creationDate && (
+                  <MetricItem
+                    icon={Calendar}
+                    value={new Date(creationDate * 1000).toLocaleDateString()}
+                    tooltip="Page Creation Date"
+                  />
+                )}
+                {adminLocations.length > 0 && <AdminLocations />}
+              </div>
+
+              {/* Visit Button */}
+              <a
+                href={pageInfo.page_profile_uri}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative inline-flex items-center space-x-2 rounded-full bg-gradient-to-r from-[#6566F1] to-[#B977F8] p-[1px] shadow-md transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="inline-flex items-center space-x-2 rounded-full bg-white/90 px-3.5 py-1.5 transition-all duration-300 group-hover:bg-opacity-90 dark:bg-gray-900/90">
+                  <GlobeIcon className="h-4 w-4 text-[#6566F1] transition-transform duration-300 group-hover:scale-110 dark:text-[#B977F8]" />
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Visit Page
+                  </span>
+                </div>
+              </a>
+            </div>
           </div>
 
-          <a
-            href={pageInfo.page_profile_uri}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block rounded-full bg-white bg-opacity-20 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
-          >
-            <GlobeIcon className="mr-1 inline-block h-4 w-4" />
-            Visit Page
-          </a>
+          {/* Decorative bottom line */}
+          <div className="absolute bottom-2 left-1/2 h-0.5 w-32 -translate-x-1/2 rounded-full bg-gradient-to-r from-[#6566F1]/25 to-[#B977F8]/25 transition-all duration-300 ease-in-out group-hover:w-40">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/25 to-[#B977F8]/25 blur-sm" />
+          </div>
         </div>
       </div>
-    </div>
+    </FirefliesWrapper>
   );
 };
 

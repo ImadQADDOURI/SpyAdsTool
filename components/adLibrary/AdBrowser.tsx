@@ -102,7 +102,7 @@ export const AdBrowser = () => {
   /////////////////////////
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-800">
+    <div className="min-h-full bg-gray-100 pb-8 dark:bg-gray-800">
       <FirefliesWrapper intensity={"medium"}>
         {/* Title */}
         <div className="group relative py-6">
