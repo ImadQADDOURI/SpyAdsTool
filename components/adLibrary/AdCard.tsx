@@ -205,9 +205,11 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
             />
           </div>
         </div>
+      </CardContent>
+      <CardFooter className="m-0 p-1">
         {/* Ad details button */}
         <AdDetails ad={ad} />
-      </CardContent>
+      </CardFooter>
     </Card>
   );
 };

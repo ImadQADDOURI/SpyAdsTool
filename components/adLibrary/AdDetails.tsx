@@ -18,11 +18,23 @@ import {
   getAdLibraryAdCollationVariables,
   getAdLibraryAdDetailsV2Variables,
 } from "@/utils/adSearchVariables";
-import { CheckCircle, ChevronRight, RefreshCw } from "lucide-react";
+import {
+  BarChart3,
+  CheckCircle,
+  ChevronRight,
+  Info,
+  RefreshCw,
+} from "lucide-react";
 
 import { AdData } from "@/types/ad";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Analytics from "@/components/adLibrary/adInsights/Analytics";
 import { EuAdStatistic } from "@/components/adLibrary/adInsights/EuAdStatistic";
 import AdCreativeGenerator from "@/components/adLibrary/aiComponents/AdCreativeGenerator";
@@ -149,63 +161,100 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
         {trigger || (
           <Button
             variant="outline"
-            className="w-full bg-gradient-to-r from-purple-600/10 to-pink-500/10 hover:from-purple-600/20 hover:to-pink-500/20"
+            className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-md border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#6566F1]/30 hover:text-[#6566F1] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-[#B977F8]/30 dark:hover:text-[#B977F8]"
           >
-            View Details
+            <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <Info className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+            <span>View Details</span>
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] max-w-[90vw] overflow-hidden p-6">
-        <h2 className="mb-4 bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-2xl font-bold text-transparent">
-          Ad Details
-        </h2>
-        <div className="flex h-[calc(100%-3rem)] flex-col gap-6 lg:flex-row">
-          <AdCard ad={ad} />
-          <div className="h-1/2 w-full overflow-hidden rounded-lg bg-gray-50 shadow-inner dark:bg-gray-900 lg:h-full lg:w-1/2">
-            <AdCreativeGenerator ad={ad} />
-          </div>
-          <div className="h-1/2 w-full overflow-y-auto rounded-lg bg-gray-50 p-4 shadow-inner dark:bg-gray-900 lg:h-full lg:w-1/2">
-            <div className="mb-4 flex items-center justify-between">
-              {!isComplete ? (
-                <Button
-                  onClick={handleLoadMore}
-                  disabled={isLoading}
-                  className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-700 hover:to-pink-600"
-                >
-                  {isLoading ? (
-                    <RefreshCw className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                  <span>{isLoading ? "Loading..." : "Load More Ads"}</span>
-                </Button>
-              ) : (
-                <div className="flex items-center space-x-2 text-green-500">
-                  <CheckCircle className="h-5 w-5" />
-                  <span className="text-sm font-medium">All ads loaded</span>
-                </div>
-              )}
-              {totalCount !== null && (
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  {remainingCount !== null && remainingCount > 0 ? (
-                    <span>{`${remainingCount} of ${totalCount} ads remaining`}</span>
-                  ) : (
-                    <span>{`${totalCount} total ads`}</span>
-                  )}
-                </div>
-              )}
+      <DialogContent className="max-h-[95vh] max-w-[95vw] overflow-y-auto bg-gray-100/20 dark:bg-gray-800/20 lg:overflow-hidden">
+        <DialogHeader>
+          <DialogTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-2xl font-bold text-transparent">
+            Ad Details
+          </DialogTitle>
+        </DialogHeader>
+
+        {/* Main Container */}
+        <div className="flex min-h-[calc(90vh-6rem)] flex-col gap-1 lg:h-[calc(90vh-6rem)] lg:flex-row lg:overflow-hidden">
+          {/* Left Panel */}
+          <div className="w-full lg:w-1/3 lg:overflow-y-auto">
+            <div className="space-y-1">
+              <AdCard ad={ad} />
+              <AdCreativeGenerator ad={ad} />
             </div>
-            <Analytics ads={detailedAds} />
-            <EuAdStatistic
-              data={adDetails}
-              isLoading={isLoadingEuStats}
-              error={euStatsError}
-            />
-            <KeywordAnalysisTable
-              data={keywordAnalysis}
-              isLoading={isLoadingKeywords}
-              error={keywordError}
-            />
+          </div>
+
+          {/* Right Panel */}
+          <div className="w-full lg:w-2/3 lg:overflow-y-auto">
+            <div className="space-y-1">
+              {/* Analytics Section with Controls */}
+              <div className="rounded-lg border border-gray-200/30 dark:border-gray-700/30">
+                {/* Analytics Header */}
+                <div className="border-b border-gray-200/30 p-4 dark:border-gray-700/30">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    {/* Load More Controls */}
+                    {!isComplete ? (
+                      <Button
+                        onClick={handleLoadMore}
+                        disabled={isLoading}
+                        className="flex h-9 items-center gap-2 bg-gradient-to-r from-[#6566F1] to-[#B977F8] text-sm font-medium text-white transition-colors hover:from-[#5859D9] hover:to-[#A66ADF]"
+                      >
+                        {isLoading ? (
+                          <RefreshCw className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
+                        <span>
+                          {isLoading ? "Loading..." : "Load More Ad versions"}
+                        </span>
+                      </Button>
+                    ) : (
+                      <div className="flex items-center gap-2 text-green-500">
+                        <CheckCircle className="h-5 w-5" />
+                        <span className="text-sm font-medium">
+                          All Ad Versions loaded
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Total Count */}
+                    {totalCount !== null && (
+                      <div className="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400">
+                        <span className="flex items-center gap-1.5">
+                          <BarChart3 className="h-4 w-4" />
+                          {remainingCount !== null && remainingCount > 0 ? (
+                            <span>{`${remainingCount} of ${totalCount} ads remaining`}</span>
+                          ) : (
+                            <span>{`${totalCount} total ads`}</span>
+                          )}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Analytics Content */}
+                <div className="min-h-[300px]">
+                  <Analytics ads={detailedAds} />
+                </div>
+              </div>
+
+              {/* Bottom Stats Grid */}
+              <div className="grid min-h-[200px] grid-cols-1 gap-1 lg:grid-cols-2">
+                <EuAdStatistic
+                  data={adDetails}
+                  isLoading={isLoadingEuStats}
+                  error={euStatsError}
+                />
+                <KeywordAnalysisTable
+                  data={keywordAnalysis}
+                  isLoading={isLoadingKeywords}
+                  error={keywordError}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </DialogContent>
