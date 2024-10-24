@@ -1,5 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+/**
+ * AdDetails Component
+ *
+ * A dialog component that displays detailed information about an advertisement,
+ * including analytics, EU statistics, and keyword analysis. Data is lazy-loaded
+ * when the dialog is opened.
+ *
+ * @package components/adLibrary
+ */
+
+import React, { useCallback, useState } from "react";
 import { analyzeKeywords } from "@/actions/geminiAiService";
 import {
   AdLibraryAdCollationDetailsQuery,
@@ -9,28 +18,27 @@ import {
   getAdLibraryAdCollationVariables,
   getAdLibraryAdDetailsV2Variables,
 } from "@/utils/adSearchVariables";
-import {
-  CheckCircle,
-  ChevronLeft,
-  ChevronRight,
-  RefreshCw,
-  X,
-} from "lucide-react";
+import { CheckCircle, ChevronRight, RefreshCw } from "lucide-react";
 
 import { AdData } from "@/types/ad";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Analytics from "@/components/adLibrary/adInsights/Analytics";
 import { EuAdStatistic } from "@/components/adLibrary/adInsights/EuAdStatistic";
 import AdCreativeGenerator from "@/components/adLibrary/aiComponents/AdCreativeGenerator";
 import KeywordAnalysisTable from "@/components/adLibrary/aiComponents/KeywordAnalysisTable";
 
-import { Button } from "../ui/button";
+import { AdCard } from "./AdCard";
 
 interface AdDetailsProps {
+  /** The advertisement data to display */
   ad: AdData;
-  onClose: () => void;
+  /** Optional custom trigger element */
+  trigger?: React.ReactNode;
 }
 
-export const AdDetails: React.FC<AdDetailsProps> = ({ ad, onClose }) => {
+export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
+  const [open, setOpen] = useState(false);
   const [detailedAds, setDetailedAds] = useState<AdData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,11 +46,6 @@ export const AdDetails: React.FC<AdDetailsProps> = ({ ad, onClose }) => {
   const [isComplete, setIsComplete] = useState(false);
   const [totalCount, setTotalCount] = useState<number | null>(null);
   const [remainingCount, setRemainingCount] = useState<number | null>(null);
-  const initialFetchDone = useRef(false);
-
-  const searchParams = useSearchParams();
-  const countries = searchParams.get("countries");
-
   // EU ADs
   const [adDetails, setAdDetails] = useState<any>(null);
   const [isLoadingEuStats, setIsLoadingEuStats] = useState(false);
@@ -55,7 +58,6 @@ export const AdDetails: React.FC<AdDetailsProps> = ({ ad, onClose }) => {
 
   const fetchAdDetails = useCallback(async () => {
     if (isComplete || isLoading) return;
-
     setIsLoading(true);
     setError(null);
 
@@ -65,24 +67,24 @@ export const AdDetails: React.FC<AdDetailsProps> = ({ ad, onClose }) => {
         setIsComplete(true);
         setTotalCount(1);
         setRemainingCount(0);
-      } else {
-        const variables = getAdLibraryAdCollationVariables(
-          ad.collation_id,
-          forwardCursor,
-          "ALL",
-        );
-        const results = await AdLibraryAdCollationDetailsQuery(variables);
-
-        setDetailedAds((prevAds) => [...prevAds, ...results.ads]);
-        setForwardCursor(results.forward_cursor);
-        setIsComplete(results.is_complete);
-        setTotalCount((prevCount) => prevCount || results.total_count);
-        setRemainingCount((prevCount) => {
-          const newCount =
-            (prevCount || results.total_count) - results.ads.length;
-          return newCount > 0 ? newCount : 0;
-        });
+        return;
       }
+
+      const variables = getAdLibraryAdCollationVariables(
+        ad.collation_id,
+        forwardCursor,
+        "ALL",
+      );
+      const results = await AdLibraryAdCollationDetailsQuery(variables);
+
+      setDetailedAds((prev) => [...prev, ...results.ads]);
+      setForwardCursor(results.forward_cursor);
+      setIsComplete(results.is_complete);
+      setTotalCount((prev) => prev || results.total_count);
+      setRemainingCount((prev) => {
+        const newCount = (prev || results.total_count) - results.ads.length;
+        return newCount > 0 ? newCount : 0;
+      });
     } catch (error) {
       console.error("Error fetching ad details:", error);
       setError(
@@ -96,8 +98,6 @@ export const AdDetails: React.FC<AdDetailsProps> = ({ ad, onClose }) => {
   // Function to get EU ad stats
   const fetchEuAdStats = useCallback(async () => {
     setIsLoadingEuStats(true);
-    setEuStatsError(null);
-
     try {
       const variables = getAdLibraryAdDetailsV2Variables(
         ad.ad_archive_id,
@@ -108,7 +108,6 @@ export const AdDetails: React.FC<AdDetailsProps> = ({ ad, onClose }) => {
       setAdDetails(result);
     } catch (err) {
       setEuStatsError("Failed to fetch EU ad statistics");
-      console.error(err);
     } finally {
       setIsLoadingEuStats(false);
     }
@@ -117,32 +116,26 @@ export const AdDetails: React.FC<AdDetailsProps> = ({ ad, onClose }) => {
   // Function to fetch keyword analysis
   const fetchKeywordAnalysis = useCallback(async () => {
     setIsLoadingKeywords(true);
-    setKeywordError(null);
     try {
       const result = await analyzeKeywords(ad);
       setKeywordAnalysis(result);
     } catch (error) {
-      console.error("Error analyzing keywords:", error);
       setKeywordError("Failed to analyze keywords");
     } finally {
       setIsLoadingKeywords(false);
     }
   }, [ad]);
 
-  useEffect(() => {
-    if (!initialFetchDone.current) {
-      setDetailedAds([]);
-      setForwardCursor(null);
-      setIsComplete(false);
-      setTotalCount(null);
-      setRemainingCount(null);
-      fetchAdDetails();
-      fetchEuAdStats();
-      fetchKeywordAnalysis();
-
-      initialFetchDone.current = true;
+  const handleDialogOpen = async (open: boolean) => {
+    setOpen(open);
+    if (open && detailedAds.length === 0) {
+      await Promise.all([
+        fetchAdDetails(),
+        fetchEuAdStats(),
+        fetchKeywordAnalysis(),
+      ]);
     }
-  }, [ad.collation_id, fetchAdDetails, fetchEuAdStats, fetchKeywordAnalysis]);
+  };
 
   const handleLoadMore = () => {
     if (!isComplete && !isLoading) {
@@ -150,27 +143,24 @@ export const AdDetails: React.FC<AdDetailsProps> = ({ ad, onClose }) => {
     }
   };
 
-  // Effect to disable scrolling and hide overflow when component mounts
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "visible";
-    };
-  }, []);
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-      <div className="relative h-[90vh] w-[90vw] overflow-hidden rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
-        <button
-          className="absolute right-2 top-2 rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
-          onClick={onClose}
-        >
-          <X className="h-6 w-6" />
-        </button>
+    <Dialog open={open} onOpenChange={handleDialogOpen}>
+      <DialogTrigger asChild>
+        {trigger || (
+          <Button
+            variant="outline"
+            className="w-full bg-gradient-to-r from-purple-600/10 to-pink-500/10 hover:from-purple-600/20 hover:to-pink-500/20"
+          >
+            View Details
+          </Button>
+        )}
+      </DialogTrigger>
+      <DialogContent className="max-h-[90vh] max-w-[90vw] overflow-hidden p-6">
         <h2 className="mb-4 bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-2xl font-bold text-transparent">
           Ad Details
         </h2>
         <div className="flex h-[calc(100%-3rem)] flex-col gap-6 lg:flex-row">
+          <AdCard ad={ad} />
           <div className="h-1/2 w-full overflow-hidden rounded-lg bg-gray-50 shadow-inner dark:bg-gray-900 lg:h-full lg:w-1/2">
             <AdCreativeGenerator ad={ad} />
           </div>
@@ -218,7 +208,7 @@ export const AdDetails: React.FC<AdDetailsProps> = ({ ad, onClose }) => {
             />
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };

@@ -1,5 +1,5 @@
 // @/components/adLibrary/AdCard.tsx
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import {
   CircleCheck,
@@ -43,7 +43,6 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
     collation_count,
     is_aaa_eligible,
   } = ad;
-  const [showAdDetails, setShowAdDetails] = useState(false);
 
   const formatDate = (timestamp: number | undefined) => {
     if (!timestamp) return "N/A";
@@ -206,25 +205,9 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
             />
           </div>
         </div>
-
         {/* Ad details button */}
-        <div className="">
-          <Button
-            className="group relative my-2 w-full overflow-hidden rounded-lg bg-gradient-to-r from-[#6566F1] to-[#B977F8] p-[2px] transition-all duration-300 hover:from-[#5455E0] hover:to-[#A866E7]"
-            onClick={() => setShowAdDetails(true)}
-          >
-            <span className="relative flex w-full items-center justify-center rounded-md bg-white px-2 py-2 text-sm font-medium text-gray-900 transition-all duration-300 group-hover:bg-opacity-0 group-hover:text-white dark:bg-gray-900 dark:text-white">
-              See ad details
-              <Info className="ml-2 h-4 w-4" />
-            </span>
-          </Button>
-        </div>
+        <AdDetails ad={ad} />
       </CardContent>
-
-      {/* Ad details modal */}
-      {showAdDetails && (
-        <AdDetails ad={ad} onClose={() => setShowAdDetails(false)} />
-      )}
     </Card>
   );
 };
