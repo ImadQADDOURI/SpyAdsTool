@@ -1,5 +1,19 @@
 import React, { useMemo } from "react";
-import Image from "next/image";
+import {
+  ArrowDownRight,
+  ArrowRight,
+  ArrowUpRight,
+  MinusCircle,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DataPoint {
   date: string;
@@ -16,7 +30,7 @@ interface TrendAnalysis {
   changePercentage: number;
 }
 
-const DEFAULT_PERIODS = [7, 30, 0]; // 7 days, 30 days, all-time
+const DEFAULT_PERIODS = [7, 30, 0];
 
 const AnalyzeTrends: React.FC<AnalyzeTrendsProps> = ({
   chartData,
@@ -30,62 +44,58 @@ const AnalyzeTrends: React.FC<AnalyzeTrendsProps> = ({
   }, [chartData, periods]);
 
   return (
-    <div className="w-full overflow-hidden rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 shadow-md dark:from-gray-800 dark:to-indigo-900">
-      <div className="flex items-stretch justify-between divide-x divide-gray-200 dark:divide-gray-700">
-        {trendAnalyses.map(({ period, analysis }) => (
-          <div
-            key={period}
-            className="flex min-w-[100px] flex-1 flex-col items-center justify-between p-2 transition-all duration-300 hover:bg-white/50 dark:hover:bg-gray-700/50"
-          >
-            <span className="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">
-              {period}
-            </span>
-            <div className="mb-1 flex items-center">
-              <TrendIcon trend={analysis.trend} />
-              <span
-                className={`text-sm font-bold ${getTrendColor(analysis.trend)} ml-1`}
-              >
-                {analysis.trend}
-              </span>
-            </div>
-            <ChangeDisplay value={analysis.changePercentage} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+    <div className="flex w-[80px] flex-col justify-end gap-1">
+      {trendAnalyses.map(({ period, analysis }) => (
+        <TooltipProvider key={period}>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <div className="group flex cursor-default flex-col items-center rounded-lg bg-gradient-to-r from-[#6566F1]/5 to-[#B977F8]/5 p-1 transition-colors hover:from-[#6566F1]/10 hover:to-[#B977F8]/10">
+                {/* Period */}
+                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  {period}
+                </span>
 
-const ChangeDisplay: React.FC<{ value: number }> = ({ value }) => {
-  const formattedValue = value.toFixed(1);
-  const isPositive = value >= 0;
-  const barWidth = Math.min(Math.abs(value), 100);
-  const barColor = isPositive ? "bg-green-500" : "bg-red-500";
+                {/* Trend Icon */}
+                <div className="">
+                  <TrendIcon
+                    trend={analysis.trend}
+                    className={getTrendColor(analysis.trend)}
+                    size={20}
+                  />
+                </div>
 
-  return (
-    <div className="w-full">
-      <div className="flex h-2 items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-        <div
-          className={`h-full ${barColor} transition-all duration-500 ease-out`}
-          style={{
-            width: `${barWidth}%`,
-            marginLeft: isPositive ? "50%" : `${50 - barWidth}%`,
-          }}
-        ></div>
-      </div>
-      <span
-        className={`text-xs font-medium ${isPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"} mt-1 block text-center`}
-      >
-        {isPositive ? "+" : ""}
-        {formattedValue}%
-      </span>
+                {/* Change Percentage */}
+                <span
+                  className={`text-sm font-semibold ${getTrendColor(analysis.trend)}`}
+                >
+                  {analysis.changePercentage > 0 ? "+" : ""}
+                  {analysis.changePercentage.toFixed(1)}%
+                </span>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="flex flex-col gap-1.5 p-3">
+              <div className="text-sm font-medium">
+                {period === "All" ? "All Time" : `Last ${period} Days`}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm">Trend:</span>
+                <span
+                  className={`text-sm font-semibold ${getTrendColor(analysis.trend)}`}
+                >
+                  {getTrendFullName(analysis.trend)}
+                </span>
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ))}
     </div>
   );
 };
 
 function analyzeTrendPeriod(data: DataPoint[]): TrendAnalysis {
   if (data.length < 2) {
-    return { trend: "Insufficient Data", changePercentage: 0 };
+    return { trend: "No Data", changePercentage: 0 };
   }
 
   const values = data.map((point) => point.activeVersions);
@@ -97,54 +107,70 @@ function analyzeTrendPeriod(data: DataPoint[]): TrendAnalysis {
 }
 
 function getTrendName(changePercentage: number): string {
-  if (changePercentage > 20) return "Rapid Growth";
-  if (changePercentage > 5) return "Gradual Increase";
-  if (changePercentage < -20) return "Sharp Decline";
-  if (changePercentage < -5) return "Gradual Decrease";
+  if (changePercentage > 20) return "RapidGrowth";
+  if (changePercentage > 5) return "Growth";
+  if (changePercentage < -20) return "SharpDecline";
+  if (changePercentage < -5) return "Decline";
   return "Stable";
+}
+
+function getTrendFullName(trend: string): string {
+  switch (trend) {
+    case "RapidGrowth":
+      return "Rapid Growth";
+    case "Growth":
+      return "Growth";
+    case "SharpDecline":
+      return "Sharp Decline";
+    case "Decline":
+      return "Decline";
+    case "Stable":
+      return "Stable";
+    default:
+      return "No Data";
+  }
 }
 
 function getTrendColor(trend: string): string {
   switch (trend) {
-    case "Rapid Growth":
-    case "Gradual Increase":
-      return "text-green-600 dark:text-green-400";
-    case "Sharp Decline":
-    case "Gradual Decrease":
-      return "text-red-600 dark:text-red-400";
+    case "RapidGrowth":
+    case "Growth":
+      return "text-emerald-500 dark:text-emerald-400";
+    case "SharpDecline":
+    case "Decline":
+      return "text-rose-500 dark:text-rose-400";
     case "Stable":
-      return "text-blue-600 dark:text-blue-400";
+      return "text-[#6566F1] dark:text-[#B977F8]";
     default:
-      return "text-gray-600 dark:text-gray-400";
+      return "text-gray-400 dark:text-gray-500";
   }
 }
-const TrendIcon: React.FC<{ trend: string }> = ({ trend }) => {
-  let iconPath = "";
-  switch (trend) {
-    case "Rapid Growth":
-      iconPath = "/icons/arrow_up.svg";
-      break;
-    case "Gradual Increase":
-      iconPath = "/icons/arrow_up_right.svg";
-      break;
-    case "Sharp Decline":
-      iconPath = "/icons/arrow_down.svg";
-      break;
-    case "Gradual Decrease":
-      iconPath = "/icons/arrow_down_right.svg";
-      break;
-    case "Stable":
-      iconPath = "/icons/arrow_right.svg";
-      break;
-    default:
-      iconPath = "/icons/arrow_zigzag.svg";
-  }
 
-  return (
-    <div className="inline-flex h-4 w-4 items-center justify-center">
-      <Image src={iconPath} alt={trend} width={16} height={16} />
-    </div>
-  );
+const TrendIcon: React.FC<{
+  trend: string;
+  className?: string;
+  size?: number;
+}> = ({ trend, className = "", size = 20 }) => {
+  const iconProps = {
+    size,
+    className,
+    strokeWidth: 2.5,
+  };
+
+  switch (trend) {
+    case "RapidGrowth":
+      return <TrendingUp {...iconProps} />;
+    case "Growth":
+      return <ArrowUpRight {...iconProps} />;
+    case "SharpDecline":
+      return <TrendingDown {...iconProps} />;
+    case "Decline":
+      return <ArrowDownRight {...iconProps} />;
+    case "Stable":
+      return <ArrowRight {...iconProps} />;
+    default:
+      return <MinusCircle {...iconProps} />;
+  }
 };
 
 export default AnalyzeTrends;

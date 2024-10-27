@@ -2,10 +2,12 @@
 "use client";
 
 import React, { useMemo } from "react";
+import { ActivitySquare } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
   Area,
   AreaChart,
+  CartesianGrid,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -146,81 +148,121 @@ const Analytics: React.FC<AnalyticsProps> = ({ ads }) => {
   const chartColor = theme === "dark" ? "#FF1493" : "#8B00FF";
 
   return (
-    <Card className="w-full transition-shadow duration-300 hover:shadow-lg">
-      <CardHeader className="items-center">
-        <CardTitle className="text-2xl font-bold">Ad Scale</CardTitle>
-        <CardDescription className="text-sm text-gray-500">
-          Number of active ad versions over time
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart
-            data={chartData}
-            margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
-          >
-            <XAxis
-              dataKey="date"
-              tickFormatter={formatXAxis}
-              interval="preserveStartEnd"
-              tickCount={5}
-              stroke={theme === "dark" ? "#888" : "#333"}
-            />
-            <YAxis
-              allowDecimals={false}
-              domain={[0, "dataMax + 1"]}
-              tickCount={5}
-              stroke={theme === "dark" ? "#888" : "#333"}
-            />
-            <Tooltip
-              labelFormatter={(label) => formatTooltipDate(label as string)}
-              contentStyle={{
-                backgroundColor:
-                  theme === "dark"
-                    ? "rgba(51, 51, 51, 0.8)"
-                    : "rgba(255, 255, 255, 0.8)",
-                border: "none",
-                borderRadius: "8px",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                backdropFilter: "blur(4px)",
-              }}
-              itemStyle={{
-                color: theme === "dark" ? "#fff" : "#333",
-              }}
-            />
-            <defs>
-              <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={chartColor} stopOpacity={0.8} />
-                <stop offset="100%" stopColor={chartColor} stopOpacity={0.1} />
-              </linearGradient>
-            </defs>
-            <Area
-              type="monotone"
-              dataKey="activeVersions"
-              stroke={chartColor}
-              fill="url(#colorGradient)"
-              strokeWidth={3}
-              dot={false}
-              activeDot={{
-                r: 6,
-                strokeWidth: 2,
-                stroke: theme === "dark" ? "#fff" : "#333",
-              }}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-        <div className="mt-6 text-center">
-          <p className="text-2xl font-bold">
-            Current Active Ad Versions:
-            <span className="ml-2 text-3xl text-indigo-600 dark:text-indigo-400">
+    <Card className="w-full">
+      <CardHeader className="flex-row items-center justify-between space-y-0 pb-4">
+        <div className="space-y-1.5">
+          <CardTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-xl font-bold text-transparent">
+            Ad Scale
+          </CardTitle>
+          <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+            Number of active ad versions over time
+          </CardDescription>
+        </div>
+        <div className="flex items-center rounded-full bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 px-4 py-2">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-2 w-2 rounded-full bg-[#6566F1]">
+              <div className="h-2 w-2 animate-ping rounded-full bg-[#6566F1]" />
+            </div>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Active Versions
+            </span>
+            <span className="text-lg font-bold text-[#6566F1] dark:text-[#B977F8]">
               {activeAdsCount}
             </span>
-          </p>
+          </div>
         </div>
-        <AnalyzeTrends
-          chartData={chartData}
-          periods={[7, 30, 0]} // Customize periods as needed // [7, 30, 0];  7 days, 30 days, all-time
-        />
+      </CardHeader>
+
+      <CardContent>
+        {/* Main Content Container */}
+        <div className="flex flex-row items-center gap-4">
+          {/* Chart Section */}
+          <div className="flex-1">
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart
+                data={chartData}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={formatXAxis}
+                  interval="preserveStartEnd"
+                  tickCount={5}
+                  stroke={theme === "dark" ? "#888" : "#333"}
+                  fontSize={12}
+                  dy={10}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  domain={[0, "dataMax + 1"]}
+                  tickCount={5}
+                  stroke={theme === "dark" ? "#888" : "#333"}
+                  fontSize={12}
+                  width={25}
+                />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke={theme === "dark" ? "#333" : "#eee"}
+                />
+                <Tooltip
+                  labelFormatter={(label) => formatTooltipDate(label as string)}
+                  contentStyle={{
+                    backgroundColor:
+                      theme === "dark"
+                        ? "rgba(51, 51, 51, 0.95)"
+                        : "rgba(255, 255, 255, 0.95)",
+                    border: "1px solid",
+                    borderColor:
+                      theme === "dark"
+                        ? "rgba(255, 255, 255, 0.1)"
+                        : "rgba(0, 0, 0, 0.1)",
+                    borderRadius: "8px",
+                    padding: "8px 12px",
+                    fontSize: "12px",
+                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                  }}
+                  itemStyle={{
+                    color: theme === "dark" ? "#fff" : "#333",
+                    fontSize: "12px",
+                    padding: "2px 0",
+                  }}
+                />
+                <defs>
+                  <linearGradient
+                    id="colorGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop offset="5%" stopColor="#6566F1" stopOpacity={0.6} />
+                    <stop offset="95%" stopColor="#B977F8" stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
+                <Area
+                  type="monotone"
+                  dataKey="activeVersions"
+                  stroke="#6566F1"
+                  strokeWidth={2}
+                  fill="url(#colorGradient)"
+                  dot={false}
+                  activeDot={{
+                    r: 4,
+                    strokeWidth: 2,
+                    stroke: theme === "dark" ? "#fff" : "#333",
+                    fill: "#6566F1",
+                  }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Trends Analysis Section */}
+          <div className="">
+            <AnalyzeTrends chartData={chartData} periods={[7, 30, 0]} />
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
