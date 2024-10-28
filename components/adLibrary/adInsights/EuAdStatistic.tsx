@@ -207,10 +207,12 @@ const ChartSection: React.FC<{ title: string; children: React.ReactNode }> = ({
   title,
   children,
 }) => (
-  <div className="space-y-2">
-    <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300">
+  <div className="space-y-1">
+    {/* <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300">
       {title}
-    </h4>
-    <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-700">{children}</div>
+    </h4> */}
+    <div className="rounded-lg bg-gray-50 p-0.5 dark:bg-gray-700">
+      {children}
+    </div>
   </div>
 );

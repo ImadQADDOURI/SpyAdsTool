@@ -111,10 +111,9 @@ Analyze ad. Return JSON:
   "long": [{"p": "phrase", "c": count}],
   "gender_target": ["Men"|"Women"|"All"],
   "age_target": ["min-max"],
-  "ad_categories": ["category"],
-  "target_audience": ["specific audience"],
+  "ad_categories": ["category keyword"],
+  "target_audience": ["audience keyword"],
   "estimated_budget": "Low"|"Medium"|"High",
-  "ad_objective": ["primary objective"],
   "marketing_strategies": ["Problem-Solving"|"Prestige"|"Emotional"|"Trends"|"Holidays"],
   "season_target": ["Spring"|"Summer"|"Autumn"|"Winter"],
   "competition": 0-100,
@@ -128,7 +127,11 @@ Rules:
 - Concise, accurate analysis
 Ad: "${parsedText}"
 `;
-
+  {
+    /*
+  "ad_objective": ["primary objective"],
+  */
+  }
   try {
     const result = await model.generateContent(prompt);
     const response = result.response;
