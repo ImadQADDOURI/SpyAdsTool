@@ -192,8 +192,8 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
               {/* Analytics Section with Controls */}
               <div className="rounded-lg border border-gray-200/30 dark:border-gray-700/30">
                 {/* Analytics Header */}
-                <div className="border-b border-gray-200/30 p-4 dark:border-gray-700/30">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="rounded-lg border bg-white px-2 py-1 dark:border-gray-700/30 dark:bg-gray-900">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     {/* Load More Controls */}
                     {!isComplete ? (
                       <Button

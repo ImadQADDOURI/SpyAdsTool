@@ -148,7 +148,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ ads }) => {
   const chartColor = theme === "dark" ? "#FF1493" : "#8B00FF";
 
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-white dark:bg-gray-900">
       <CardHeader className="flex-row items-center justify-between space-y-0 pb-4">
         <div className="space-y-1.5">
           <CardTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-xl font-bold text-transparent">
