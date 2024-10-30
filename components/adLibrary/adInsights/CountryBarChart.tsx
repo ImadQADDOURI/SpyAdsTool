@@ -37,24 +37,41 @@ interface CountryBarChartProps {
   data: CountryData[];
 }
 
-const chartConfig = {
-  male: {
-    label: "Male",
-    color: "hsl(210, 100%, 85%)",
-  },
-  female: {
-    label: "Female",
-    color: "hsl(330, 100%, 85%)",
-  },
-  unknown: {
-    label: "Unknown",
-    color: "hsl(270, 100%, 85%)",
-  },
-};
+interface TooltipProps {
+  active?: boolean;
+  payload?: any[];
+  label?: string;
+}
+
+interface LegendProps {
+  payload?: any[];
+}
 
 export const CountryBarChart: React.FC<CountryBarChartProps> = ({ data }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [hoveredBar, setHoveredBar] = useState<string | null>(null);
+
+  // Enhanced color scheme matching other charts
+  const chartConfig = {
+    male: {
+      label: "Male",
+      color: "#6366F1",
+      hoverColor: "#4F46E5",
+      fadeColor: "rgba(99, 102, 241, 0.3)",
+    },
+    female: {
+      label: "Female",
+      color: "#EC4899",
+      hoverColor: "#DB2777",
+      fadeColor: "rgba(236, 72, 153, 0.3)",
+    },
+    unknown: {
+      label: "Unknown",
+      color: "#A855F7",
+      hoverColor: "#9333EA",
+      fadeColor: "rgba(168, 85, 247, 0.3)",
+    },
+  };
 
   const filteredData = data
     .filter(
@@ -63,118 +80,181 @@ export const CountryBarChart: React.FC<CountryBarChartProps> = ({ data }) => {
         country.countryCode.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     .sort((a, b) => b.total - a.total)
-    .slice(0, 20); // Show top 20 countries
+    .slice(0, 20);
+
+  const CustomTooltipContent: React.FC<TooltipProps> = ({
+    active,
+    payload,
+  }) => {
+    if (!active || !payload?.length) return null;
+
+    const total = payload[0]?.payload.total || 0;
+    const countryLabel = payload[0]?.payload.countryLabel || "";
+    const countryCode = payload[0]?.payload.countryCode || "";
+
+    return (
+      <div className="overflow-hidden rounded-lg border border-gray-100 bg-white/95 shadow-lg dark:border-gray-800 dark:bg-gray-900/95">
+        {/* Tooltip Header */}
+        <div className="border-b border-gray-100 bg-gray-50/50 px-3 py-1.5 dark:border-gray-800 dark:bg-gray-800/50">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-medium text-gray-700 dark:text-gray-200">
+              {countryLabel}
+            </span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              ({countryCode})
+            </span>
+          </div>
+        </div>
+
+        {/* Tooltip Content */}
+        <div className="space-y-1 p-2">
+          {payload.map((item, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between gap-3"
+            >
+              <div className="flex items-center gap-1.5">
+                <div
+                  className="h-2 w-2 rounded-full"
+                  style={{ backgroundColor: chartConfig[item.name].color }}
+                />
+                <span className="text-xs text-gray-600 dark:text-gray-300">
+                  {chartConfig[item.name].label}
+                </span>
+              </div>
+              <span className="text-xs font-medium tabular-nums text-gray-900 dark:text-gray-100">
+                {item.value.toLocaleString()}
+              </span>
+            </div>
+          ))}
+
+          {/* Total */}
+          <div className="border-t border-gray-100 pt-1 dark:border-gray-800">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                Total
+              </span>
+              <span className="text-xs font-medium tabular-nums text-gray-900 dark:text-gray-100">
+                {total.toLocaleString()}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const CustomLegend: React.FC<LegendProps> = ({ payload }) => {
+    if (!payload) return null;
+
+    return (
+      <ul className="flex flex-wrap items-center justify-center gap-3 px-2 pb-1 pt-2 text-xs">
+        {payload.map((entry, index) => (
+          <li
+            key={index}
+            className="flex items-center gap-1.5 rounded-full bg-gray-50/50 px-2 py-0.5 dark:bg-gray-800/50"
+          >
+            <div
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: chartConfig[entry.dataKey].color }}
+            />
+            <span className="font-medium text-gray-700 dark:text-gray-200">
+              {chartConfig[entry.dataKey].label}
+            </span>
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
   return (
-    <Card className="flex w-full flex-col border-none bg-transparent shadow-none">
-      <CardHeader className="items-center">
-        <CardTitle>Audience by Country</CardTitle>
-        <CardDescription>
-          Distribution of audience across different countries (Top 20)
-        </CardDescription>
-      </CardHeader>
-      <Input
-        placeholder="Search countries..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="mb-2 mr-9 w-40 place-self-end"
-      />
-      <CardContent className="">
+    <div className="flex flex-col">
+      {/* Header with Search */}
+      <div className="flex items-center justify-between px-2 py-1.5">
+        <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400">
+          Country Distribution
+        </h4>
+        <div className="flex items-center gap-2">
+          <Input
+            type="search"
+            placeholder="Search countries..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="h-7 w-36 text-xs"
+          />
+          <span className="text-[10px] text-gray-400 dark:text-gray-500">
+            Top 20
+          </span>
+        </div>
+      </div>
+
+      {/* Chart Container */}
+      <div className="flex-1 px-1">
         <ChartContainer config={chartConfig}>
-          <ResponsiveContainer width="100%" height={450}>
-            <BarChart data={filteredData} layout="vertical">
-              <XAxis type="number" />
-              <YAxis dataKey="countryLabel" type="category" width={100} />
-              <Tooltip
-                content={
-                  <ChartTooltipContent
-                    formatter={(value, name, item) => (
-                      <>
-                        <div
-                          className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-[--color-bg]"
-                          style={
-                            {
-                              "--color-bg": chartConfig[name].color,
-                            } as React.CSSProperties
-                          }
-                        />
-                        {chartConfig[name].label}
-                        <div className="ml-auto font-mono font-medium tabular-nums text-foreground">
-                          {value.toLocaleString()}
-                        </div>
-                        {name === "unknown" && (
-                          <div className="mt-1.5 flex basis-full items-center border-t pt-1.5 text-xs font-medium text-foreground">
-                            Total
-                            <div className="ml-auto font-mono font-medium tabular-nums text-foreground">
-                              {item.payload.total.toLocaleString()}
-                            </div>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  />
-                }
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={filteredData}
+              layout="vertical"
+              margin={{ top: 0, right: 10, left: 0, bottom: 0 }}
+              barSize={16}
+            >
+              <XAxis
+                type="number"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                tick={{ fill: "#6B7280" }}
               />
-              <Legend />
-              <Bar
-                dataKey="male"
-                stackId="a"
-                fill={chartConfig.male.color}
-                onMouseEnter={() => setHoveredBar("male")}
-                onMouseLeave={() => setHoveredBar(null)}
-              >
-                {filteredData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={
-                      hoveredBar === "male" || hoveredBar === null
-                        ? chartConfig.male.color
-                        : "hsl(210, 100%, 95%)"
-                    }
-                  />
-                ))}
-              </Bar>
-              <Bar
-                dataKey="female"
-                stackId="a"
-                fill={chartConfig.female.color}
-                onMouseEnter={() => setHoveredBar("female")}
-                onMouseLeave={() => setHoveredBar(null)}
-              >
-                {filteredData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={
-                      hoveredBar === "female" || hoveredBar === null
-                        ? chartConfig.female.color
-                        : "hsl(330, 100%, 95%)"
-                    }
-                  />
-                ))}
-              </Bar>
-              <Bar
-                dataKey="unknown"
-                stackId="a"
-                fill={chartConfig.unknown.color}
-                onMouseEnter={() => setHoveredBar("unknown")}
-                onMouseLeave={() => setHoveredBar(null)}
-              >
-                {filteredData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={
-                      hoveredBar === "unknown" || hoveredBar === null
-                        ? chartConfig.unknown.color
-                        : "hsl(270, 100%, 95%)"
-                    }
-                  />
-                ))}
-              </Bar>
+              <YAxis
+                dataKey="countryLabel"
+                type="category"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                tick={{ fill: "#6B7280" }}
+                width={120}
+              />
+              <Tooltip
+                cursor={{
+                  fill: "currentColor",
+                  className: "text-gray-500/10 dark:text-gray-300/10",
+                }}
+                content={<CustomTooltipContent />}
+                wrapperStyle={{ outline: "none" }}
+              />
+              <Legend
+                content={<CustomLegend />}
+                verticalAlign="bottom"
+                height={32}
+              />
+              {/* Bars */}
+              {Object.entries(chartConfig).map(([key, config]) => (
+                <Bar
+                  key={key}
+                  dataKey={key}
+                  stackId="a"
+                  fill={config.color}
+                  onMouseEnter={() => setHoveredBar(key)}
+                  onMouseLeave={() => setHoveredBar(null)}
+                >
+                  {filteredData.map((_, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={
+                        hoveredBar === null || hoveredBar === key
+                          ? config.color
+                          : config.fadeColor
+                      }
+                      className="transition-colors duration-200"
+                    />
+                  ))}
+                </Bar>
+              ))}
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

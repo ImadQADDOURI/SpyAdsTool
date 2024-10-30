@@ -30,10 +30,11 @@ const GenderPieChart: React.FC<GenderPieChartProps> = ({
 }) => {
   const total = men + women + unknown;
 
+  // Enhanced color palette for better visibility in both themes
   const chartData = [
-    { gender: "Men", value: men, fill: "hsl(210, 100%, 85%)" }, // Light blue
-    { gender: "Women", value: women, fill: "hsl(330, 100%, 85%)" }, // Light pink
-    { gender: "Unknown", value: unknown, fill: "hsl(270, 100%, 85%)" }, // Light purple
+    { gender: "Men", value: men, fill: "#6366F1" }, // Indigo
+    { gender: "Women", value: women, fill: "#EC4899" }, // Pink
+    { gender: "Unknown", value: unknown, fill: "#A855F7" }, // Purple
   ];
 
   const chartConfig: ChartConfig = {
@@ -42,31 +43,36 @@ const GenderPieChart: React.FC<GenderPieChartProps> = ({
     },
     Men: {
       label: "Men",
-      color: "hsl(210, 100%, 85%)",
+      color: "#6366F1",
     },
     Women: {
       label: "Women",
-      color: "hsl(330, 100%, 85%)",
+      color: "#EC4899",
     },
     Unknown: {
       label: "Unknown",
-      color: "hsl(270, 100%, 85%)",
+      color: "#A855F7",
     },
   };
 
   const CustomLegendContent = ({ payload }: { payload?: Array<any> }) => {
     if (!payload) return null;
     return (
-      <ul className="flex flex-wrap justify-center gap-4">
+      <ul className="flex flex-wrap items-center justify-center gap-3 text-xs">
         {payload.map((entry, index) => (
-          <li key={`item-${index}`} className="flex items-center">
+          <li
+            key={`item-${index}`}
+            className="flex items-center whitespace-nowrap"
+          >
             <span
-              className="mr-2 inline-block h-3 w-3 rounded-full"
+              className="mr-1.5 inline-block h-2 w-2 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
-            <span className="mr-1">{entry.value}</span>
-            <span className="text-muted-foreground">
-              ({entry.payload.value})
+            <span className="font-medium text-gray-700 dark:text-gray-200">
+              {entry.value}
+            </span>
+            <span className="ml-1 text-gray-500 dark:text-gray-400">
+              ({((entry.payload.value / total) * 100).toFixed(1)}%)
             </span>
           </li>
         ))}
@@ -75,41 +81,49 @@ const GenderPieChart: React.FC<GenderPieChartProps> = ({
   };
 
   return (
-    <Card className="flex flex-col border-none bg-transparent shadow-none">
-      <CardHeader className="items-center pb-0">
-        <CardTitle className=" pb-0">Gender Distribution</CardTitle>
-        {/* <CardDescription>Total: {total}</CardDescription> */}
-      </CardHeader>
-      <CardContent className="m-0 flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[300px]"
-        >
+    <div className="flex flex-col">
+      {/* Compact Header */}
+      <div className="px-2 py-1.5">
+        <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400">
+          Gender Distribution
+        </h4>
+      </div>
+
+      {/* Maximized Chart Area */}
+      <div className="flex-1">
+        <ChartContainer config={chartConfig}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    hideLabel
+                    className="rounded-lg border border-gray-100 bg-white/95 p-2 shadow-lg dark:border-gray-800 dark:bg-gray-900/95"
+                  />
+                }
+              />
               <Pie
-                className="m-0"
                 data={chartData}
                 dataKey="value"
                 nameKey="gender"
                 cx="50%"
                 cy="50%"
-                innerRadius={50}
-                outerRadius={80}
-                paddingAngle={3}
+                innerRadius="45%"
+                outerRadius="80%"
+                paddingAngle={2}
                 labelLine={false}
-                label={({ name, percent, gender }) =>
-                  `${(percent * 100).toFixed(0)}%`
-                }
+                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
               >
                 {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={entry.fill}
+                    className="stroke-white stroke-2 dark:stroke-gray-900"
+                  />
                 ))}
 
                 <Label
                   content={({ viewBox }) => {
-                    // Type assertion for viewBox
                     const { cx, cy } = viewBox as { cx: number; cy: number };
                     return (
                       <text
@@ -122,18 +136,18 @@ const GenderPieChart: React.FC<GenderPieChartProps> = ({
                           x={cx}
                           y={cy}
                           dy="-0.5em"
-                          fontSize="24"
+                          fontSize="20"
                           fontWeight="bold"
-                          className="fill-gray-700 dark:fill-gray-100"
+                          className="fill-gray-900 dark:fill-gray-100"
                         >
-                          {total}
+                          {total.toLocaleString()}
                         </tspan>
                         <tspan
                           x={cx}
                           y={cy}
                           dy="1.5em"
-                          fontSize="12"
-                          className="fill-gray-700 dark:fill-gray-100"
+                          fontSize="10"
+                          className="fill-gray-500 dark:fill-gray-400"
                         >
                           Total
                         </tspan>
@@ -142,19 +156,17 @@ const GenderPieChart: React.FC<GenderPieChartProps> = ({
                   }}
                 />
               </Pie>
-              {/* <ChartLegend
-                content={<ChartLegendContent nameKey="gender" />}
-                className="-translate-y-6 flex-wrap gap-1 [&>*]:basis-1/3 [&>*]:justify-center"
-              /> */}
+              {/* Compact Legend */}
               <ChartLegend
                 content={<CustomLegendContent />}
-                className="flex w-full -translate-y-6 justify-center"
+                verticalAlign="bottom"
+                height={24}
               />
             </PieChart>
           </ResponsiveContainer>
         </ChartContainer>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

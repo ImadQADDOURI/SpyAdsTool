@@ -27,7 +27,7 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
   if (error) {
     return (
       <div
-        className="rounded-lg bg-red-100 p-4 text-red-700 dark:bg-red-900 dark:text-red-300"
+        className="rounded-lg bg-red-100/80 p-3 text-red-700 dark:bg-red-900/80 dark:text-red-300"
         role="alert"
       >
         <p className="font-bold">Error</p>
@@ -40,7 +40,7 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
 
   if (!aaaInfo) {
     return (
-      <div className="rounded-lg bg-gray-100 p-4 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+      <div className="rounded-lg bg-gray-100/50 p-3 text-gray-700 dark:bg-gray-800/50 dark:text-gray-300">
         No Statistics available.
       </div>
     );
@@ -141,15 +141,22 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
   }));
 
   return (
-    <div className="space-y-6 rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          European Union Statistics
-        </h3>
-        <Info className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+    <div className="rounded-lg bg-white dark:bg-gray-900">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-gray-100 p-3 dark:border-gray-700">
+        <div className="space-y-1">
+          <h3 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-lg font-semibold text-transparent">
+            European Union Statistics
+          </h3>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Detailed audience insights and regional distribution
+          </p>
+        </div>
+        <Info className="h-4 w-4 text-gray-400 dark:text-gray-500" />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-3 gap-2 p-2">
         <StatCard
           title="Gender Audience"
           value={gender_audience || "Not specified"}
@@ -168,22 +175,23 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
         />
       </div>
 
-      <div className="space-y-6">
-        <ChartSection title="Gender Distribution">
+      {/* Charts Section */}
+      <div className="space-y-2 p-2">
+        <div className="overflow-hidden rounded-md border border-gray-100/50 bg-gray-50/50 dark:border-gray-700/50 dark:bg-gray-700/50">
           <GenderPieChart
             men={totalMale}
             women={totalFemale}
             unknown={totalUnknown}
           />
-        </ChartSection>
+        </div>
 
-        <ChartSection title="Age Distribution">
+        <div className="overflow-hidden rounded-md border border-gray-100/50 bg-gray-50/50 dark:border-gray-700/50 dark:bg-gray-700/50">
           <AgeBarChart data={ageBarChartData} />
-        </ChartSection>
+        </div>
 
-        <ChartSection title="Country Distribution">
+        <div className="overflow-hidden rounded-md border border-gray-100/50 bg-gray-50/50 dark:border-gray-700/50 dark:bg-gray-700/50">
           <CountryBarChart data={countryBarChartData} />
-        </ChartSection>
+        </div>
       </div>
     </div>
   );
@@ -193,26 +201,12 @@ const StatCard: React.FC<{ title: string; value: string | number }> = ({
   title,
   value,
 }) => (
-  <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-700">
-    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+  <div className="rounded-md bg-gray-50/50 p-2 dark:bg-gray-700/50">
+    <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
       {title}
-    </h4>
-    <p className="mt-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
+    </p>
+    <p className="mt-1 truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
       {value}
     </p>
-  </div>
-);
-
-const ChartSection: React.FC<{ title: string; children: React.ReactNode }> = ({
-  title,
-  children,
-}) => (
-  <div className="space-y-1">
-    {/* <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300">
-      {title}
-    </h4> */}
-    <div className="rounded-lg bg-gray-50 p-0.5 dark:bg-gray-700">
-      {children}
-    </div>
   </div>
 );

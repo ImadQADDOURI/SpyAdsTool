@@ -132,25 +132,26 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
     <div className="space-y-4 rounded-lg bg-white p-4 dark:bg-gray-900">
       <div className="space-y-3 rounded-lg">
         <div className="flex items-center justify-between">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h3 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-lg font-semibold text-transparent">
             AI-Powered Ad Insights
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                </TooltipTrigger>
-                <TooltipContent
-                  side="top"
-                  align="center"
-                  className="max-w-xs p-2"
-                >
-                  <p className="text-xs">
-                    AI-generated insights from ad content analysis
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
           </h3>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                align="center"
+                className="max-w-xs p-2"
+              >
+                <p className="text-xs">
+                  AI-generated insights from ad content analysis
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         {/* First Row of Insights */}

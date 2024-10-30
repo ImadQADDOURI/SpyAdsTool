@@ -179,7 +179,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
         {/* Main Container */}
         <div className="flex min-h-[calc(90vh-6rem)] flex-col gap-1 lg:h-[calc(90vh-6rem)] lg:flex-row lg:overflow-hidden">
           {/* Left Panel */}
-          <div className="w-full lg:w-1/3 lg:overflow-y-auto">
+          <div className="w-full pr-1 lg:w-1/3 lg:overflow-y-auto">
             <div className="space-y-1">
               <AdCard ad={ad} />
               <AdCreativeGenerator ad={ad} />
