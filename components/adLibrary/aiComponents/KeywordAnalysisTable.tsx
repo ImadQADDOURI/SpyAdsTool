@@ -129,31 +129,25 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
   );
 
   return (
-    <div className="space-y-4 rounded-lg bg-white p-4 dark:bg-gray-900">
-      <div className="space-y-3 rounded-lg">
-        <div className="flex items-center justify-between">
-          <h3 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-lg font-semibold text-transparent">
-            AI-Powered Ad Insights
-          </h3>
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Info className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-              </TooltipTrigger>
-              <TooltipContent
-                side="top"
-                align="center"
-                className="max-w-xs p-2"
-              >
-                <p className="text-xs">
-                  AI-generated insights from ad content analysis
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-
+    <div className="space-y-2 rounded-lg bg-white px-2 dark:bg-gray-900">
+      <div className="flex items-center justify-between border-b border-gray-100 py-2 dark:border-gray-700">
+        <h3 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-lg font-semibold text-transparent">
+          AI-Powered Ad Insights
+        </h3>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+            </TooltipTrigger>
+            <TooltipContent side="top" align="center" className="max-w-xs p-2">
+              <p className="text-xs">
+                AI-generated insights from ad content analysis
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      <div className="space-y-2 rounded-lg">
         {/* First Row of Insights */}
         <div className="flex flex-wrap gap-1">
           <InsightItem label="Gender" value={data.genderTarget} />

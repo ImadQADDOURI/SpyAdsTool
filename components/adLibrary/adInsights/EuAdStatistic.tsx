@@ -3,6 +3,12 @@ import React from "react";
 import { countryCodesAlpha2Flag } from "@/utils/countryCodesAlpha2Flag";
 import { Info, Loader2 } from "lucide-react";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import AgeBarChart from "@/components/adLibrary/adInsights/AgeBarChart";
 import CountryBarChart from "@/components/adLibrary/adInsights/CountryBarChart";
 import GenderPieChart from "@/components/adLibrary/adInsights/GenderPieChart";
@@ -143,16 +149,22 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
   return (
     <div className="rounded-lg bg-white dark:bg-gray-900">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-100 p-3 dark:border-gray-700">
-        <div className="space-y-1">
-          <h3 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-lg font-semibold text-transparent">
-            European Union Statistics
-          </h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Detailed audience insights and regional distribution
-          </p>
-        </div>
-        <Info className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+      <div className="flex items-center justify-between border-b border-gray-100 p-2 dark:border-gray-700">
+        <h3 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-lg font-semibold text-transparent">
+          European Union Statistics
+        </h3>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+            </TooltipTrigger>
+            <TooltipContent side="top" align="center" className="max-w-xs p-2">
+              <p className="text-xs">
+                Detailed audience insights and regional distribution
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       {/* Stats Grid */}
