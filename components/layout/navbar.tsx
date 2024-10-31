@@ -17,6 +17,8 @@ import { ModalContext } from "@/components/modals/providers";
 import { Icons } from "@/components/shared/icons";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 
+import { ModeToggle } from "./mode-toggle";
+
 interface NavBarProps {
   scroll?: boolean;
   large?: boolean;
@@ -99,29 +101,31 @@ export function NavBar({ scroll = false }: NavBarProps) {
               </div>
             </div>
           ) : null}
-
-          {session ? (
-            <Link
-              href={session.user.role === "ADMIN" ? "/admin" : "/dashboard"}
-              className="hidden md:block"
-            >
-              <Button className="gap-2 px-5" variant="default" size="sm">
-                <span>Dashboard</span>
+          <div className="flex items-center gap-3">
+            <ModeToggle />
+            {session ? (
+              <Link
+                href={session.user.role === "ADMIN" ? "/admin" : "/dashboard"}
+                className="hidden md:block"
+              >
+                <Button className="gap-2 px-5" variant="default" size="sm">
+                  <span>Dashboard</span>
+                </Button>
+              </Link>
+            ) : status === "unauthenticated" ? (
+              <Button
+                className="hidden gap-2 px-5 md:flex"
+                variant="default"
+                size="sm"
+                onClick={() => setShowSignInModal(true)}
+              >
+                <span>Sign In</span>
+                <Icons.arrowRight className="size-4" />
               </Button>
-            </Link>
-          ) : status === "unauthenticated" ? (
-            <Button
-              className="hidden gap-2 px-5 md:flex"
-              variant="default"
-              size="sm"
-              onClick={() => setShowSignInModal(true)}
-            >
-              <span>Sign In</span>
-              <Icons.arrowRight className="size-4" />
-            </Button>
-          ) : (
-            <Skeleton className="hidden h-9 w-28 rounded-full lg:flex" />
-          )}
+            ) : (
+              <Skeleton className="hidden h-9 w-28 rounded-full lg:flex" />
+            )}
+          </div>
         </div>
       </MaxWidthWrapper>
     </header>
