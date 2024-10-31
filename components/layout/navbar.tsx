@@ -102,7 +102,9 @@ export function NavBar({ scroll = false }: NavBarProps) {
             </div>
           ) : null}
           <div className="flex items-center gap-3">
-            <ModeToggle />
+            <div className="hidden md:block">
+              <ModeToggle />
+            </div>
             {session ? (
               <Link
                 href={session.user.role === "ADMIN" ? "/admin" : "/dashboard"}
