@@ -91,7 +91,7 @@ export function CollectionDetails({ collectionId }: CollectionDetailsProps) {
         </div>
       </FirefliesWrapper>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="mx-auto px-4 py-8">
         <AdCardGrid
           ads={collection.savedAds.map((savedAd: any) => savedAd.adData)}
         />

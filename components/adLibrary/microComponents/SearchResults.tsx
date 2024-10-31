@@ -28,7 +28,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   handleLoadMore,
 }) => {
   return (
-    <div className="container mx-auto p-4">
+    <div className="mx-auto p-4">
       {/* Initial Loading indicator */}
       {isLoading && <Loading size="large" />}
 
