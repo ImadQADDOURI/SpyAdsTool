@@ -160,6 +160,7 @@ const FilterActions: React.FC<{
     </Button>
   </div>
 ));
+FilterActions.displayName = "FilterActions";
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({
   onSearch,
@@ -192,8 +193,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     setFilterStates((prev) => ({ ...prev, [key]: value }));
   }, []);
 
-  const FilterTrigger = useMemo(
-    () => () => (
+  const FilterTrigger = useMemo(() => {
+    const TriggerComponent: React.FC = () => (
       <Button
         aria-label="Open Search Filters"
         className="relative h-9 rounded-full bg-white/60 px-3 text-gray-700 transition-all duration-300 hover:bg-white/80 hover:shadow-md dark:bg-gray-900/60 dark:text-gray-200 dark:hover:bg-gray-900/80"
@@ -211,12 +212,13 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           )}
         </div>
       </Button>
-    ),
-    [countAppliedFilters],
-  );
+    );
+    TriggerComponent.displayName = "FilterTrigger";
+    return TriggerComponent;
+  }, [countAppliedFilters]);
 
-  const FilterContent = useMemo(
-    () => () => (
+  const FilterContent = useMemo(() => {
+    const ContentComponent: React.FC = () => (
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {filterComponents.map(({ key, component: Component, label, icon }) => (
           <div key={key} className="flex flex-col space-y-2">
@@ -237,9 +239,10 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           </div>
         ))}
       </div>
-    ),
-    [filterStates, updateFilterState],
-  );
+    );
+    ContentComponent.displayName = "FilterContent";
+    return ContentComponent;
+  }, [filterStates, updateFilterState]);
 
   if (variant === "full") {
     return (
@@ -290,4 +293,5 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   );
 };
 
+FilterPanel.displayName = "FilterPanel";
 export default React.memo(FilterPanel);
