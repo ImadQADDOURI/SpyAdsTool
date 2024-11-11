@@ -42,7 +42,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       )}
 
       {totalCount !== null && (
-        <div className="mb-6 text-center">
+        <div className="my-4 text-center">
           <span
             className="inline-block rounded-full bg-purple-100 px-6 py-3 text-lg font-bold text-purple-800 shadow-md dark:bg-purple-900 dark:text-purple-200"
             aria-live="polite"

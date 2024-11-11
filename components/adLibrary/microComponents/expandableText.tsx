@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import parse from "html-react-parser";
-import { Check, Copy, MoreHorizontal } from "lucide-react";
+import { Check, ChevronDown, Copy, MoreHorizontal } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -104,7 +104,7 @@ const ExpandableText: React.FC<ExpandableTextProps> = ({
               )}
               aria-label="Show more text"
             >
-              <MoreHorizontal className="h-5 w-5" />
+              <ChevronDown className="h-5 w-5" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-80 rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-gray-800">

@@ -36,19 +36,19 @@ const PageNameWithHoverCard: React.FC<PageNameWithHoverCardProps> = ({
   return (
     <HoverCard openDelay={300} closeDelay={200}>
       <HoverCardTrigger asChild>
-        <button className="duration-50 group flex items-center space-x-2 rounded-full pr-2 transition-all ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500">
+        <button className="duration-50 group flex min-w-0 items-center space-x-2 rounded-full pr-2 transition-all ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500">
           {page_profile_picture_url ? (
             <Image
               src={page_profile_picture_url}
               alt={page_name || "Page profile"}
               width={32}
               height={32}
-              className="rounded-full border border-gray-200 transition-transform duration-200 group-hover:scale-110 dark:border-gray-700"
+              className="shrink-0 rounded-full border border-gray-200 transition-transform duration-200 group-hover:scale-110 dark:border-gray-700"
             />
           ) : (
-            <Skeleton className="h-6 w-6 rounded-full" />
+            <Skeleton className="h-8 w-8 shrink-0 rounded-full" />
           )}
-          <span className="font-medium text-gray-800 transition-colors duration-200 group-hover:text-purple-600 dark:text-gray-200 dark:group-hover:text-purple-400">
+          <span className="min-w-0 flex-1 truncate font-medium text-gray-800 transition-colors duration-200 group-hover:text-purple-600 dark:text-gray-200 dark:group-hover:text-purple-400">
             {page_name || "Unknown Page"}
           </span>
         </button>

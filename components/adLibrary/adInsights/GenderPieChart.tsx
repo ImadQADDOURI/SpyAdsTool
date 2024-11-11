@@ -149,7 +149,7 @@ const GenderPieChart: React.FC<GenderPieChartProps> = ({
                           fontSize="10"
                           className="fill-gray-500 dark:fill-gray-400"
                         >
-                          Total
+                          Total Reach
                         </tspan>
                       </text>
                     );

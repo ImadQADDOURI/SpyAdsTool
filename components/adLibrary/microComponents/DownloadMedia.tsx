@@ -45,9 +45,9 @@ const DownloadMedia: React.FC<DownloadMediaProps> = ({ item }) => {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 border border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 pl-2 pr-3 text-xs font-medium hover:from-purple-100 hover:to-pink-100 dark:border-purple-700 dark:from-purple-900 dark:to-pink-900 dark:hover:from-purple-800 dark:hover:to-pink-800"
+                className="h-8 border border-indigo-200 bg-gradient-to-r from-indigo-50/80 to-indigo-100/80 pl-2 pr-3 text-xs font-medium transition-colors duration-200 hover:from-indigo-100/90 hover:to-indigo-200/90 dark:border-indigo-700 dark:from-indigo-900/50 dark:to-indigo-800/50 dark:hover:from-indigo-800/60 dark:hover:to-indigo-700/60"
               >
-                <DownloadCloud className="mr-1 h-4 w-4 text-purple-500 dark:text-purple-400" />
+                <DownloadCloud className="mr-1 h-4 w-4 text-indigo-500 dark:text-indigo-400" />
                 Media
               </Button>
             </DropdownMenuTrigger>

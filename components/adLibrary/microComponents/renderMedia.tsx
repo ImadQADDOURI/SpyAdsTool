@@ -92,9 +92,10 @@ export const RenderMedia: React.FC<RenderMediaProps> = ({ snapshot }) => {
                 <ExpandableText
                   text={item.caption || snapshot.caption || ""}
                   maxLength={33}
-                  className="text-xs font-semibold text-gray-800 dark:text-gray-200"
+                  className="text-xs font-medium text-indigo-600 transition-colors duration-200 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
                   singleLine={true}
                 />
+
                 <ExpandableText
                   text={item.title || snapshot.title || ""}
                   maxLength={33}

@@ -15,7 +15,7 @@ import * as puppeteer from "puppeteer";
 const DEFAULT_SETTINGS = {
   USER_AGENT:
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-  BROWSER_HEADLESS: true,
+  BROWSER_HEADLESS: false,
   INITIAL_WAIT: 1000, // 1 second
   MAX_TOTAL_TIME: 5000, // 5 seconds
   SCROLL_INTERVAL: 50, // 50 ms for faster scrolling

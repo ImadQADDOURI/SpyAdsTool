@@ -161,18 +161,19 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
         {trigger || (
           <Button
             variant="outline"
-            className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-md border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#6566F1]/30 hover:text-[#6566F1] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-[#B977F8]/30 dark:hover:text-[#B977F8]"
+            className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-md border-2 border-[#6566F1]/30 bg-gradient-to-r from-[#6566F1]/15 to-[#B977F8]/15 px-4 py-2.5 text-sm font-medium text-gray-700 shadow-md transition-all duration-300 hover:border-[#6566F1]/50 hover:from-[#6566F1]/25 hover:to-[#B977F8]/25 hover:shadow-lg hover:shadow-[#6566F1]/10 dark:border-[#6566F1]/30 dark:bg-gradient-to-r dark:from-[#6566F1]/20 dark:to-[#B977F8]/20 dark:text-gray-200 dark:hover:border-[#B977F8]/50 dark:hover:from-[#6566F1]/30 dark:hover:to-[#B977F8]/30 dark:hover:shadow-[#B977F8]/20"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            <Info className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-            <span>View Details</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <BarChart3 className="h-4.5 w-4.5 text-[#6566F1] transition-transform duration-300 group-hover:scale-110 dark:text-[#8485FF]" />
+            <span className="relative font-medium">View Analytics</span>
+            <ChevronRight className="h-4 w-4 text-[#6566F1]/70 transition-transform duration-300 group-hover:translate-x-0.5 dark:text-[#8485FF]/70" />
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="max-h-[95vh] max-w-[95vw] overflow-y-auto bg-gray-100/20 dark:bg-gray-800/20 lg:overflow-hidden">
         <DialogHeader>
           <DialogTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-2xl font-bold text-transparent">
-            Ad Details
+            Ad Analytics
           </DialogTitle>
         </DialogHeader>
 
@@ -181,8 +182,8 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
           {/* Left Panel */}
           <div className="w-full px-1 py-2 lg:w-1/3 lg:overflow-y-auto">
             <div className="space-y-1">
-              <AdCard ad={ad} />
               <AdCreativeGenerator ad={ad} />
+              <AdCard ad={ad} />
             </div>
           </div>
 

@@ -44,12 +44,12 @@ const AnalyzeTrends: React.FC<AnalyzeTrendsProps> = ({
   }, [chartData, periods]);
 
   return (
-    <div className="flex w-[80px] flex-col justify-end gap-1">
+    <div className="flex w-[85px] flex-col justify-end gap-1">
       {trendAnalyses.map(({ period, analysis }) => (
         <TooltipProvider key={period}>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
-              <div className="group flex cursor-default flex-col items-center rounded-lg bg-gradient-to-r from-[#6566F1]/5 to-[#B977F8]/5 p-1 transition-colors hover:from-[#6566F1]/10 hover:to-[#B977F8]/10">
+              <div className="group flex cursor-default flex-col items-center rounded-lg bg-gradient-to-r from-[#6566F1]/5 to-[#B977F8]/5 p-2 transition-colors hover:from-[#6566F1]/10 hover:to-[#B977F8]/10">
                 {/* Period */}
                 <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   {period}
@@ -64,12 +64,11 @@ const AnalyzeTrends: React.FC<AnalyzeTrendsProps> = ({
                   />
                 </div>
 
-                {/* Change Percentage */}
+                {/* Trend Full Name instead of Change Percentage */}
                 <span
-                  className={`text-sm font-semibold ${getTrendColor(analysis.trend)}`}
+                  className={`text-xs font-semibold ${getTrendColor(analysis.trend)} truncate`}
                 >
-                  {analysis.changePercentage > 0 ? "+" : ""}
-                  {analysis.changePercentage.toFixed(1)}%
+                  {getTrendFullName(analysis.trend)}
                 </span>
               </div>
             </TooltipTrigger>
@@ -78,11 +77,12 @@ const AnalyzeTrends: React.FC<AnalyzeTrendsProps> = ({
                 {period === "All" ? "All Time" : `Last ${period} Days`}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm">Trend:</span>
+                <span className="text-sm">Change:</span>
                 <span
                   className={`text-sm font-semibold ${getTrendColor(analysis.trend)}`}
                 >
-                  {getTrendFullName(analysis.trend)}
+                  {analysis.changePercentage > 0 ? "+" : ""}
+                  {analysis.changePercentage.toFixed(1)}%
                 </span>
               </div>
             </TooltipContent>

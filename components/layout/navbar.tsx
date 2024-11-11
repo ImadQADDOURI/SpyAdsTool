@@ -1,9 +1,10 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { LayoutDashboard, Lock, LogOut, Settings } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 
 import { docsConfig } from "@/config/docs";
 import { marketingConfig } from "@/config/marketing";
@@ -11,11 +12,19 @@ import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { useScroll } from "@/hooks/use-scroll";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DocsSearch } from "@/components/docs/search";
 import { ModalContext } from "@/components/modals/providers";
 import { Icons } from "@/components/shared/icons";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
+import { UserAvatar } from "@/components/shared/user-avatar";
 
 import { ModeToggle } from "./mode-toggle";
 
@@ -28,6 +37,7 @@ export function NavBar({ scroll = false }: NavBarProps) {
   const scrolled = useScroll(50);
   const { data: session, status } = useSession();
   const { setShowSignInModal } = useContext(ModalContext);
+  const [open, setOpen] = useState(false);
 
   const selectedLayout = useSelectedLayoutSegment();
   const documentation = selectedLayout === "docs";
@@ -41,14 +51,11 @@ export function NavBar({ scroll = false }: NavBarProps) {
 
   return (
     <header
-      className={`sticky top-0 z-40 flex w-full justify-center bg-background/60 backdrop-blur-xl transition-all ${
+      className={`sticky top-0 z-40 w-full bg-background/60 backdrop-blur-xl transition-all ${
         scroll ? (scrolled ? "border-b" : "bg-transparent") : "border-b"
       }`}
     >
-      <MaxWidthWrapper
-        className="flex h-14 items-center justify-between py-4"
-        large={documentation}
-      >
+      <div className="flex h-14 items-center justify-between px-4 md:px-6">
         <div className="flex gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-1.5">
             <Icons.logo />
@@ -57,7 +64,7 @@ export function NavBar({ scroll = false }: NavBarProps) {
             </span>
           </Link>
 
-          {links && links.length > 0 ? (
+          {links?.length > 0 ? (
             <nav className="hidden gap-6 md:flex">
               {links.map((item, index) => (
                 <Link
@@ -80,7 +87,6 @@ export function NavBar({ scroll = false }: NavBarProps) {
         </div>
 
         <div className="flex items-center space-x-3">
-          {/* right header for docs */}
           {documentation ? (
             <div className="hidden flex-1 items-center space-x-4 sm:justify-end lg:flex">
               <div className="hidden lg:flex lg:grow-0">
@@ -106,14 +112,81 @@ export function NavBar({ scroll = false }: NavBarProps) {
               <ModeToggle />
             </div>
             {session ? (
-              <Link
-                href={session.user.role === "ADMIN" ? "/admin" : "/dashboard"}
-                className="hidden md:block"
-              >
-                <Button className="gap-2 px-5" variant="default" size="sm">
-                  <span>Dashboard</span>
-                </Button>
-              </Link>
+              <div className="hidden md:block">
+                <DropdownMenu open={open} onOpenChange={setOpen}>
+                  <DropdownMenuTrigger className="focus:outline-none">
+                    <UserAvatar
+                      user={{
+                        name: session.user.name || null,
+                        image: session.user.image || null,
+                      }}
+                      className="size-8 border transition-colors hover:border-primary"
+                    />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[200px]">
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="flex flex-col space-y-1 leading-none">
+                        {session.user.name && (
+                          <p className="font-medium">{session.user.name}</p>
+                        )}
+                        {session.user.email && (
+                          <p className="w-[180px] truncate text-sm text-muted-foreground">
+                            {session.user.email}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <DropdownMenuSeparator />
+
+                    {session.user.role === "ADMIN" ? (
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/admin"
+                          className="flex items-center space-x-2.5"
+                        >
+                          <Lock className="size-4" />
+                          <p className="text-sm">Admin</p>
+                        </Link>
+                      </DropdownMenuItem>
+                    ) : null}
+
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center space-x-2.5"
+                      >
+                        <LayoutDashboard className="size-4" />
+                        <p className="text-sm">Dashboard</p>
+                      </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/dashboard/settings"
+                        className="flex items-center space-x-2.5"
+                      >
+                        <Settings className="size-4" />
+                        <p className="text-sm">Settings</p>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onSelect={(event) => {
+                        event.preventDefault();
+                        signOut({
+                          callbackUrl: `${window.location.origin}/`,
+                        });
+                      }}
+                    >
+                      <div className="flex items-center space-x-2.5">
+                        <LogOut className="size-4" />
+                        <p className="text-sm">Log out</p>
+                      </div>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ) : status === "unauthenticated" ? (
               <Button
                 className="hidden gap-2 px-5 md:flex"
@@ -125,11 +198,11 @@ export function NavBar({ scroll = false }: NavBarProps) {
                 <Icons.arrowRight className="size-4" />
               </Button>
             ) : (
-              <Skeleton className="hidden h-9 w-28 rounded-full lg:flex" />
+              <Skeleton className="hidden h-8 w-8 rounded-full lg:flex" />
             )}
           </div>
         </div>
-      </MaxWidthWrapper>
+      </div>
     </header>
   );
 }

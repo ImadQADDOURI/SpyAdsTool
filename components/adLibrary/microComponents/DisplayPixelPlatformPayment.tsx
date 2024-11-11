@@ -17,7 +17,11 @@ import {
   FileWarning,
   Info,
   Layers,
+  Link2Off,
+  Radar,
   Radio,
+  ScanSearch,
+  ShieldAlert,
   XCircle,
 } from "lucide-react";
 
@@ -224,11 +228,11 @@ export default function DisplayPixelPlatformPayment({
 
   const getAnalyzeIcon = () => {
     if (!url) {
-      return <FileWarning className="h-8 w-8 text-gray-400" />;
+      return <Link2Off className="h-8 w-8 text-gray-400" />;
     } else if (isNonTrackableWebsite(url)) {
-      return <Info className="h-8 w-8 text-yellow-400" />;
+      return <ShieldAlert className="h-8 w-8 text-gray-400" />;
     } else {
-      return <FileScan className="h-8 w-8 text-purple-500" />;
+      return <ScanSearch className="h-8 w-8 text-purple-500" />;
     }
   };
 
@@ -250,7 +254,7 @@ export default function DisplayPixelPlatformPayment({
       }
       className={`flex items-center justify-between rounded-lg px-0 py-0.5 transition-all duration-300 ${getComponentStyle()}`}
     >
-      <div className="flex flex-1 flex-col space-y-1 pl-1">
+      <div className="flex flex-1 flex-col space-y-0 pl-1">
         {renderCategoryIcons("pixels", <Radio className="h-5 w-5" />, "Pixel")}
         {renderCategoryIcons(
           "platforms",
