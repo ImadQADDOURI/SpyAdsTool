@@ -68,7 +68,7 @@ export const defaultParams = {
   fb_api_caller_class: "RelayModern",
   fb_api_req_friendly_name: "AdLibrarySearchPaginationQuery",
   variables:
-    '{"activeStatus":"ALL","adType":"ALL","bylines":[],"collationToken":"3b383199-512f-4fd2-832c-5826ec2f467e","contentLanguages":[],"countries":["ALL"],"cursor":"AQHRwY6hlHeo0QkzqWpB_AsoodbcYJe5MKlTVQlMneu0gd1WyBd2lWbgFB7k2MPzxPh4","excludedIDs":[],"first":30,"location":null,"mediaType":"ALL","pageIDs":[],"potentialReachInput":[],"publisherPlatforms":[],"queryString":"cat","regions":[],"searchType":"KEYWORD_UNORDERED","sessionID":"7cc4cfcd-17fd-48b7-934d-df89d7a469f8","sortData":null,"source":"FB_LOGO","startDate":null,"v":"7218b1","viewAllPageID":"0"}',
+    '{"activeStatus":"ACTIVE","adType":"ALL","bylines":[],"collationToken":"3b383199-512f-4fd2-832c-5826ec2f467e","contentLanguages":[],"countries":["ALL"],"cursor":"AQHRwY6hlHeo0QkzqWpB_AsoodbcYJe5MKlTVQlMneu0gd1WyBd2lWbgFB7k2MPzxPh4","excludedIDs":[],"first":30,"location":null,"mediaType":"ALL","pageIDs":[],"potentialReachInput":[],"publisherPlatforms":[],"queryString":"cat","regions":[],"searchType":"KEYWORD_UNORDERED","sessionID":"7cc4cfcd-17fd-48b7-934d-df89d7a469f8","sortData":null,"source":"FB_LOGO","startDate":null,"v":"7218b1","viewAllPageID":"0"}',
   server_timestamps: "true",
   doc_id: "8903998899629704",
 };

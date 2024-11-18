@@ -28,7 +28,7 @@ export const getAdSearchVariables = (
   }
 
   return {
-    activeStatus: getParam("active_status", "ALL"),
+    activeStatus: getParam("active_status", "ACTIVE"),
     adType: getParam("ad_type", "ALL"),
     bylines: [],
     collationToken: null,
@@ -63,7 +63,7 @@ export const getAdSearchVariables = (
 
 export const getAdLibraryMobileVariables = (pageId: string) => {
   return {
-    activeStatus: "ALL",
+    activeStatus: "ACTIVE",
     adType: "ALL",
     audienceTimeframe: "LAST_7_DAYS",
     bylines: [],

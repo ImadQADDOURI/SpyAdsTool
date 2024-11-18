@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover";
 
 const statuses = [
+  { value: "ALL", label: "Active and Inactive", icon: CircleDot },
   { value: "ACTIVE", label: "Active", icon: CircleCheck },
   { value: "INACTIVE", label: "Inactive", icon: CircleX },
 ];
@@ -30,7 +31,7 @@ export const Status: React.FC = () => {
   const searchParams = useSearchParams();
 
   const selectedStatus = React.useMemo(
-    () => searchParams.get("active_status") || null,
+    () => searchParams.get("active_status") || "ACTIVE",
     [searchParams],
   );
 
@@ -49,9 +50,9 @@ export const Status: React.FC = () => {
   );
 
   const selectedOption = React.useMemo(() => {
-    return selectedStatus
-      ? statuses.find((status) => status.value === selectedStatus)
-      : null;
+    return (
+      statuses.find((status) => status.value === selectedStatus) || statuses[1]
+    );
   }, [selectedStatus]);
 
   return (
@@ -65,14 +66,8 @@ export const Status: React.FC = () => {
         >
           <div className="flex min-w-0 flex-1 items-center">
             <div className="flex items-center truncate">
-              {selectedOption ? (
-                <>
-                  <selectedOption.icon className="mr-2 h-4 w-4 flex-shrink-0" />
-                  <span className="truncate">{selectedOption.label}</span>
-                </>
-              ) : (
-                <span className="truncate">Active and Inactive</span>
-              )}
+              <selectedOption.icon className="mr-2 h-4 w-4 flex-shrink-0" />
+              <span className="truncate">{selectedOption.label}</span>
             </div>
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 flex-shrink-0" />
