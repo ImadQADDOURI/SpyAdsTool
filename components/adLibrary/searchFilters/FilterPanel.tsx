@@ -62,12 +62,12 @@ const filterComponents: {
     label: "Country",
     icon: "/filters/location.svg",
   },
-  {
-    key: "nicheAsKeyword",
-    component: NicheAsKeyword,
-    label: "Niche",
-    icon: "/filters/target.svg",
-  },
+  // {
+  //   key: "nicheAsKeyword",
+  //   component: NicheAsKeyword,
+  //   label: "Niche",
+  //   icon: "/filters/target.svg",
+  // },
   {
     key: "categoryAsKeyword",
     component: CategoryAsKeyword,

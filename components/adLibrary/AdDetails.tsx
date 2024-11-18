@@ -180,7 +180,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
         {/* Main Container */}
         <div className="flex min-h-[calc(90vh-6rem)] flex-col gap-1 lg:h-[calc(90vh-6rem)] lg:flex-row lg:overflow-hidden">
           {/* Left Panel */}
-          <div className="w-full px-1 py-2 lg:w-1/3 lg:overflow-y-auto">
+          <div className="w-full px-1 py-2 lg:w-3/12 lg:overflow-y-auto">
             <div className="space-y-1">
               <AdCreativeGenerator ad={ad} />
               <AdCard ad={ad} />
@@ -188,7 +188,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
           </div>
 
           {/* Right Panel */}
-          <div className="w-full py-2 lg:w-2/3 lg:overflow-y-auto">
+          <div className="w-full py-2 lg:w-9/12 lg:overflow-y-auto">
             <div className="space-y-1">
               {/* Analytics Section with Controls */}
               <div className="rounded-lg border border-gray-200/30 dark:border-gray-700/30">
