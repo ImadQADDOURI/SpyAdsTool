@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { DocsSidebarNav } from "@/components/docs/sidebar-nav";
 import { Icons } from "@/components/shared/icons";
 
+import ToolsNavigationMenu from "../adLibrary/microComponents/ToolsNavigationMenu";
 import { ModeToggle } from "./mode-toggle";
 
 export function NavMobile() {
@@ -60,17 +61,23 @@ export function NavMobile() {
         )}
       >
         <ul className="grid divide-y divide-muted">
-          {links && links.length > 0 && links.map(({ title, href }) => (
-            <li key={href} className="py-3">
-              <Link
-                href={href}
-                onClick={() => setOpen(false)}
-                className="flex w-full font-medium capitalize"
-              >
-                {title}
-              </Link>
-            </li>
-          ))}
+          {links &&
+            links.length > 0 &&
+            links.map(({ title, href }) => (
+              <li key={href} className="py-3">
+                <Link
+                  href={href}
+                  onClick={() => setOpen(false)}
+                  className="text-md flex w-full font-medium capitalize"
+                >
+                  {title}
+                </Link>
+              </li>
+            ))}
+
+          <li className="place-self-start py-3">
+            <ToolsNavigationMenu />
+          </li>
 
           {session ? (
             <>

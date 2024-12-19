@@ -26,6 +26,7 @@ import { Icons } from "@/components/shared/icons";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 import { UserAvatar } from "@/components/shared/user-avatar";
 
+import ToolsNavigationMenu from "../adLibrary/microComponents/ToolsNavigationMenu";
 import { ModeToggle } from "./mode-toggle";
 
 interface NavBarProps {
@@ -82,6 +83,7 @@ export function NavBar({ scroll = false }: NavBarProps) {
                   {item.title}
                 </Link>
               ))}
+              <ToolsNavigationMenu />
             </nav>
           ) : null}
         </div>
