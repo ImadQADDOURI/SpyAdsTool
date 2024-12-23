@@ -2,7 +2,7 @@
 "use server";
 
 import { extractText, parseText } from "@/utils/adTextExtractor";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { geminiKeyManager } from "@/utils/geminiKeyManager";
 
 import { AdData } from "@/types/ad";
 
@@ -93,12 +93,13 @@ function parseResponse(responseText: string): AdAnalysis {
   };
 }
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
-
 // Analyze ad text & Estimation
 export async function analyzeKeywords(ad: AdData): Promise<AdAnalysis> {
   const extractedText = extractText(ad);
   const parsedText = parseText(extractedText);
+
+  // Get next model instance from key manager
+  const genAI = geminiKeyManager.getNextModel();
 
   const model = genAI.getGenerativeModel({
     model: process.env.GEMINI_AI_MODEL || "gemini-1.5-flash",
@@ -140,7 +141,7 @@ Ad: "${parsedText}"
       .replace(/^```json\n|\n```$/g, "")
       .trim();
     //console.log("🤖🤖🤖🤖 Raw API Response:", responseText);
-    console.log("🤖🤖🤖🤖 ~ Gemini API");
+    console.log("🤖🤖🤖🤖 ~ Gemini API ~ 📊📊📊📊 Analyze Keywords");
 
     return parseResponse(responseText);
   } catch (error) {
@@ -171,7 +172,10 @@ export async function generateAdCreative(
 
   const parsedText = parseText(extractedText);
 
-  console.log("🤖🤖🤖🤖 ~ ", parsedText);
+  //console.log("🤖🤖🤖🤖 ~ ", parsedText);
+
+  // Get next model instance from key manager
+  const genAI = geminiKeyManager.getNextModel();
 
   const model = genAI.getGenerativeModel({
     model: process.env.GOOGLE_AI_API_MODEL || "gemini-1.5-flash",
@@ -207,7 +211,8 @@ export async function generateAdCreative(
       .text()
       .replace(/^```json\n|\n```$/g, "")
       .trim();
-    console.log(`🎨🎨🎨🎨 Generated Ad Creative:`, responseText);
+    // console.log(`🎨🎨🎨🎨 Generated Ad Creative:`, responseText);
+    console.log(`🤖🤖🤖🤖 ~ Gemini API ~ 🎨🎨🎨🎨 Generated Ad Creative:`);
 
     const parsedResponse = robustJSONParse(responseText);
     return {

@@ -31,13 +31,9 @@ Use lazy loading for components/routes that aren’t needed immediately.
 Implement list virtualization (react-window/react-virtualized) for long lists.
 Optimize context with memoization or by splitting contexts.
 Use React DevTools Profiler to spot and fix unnecessary re-renders.
+-------------------------------
 
-Use the Loading component from @/components/adLibrary/microComponents/Loading.tsx for spinners. Implement user feedback with toast notifications. Ensure all code is well-documented, efficient, and adheres to the specified best practices and styling guidelines.
 
----------
-
--------
-No other changes should be made to the component.
 
 -------------------------------
 # Modern Minimalist UI Style Guide
@@ -187,5 +183,14 @@ border-gray-200/50 dark:border-gray-700/50
 ```
 
 ################################
+Use the Loading component from @/components/adLibrary/microComponents/Loading.tsx for spinners. Implement user feedback with toast notifications. Ensure all code is well-documented, efficient, and adheres to the specified best practices and styling guidelines.
+
+---------
+
+
+No other changes should be made to the component.
+
+-------
+
 think step by step
 ################################
