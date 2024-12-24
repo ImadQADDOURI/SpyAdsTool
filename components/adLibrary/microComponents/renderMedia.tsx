@@ -45,15 +45,17 @@ export const RenderMedia: React.FC<RenderMediaProps> = ({ snapshot }) => {
       <Carousel className="relative w-full">
         <CarouselContent>
           {mediaItems.map((item, index) => (
-            <CarouselItem key={index} className="p-0.5">
+            <CarouselItem key={index} className="">
               {/* Media Content */}
-              <div className="relative aspect-video w-full">
+              <div className="relative aspect-video w-full bg-gray-100 dark:bg-gray-900">
                 {item.resized_image_url && (
                   <Image
                     src={item.resized_image_url}
                     alt={item.title || `Ad image ${index + 1}`}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{ objectFit: "contain" }}
+                    unoptimized
+                    priority={false}
                   />
                 )}
                 {item.video_preview_image_url && (
@@ -63,15 +65,17 @@ export const RenderMedia: React.FC<RenderMediaProps> = ({ snapshot }) => {
                         src={item.video_sd_url || undefined}
                         controls
                         autoPlay
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-contain"
                       />
                     ) : (
                       <>
                         <Image
                           src={item.video_preview_image_url}
                           alt={`Video preview ${index + 1}`}
-                          layout="fill"
-                          objectFit="cover"
+                          fill
+                          style={{ objectFit: "contain" }}
+                          unoptimized
+                          priority={false}
                         />
                         <Button
                           variant="ghost"

@@ -141,7 +141,11 @@ Ad: "${parsedText}"
       .replace(/^```json\n|\n```$/g, "")
       .trim();
     //console.log("🤖🤖🤖🤖 Raw API Response:", responseText);
-    console.log("🤖🤖🤖🤖 ~ Gemini API ~ 📊📊📊📊 Analyze Keywords");
+    console.log(
+      "\n",
+      "🤖🤖🤖🤖 ~ Gemini API ~ 📊📊📊📊 Analyze Keywords",
+      " ~ \n",
+    );
 
     return parseResponse(responseText);
   } catch (error) {
@@ -212,7 +216,11 @@ export async function generateAdCreative(
       .replace(/^```json\n|\n```$/g, "")
       .trim();
     // console.log(`🎨🎨🎨🎨 Generated Ad Creative:`, responseText);
-    console.log(`🤖🤖🤖🤖 ~ Gemini API ~ 🎨🎨🎨🎨 Generated Ad Creative:`);
+    console.log(
+      "\n",
+      `🤖🤖🤖🤖 ~ Gemini API ~ 🎨🎨🎨🎨 Generated Ad Creative:`,
+      " ~ \n",
+    );
 
     const parsedResponse = robustJSONParse(responseText);
     return {

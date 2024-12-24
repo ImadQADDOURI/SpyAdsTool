@@ -55,10 +55,11 @@ export async function metaGraphQLApi({
       throw new Error("No valid JSON objects found in the response");
     }
     console.log(
+      "\n",
       "🔧🔧🔧🔧 ~ Meta-GraphQL-Api ~ ",
       fb_api_req_friendly_name,
       " ~ \n",
-      variables,
+      // variables,
     );
     return parsedData.length === 1 ? parsedData[0] : parsedData;
   } catch (error) {

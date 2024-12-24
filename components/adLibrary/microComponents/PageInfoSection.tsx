@@ -66,6 +66,7 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
               width={16}
               height={16}
               className="transition-transform group-hover:scale-110"
+              unoptimized
             />
           )}
         </TooltipTrigger>
@@ -95,6 +96,7 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
                   width={18}
                   height={18}
                   className="rounded-sm transition-transform duration-300 group-hover:scale-110"
+                  unoptimized
                 />
               ) : null;
             })}
@@ -129,13 +131,17 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
               {/* Profile Image */}
               <div className="relative shrink-0">
                 <div className="absolute -inset-1 animate-pulse rounded-full bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 blur-md" />
-                <Image
-                  src={profilePictureUrl || "/icons/user.png"}
-                  alt={pageInfo.page_name || page.name}
-                  width={80}
-                  height={80}
-                  className="relative rounded-full border-2 border-white/90 object-cover shadow-lg transition-transform duration-300 hover:scale-105"
-                />
+                <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-white/90 bg-gray-100 shadow-lg dark:bg-gray-800">
+                  <Image
+                    src={profilePictureUrl || "/icons/user.png"}
+                    alt={pageInfo.page_name || page.name}
+                    fill
+                    style={{ objectFit: "contain" }}
+                    className="transition-transform duration-300 hover:scale-105"
+                    unoptimized
+                    priority
+                  />
+                </div>
               </div>
 
               {/* Profile Info */}
@@ -151,6 +157,7 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
                       width={24}
                       height={24}
                       className="transition-transform duration-300 hover:scale-110"
+                      unoptimized
                     />
                   )}
                 </div>

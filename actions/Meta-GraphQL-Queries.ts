@@ -36,14 +36,14 @@ export async function AdLibraryAdCollationDetailsQuery(
       fb_api_req_friendly_name: "AdLibraryAdCollationDetailsQuery",
     });
 
-    console.log("🚀🚀🚀🚀 - result ", result);
+    // console.log("🚀🚀🚀🚀 - result ", result);
     // Extract the relevant data from the result
     const collationResults = result.data?.ad_library_main?.collation_results;
 
     if (!collationResults) {
       throw new Error("Unexpected response structure");
     }
-
+    console.log("🚀🚀🚀🚀 - AdLibraryAdCollationDetailsQuery ");
     return {
       ads: collationResults.ad_cards || [],
       forward_cursor: collationResults.forward_cursor,
@@ -104,6 +104,8 @@ export async function AdLibrarySearchPaginationQuery(
       edge.node.collated_results.flatMap((result) => result),
     );
 
+    console.log("🚀🚀🚀🚀 - AdLibrarySearchPaginationQuery ");
+
     return {
       count,
       ads,
@@ -148,6 +150,8 @@ export async function AdLibraryMobileFocusedStateProviderRefetchQuery(
     const ads = searchResultsConnection.edges.flatMap((edge: any) =>
       edge.node.collated_results.flatMap((result: AdData) => result),
     );
+
+    console.log("🚀🚀🚀🚀 - AdLibraryMobileFocusedStateProviderRefetchQuery ");
 
     return {
       count: searchResultsConnection.count,

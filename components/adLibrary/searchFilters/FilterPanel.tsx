@@ -223,13 +223,15 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         {filterComponents.map(({ key, component: Component, label, icon }) => (
           <div key={key} className="flex flex-col space-y-2">
             <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300">
-              <Image
-                src={icon}
-                alt={label}
-                width={24}
-                height={24}
-                className="mr-2"
-              />
+              <div className="relative mr-2 h-6 w-6">
+                <Image
+                  src={icon}
+                  alt={label}
+                  fill
+                  className="object-contain"
+                  unoptimized
+                />
+              </div>
               {label}
             </label>
             <Component

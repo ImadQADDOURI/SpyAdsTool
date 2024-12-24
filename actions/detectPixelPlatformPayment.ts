@@ -63,7 +63,7 @@ async function getBrowser(): Promise<puppeteer.Browser> {
         "--disable-dev-shm-usage",
       ],
     });
-    console.log("⛏️ New browser instance created");
+    // console.log("⛏️ New browser instance created");
   }
   return browserInstance;
 }
@@ -94,7 +94,12 @@ async function fetchWithPuppeteer(url: string): Promise<FetchResult> {
     const navigationPromise = page
       .goto(url, { waitUntil: "networkidle0" })
       .catch((error) => {
-        console.warn(`⛏️ Navigation error for ${url}:`, error.message);
+        console.warn(
+          "\n",
+          `⛏️⛏️⛏️⛏️ ~ Navigation error ~ \n`,
+          error.message,
+          "\n",
+        );
       });
 
     await new Promise((resolve) =>
@@ -190,7 +195,7 @@ function getCacheKey(url: string): string {
 export async function detectPixelPlatformPayment(
   url: string,
 ): Promise<DetectionResult> {
-  console.log(`⛏️ Starting detection for URL: ${url}`);
+  console.log("\n", `⛏️⛏️⛏️⛏️ ~ Starting detection for URL: ${url}`, "\n");
   const cacheKey = getCacheKey(url);
   const now = Date.now();
   const cached = cache.get(cacheKey);
@@ -206,7 +211,7 @@ export async function detectPixelPlatformPayment(
 
     cache.set(cacheKey, { result: detectedFeatures, timestamp: now });
     //console.log("⛏️ Detection complete and result cached");
-    console.log("⛏️⛏️⛏️", detectedFeatures);
+    //console.log("\n", "⛏️⛏️⛏️", detectedFeatures, "\n");
 
     return detectedFeatures;
   } catch (error) {

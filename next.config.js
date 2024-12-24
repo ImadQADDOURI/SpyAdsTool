@@ -22,7 +22,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "scontent.*.fna.fbcdn.net",
+        hostname: "**.fna.fbcdn.net",
         pathname: "/**",
       },
       {
@@ -30,13 +30,14 @@ const nextConfig = {
         hostname: "scontent.cdninstagram.com",
         pathname: "/**",
       },
-      //https://static.xx.fbcdn.net
       {
         protocol: "https",
-        hostname: "static.xx.fbcdn.net",
+        hostname: "**.fbcdn.net",
         pathname: "/**",
       },
     ],
+    dangerouslyAllowSVG: true,
+    unoptimized: true,
   },
   experimental: {
     serverComponentsExternalPackages: ["@prisma/client"],

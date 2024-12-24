@@ -41,7 +41,7 @@ export const AdBrowser = () => {
           useExistingParams ? endCursor : null,
           //page_id,
         );
-        // console.log("🚀🚀🚀🚀 ~ variables:", variables);
+        console.log("🚀🚀🚀🚀 ~ variables:", variables);
 
         const results = await AdLibrarySearchPaginationQuery(variables);
 
