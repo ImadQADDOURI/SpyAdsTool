@@ -47,6 +47,7 @@ export const getAdSearchVariables = (
     searchType,
     sessionID: "36350c01-dbe2-4778-b84f-b1d1ec03ae57",
     //sessionID: Math.random().toString(36).substring(7),
+    //sessionID: default sessionID from metaGraphQLConstants/defaultParams
     sortData: searchParams.get("sort_data") || null,
     source: "NAV_HEADER",
     startDate: (() => {

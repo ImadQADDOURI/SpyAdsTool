@@ -21,8 +21,23 @@ export async function metaGraphQLApi({
     const headers = { ...defaultHeaders };
     const params = { ...defaultParams };
 
+    //     Extract sessionID from defaultParams.variables if it exists
+    // Check if the extracted sessionID exists
+    // If it exists, use it regardless of what's in props variables
+    // If it doesn't exist, use the sessionID from props variables
     if (variables) {
-      params.variables = JSON.stringify(variables);
+      // Parse the default variables from string to object
+      const defaultVariablesObj = JSON.parse(defaultParams.variables);
+      const defaultSessionId = defaultVariablesObj?.sessionID;
+
+      // Create a new variables object
+      const mergedVariables = {
+        ...variables,
+        // If defaultSessionId exists, use it; otherwise keep the one from variables
+        ...(defaultSessionId && { sessionID: defaultSessionId }),
+      };
+
+      params.variables = JSON.stringify(mergedVariables);
     }
 
     if (fb_api_req_friendly_name) {
@@ -59,11 +74,13 @@ export async function metaGraphQLApi({
       "🔧🔧🔧🔧 ~ Meta-GraphQL-Api ~ ",
       fb_api_req_friendly_name,
       " ~ \n",
-      // variables,
+      variables,
+      " ~ \n",
+      text.slice(0, 200),
     );
     return parsedData.length === 1 ? parsedData[0] : parsedData;
   } catch (error) {
-    console.error("Error in metaGraphQLApi:", error);
+    console.error("Error in metaGraphQLApi:", error.message);
     throw error;
   }
 }
@@ -72,6 +89,9 @@ function parseJsonObjects(text: string): any[] {
   const results: any[] = [];
   let bracketCount = 0;
   let currentObject = "";
+
+  // First step: Remove "for (;;);"
+  text = text.replace("for (;;);", "");
 
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
@@ -90,7 +110,7 @@ function parseJsonObjects(text: string): any[] {
         results.push(parsedObject);
         currentObject = "";
       } catch (error) {
-        console.error("Error parsing JSON object:", error);
+        console.error("Error parsing JSON object:", error.message);
       }
     }
   }
