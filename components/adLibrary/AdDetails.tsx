@@ -13,11 +13,11 @@ import { analyzeKeywords } from "@/actions/geminiAiService";
 import {
   AdLibraryAdCollationDetailsQuery,
   AdLibraryAdDetailsV2Query,
-} from "@/actions/Meta-GraphQL-Queries";
+} from "@/utils/MetaGraphQLConstsAndFunctions";
 import {
   getAdLibraryAdCollationVariables,
   getAdLibraryAdDetailsV2Variables,
-} from "@/utils/adSearchVariables";
+} from "@/utils/MetaGraphQLConstsAndFunctions";
 import {
   BarChart3,
   CheckCircle,

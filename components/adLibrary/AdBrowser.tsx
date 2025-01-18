@@ -3,8 +3,8 @@
 
 import React, { useCallback, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AdLibrarySearchPaginationQuery } from "@/actions/Meta-GraphQL-Queries";
-import { getAdSearchVariables } from "@/utils/adSearchVariables";
+import { AdLibrarySearchPaginationQuery } from "@/utils/MetaGraphQLConstsAndFunctions";
+import { getAdSearchVariables } from "@/utils/MetaGraphQLConstsAndFunctions";
 import { Loader2 } from "lucide-react";
 
 import { AdData } from "@/types/ad";

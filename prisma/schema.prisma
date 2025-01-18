@@ -111,3 +111,12 @@ model SavedAd {
   @@index([collectionId])
   @@map(name: "saved_ads")
 }
+
+model MetaGraphQLConfig {
+  id          String   @id @default(cuid())
+  graphql_xhr Json
+  is_active   Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@map(name: "meta_graphql_configs")
+}

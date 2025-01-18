@@ -1,67 +1,38 @@
 // @/actions/Meta-GraphQL-Api.ts
-"use server";
+'use server'
 
-import {
-  API_ENDPOINT,
-  apiNameToDocId,
-  defaultHeaders,
-  defaultParams,
-} from "@/utils/metaGraphQLConstants";
+import { prisma } from "@/lib/db"
+import { cache } from 'react'
+import { headers } from 'next/headers'
+import{ apiNameToDocId, DEFAULT_GRAPHQL_CONFIG } from "@/utils/MetaGraphQLConstsAndFunctions"
 
-type MetaGraphQLApiProps = {
-  variables?: Record<string, any>;
-  fb_api_req_friendly_name?: string;
-};
+// Type definitions
+type GraphQLConfig = {
+  url: string
+  headers: Record<string, string>
+  method: string
+  body: Record<string, any>
+}
+
+interface MetaGraphQLApiProps {
+  configId?: string
+  variables?: Record<string, any>
+  fb_api_req_friendly_name?: string
+}
 
 export async function metaGraphQLApi({
   variables,
   fb_api_req_friendly_name,
+  configId,
 }: MetaGraphQLApiProps) {
   try {
-    const headers = { ...defaultHeaders };
-    const params = { ...defaultParams };
+   
 
-    //     Extract sessionID from defaultParams.variables if it exists
-    // Check if the extracted sessionID exists
-    // If it exists, use it regardless of what's in props variables
-    // If it doesn't exist, use the sessionID from props variables
-    if (variables) {
-      // Parse the default variables from string to object
-      const defaultVariablesObj = JSON.parse(defaultParams.variables);
-      const defaultSessionId = defaultVariablesObj?.sessionID;
-
-      // Create a new variables object
-      const mergedVariables = {
-        ...variables,
-        // If defaultSessionId exists, use it; otherwise keep the one from variables
-        ...(defaultSessionId && { sessionID: defaultSessionId }),
-      };
-
-      params.variables = JSON.stringify(mergedVariables);
-    }
-
-    if (fb_api_req_friendly_name) {
-      params.fb_api_req_friendly_name = fb_api_req_friendly_name;
-      headers["x-fb-friendly-name"] = fb_api_req_friendly_name;
-      params.doc_id =
-        apiNameToDocId[
-          fb_api_req_friendly_name as keyof typeof apiNameToDocId
-        ] || params.doc_id;
-    }
-
-    const body = new URLSearchParams(params);
-
-    const response = await fetch(API_ENDPOINT, {
-      method: "POST",
-      headers: headers as HeadersInit,
-      body: body,
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const text = await response.text();
+    const text = await fetchGraphQL({
+      variables,
+      fb_api_req_friendly_name,
+      configId,
+    })
 
     // Use our optimized parser to handle multiple JSON objects
     const parsedData = parseJsonObjects(text);
@@ -69,15 +40,15 @@ export async function metaGraphQLApi({
     if (parsedData.length === 0) {
       throw new Error("No valid JSON objects found in the response");
     }
-    console.log(
-      "\n",
-      "🔧🔧🔧🔧 ~ Meta-GraphQL-Api ~ ",
-      fb_api_req_friendly_name,
-      " ~ \n",
-      variables,
-      " ~ \n",
-      text.slice(0, 200),
-    );
+    // console.log(
+    //   "\n",
+    //   "🔧🔧🔧🔧 ~ Meta-GraphQL-Api ~ ",
+    //   fb_api_req_friendly_name,
+    //   " ~ \n",
+    //   variables,
+    //   " ~ \n",
+    //   text.slice(0, 200),
+    // );
     return parsedData.length === 1 ? parsedData[0] : parsedData;
   } catch (error) {
     console.error("Error in metaGraphQLApi:", error.message);
@@ -85,39 +56,6 @@ export async function metaGraphQLApi({
   }
 }
 
-function parseJsonObjects(text: string): any[] {
-  const results: any[] = [];
-  let bracketCount = 0;
-  let currentObject = "";
-
-  // First step: Remove "for (;;);"
-  text = text.replace("for (;;);", "");
-
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
-
-    if (char === "{") {
-      bracketCount++;
-    } else if (char === "}") {
-      bracketCount--;
-    }
-
-    currentObject += char;
-
-    if (bracketCount === 0 && currentObject.trim() !== "") {
-      try {
-        const parsedObject = JSON.parse(currentObject);
-        results.push(parsedObject);
-        currentObject = "";
-      } catch (error) {
-        console.error("Error parsing JSON object:", error.message);
-      }
-    }
-  }
-
-  return results;
-}
-{
   /* Meta GraphQL API Server Action Summary
   
   # Meta GraphQL API Server Action
@@ -174,4 +112,186 @@ if (Array.isArray(result)) {
 - Designed for server-side use in Next.js applications
 
   */
+
+
+// This implementation includes:
+
+// Caching System: Uses React's cache function to cache GraphQL configurations
+// Fallback Strategy:
+// Falls back to DEFAULT_GRAPHQL_CONFIG if no config is found
+// Merges any partial config with DEFAULT_GRAPHQL_CONFIG to ensure all required fields
+// Parameter Overrides:
+// Handles variables override
+// Manages fb_api_req_friendly_name and related doc_id mapping
+// Helper Functions:
+// getGraphQLConfig: Cached function to fetch and validate configurations
+// objectToURLSearchParams: Converts body object to URLSearchParams
+// Type Safety:
+// TypeScript interfaces for params and config
+// Proper type checking throughout the code
+// To use this function, you can call it like this:
+// Using default active config
+// const result = await fetchGraphQL({
+//   variables: { someVar: "value" }
+// })
+
+// // Using specific config with friendly name
+// const result = await fetchGraphQL({
+//   configId: "some-config-id",
+//   fb_api_req_friendly_name: "AdLibraryAdCollationDetailsQuery",
+//   variables: { someVar: "value" }
+// })
+export async function fetchGraphQL({
+  configId,
+  variables,
+  fb_api_req_friendly_name,
+}: MetaGraphQLApiProps) {
+  try {
+    // Get config with fallback strategy
+    const config = await getGraphQLConfig(configId)
+    
+    console.log(
+      "\n",
+      " 🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧 ~ Meta-GraphQL-Api ~ fetchGraphQL ~ -------------",
+      "\n",
+      config.headers,
+      "\n",
+       config.body,
+      "\n",
+    )
+    
+    // Deep clone the config to avoid modifying the cached version
+    const headers = { ...config.headers }
+    const body = { ...config.body }
+
+    if (variables) {
+      body.variables = variables
+    }
+
+    if (fb_api_req_friendly_name) {
+      body.fb_api_req_friendly_name = fb_api_req_friendly_name
+      headers["x-fb-friendly-name"] = fb_api_req_friendly_name
+      
+      // Set doc_id if available in mapping
+      const docId = apiNameToDocId[fb_api_req_friendly_name as keyof typeof apiNameToDocId]
+      if (docId) {
+        body.doc_id = docId
+      }
+    }
+
+    // Convert body to URLSearchParams
+    const bodyParams = objectToURLSearchParams(body)
+
+    console.log(
+      "\n",
+      " 🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧🔧 ~ Meta-GraphQL-Api ~ fetchGraphQL ~ ++++++++++++++++",
+      "\n",
+      headers,
+      "\n",
+       bodyParams,
+      "\n",
+    )
+
+    // Make the request
+    const response = await fetch(config.url, {
+      method: config.method,
+      headers: headers as HeadersInit,
+      body: bodyParams,
+    })
+
+    if (!response.ok) {
+      throw new Error(`GraphQL request failed: ${response.status} ${response.statusText}`)
+    }
+
+    return await response.text()
+  } catch (error) {
+    console.error('Error in fetchGraphQL:', error.message)
+    throw error
+  }
+}
+
+
+// Config fetching logic with fallback:
+// Try to get config by configId
+// If not found, get newest active config
+// If no config found at all, use DEFAULT_GRAPHQL_CONFIG
+// Use individual field fallbacks only when a field is completely missing from the DB config
+async function getGraphQLConfig(configId?: string): Promise<GraphQLConfig> {
+  try {
+    let config
+
+    if (configId) {
+      config = await prisma.metaGraphQLConfig.findUnique({
+        where: { id: configId },
+      })
+    } else {
+      config = await prisma.metaGraphQLConfig.findFirst({
+        where: { is_active: true },
+        orderBy: { createdAt: 'desc' },
+      })
+    }
+
+    if (!config) {
+      return DEFAULT_GRAPHQL_CONFIG
+    }
+
+    // Since graphql_xhr is stored as JSON, we can directly access its fields
+    const xhr = config.graphql_xhr as any
+
+    // Return the complete config from DB, falling back to DEFAULT only if fields are missing
+    return {
+      url: xhr.url || DEFAULT_GRAPHQL_CONFIG.url,
+      headers: typeof xhr.headers === 'object' ? xhr.headers : DEFAULT_GRAPHQL_CONFIG.headers,
+      method: xhr.method || DEFAULT_GRAPHQL_CONFIG.method,
+      body: typeof xhr.body === 'object' ? xhr.body : DEFAULT_GRAPHQL_CONFIG.body,
+    }
+  } catch (error) {
+    console.error('Error fetching GraphQL config:', error)
+    return DEFAULT_GRAPHQL_CONFIG
+  }
+}
+
+// Convert body object to URLSearchParams
+function objectToURLSearchParams(obj: Record<string, any>): URLSearchParams {
+  const params = new URLSearchParams()
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined && value !== null) {
+      params.append(key, typeof value === 'object' ? JSON.stringify(value) : String(value))
+    }
+  }
+  return params
+}
+
+// Optimized parser to handle multiple JSON objects
+function parseJsonObjects(text: string): any[] {
+  const results: any[] = [];
+  let bracketCount = 0;
+  let currentObject = "";
+
+  // First step: Remove "for (;;);"
+  text = text.replace("for (;;);", "");
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+
+    if (char === "{") {
+      bracketCount++;
+    } else if (char === "}") {
+      bracketCount--;
+    }
+
+    currentObject += char;
+
+    if (bracketCount === 0 && currentObject.trim() !== "") {
+      try {
+        const parsedObject = JSON.parse(currentObject);
+        results.push(parsedObject);
+        currentObject = "";
+      } catch (error) {
+        console.error("Error parsing JSON object:", error.message);
+      }
+    }
+  }
+
+  return results;
 }

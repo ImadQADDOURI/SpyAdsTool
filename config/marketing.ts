@@ -26,5 +26,9 @@ export const marketingConfig: MarketingConfig = {
       title: "Trend",
       href: "/trend",
     },
+    {
+      title: "meta-graphql-configs",
+      href: "/meta-graphql-configs",
+    },
   ],
 };

@@ -5,11 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   AdLibraryMobileFocusedStateProviderRefetchQuery,
   AdLibrarySearchPaginationQuery,
-} from "@/actions/Meta-GraphQL-Queries";
+} from "@/utils/MetaGraphQLConstsAndFunctions";
 import {
   getAdLibraryMobileVariables,
   getAdSearchVariables,
-} from "@/utils/adSearchVariables";
+} from "@/utils/MetaGraphQLConstsAndFunctions";
 import { Loader2 } from "lucide-react";
 
 import { AdData } from "@/types/ad";
