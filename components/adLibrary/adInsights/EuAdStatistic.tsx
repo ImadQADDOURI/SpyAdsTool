@@ -30,21 +30,19 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
     return <Loading message="Loading Statistics..." size="small" />;
   }
 
-  if (error) {
-    return (
-      <div
-        className="rounded-lg bg-red-100/80 p-3 text-red-700 dark:bg-red-900/80 dark:text-red-300"
-        role="alert"
-      >
-        <p className="font-bold">Error</p>
-        <p>{error}</p>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div
+  //       className="rounded-lg bg-red-100/80 p-3 text-red-700 dark:bg-red-900/80 dark:text-red-300"
+  //       role="alert"
+  //     >
+  //       <p className="font-bold">Error</p>
+  //       <p>{error}</p>
+  //     </div>
+  //   );
+  // }
 
-  const aaaInfo = data?.data?.ad_library_main?.ad_details?.aaa_info;
-
-  if (!aaaInfo) {
+  if (!data) {
     return (
       <div className="rounded-lg bg-gray-100/50 p-3 text-gray-700 dark:bg-gray-800/50 dark:text-gray-300">
         No Statistics available.
@@ -56,7 +54,7 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
     age_audience,
     eu_total_reach,
     age_country_gender_reach_breakdown,
-  } = aaaInfo;
+  } = data;
 
   // Initialize totals
   let totalMale = 0;

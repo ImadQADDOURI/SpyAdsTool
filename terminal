@@ -44,3 +44,5 @@ pnpm add @google/generative-ai
 pnpm add file-saver
 
 ---
+
+npx update-browserslist-db@latest

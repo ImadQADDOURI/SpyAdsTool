@@ -1,9 +1,9 @@
 // @/actions/Meta-GraphQL-Queries.ts
 
-import { metaGraphQLApi } from "@/actions/Meta-GraphQL-Api";
 import { ReadonlyURLSearchParams } from "next/navigation";
-import { AdData } from "@/types/ad";
+import { metaGraphQLApi } from "@/actions/Meta-GraphQL-Api";
 
+import { AdData } from "@/types/ad";
 
 // Default configuration
 export const DEFAULT_GRAPHQL_CONFIG = {
@@ -11,31 +11,31 @@ export const DEFAULT_GRAPHQL_CONFIG = {
   headers: {
     X: "DEFAULT_GRAPHQL_CONFIG",
     accept: "*/*",
-  "accept-language": "en-US,en;q=0.9,fr;q=0.8",
-  "content-type": "application/x-www-form-urlencoded",
-  cookie:
-    "datr=OcriZmtZzOtqJKEUX9Zhukco; sb=upzuZjh-bKjXqMoe0VbegPf7; ps_l=1; ps_n=1; usida=eyJ2ZXIiOjEsImlkIjoiQXNreWYwbjFyYnZod3ciLCJ0aW1lIjoxNzI4MjUxMDE1fQ%3D%3D; locale=en_US; c_user=100004554965536; xs=26%3A2yId6bC3XgoRoQ%3A2%3A1736969665%3A-1%3A7027%3A%3AAcUh92sa2bnaIeeBfftv9ZwUKL7Sw7plkhDgNGk0iQ; fr=155NG29rrAigQr7HP.AWU5Dnx4BSn0x-x6K6C5cqm33vM.BniPSd..AAA.0.0.BniPSi.AWU55RIvhEw; presence=C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1737028773298%2C%22v%22%3A1%7D; wd=1366x991",
-  origin: "https://www.facebook.com",
-  priority: "u=1, i",
-  referer:
-    "https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=ALL&is_targeted_country=false&media_type=all&q=baboon&search_type=keyword_unordered&source=nav-header",
-  "sec-ch-prefers-color-scheme": "dark",
-  "sec-ch-ua":
-    '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
-  "sec-ch-ua-full-version-list":
-    '"Google Chrome";v="131.0.6778.265", "Chromium";v="131.0.6778.265", "Not_A Brand";v="24.0.0.0"',
-  "sec-ch-ua-mobile": "?0",
-  "sec-ch-ua-model": '""',
-  "sec-ch-ua-platform": '"Windows"',
-  "sec-ch-ua-platform-version": '"15.0.0"',
-  "sec-fetch-dest": "empty",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-site": "same-origin",
-  "user-agent":
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-  "x-asbd-id": "129477",
-  "x-fb-friendly-name": "AdLibrarySearchPaginationQuery",
-  "x-fb-lsd": "cPZns4iGcGZoQk-6XqH2Dd",
+    "accept-language": "en-US,en;q=0.9,fr;q=0.8",
+    "content-type": "application/x-www-form-urlencoded",
+    cookie:
+      "datr=OcriZmtZzOtqJKEUX9Zhukco; sb=upzuZjh-bKjXqMoe0VbegPf7; ps_l=1; ps_n=1; usida=eyJ2ZXIiOjEsImlkIjoiQXNreWYwbjFyYnZod3ciLCJ0aW1lIjoxNzI4MjUxMDE1fQ%3D%3D; locale=en_US; c_user=100004554965536; xs=26%3A2yId6bC3XgoRoQ%3A2%3A1736969665%3A-1%3A7027%3A%3AAcUh92sa2bnaIeeBfftv9ZwUKL7Sw7plkhDgNGk0iQ; fr=155NG29rrAigQr7HP.AWU5Dnx4BSn0x-x6K6C5cqm33vM.BniPSd..AAA.0.0.BniPSi.AWU55RIvhEw; presence=C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1737028773298%2C%22v%22%3A1%7D; wd=1366x991",
+    origin: "https://www.facebook.com",
+    priority: "u=1, i",
+    referer:
+      "https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=ALL&is_targeted_country=false&media_type=all&q=baboon&search_type=keyword_unordered&source=nav-header",
+    "sec-ch-prefers-color-scheme": "dark",
+    "sec-ch-ua":
+      '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+    "sec-ch-ua-full-version-list":
+      '"Google Chrome";v="131.0.6778.265", "Chromium";v="131.0.6778.265", "Not_A Brand";v="24.0.0.0"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-model": '""',
+    "sec-ch-ua-platform": '"Windows"',
+    "sec-ch-ua-platform-version": '"15.0.0"',
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "user-agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "x-asbd-id": "129477",
+    "x-fb-friendly-name": "AdLibrarySearchPaginationQuery",
+    "x-fb-lsd": "cPZns4iGcGZoQk-6XqH2Dd",
   },
   method: "POST",
   body: {
@@ -68,8 +68,8 @@ export const DEFAULT_GRAPHQL_CONFIG = {
       '{"activeStatus":"ALL","adType":"ALL","bylines":[],"collationToken":"d804de5a-d922-48d2-b3d3-f26f3e1fceb3","contentLanguages":[],"countries":["ALL"],"cursor":"AQHRcg0rbOI7zQYkEU7MWKZN-tDHR1Y3xXtyutth_N8Bl4uUTnHIX0b30jSlyR1XU1fu","excludedIDs":[],"first":30,"isTargetedCountry":false,"location":null,"mediaType":"ALL","multiCountryFilterMode":null,"pageIDs":[],"potentialReachInput":[],"publisherPlatforms":[],"queryString":"baboon","regions":[],"searchType":"KEYWORD_UNORDERED","sessionID":"f16ea488-18fa-4338-add4-f58cd081be9e","sortData":null,"source":"NAV_HEADER","startDate":null,"v":"74b7f1","viewAllPageID":"0"}',
     server_timestamps: "true",
     doc_id: "8983567531734900",
-  }
-}
+  },
+};
 // API name to doc_id mapping
 export const apiNameToDocId = {
   AdLibraryAdCollationDetailsQuery: "8918149204878948",
@@ -80,7 +80,7 @@ export const apiNameToDocId = {
   AdLibraryFilterContextProviderQuery: "6645028345583352",
   AdLibraryPageHoverCardQuery: "6453683764688391",
   useAdLibraryTypeaheadSuggestionDataSourceQuery: "7801302506625362",
-}
+};
 
 export const getAdSearchVariables = (
   searchParams: ReadonlyURLSearchParams,
@@ -213,13 +213,20 @@ export const getAdLibraryAdDetailsV2Variables = (
   };
 };
 
-
 interface AdLibraryAdCollationDetailsQueryResult {
   ads: AdData[];
   forward_cursor: string | null;
   total_count: number;
   is_complete: boolean;
 }
+
+interface AdLibraryAdDetailsV2QueryResult {
+  gender_audience: string | null;
+  age_audience: { min: number; max: number } | null;
+  eu_total_reach: number | null;
+  age_country_gender_reach_breakdown: any;
+}
+
 interface AdLibrarySearchPaginationQueryResult {
   count: number;
   ads: AdData[];
@@ -270,15 +277,27 @@ export async function AdLibraryAdCollationDetailsQuery(
 // variables example: {"adArchiveID":"451740291243640","pageID":"432061063659239","country":"ALL","sessionID":"0162a99e-6971-4fb4-8a57-97c681e3f534","source":"FB_LOGO","isAdNonPolitical":true,"isAdNotAAAEligible":false}
 export async function AdLibraryAdDetailsV2Query(
   variables: Record<string, any>,
-): Promise<any> {
+): Promise<AdLibraryAdDetailsV2QueryResult> {
   try {
     const result = await metaGraphQLApi({
       variables,
       fb_api_req_friendly_name: "AdLibraryAdDetailsV2Query",
     });
-    console.log("🚀🚀🚀🚀 - AdLibraryAdDetailsV2Query ");
 
-    return result;
+    // Extract the relevant data from the result
+    const aaaInfo = result.data?.ad_library_main?.ad_details?.aaa_info;
+
+    if (!aaaInfo) {
+      throw new Error("Unexpected response structure");
+    }
+    console.log("🚀🚀🚀🚀 - AdLibraryAdDetailsV2Query ");
+    return {
+      gender_audience: aaaInfo.gender_audience,
+      age_audience: aaaInfo.age_audience,
+      eu_total_reach: aaaInfo.eu_total_reach,
+      age_country_gender_reach_breakdown:
+        aaaInfo.age_country_gender_reach_breakdown,
+    };
   } catch (error) {
     console.error("Error in AdLibraryAdDetailsV2Query:", error);
     throw error;

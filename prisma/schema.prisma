@@ -1,3 +1,4 @@
+// @prisma\schema.prisma
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -114,9 +115,16 @@ model SavedAd {
 
 model MetaGraphQLConfig {
   id          String   @id @default(cuid())
-  graphql_xhr Json
-  is_active   Boolean @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  graphql_xhr Json     @db.JsonB // 🚀 Binary JSON storage
+  is_active   Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // 🔍 Query optimization indexes
+  @@index([is_active], name: "config_active_idx")
+  @@index([createdAt], name: "config_created_at_idx")
+  
+  // 📈 Storage optimizations
   @@map(name: "meta_graphql_configs")
+  /// "Stores GraphQL XHR configurations for Meta API interactions"
 }
