@@ -1,3 +1,4 @@
+// @app\(protected)\dashboard\billing\page.tsx
 import { redirect } from "next/navigation";
 
 import { getCurrentUser } from "@/lib/session";
@@ -17,7 +18,11 @@ export default async function BillingPage() {
   const user = await getCurrentUser();
 
   let userSubscriptionPlan;
-  if (user && user.id && user.role === "USER") {
+  if (
+    user &&
+    user.id
+    //&& user.role === "USER"
+  ) {
     userSubscriptionPlan = await getUserSubscriptionPlan(user.id);
   } else {
     redirect("/login");

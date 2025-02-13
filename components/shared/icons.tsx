@@ -6,6 +6,7 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  CircleAlert,
   Copy,
   CreditCard,
   File,
@@ -36,6 +37,9 @@ import {
 export type Icon = LucideIcon;
 
 export const Icons = {
+  creditCard: CreditCard,
+  alertTriangle: AlertTriangle,
+  alertCircle: CircleAlert,
   add: Plus,
   arrowRight: ArrowRight,
   arrowUpRight: ArrowUpRight,

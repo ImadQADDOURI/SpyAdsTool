@@ -1,3 +1,4 @@
+// @components\pricing\pricing-cards.tsx
 "use client";
 
 import { useContext, useState } from "react";
@@ -21,11 +22,9 @@ interface PricingCardsProps {
 }
 
 export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
-  const isYearlyDefault =
-    !subscriptionPlan?.stripeCustomerId || subscriptionPlan.interval === "year"
-      ? true
-      : false;
-  const [isYearly, setIsYearly] = useState<boolean>(!!isYearlyDefault);
+  const [isYearly, setIsYearly] = useState(
+    subscriptionPlan?.interval === "year" || false,
+  );
   const { setShowSignInModal } = useContext(ModalContext);
 
   const toggleBilling = () => {

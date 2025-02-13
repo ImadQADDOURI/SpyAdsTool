@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { generateUserStripe } from "@/actions/generate-user-stripe";
-import { SubscriptionPlan, UserSubscriptionPlan } from "@/types";
+import type { SubscriptionPlan, UserSubscriptionPlan } from "@/types";
 
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/shared/icons";
@@ -18,32 +18,46 @@ export function BillingFormButton({
   offer,
   subscriptionPlan,
 }: BillingFormButtonProps) {
-  let [isPending, startTransition] = useTransition();
-  const generateUserStripeSession = generateUserStripe.bind(
-    null,
-    offer.stripeIds[year ? "yearly" : "monthly"],
-  );
+  const [isPending, startTransition] = useTransition();
+  const priceId = offer.stripeIds[year ? "yearly" : "monthly"];
 
-  const stripeSessionAction = () =>
-    startTransition(async () => await generateUserStripeSession());
+  const handleClick = () => {
+    if (!priceId) return;
+    startTransition(async () => {
+      try {
+        await generateUserStripe(priceId);
+      } catch (error) {
+        console.error("🔴 Failed to initiate Stripe session:", error);
+      }
+    });
+  };
 
-  const userOffer =
-    subscriptionPlan.stripePriceId ===
-    offer.stripeIds[year ? "yearly" : "monthly"];
+  const isCurrentPlan =
+    subscriptionPlan.stripePriceId === priceId && !subscriptionPlan.isCanceled;
 
   return (
     <Button
-      variant={userOffer ? "default" : "outline"}
-      className="w-full"
+      variant={isCurrentPlan ? "default" : "outline"}
+      className="flex w-full items-center justify-center gap-2"
       disabled={isPending}
-      onClick={stripeSessionAction}
+      onClick={handleClick}
+      aria-label={isCurrentPlan ? "Manage subscription" : "Upgrade plan"}
     >
       {isPending ? (
         <>
-          <Icons.spinner className="mr-2 size-4 animate-spin" /> Loading...
+          <Icons.spinner className="mr-2 h-5 w-5 animate-spin" aria-hidden />
+          Processing...
+        </>
+      ) : isCurrentPlan ? (
+        <>
+          <Icons.settings className="mr-2 h-5 w-5" />
+          Manage Subscription
         </>
       ) : (
-        <>{userOffer ? "Manage Subscription" : "Upgrade"}</>
+        <>
+          <Icons.arrowUpRight className="mr-2 h-5 w-5" />
+          Upgrade
+        </>
       )}
     </Button>
   );

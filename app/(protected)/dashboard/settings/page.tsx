@@ -1,6 +1,8 @@
+// @app\(protected)\dashboard\settings\page.tsx
 import { redirect } from "next/navigation";
 
 import { getCurrentUser } from "@/lib/session";
+import { getUserSubscriptionPlan } from "@/lib/subscription";
 import { constructMetadata } from "@/lib/utils";
 import { DeleteAccountSection } from "@/components/dashboard/delete-account";
 import { DashboardHeader } from "@/components/dashboard/header";
@@ -17,6 +19,8 @@ export default async function SettingsPage() {
 
   if (!user?.id) redirect("/login");
 
+  const subscriptionPlan = await getUserSubscriptionPlan(user.id);
+
   return (
     <>
       <DashboardHeader
@@ -26,7 +30,7 @@ export default async function SettingsPage() {
       <div className="divide-y divide-muted pb-10">
         <UserNameForm user={{ id: user.id, name: user.name || "" }} />
         <UserRoleForm user={{ id: user.id, role: user.role }} />
-        <DeleteAccountSection />
+        <DeleteAccountSection subscriptionPlan={subscriptionPlan} />
       </div>
     </>
   );

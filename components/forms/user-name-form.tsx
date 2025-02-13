@@ -1,3 +1,4 @@
+// @components\forms\user-name-form.tsx
 "use client";
 
 import { useState, useTransition } from "react";
@@ -10,9 +11,15 @@ import { toast } from "sonner";
 
 import { userNameSchema } from "@/lib/validations/user";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SectionColumns } from "@/components/dashboard/section-columns";
 import { Icons } from "@/components/shared/icons";
 
 interface UserNameFormProps {
@@ -25,7 +32,7 @@ export function UserNameForm({ user }: UserNameFormProps) {
   const [isPending, startTransition] = useTransition();
   const updateUserNameWithId = updateUserName.bind(null, user.id);
 
-  const checkUpdate = (value) => {
+  const checkUpdate = (value: string) => {
     setUpdated(user.name !== value);
   };
 
@@ -58,46 +65,56 @@ export function UserNameForm({ user }: UserNameFormProps) {
 
   return (
     <form onSubmit={onSubmit}>
-      <SectionColumns
-        title="Your Name"
-        description="Please enter a display name you are comfortable with."
-      >
-        <div className="flex w-full items-center gap-2">
-          <Label className="sr-only" htmlFor="name">
-            Name
-          </Label>
-          <Input
-            id="name"
-            className="flex-1"
-            size={32}
-            {...register("name")}
-            onChange={(e) => checkUpdate(e.target.value)}
-          />
-          <Button
-            type="submit"
-            variant={updated ? "default" : "secondary"}
-            disabled={isPending || !updated}
-            className="w-[67px] shrink-0 px-0 sm:w-[130px]"
-          >
-            {isPending ? (
-              <Icons.spinner className="size-4 animate-spin" />
-            ) : (
-              <p>
-                Save
-                <span className="hidden sm:inline-flex">&nbsp;Changes</span>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Icons.user className="h-5 w-5" />
+            Your Name
+          </CardTitle>
+          <CardDescription>
+            Please enter a display name you are comfortable with.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex w-full items-center gap-2">
+            <Label className="sr-only" htmlFor="name">
+              Name
+            </Label>
+            <Input
+              id="name"
+              className="flex-1"
+              size={32}
+              {...register("name")}
+              onChange={(e) => checkUpdate(e.target.value)}
+            />
+            <Button
+              type="submit"
+              variant={updated ? "default" : "secondary"}
+              disabled={isPending || !updated}
+              className="w-[67px] shrink-0 px-0 sm:w-[130px]"
+            >
+              {isPending ? (
+                <Icons.spinner className="h-4 w-4 animate-spin" />
+              ) : (
+                <p>
+                  Save
+                  <span className="hidden sm:inline-flex">&nbsp;Changes</span>
+                </p>
+              )}
+            </Button>
+          </div>
+          <div className="flex flex-col justify-between p-1">
+            {errors?.name && (
+              <p className="pb-0.5 text-[13px] text-red-600">
+                {errors.name.message}
               </p>
             )}
-          </Button>
-        </div>
-        <div className="flex flex-col justify-between p-1">
-          {errors?.name && (
-            <p className="pb-0.5 text-[13px] text-red-600">
-              {errors.name.message}
+            <p className="text-[13px] text-muted-foreground">
+              Max 32 characters
             </p>
-          )}
-          <p className="text-[13px] text-muted-foreground">Max 32 characters</p>
-        </div>
-      </SectionColumns>
+          </div>
+        </CardContent>
+      </Card>
     </form>
   );
 }

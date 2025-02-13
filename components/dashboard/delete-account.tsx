@@ -1,56 +1,85 @@
+// @components\dashboard\delete-account.tsx
 "use client";
 
+import { useState } from "react";
+import { UserSubscriptionPlan } from "@/types";
+
 import { siteConfig } from "@/config/site";
+import { formatDate } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { SectionColumns } from "@/components/dashboard/section-columns";
-import { useDeleteAccountModal } from "@/components/modals/delete-account-modal";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { DeleteAccountModal } from "@/components/modals/delete-account-modal";
 import { Icons } from "@/components/shared/icons";
 
-export function DeleteAccountSection() {
-  const { setShowDeleteAccountModal, DeleteAccountModal } =
-    useDeleteAccountModal();
+interface DeleteAccountSectionProps {
+  subscriptionPlan: UserSubscriptionPlan;
+}
 
-  const userPaidPlan = true;
+export function DeleteAccountSection({
+  subscriptionPlan,
+}: DeleteAccountSectionProps) {
+  const [showModal, setShowModal] = useState(false);
+  const hasActiveSubscription =
+    subscriptionPlan.isPaid && !subscriptionPlan.isCanceled;
 
   return (
     <>
-      <DeleteAccountModal />
-      <SectionColumns
-        title="Delete Account"
-        description="This is a danger zone - Be careful !"
-      >
-        <div className="flex flex-col gap-4 rounded-xl border border-red-400 p-4 dark:border-red-900">
+      <DeleteAccountModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        subscriptionPlan={subscriptionPlan}
+      />
+      <Card className="w-full border border-red-400 dark:border-red-900">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-red-600">
+            <Icons.trash className="h-5 w-5" />
+            Delete Account
+          </CardTitle>
+          <CardDescription className="text-red-500">
+            Danger Zone – proceed with caution!
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-[15px] font-medium">Are you sure ?</span>
-
-              {userPaidPlan ? (
-                <div className="flex items-center gap-1 rounded-md bg-red-600/10 p-1 pr-2 text-xs font-medium text-red-600 dark:bg-red-500/10 dark:text-red-500">
-                  <div className="m-0.5 rounded-full bg-red-600 p-[3px]">
-                    <Icons.close size={10} className="text-background" />
-                  </div>
-                  Active Subscription
+              <span className="text-[15px] font-medium">Are you sure?</span>
+              {hasActiveSubscription && (
+                <div className="ml-auto">
+                  <Badge
+                    variant="destructive"
+                    className="text-md flex items-center gap-1 uppercase tracking-wider"
+                  >
+                    <Icons.alertTriangle className="h-4 w-4" />
+                    Active Subscription
+                  </Badge>
                 </div>
-              ) : null}
+              )}
             </div>
-            <div className="text-balance text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Permanently delete your {siteConfig.name} account
-              {userPaidPlan ? " and your subscription" : ""}. This action cannot
-              be undone - please proceed with caution.
-            </div>
+              {hasActiveSubscription ? " and cancel your subscription" : ""}.
+              This action cannot be undone.
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              type="submit"
-              variant="destructive"
-              onClick={() => setShowDeleteAccountModal(true)}
-            >
-              <Icons.trash className="mr-2 size-4" />
-              <span>Delete Account</span>
-            </Button>
-          </div>
-        </div>
-      </SectionColumns>
+
+          <Button
+            variant="destructive"
+            onClick={() => setShowModal(true)}
+            aria-label="Initiate account deletion"
+            className="flex w-full items-center justify-center gap-2"
+          >
+            <Icons.trash className="h-4 w-4" />
+            Delete Account
+          </Button>
+        </CardContent>
+      </Card>
     </>
   );
 }

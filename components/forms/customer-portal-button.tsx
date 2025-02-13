@@ -13,18 +13,32 @@ interface CustomerPortalButtonProps {
 export function CustomerPortalButton({
   userStripeId,
 }: CustomerPortalButtonProps) {
-  let [isPending, startTransition] = useTransition();
-  const generateUserStripeSession = openCustomerPortal.bind(null, userStripeId);
+  const [isPending, startTransition] = useTransition();
+  const isValidCustomer = userStripeId.startsWith("cus_");
 
-  const stripeSessionAction = () =>
-    startTransition(async () => await generateUserStripeSession());
+  const handleClick = () => {
+    startTransition(async () => {
+      try {
+        await openCustomerPortal(userStripeId);
+      } catch (error) {
+        console.error("🔴 Failed to access billing portal:", error);
+      }
+    });
+  };
 
   return (
-    <Button disabled={isPending} onClick={stripeSessionAction}>
+    <Button
+      className="flex w-full items-center justify-center gap-2"
+      disabled={!isValidCustomer || isPending}
+      onClick={handleClick}
+      aria-label="Manage billing information"
+    >
       {isPending ? (
-        <Icons.spinner className="mr-2 size-4 animate-spin" />
-      ) : null}
-      Open Customer Portal
+        <Icons.spinner className="mr-2 h-5 w-5 animate-spin" aria-hidden />
+      ) : (
+        <Icons.creditCard className="mr-2 h-5 w-5" />
+      )}
+      {isValidCustomer ? "Billing Portal" : "Invalid Customer ID"}
     </Button>
   );
 }

@@ -1,3 +1,4 @@
+// @actions/open-customer-portal.ts
 "use server";
 
 import { redirect } from "next/navigation";
@@ -16,26 +17,35 @@ const billingUrl = absoluteUrl("/dashboard/billing");
 export async function openCustomerPortal(
   userStripeId: string,
 ): Promise<responseAction> {
-  let redirectUrl: string = "";
+  let redirectUrl: string | null = null;
 
   try {
+    // 🔒 Double-check authentication before proceeding
     const session = await auth();
-
-    if (!session?.user || !session?.user.email) {
-      throw new Error("Unauthorized");
+    if (!session?.user?.email) {
+      throw new Error("Unauthorized: User not authenticated");
     }
 
-    if (userStripeId) {
-      const stripeSession = await stripe.billingPortal.sessions.create({
-        customer: userStripeId,
-        return_url: billingUrl,
-      });
-
-      redirectUrl = stripeSession.url as string;
+    // 🛡️ Validate Stripe customer ID format
+    if (!userStripeId.startsWith("cus_")) {
+      throw new Error("Invalid Stripe customer ID format");
     }
+
+    // 🏢 Create secure billing portal session
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: userStripeId,
+      return_url: billingUrl,
+    });
+    redirectUrl = portalSession.url;
   } catch (error) {
-    throw new Error("Failed to generate user stripe session");
+    console.error("🔴 Billing portal access failed:", error);
+    return { status: "error" };
   }
 
-  redirect(redirectUrl);
+  // 🚀 Final redirect outside error-prone blocks
+  if (redirectUrl) {
+    redirect(redirectUrl);
+  }
+
+  return { status: "error" };
 }

@@ -1,3 +1,4 @@
+// @types/next-auth.d.ts
 import { UserRole } from "@prisma/client";
 import { User } from "next-auth";
 import { JWT } from "next-auth/jwt";
