@@ -26,7 +26,7 @@ const ExpandableText: React.FC<ExpandableTextProps> = ({
   const [isCopied, setIsCopied] = useState(false);
 
   const { parsedText, textContent, isTextLong, displayText } = useMemo(() => {
-    if (!text || text.trim() === "") {
+    if (!text || text.trim() === "" || text == "{{product.description}}") {
       return {
         parsedText: null,
         textContent: "",
