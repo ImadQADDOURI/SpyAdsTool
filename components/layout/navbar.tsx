@@ -3,7 +3,14 @@
 import { useContext, useState } from "react";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
-import { LayoutDashboard, Lock, LogOut, Settings } from "lucide-react";
+import {
+  CreditCard,
+  LayoutDashboard,
+  Lock,
+  LogOut,
+  Settings,
+  User,
+} from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
 import { docsConfig } from "@/config/docs";
@@ -154,21 +161,31 @@ export function NavBar({ scroll = false }: NavBarProps) {
 
                     <DropdownMenuItem asChild>
                       <Link
-                        href="/dashboard"
+                        href="/settings/profile"
                         className="flex items-center space-x-2.5"
                       >
-                        <LayoutDashboard className="size-4" />
-                        <p className="text-sm">Dashboard</p>
+                        <User className="size-4" />
+                        <p className="text-sm">Profile</p>
                       </Link>
                     </DropdownMenuItem>
 
                     <DropdownMenuItem asChild>
                       <Link
-                        href="/dashboard/settings"
+                        href="/settings/billing"
+                        className="flex items-center space-x-2.5"
+                      >
+                        <CreditCard className="size-4" />
+                        <p className="text-sm">Billing</p>
+                      </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/settings/account"
                         className="flex items-center space-x-2.5"
                       >
                         <Settings className="size-4" />
-                        <p className="text-sm">Settings</p>
+                        <p className="text-sm">Account</p>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />

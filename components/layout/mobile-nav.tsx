@@ -3,7 +3,17 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import {
+  CreditCard,
+  Lock,
+  LogIn,
+  Menu,
+  Settings,
+  ShieldCheck,
+  User,
+  UserPlus,
+  X,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 
 import { docsConfig } from "@/config/docs";
@@ -43,7 +53,7 @@ export function NavMobile() {
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          "fixed right-2 top-2.5 z-50 rounded-full p-2 transition-colors duration-200 hover:bg-muted focus:outline-none active:bg-muted md:hidden",
+          "fixed right-4 top-3 z-50 rounded-full p-2 transition-colors duration-200 hover:bg-muted focus:outline-none active:bg-muted md:hidden",
           open && "hover:bg-muted active:bg-muted",
         )}
       >
@@ -56,90 +66,142 @@ export function NavMobile() {
 
       <nav
         className={cn(
-          "fixed inset-0 z-20 hidden w-full overflow-auto bg-background px-5 py-16 lg:hidden",
+          "fixed inset-0 z-20 hidden w-full overflow-auto bg-background px-6 py-16 lg:hidden",
           open && "block",
         )}
       >
-        <ul className="grid divide-y divide-muted">
-          {links &&
-            links.length > 0 &&
-            links.map(({ title, href }) => (
-              <li key={href} className="py-3">
-                <Link
-                  href={href}
-                  onClick={() => setOpen(false)}
-                  className="text-md flex w-full font-medium capitalize"
-                >
-                  {title}
-                </Link>
-              </li>
-            ))}
-
-          <li className="place-self-start py-3">
-            <ToolsNavigationMenu />
-          </li>
-
-          {session ? (
-            <>
-              {session.user.role === "ADMIN" ? (
-                <li className="py-3">
+        {/* Main Navigation Links */}
+        <div className="mb-6">
+          <h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
+            Navigation
+          </h3>
+          <ul className="grid gap-2">
+            {links &&
+              links.length > 0 &&
+              links.map(({ title, href }) => (
+                <li key={href}>
                   <Link
-                    href="/admin"
+                    href={href}
                     onClick={() => setOpen(false)}
-                    className="flex w-full font-medium capitalize"
+                    className="flex w-full py-2 text-base font-medium capitalize hover:text-primary"
                   >
-                    Admin
+                    {title}
                   </Link>
                 </li>
-              ) : null}
+              ))}
 
-              <li className="py-3">
-                <Link
-                  href="/dashboard"
-                  onClick={() => setOpen(false)}
-                  className="flex w-full font-medium capitalize"
-                >
-                  Dashboard
-                </Link>
-              </li>
+            <li className="py-1">
+              <ToolsNavigationMenu />
+            </li>
+          </ul>
+        </div>
+
+        {/* Account Section */}
+        <div className="mb-6 border-t border-muted pt-6">
+          {session ? (
+            <>
+              <h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
+                Settings
+              </h3>
+              <ul className="grid gap-2">
+                <li>
+                  <Link
+                    href="/settings/profile"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center space-x-3 py-2 hover:text-primary"
+                  >
+                    <User className="size-4" />
+                    <p className="text-sm">Profile</p>
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    href="/settings/billing"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center space-x-3 py-2 hover:text-primary"
+                  >
+                    <CreditCard className="size-4" />
+                    <p className="text-sm">Billing</p>
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    href="/settings/account"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center space-x-3 py-2 hover:text-primary"
+                  >
+                    <Settings className="size-4" />
+                    <p className="text-sm">Account</p>
+                  </Link>
+                </li>
+
+                {session.user.role === "ADMIN" && (
+                  <li>
+                    <Link
+                      href="/admin"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center space-x-3 py-2 hover:text-primary"
+                    >
+                      <ShieldCheck className="size-4" />
+                      <p className="text-sm font-medium">Admin</p>
+                    </Link>
+                  </li>
+                )}
+              </ul>
             </>
           ) : (
             <>
-              <li className="py-3">
-                <Link
-                  href="/login"
-                  onClick={() => setOpen(false)}
-                  className="flex w-full font-medium capitalize"
-                >
-                  Login
-                </Link>
-              </li>
+              <h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
+                Account
+              </h3>
+              <ul className="grid gap-2">
+                <li>
+                  <Link
+                    href="/login"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center space-x-3 py-2 hover:text-primary"
+                  >
+                    <LogIn className="size-4" />
+                    <p className="text-sm font-medium">Login</p>
+                  </Link>
+                </li>
 
-              <li className="py-3">
-                <Link
-                  href="/register"
-                  onClick={() => setOpen(false)}
-                  className="flex w-full font-medium capitalize"
-                >
-                  Sign up
-                </Link>
-              </li>
+                <li>
+                  <Link
+                    href="/register"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center space-x-3 py-2 hover:text-primary"
+                  >
+                    <UserPlus className="size-4" />
+                    <p className="text-sm font-medium">Sign up</p>
+                  </Link>
+                </li>
+              </ul>
             </>
           )}
-        </ul>
+        </div>
 
+        {/* Documentation Section */}
         {documentation ? (
-          <div className="mt-8 block md:hidden">
+          <div className="mb-6 border-t border-muted pt-6 md:hidden">
+            <h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
+              Documentation
+            </h3>
             <DocsSidebarNav setOpen={setOpen} />
           </div>
         ) : null}
 
-        <div className="mt-5 flex items-center justify-end space-x-4">
-          <Link href={siteConfig.links.github} target="_blank" rel="noreferrer">
+        {/* Footer */}
+        <div className="mt-auto border-t border-muted pt-6">
+          <div className="flex items-center justify-end">
+            {/* <Link href={siteConfig.links.github} target="_blank" rel="noreferrer">
             <Icons.gitHub className="size-6" />
             <span className="sr-only">GitHub</span>
-          </Link>
-          <ModeToggle />
+          </Link> */}
+            <ModeToggle />
+          </div>
         </div>
       </nav>
     </>

@@ -17,30 +17,30 @@ export const metadata = constructMetadata({
 export default async function PricingPage() {
   const user = await getCurrentUser();
 
-  if (user?.role === "ADMIN") {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <h1 className="text-5xl font-bold">Admin Access Detected</h1>
-        <Image
-          src="/_static/illustrations/call-waiting.svg"
-          alt="Admin dashboard illustration"
-          width={560}
-          height={560}
-          className="pointer-events-none -my-20 dark:invert"
-          priority
-        />
-        <p className="text-balance px-4 text-center text-2xl font-medium">
-          Redirecting to{" "}
-          <Link
-            href="/admin"
-            className="text-muted-foreground underline underline-offset-4 transition-colors hover:text-purple-500"
-          >
-            Admin Dashboard
-          </Link>
-        </p>
-      </div>
-    );
-  }
+  // if (user?.role === "ADMIN") {
+  //   return (
+  //     <div className="flex min-h-screen flex-col items-center justify-center">
+  //       <h1 className="text-5xl font-bold">Admin Access Detected</h1>
+  //       <Image
+  //         src="/_static/illustrations/call-waiting.svg"
+  //         alt="Admin dashboard illustration"
+  //         width={560}
+  //         height={560}
+  //         className="pointer-events-none -my-20 dark:invert"
+  //         priority
+  //       />
+  //       <p className="text-balance px-4 text-center text-2xl font-medium">
+  //         Redirecting to{" "}
+  //         <Link
+  //           href="/admin"
+  //           className="text-muted-foreground underline underline-offset-4 transition-colors hover:text-purple-500"
+  //         >
+  //           Admin Dashboard
+  //         </Link>
+  //       </p>
+  //     </div>
+  //   );
+  // }
 
   let subscriptionPlan;
   if (user && user.id) {

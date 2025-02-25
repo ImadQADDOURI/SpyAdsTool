@@ -63,9 +63,12 @@ export function DeleteAccountSection({
               )}
             </div>
             <p className="text-sm text-muted-foreground">
-              Permanently delete your {siteConfig.name} account
-              {hasActiveSubscription ? " and cancel your subscription" : ""}.
-              This action cannot be undone.
+              Permanently<span className="text-red-500"> delete</span> your
+              {siteConfig.name} account and
+              <span className="text-red-500"> cancel</span> your subscription.{" "}
+              <span className="text-red-500">
+                This action cannot be undone.
+              </span>
             </p>
           </div>
 
