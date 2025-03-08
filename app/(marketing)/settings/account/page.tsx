@@ -1,17 +1,19 @@
-import { redirect } from "next/navigation";
+"use client";
 
-import { getCurrentUser } from "@/lib/session";
-import { getUserSubscriptionPlan } from "@/lib/subscription";
+import { useEffect } from "react";
+
+import { useSubscription } from "@/components/adLibrary/subscription/SubscriptionProvider";
 import { DeleteAccountSection } from "@/components/dashboard/delete-account";
 import { DashboardHeader } from "@/components/dashboard/header";
 
-export default async function AccountSettingsPage() {
-  // 🔐 Auth check - fetch user data at page level
-  const user = await getCurrentUser();
-  if (!user?.id) redirect("/login");
+export default function AccountSettingsPage() {
+  const { refresh, subscription, isLoading } = useSubscription();
 
-  // 💰 Get subscription details for account deletion checks
-  const subscriptionPlan = await getUserSubscriptionPlan(user.id);
+  // Refresh subscription data when this page loads
+  useEffect(() => {
+    // Immediately refresh subscription data when page loads
+    refresh();
+  }, []); // Empty dependency array means this runs once on mount
 
   return (
     <div className="space-y-6">
@@ -21,7 +23,15 @@ export default async function AccountSettingsPage() {
       />
 
       <div className="space-y-8">
-        <DeleteAccountSection subscriptionPlan={subscriptionPlan} />
+        {isLoading ? (
+          <div className="animate-pulse rounded-md bg-gray-100 p-6 dark:bg-gray-800">
+            Loading subscription data...
+          </div>
+        ) : (
+          subscription && (
+            <DeleteAccountSection subscriptionPlan={subscription} />
+          )
+        )}
       </div>
     </div>
   );

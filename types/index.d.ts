@@ -59,7 +59,6 @@ export type SubscriptionPlan = {
     yearly: string | null;
   };
 };
-
 export type UserSubscriptionPlan = SubscriptionPlan &
   Pick<User, "stripeCustomerId" | "stripeSubscriptionId" | "stripePriceId"> & {
     stripeCurrentPeriodEnd: number;
@@ -67,6 +66,11 @@ export type UserSubscriptionPlan = SubscriptionPlan &
     interval: "month" | "year" | null;
     isCanceled?: boolean;
   };
+// 🔄 Response shape from the subscription API
+export type SubscriptionResponse = {
+  subscription: UserSubscriptionPlan | null;
+  userHasAccess: boolean;
+};
 
 // compare plans
 export type ColumnType = string | boolean | null;
