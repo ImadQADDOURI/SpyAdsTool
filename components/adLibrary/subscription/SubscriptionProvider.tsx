@@ -5,7 +5,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { SubscriptionResponse, UserSubscriptionPlan } from "types";
 
 // ⚡ Configurable constants for the subscription system
-const AUTO_REFRESH_INTERVAL = 60 * 60 * 1000; // 🕒 Refresh every 60 minutes
+const AUTO_REFRESH_INTERVAL = 10 * 60 * 1000; // 🕒 Refresh every 10 minutes
 const SUBSCRIPTION_ENDPOINT = "/api/subscription";
 
 // 📋 Define the shape of our subscription context
@@ -83,10 +83,10 @@ export function SubscriptionProvider({
     }
   };
 
-  // 🧠 Exposed refresh function for manual updates
-  const refresh = async () => {
+  // 🧠 Exposed refresh function for manual updates (memoized to prevent dependency loops)
+  const refresh = React.useCallback(async () => {
     await fetchSubscription();
-  };
+  }, []);
 
   // ⏱️ Set up auto-refresh interval when enabled
   useEffect(() => {
