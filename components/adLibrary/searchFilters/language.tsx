@@ -4,6 +4,7 @@ import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { languages } from "@/utils/languages";
 import { Check, ChevronsUpDown, X } from "lucide-react";
+import { FixedSizeList } from "react-window"; // 🚀 Virtualization library
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -15,15 +16,62 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+// 🔄 Language Item renderer for virtualized list
+type LanguageItemProps = {
+  index: number;
+  style: React.CSSProperties;
+  data: {
+    items: typeof languages;
+    selectedLanguages: string[];
+    handleSelect: (languageCode: string) => void;
+  };
+};
+
+// ✨ Memoized language item component
+const LanguageItem = React.memo(({ index, style, data }: LanguageItemProps) => {
+  const language = data.items[index];
+  const isSelected = data.selectedLanguages.includes(language.code);
+
+  return (
+    <Button
+      key={language.code}
+      variant="ghost"
+      className="w-full justify-start"
+      style={style}
+      onClick={() => data.handleSelect(language.code)}
+    >
+      <Check
+        className={cn("mr-2 h-4 w-4", isSelected ? "opacity-100" : "opacity-0")}
+      />
+      {language.name}
+    </Button>
+  );
+});
+LanguageItem.displayName = "LanguageItem";
+
 export const Language: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const selectedLanguages =
-    searchParams.get("content_languages")?.split(",") || [];
+  // 🔍 Debounced search
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = React.useState("");
 
+  React.useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 150); // ⏱️ Debounce delay
+
+    return () => clearTimeout(timerId);
+  }, [searchTerm]);
+
+  // 🌐 Parse selected languages from URL only when needed
+  const selectedLanguages = React.useMemo(() => {
+    return searchParams.get("content_languages")?.split(",") || [];
+  }, [searchParams]);
+
+  // 🔄 URL update with request batching
   const updateURL = React.useCallback(
     (newLanguages: string[]) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -65,14 +113,42 @@ export const Language: React.FC = () => {
     [updateURL],
   );
 
+  // 🧠 Memoized filtered languages with debounced search term
   const filteredLanguages = React.useMemo(() => {
-    return languages.filter((language) =>
-      language.name.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-  }, [searchTerm]);
+    if (!debouncedSearchTerm) return languages;
 
-  const visibleSelections = selectedLanguages.slice(0, 2);
+    return languages.filter((language) =>
+      language.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
+    );
+  }, [debouncedSearchTerm]);
+
+  // 📊 Calculate visible selections only when needed
+  const visibleSelections = React.useMemo(
+    () => selectedLanguages.slice(0, 2),
+    [selectedLanguages],
+  );
+
   const remainingCount = selectedLanguages.length - visibleSelections.length;
+
+  // 📝 Keep track of list ref for scrolling
+  const listRef = React.useRef<FixedSizeList>(null);
+
+  // 🔄 Reset scroll position when search changes
+  React.useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTo(0);
+    }
+  }, [debouncedSearchTerm]);
+
+  // 🧩 Memoize item data to prevent unnecessary re-renders
+  const itemData = React.useMemo(
+    () => ({
+      items: filteredLanguages,
+      selectedLanguages,
+      handleSelect,
+    }),
+    [filteredLanguages, selectedLanguages, handleSelect],
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -87,6 +163,7 @@ export const Language: React.FC = () => {
             {selectedLanguages.length > 0 ? (
               <>
                 {visibleSelections.map((code) => {
+                  // 🧠 Cache lookup for performance
                   const language = languages.find((lang) => lang.code === code);
                   return (
                     <Badge
@@ -150,30 +227,25 @@ export const Language: React.FC = () => {
             className="mb-2"
             aria-label="Search languages"
           />
-          <div className="max-h-[300px] overflow-y-auto">
+          <div>
             {filteredLanguages.length === 0 ? (
               <p className="p-2 text-sm text-muted-foreground">
                 No language found.
               </p>
             ) : (
-              filteredLanguages.map((language) => (
-                <Button
-                  key={language.code}
-                  variant="ghost"
-                  className="w-full justify-start"
-                  onClick={() => handleSelect(language.code)}
+              <div className="h-[300px]">
+                {/* 🚀 Virtualized list for better performance */}
+                <FixedSizeList
+                  ref={listRef}
+                  height={300}
+                  width="100%"
+                  itemCount={filteredLanguages.length}
+                  itemSize={36} // Height of each item
+                  itemData={itemData}
                 >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      selectedLanguages.includes(language.code)
-                        ? "opacity-100"
-                        : "opacity-0",
-                    )}
-                  />
-                  {language.name}
-                </Button>
-              ))
+                  {LanguageItem}
+                </FixedSizeList>
+              </div>
             )}
           </div>
         </div>

@@ -46,3 +46,7 @@ pnpm add file-saver
 ---
 
 npx update-browserslist-db@latest
+
+---
+
+pnpm add react-window @types/react-window

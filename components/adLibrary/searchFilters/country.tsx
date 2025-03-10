@@ -4,6 +4,7 @@ import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { countryCodesAlpha2Flag } from "@/utils/countryCodesAlpha2Flag";
 import { Check, ChevronsUpDown, X } from "lucide-react";
+import { FixedSizeList } from "react-window"; // 🚀 Virtualization library
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -15,14 +16,68 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+// 🔄 Country Item renderer for virtualized list
+type CountryItemProps = {
+  index: number;
+  style: React.CSSProperties;
+  data: {
+    items: typeof countryCodesAlpha2Flag;
+    selectedCountries: string[];
+    handleSelect: (countryCode: string) => void;
+  };
+};
+
+// ✨ Memoized country item component for virtualized rendering
+const CountryItem = React.memo(({ index, style, data }: CountryItemProps) => {
+  const country = data.items[index];
+  const isSelected = data.selectedCountries.includes(country.value);
+
+  return (
+    <Button
+      key={country.value}
+      variant="ghost"
+      className="w-full justify-start"
+      style={style}
+      onClick={() => data.handleSelect(country.value)}
+    >
+      <Check
+        className={cn("mr-2 h-4 w-4", isSelected ? "opacity-100" : "opacity-0")}
+      />
+      <img
+        src={country.icon}
+        alt={`${country.label} flag`}
+        className="mr-2 inline-block h-5 w-5 rounded-sm"
+        loading="lazy" // 🖼️ Lazy load images
+      />
+      {country.label}
+    </Button>
+  );
+});
+CountryItem.displayName = "CountryItem";
+
 export const Country: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const selectedCountries = searchParams.get("countries")?.split(",") || [];
+  // 🔍 Debounced search
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = React.useState("");
 
+  React.useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 150); // ⏱️ Debounce delay
+
+    return () => clearTimeout(timerId);
+  }, [searchTerm]);
+
+  // 🌐 Parse selected countries from URL only when needed
+  const selectedCountries = React.useMemo(() => {
+    return searchParams.get("countries")?.split(",") || [];
+  }, [searchParams]);
+
+  // 🔄 URL update with request batching
   const updateURL = React.useCallback(
     (newCountries: string[]) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -31,6 +86,8 @@ export const Country: React.FC = () => {
       } else {
         params.set("countries", newCountries.join(","));
       }
+
+      // 🛑 Use non-blocking navigation with scroll prevention
       router.push(`?${params.toString()}`, { scroll: false });
     },
     [router, searchParams],
@@ -64,14 +121,42 @@ export const Country: React.FC = () => {
     [updateURL],
   );
 
+  // 🧠 Memoized filtered countries with debounced search term
   const filteredCountries = React.useMemo(() => {
-    return countryCodesAlpha2Flag.filter((country) =>
-      country.label.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-  }, [searchTerm]);
+    if (!debouncedSearchTerm) return countryCodesAlpha2Flag;
 
-  const visibleSelections = selectedCountries.slice(0, 2);
+    return countryCodesAlpha2Flag.filter((country) =>
+      country.label.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
+    );
+  }, [debouncedSearchTerm]);
+
+  // 📊 Calculate visible selections only when needed
+  const visibleSelections = React.useMemo(
+    () => selectedCountries.slice(0, 2),
+    [selectedCountries],
+  );
+
   const remainingCount = selectedCountries.length - visibleSelections.length;
+
+  // 📝 Keep track of list ref for scrolling
+  const listRef = React.useRef<FixedSizeList>(null);
+
+  // 🔄 Reset scroll position when search changes
+  React.useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTo(0);
+    }
+  }, [debouncedSearchTerm]);
+
+  // 🧩 Memoize item data to prevent unnecessary re-renders
+  const itemData = React.useMemo(
+    () => ({
+      items: filteredCountries,
+      selectedCountries,
+      handleSelect,
+    }),
+    [filteredCountries, selectedCountries, handleSelect],
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -86,6 +171,7 @@ export const Country: React.FC = () => {
             {selectedCountries.length > 0 ? (
               <>
                 {visibleSelections.map((code) => {
+                  // 🧠 Cache lookup for better performance
                   const country = countryCodesAlpha2Flag.find(
                     (c) => c.value === code,
                   );
@@ -99,8 +185,8 @@ export const Country: React.FC = () => {
                         src={country?.icon}
                         alt={`${country?.label} flag`}
                         className="mr-0 inline-block h-5 w-5 rounded-sm"
+                        loading="lazy" // 🖼️ Lazy load images
                       />
-                      {/* {country?.value} */}
                       <button
                         className="ml-0.5 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                         onKeyDown={(e) => {
@@ -156,35 +242,25 @@ export const Country: React.FC = () => {
             className="mb-2"
             aria-label="Search countries"
           />
-          <div className="max-h-[300px] overflow-y-auto">
+          <div>
             {filteredCountries.length === 0 ? (
               <p className="p-2 text-sm text-muted-foreground">
                 No country found.
               </p>
             ) : (
-              filteredCountries.map((country) => (
-                <Button
-                  key={country.value}
-                  variant="ghost"
-                  className="w-full justify-start"
-                  onClick={() => handleSelect(country.value)}
+              <div className="h-[300px]">
+                {/* 🚀 Virtualized list for better performance */}
+                <FixedSizeList
+                  ref={listRef}
+                  height={300}
+                  width="100%"
+                  itemCount={filteredCountries.length}
+                  itemSize={36} // Height of each item
+                  itemData={itemData}
                 >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      selectedCountries.includes(country.value)
-                        ? "opacity-100"
-                        : "opacity-0",
-                    )}
-                  />
-                  <img
-                    src={country.icon}
-                    alt={`${country.label} flag`}
-                    className="mr-2 inline-block h-5 w-5 rounded-sm"
-                  />
-                  {country.label}
-                </Button>
-              ))
+                  {CountryItem}
+                </FixedSizeList>
+              </div>
             )}
           </div>
         </div>

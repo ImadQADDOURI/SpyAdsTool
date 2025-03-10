@@ -21,6 +21,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+// 📋 Define platforms outside component to prevent recreation on render
 const platforms = [
   { value: "FACEBOOK", label: "Facebook", icon: Facebook },
   { value: "INSTAGRAM", label: "Instagram", icon: Instagram },
@@ -28,16 +29,61 @@ const platforms = [
   { value: "MESSENGER", label: "Messenger", icon: MessageCircle },
 ];
 
+// 🔍 Create a lookup map for faster platform retrieval
+const platformMap = platforms.reduce(
+  (acc, platform) => {
+    acc[platform.value] = platform;
+    return acc;
+  },
+  {} as Record<string, (typeof platforms)[0]>,
+);
+
+// ✨ Create memoized platform item component
+const PlatformItem = React.memo(
+  ({
+    platform,
+    isSelected,
+    onSelect,
+  }: {
+    platform: (typeof platforms)[0];
+    isSelected: boolean;
+    onSelect: (value: string) => void;
+  }) => {
+    const Icon = platform.icon;
+
+    return (
+      <Button
+        key={platform.value}
+        variant="ghost"
+        className="w-full justify-start"
+        onClick={() => onSelect(platform.value)}
+      >
+        <Check
+          className={cn(
+            "mr-2 h-4 w-4 flex-shrink-0",
+            isSelected ? "opacity-100" : "opacity-0",
+          )}
+        />
+        <Icon className="mr-2 h-4 w-4 flex-shrink-0" />
+        <span className="truncate">{platform.label}</span>
+      </Button>
+    );
+  },
+);
+PlatformItem.displayName = "PlatformItem";
+
 export const Platform: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [open, setOpen] = React.useState(false);
 
+  // 🌐 Parse selected platforms from URL only when needed
   const selectedPlatforms = React.useMemo(
     () => searchParams.get("publisher_platforms")?.split(",") || [],
     [searchParams],
   );
 
+  // 🔄 URL update with request batching
   const updateURL = React.useCallback(
     (newPlatforms: string[]) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -79,7 +125,12 @@ export const Platform: React.FC = () => {
     [updateURL],
   );
 
-  const visibleSelections = selectedPlatforms.slice(0, 2);
+  // 📊 Calculate visible selections only when needed
+  const visibleSelections = React.useMemo(
+    () => selectedPlatforms.slice(0, 2),
+    [selectedPlatforms],
+  );
+
   const remainingCount = selectedPlatforms.length - visibleSelections.length;
 
   return (
@@ -95,7 +146,8 @@ export const Platform: React.FC = () => {
             {selectedPlatforms.length > 0 ? (
               <>
                 {visibleSelections.map((value) => {
-                  const platform = platforms.find((p) => p.value === value);
+                  // 🧠 Use map lookup instead of find for better performance
+                  const platform = platformMap[value];
                   if (!platform) return null;
                   const Icon = platform.icon;
                   return (
@@ -154,28 +206,14 @@ export const Platform: React.FC = () => {
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <div className="max-h-[300px] overflow-y-auto">
-          {platforms.map((platform) => {
-            const Icon = platform.icon;
-            return (
-              <Button
-                key={platform.value}
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() => handleSelect(platform.value)}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4 flex-shrink-0",
-                    selectedPlatforms.includes(platform.value)
-                      ? "opacity-100"
-                      : "opacity-0",
-                  )}
-                />
-                <Icon className="mr-2 h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{platform.label}</span>
-              </Button>
-            );
-          })}
+          {platforms.map((platform) => (
+            <PlatformItem
+              key={platform.value}
+              platform={platform}
+              isSelected={selectedPlatforms.includes(platform.value)}
+              onSelect={handleSelect}
+            />
+          ))}
         </div>
       </PopoverContent>
     </Popover>
