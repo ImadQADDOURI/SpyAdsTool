@@ -99,7 +99,7 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
   };
 
   return (
-    <Card className="relative flex h-full w-full max-w-sm flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl">
+    <Card className="relative flex h-full w-full max-w-2xl flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl">
       {/* Collation count - No margin/padding, direct in corner */}
       <TooltipProvider>
         <Tooltip>

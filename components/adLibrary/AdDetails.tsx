@@ -13,8 +13,6 @@ import { analyzeKeywords } from "@/actions/geminiAiService";
 import {
   AdLibraryAdCollationDetailsQuery,
   AdLibraryAdDetailsV2Query,
-} from "@/utils/MetaGraphQLConstsAndFunctions";
-import {
   getAdLibraryAdCollationVariables,
   getAdLibraryAdDetailsV2Variables,
 } from "@/utils/MetaGraphQLConstsAndFunctions";
@@ -41,6 +39,7 @@ import AdCreativeGenerator from "@/components/adLibrary/aiComponents/AdCreativeG
 import KeywordAnalysisTable from "@/components/adLibrary/aiComponents/KeywordAnalysisTable";
 
 import { AdCard } from "./AdCard";
+import AdCardGrid from "./microComponents/AdCardGrid";
 
 interface AdDetailsProps {
   /** The advertisement data to display */
@@ -183,7 +182,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
           <div className="w-full px-1 py-2 lg:w-3/12 lg:overflow-y-auto">
             <div className="space-y-1">
               <AdCreativeGenerator ad={ad} />
-              <AdCard ad={ad} />
+              <AdCardGrid ads={ad} />
             </div>
           </div>
 

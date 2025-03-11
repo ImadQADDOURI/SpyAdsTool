@@ -8,10 +8,12 @@ import { AdData } from "@/types/ad";
 import { AdCard } from "../AdCard";
 
 interface AdCardGridProps {
-  ads: AdData[];
+  ads: AdData | AdData[];
 }
 
 export const AdCardGrid: React.FC<AdCardGridProps> = ({ ads }) => {
+  const adArray = Array.isArray(ads) ? ads : [ads]; // Normalize to array
+
   // 🔍 Get search params to read filters
   const searchParams = useSearchParams();
 
@@ -22,14 +24,14 @@ export const AdCardGrid: React.FC<AdCardGridProps> = ({ ads }) => {
     collationCountParam !== null ? parseInt(collationCountParam, 10) : 1;
 
   // 🧮 Filter ads based on collation_count threshold
-  const filteredAds = ads.filter((ad) => {
+  const filteredAds = adArray.filter((ad) => {
     // Handle cases where collation_count might be null/undefined
     const adCollationCount = ad.collation_count ?? 0;
     return adCollationCount >= collationCountFilter;
   });
 
   return (
-    <div className="xs:grid-cols-1 mb-4 grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+    <div className="grid w-full auto-rows-fr grid-cols-[repeat(auto-fit,minmax(min(100%,350px),1fr))] gap-4">
       {filteredAds.map((ad) => (
         <AdCard key={ad.ad_archive_id} ad={ad} />
       ))}

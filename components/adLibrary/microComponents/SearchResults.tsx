@@ -54,7 +54,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 
       {/* Ads Grid */}
       {searchResults && searchResults.length > 0 ? (
-        <div className="space-y-8">
+        <div className="space-y-8 p-4">
           <AdCardGrid ads={searchResults} />
           {hasNextPage && (
             <div className="flex flex-col items-center space-y-4">
