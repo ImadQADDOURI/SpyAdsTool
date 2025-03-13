@@ -1,7 +1,16 @@
 // components/adsLibrary/EuAdStatistic.tsx
 import React from "react";
 import { countryCodesAlpha2Flag } from "@/utils/countryCodesAlpha2Flag";
-import { Info, Loader2 } from "lucide-react";
+import {
+  Baby,
+  ChartPie,
+  Earth,
+  Info,
+  Loader2,
+  Megaphone,
+  OctagonAlert,
+  VenusAndMars,
+} from "lucide-react";
 
 import {
   Tooltip,
@@ -13,6 +22,7 @@ import AgeBarChart from "@/components/adLibrary/adInsights/AgeBarChart";
 import CountryBarChart from "@/components/adLibrary/adInsights/CountryBarChart";
 import GenderPieChart from "@/components/adLibrary/adInsights/GenderPieChart";
 
+import InsightItem from "../aiComponents/InsightItem";
 import { Loading } from "../microComponents/Loading";
 
 interface EuAdStatisticProps {
@@ -44,8 +54,14 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
 
   if (!data) {
     return (
-      <div className="rounded-lg bg-gray-100/50 p-3 text-gray-700 dark:bg-gray-800/50 dark:text-gray-300">
-        No Statistics available.
+      <div className="flex flex-col items-center justify-center space-y-2 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
+        <OctagonAlert className="h-8 w-8 text-gray-400 dark:text-gray-500" />
+        <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+          No European Union Statistics available.
+        </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          this ad is not targeted to the European Union.
+        </p>
       </div>
     );
   }
@@ -166,22 +182,28 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-3 gap-2 p-2">
-        <StatCard
-          title="Gender Audience"
+      <div className="grid grid-cols-2 gap-2 p-2 sm:grid-cols-3">
+        <InsightItem
+          label="Gender Audience"
           value={gender_audience || "Not specified"}
+          description=""
+          icon={VenusAndMars}
         />
-        <StatCard
-          title="Age Audience"
+        <InsightItem
+          label="Age Audience"
           value={
             age_audience
               ? `${age_audience.min}-${age_audience.max}`
               : "Not specified"
           }
+          description=""
+          icon={Baby}
         />
-        <StatCard
-          title="EU Total Reach"
+        <InsightItem
+          label="EU Total Reach"
           value={eu_total_reach.toLocaleString()}
+          description=""
+          icon={ChartPie}
         />
       </div>
 
@@ -206,17 +228,3 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
     </div>
   );
 };
-
-const StatCard: React.FC<{ title: string; value: string | number }> = ({
-  title,
-  value,
-}) => (
-  <div className="rounded-md bg-gray-50/50 p-2 dark:bg-gray-700/50">
-    <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
-      {title}
-    </p>
-    <p className="mt-1 truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
-      {value}
-    </p>
-  </div>
-);

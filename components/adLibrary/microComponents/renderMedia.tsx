@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink, Play } from "lucide-react";
 
 import { AdData } from "@/types/ad";
 import { Button } from "@/components/ui/button";
@@ -47,7 +47,7 @@ export const RenderMedia: React.FC<RenderMediaProps> = ({ snapshot }) => {
           {mediaItems.map((item, index) => (
             <CarouselItem key={index} className="">
               {/* Media Content */}
-              <div className="relative aspect-video w-full bg-gray-100 dark:bg-gray-900">
+              <div className="relative aspect-square w-full bg-gray-100 dark:bg-gray-900">
                 {item.resized_image_url && (
                   <Image
                     src={item.resized_image_url}
@@ -92,37 +92,37 @@ export const RenderMedia: React.FC<RenderMediaProps> = ({ snapshot }) => {
               </div>
 
               {/* Text Content */}
-              <div className="my-1.5 space-y-1 pl-5 pr-1">
+              <div className="my-1 space-y-1 p-2">
                 <ExpandableText
                   text={item.caption || snapshot.caption || ""}
-                  maxLength={33}
                   className="text-xs font-medium text-indigo-600 transition-colors duration-200 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
                   singleLine={true}
+                  showIcon={true}
                 />
 
                 <ExpandableText
                   text={item.title || snapshot.title || ""}
-                  maxLength={33}
                   className="text-xs text-gray-700 dark:text-gray-300"
                   singleLine={true}
+                  showIcon={true}
                 />
                 <ExpandableText
                   text={
                     item.link_description || snapshot.link_description || ""
                   }
-                  maxLength={33}
                   className="text-xs text-gray-600 dark:text-gray-400"
                   singleLine={true}
+                  showIcon={true}
                 />
                 <ExpandableText
                   text={item.body || snapshot.body?.text || ""}
-                  maxLength={33}
                   className="text-xs text-gray-700 dark:text-gray-300"
                   singleLine={true}
+                  showIcon={true}
                 />
 
                 {/* CTA and Download Buttons */}
-                <div className="mx-2 flex items-center space-x-2">
+                <div className="flex items-center space-x-2">
                   <DownloadMedia item={item} />
                   {(item.link_url || snapshot.link_url) && (
                     <TooltipProvider>
@@ -135,17 +135,20 @@ export const RenderMedia: React.FC<RenderMediaProps> = ({ snapshot }) => {
                             asChild
                           >
                             <a
-                              href={item.link_url || snapshot.link_url || ""}
+                              href={item.link_url || snapshot.link_url || "#"}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="truncate"
+                              className="flex items-center justify-center"
                             >
-                              {truncateText(
-                                item.cta_text ||
-                                  snapshot.cta_text ||
-                                  "Learn More",
-                                20,
-                              )}
+                              <span className="truncate">
+                                {truncateText(
+                                  item.cta_text ||
+                                    snapshot.cta_text ||
+                                    "Learn More",
+                                  20,
+                                )}
+                              </span>
+                              <ExternalLink className="ml-1 h-4 w-4" />
                             </a>
                           </Button>
                         </TooltipTrigger>

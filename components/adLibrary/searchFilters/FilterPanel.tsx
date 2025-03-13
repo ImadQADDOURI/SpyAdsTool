@@ -254,7 +254,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             Search Filters
           </h2>
           <FilterContent />
-          <div className="mt-8">
+          <div className="mt-4">
             <FilterActions
               onClear={handleClearFilters}
               onApply={applyFilters}
@@ -280,10 +280,10 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             Refine your search with these filters
           </DialogDescription>
         </DialogHeader>
-        <div className="mt-6 max-h-[60vh] overflow-y-auto px-1 py-4">
-          <FilterContent />
-        </div>
-        <div className="mt-8">
+
+        <FilterContent />
+
+        <div className="mt-4">
           <FilterActions
             onClear={handleClearFilters}
             onApply={applyFilters}

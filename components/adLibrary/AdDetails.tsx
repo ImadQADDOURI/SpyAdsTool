@@ -160,12 +160,14 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
         {trigger || (
           <Button
             variant="outline"
-            className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-md border-2 border-[#6566F1]/30 bg-gradient-to-r from-[#6566F1]/15 to-[#B977F8]/15 px-4 py-2.5 text-sm font-medium text-gray-700 shadow-md transition-all duration-300 hover:border-[#6566F1]/50 hover:from-[#6566F1]/25 hover:to-[#B977F8]/25 hover:shadow-lg hover:shadow-[#6566F1]/10 dark:border-[#6566F1]/30 dark:bg-gradient-to-r dark:from-[#6566F1]/20 dark:to-[#B977F8]/20 dark:text-gray-200 dark:hover:border-[#B977F8]/50 dark:hover:from-[#6566F1]/30 dark:hover:to-[#B977F8]/30 dark:hover:shadow-[#B977F8]/20"
+            className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-md border-0 bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-5 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:from-[#7677FF] hover:to-[#CA88FF] hover:shadow-xl hover:shadow-[#B977F8]/20 focus:ring-2 focus:ring-[#6566F1]/50 dark:text-white dark:shadow-[#6566F1]/20"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            <BarChart3 className="h-4.5 w-4.5 text-[#6566F1] transition-transform duration-300 group-hover:scale-110 dark:text-[#8485FF]" />
-            <span className="relative font-medium">View Analytics</span>
-            <ChevronRight className="h-4 w-4 text-[#6566F1]/70 transition-transform duration-300 group-hover:translate-x-0.5 dark:text-[#8485FF]/70" />
+            <div className="absolute inset-0 bg-white opacity-0 mix-blend-overlay transition-opacity duration-300 group-hover:opacity-10" />
+            <BarChart3 className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
+            <span className="relative font-semibold tracking-wide">
+              View Analytics
+            </span>
+            <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Button>
         )}
       </DialogTrigger>
@@ -192,14 +194,14 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
               {/* Analytics Section with Controls */}
               <div className="rounded-lg border border-gray-200/30 dark:border-gray-700/30">
                 {/* Analytics Header */}
-                <div className="rounded-lg border bg-white px-2 py-1 dark:border-gray-700/30 dark:bg-gray-900">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="rounded-lg border bg-white p-3 shadow-sm dark:border-gray-700/30 dark:bg-gray-900">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     {/* Load More Controls */}
                     {!isComplete ? (
                       <Button
                         onClick={handleLoadMore}
                         disabled={isLoading}
-                        className="flex h-9 items-center gap-2 bg-gradient-to-r from-[#6566F1] to-[#B977F8] text-sm font-medium text-white transition-colors hover:from-[#5859D9] hover:to-[#A66ADF]"
+                        className="flex h-10 items-center gap-2 bg-gradient-to-r from-[#34D399] to-[#10B981] text-sm font-medium text-white transition-all hover:from-[#2EBC89] hover:to-[#0EA572] focus:ring-2 focus:ring-green-500/30"
                       >
                         {isLoading ? (
                           <RefreshCw className="h-4 w-4 animate-spin" />
@@ -211,8 +213,8 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
                         </span>
                       </Button>
                     ) : (
-                      <div className="flex items-center gap-2 text-green-500">
-                        <CheckCircle className="h-5 w-5" />
+                      <div className="flex items-center gap-2 bg-gradient-to-r from-[#34D399] to-[#10B981] bg-clip-text text-transparent">
+                        <CheckCircle className="h-5 w-5 text-green-500" />
                         <span className="text-sm font-medium">
                           All Ad Versions loaded
                         </span>
@@ -221,8 +223,8 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
 
                     {/* Total Count */}
                     {totalCount !== null && (
-                      <div className="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400">
-                        <span className="flex items-center gap-1.5">
+                      <div className="flex items-center rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                        <span className="flex items-center gap-2">
                           <BarChart3 className="h-4 w-4" />
                           {remainingCount !== null && remainingCount > 0 ? (
                             <span>{`${remainingCount} of ${totalCount} ads remaining`}</span>

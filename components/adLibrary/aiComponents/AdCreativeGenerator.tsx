@@ -74,9 +74,9 @@ const AdCreativeGenerator: React.FC<{ ad: AdData }> = ({ ad }) => {
       <div className="absolute right-0 top-0 h-16 w-16 -translate-y-8 translate-x-8 rounded-full bg-[#6566F1]/10 blur-2xl" />
       <div className="absolute bottom-0 left-0 h-16 w-16 -translate-x-8 translate-y-8 rounded-full bg-[#B977F8]/10 blur-2xl" />
 
-      <div className="relative space-y-4 p-6">
+      <div className="relative space-y-2 p-4">
         {/* Title Section */}
-        <div className="mb-6">
+        <div className="mb-4">
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-gradient-to-r from-[#6566F1] to-[#B977F8] p-2 text-white shadow-lg">
               <Sparkles className="h-5 w-5" />
@@ -86,14 +86,14 @@ const AdCreativeGenerator: React.FC<{ ad: AdData }> = ({ ad }) => {
                 AI Creative Generation
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Generate optimized ad copy in multiple languages
+                Generate ad copy in multiple languages
               </p>
             </div>
           </div>
         </div>
 
         {/* Controls Section */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center justify-end gap-3">
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button

@@ -170,11 +170,14 @@ export const CountryBarChart: React.FC<CountryBarChartProps> = ({ data }) => {
   return (
     <div className="flex flex-col">
       {/* Header with Search */}
-      <div className="flex items-center justify-between px-2 py-1.5">
-        <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400">
-          Country Distribution
-        </h4>
-        <div className="flex items-center gap-2">
+      <div>
+        <div className="mb-2 px-2 py-2">
+          <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-sm font-bold text-transparent">
+            Country Distribution
+          </span>
+        </div>
+
+        <div className="mb-2 flex items-center justify-end gap-2 px-2">
           <Input
             type="search"
             placeholder="Search countries..."

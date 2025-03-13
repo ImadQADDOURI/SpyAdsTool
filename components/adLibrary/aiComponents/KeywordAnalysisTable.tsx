@@ -1,6 +1,20 @@
 import React, { useState } from "react";
 import { AdAnalysis } from "@/actions/geminiAiService";
-import { Check, ChevronDown, ChevronUp, Copy, Info } from "lucide-react";
+import {
+  Baby,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  Info,
+  Megaphone,
+  OctagonAlert,
+  Snowflake,
+  SunSnow,
+  Tags,
+  UserRound,
+  VenusAndMars,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -77,8 +91,14 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
 
   if (!data) {
     return (
-      <div className="py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-        No keyword data available
+      <div className="flex flex-col items-center justify-center space-y-2 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
+        <OctagonAlert className="h-8 w-8 text-gray-400 dark:text-gray-500" />
+        <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+          No Worldwide Statistics available.
+        </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          this ad is not targeted worldwide.
+        </p>
       </div>
     );
   }
@@ -88,7 +108,7 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
     : 5;
 
   return (
-    <div className="space-y-2 rounded-lg bg-white px-2 dark:bg-gray-900">
+    <div className="w-full space-y-2 rounded-lg bg-white px-2 dark:bg-gray-900">
       <div className="flex items-center justify-between border-b border-gray-100 py-2 dark:border-gray-700">
         <h3 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-lg font-semibold text-transparent">
           Worldwide Statistics
@@ -106,149 +126,155 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
           </Tooltip>
         </TooltipProvider>
       </div>
-      {/* Insights Grid */}
-      <div className="space-y-1">
-        {/* Row 1: Demographics */}
-        <div className="flex flex-wrap gap-1">
-          <InsightItem
-            label="Gender"
-            value={data.genderTarget}
-            description="Target audience gender distribution"
-          />
-          <InsightItem
-            label="Age"
-            value={data.ageTarget}
-            description="Primary age groups for targeting"
-          />
-          <InsightItem
-            label="Season"
-            value={data.seasonTarget}
-            description="Optimal seasonal timing"
-          />
-        </div>
+      {/* Insights Grid Container */}
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {/* Demographics Insights */}
+        <InsightItem
+          label="Gender"
+          value={data.genderTarget}
+          description="Target audience gender distribution"
+          icon={VenusAndMars}
+        />
+        <InsightItem
+          label="Age"
+          value={data.ageTarget}
+          description="Primary age groups for targeting"
+          icon={Baby}
+        />
+        <InsightItem
+          label="Season"
+          value={data.seasonTarget}
+          description="Optimal seasonal timing"
+          icon={Snowflake}
+        />
 
-        {/* Row 2: Performance Metrics */}
-        <div className="flex flex-wrap gap-1">
-          <CompetitionRadialChart competition={data.competition} />
-          <CPMDisplay value={data.cpm} />
-          <BudgetIndicator budget={data.estimatedBudget} />
-        </div>
+        {/* Performance Metrics */}
+        <CompetitionRadialChart competition={data.competition} />
+        <CPMDisplay value={data.cpm} />
+        <BudgetIndicator budget={data.estimatedBudget} />
 
-        {/* Row 3: Additional Insights */}
-        <div className="flex flex-wrap gap-1">
-          <InsightItem
-            label="Audience"
-            value={data.targetAudience}
-            description="Target audience characteristics and preferences"
-          />
-          <InsightItem
-            label="Category"
-            value={data.adCategories}
-            description="Primary advertising categories"
-          />
-          <InsightItem
-            label="Marketing"
-            value={data.marketingStrategies}
-            description="Recommended marketing approaches"
-          />
-        </div>
+        {/* Additional Insights */}
+        <InsightItem
+          label="Target Audience"
+          value={data.targetAudience}
+          description="Target audience characteristics and preferences"
+          icon={UserRound}
+        />
+        <InsightItem
+          label="Category"
+          value={data.adCategories}
+          description="Primary advertising categories"
+          icon={Tags}
+        />
+        <InsightItem
+          label="Marketing Strategies"
+          value={data.marketingStrategies}
+          description="Recommended marketing approaches"
+          icon={Megaphone}
+        />
       </div>
-
-      {/* Keywords Table */}
-      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
-        <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="max-w-[300px] bg-gray-50 py-2 dark:bg-gray-800">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium">
-                    Top Focus Keywords
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    onClick={() => handleCopyKeywords("top")}
-                  >
-                    {copyingTop ? (
-                      <Check className="h-3.5 w-3.5 text-green-500" />
-                    ) : (
-                      <Copy className="h-3.5 w-3.5" />
-                    )}
-                  </Button>
-                </div>
-              </TableHead>
-              <TableHead className="max-w-[300px] bg-gray-50 py-2 dark:bg-gray-800">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium">
-                    Long-Tail Keywords
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    onClick={() => handleCopyKeywords("long")}
-                  >
-                    {copyingLong ? (
-                      <Check className="h-3.5 w-3.5 text-green-500" />
-                    ) : (
-                      <Copy className="h-3.5 w-3.5" />
-                    )}
-                  </Button>
-                </div>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {Array.from({ length: displayCount }).map((_, index) => (
-              <TableRow
-                key={index}
-                className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50"
-              >
-                <TableCell className="max-w-[300px] py-1.5">
-                  {data.topKeywords[index] && (
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="min-w-0 flex-1">
-                        <ExpandableText
-                          text={data.topKeywords[index].word}
-                          maxLength={20}
-                          singleLine
-                        />
-                      </div>
-                      <span className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">
-                        ({data.topKeywords[index].count})
-                      </span>
-                    </div>
-                  )}
-                </TableCell>
-                <TableCell className="max-w-[300px] py-1.5">
-                  {data.longTailKeywords[index] && (
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="min-w-0 flex-1">
-                        <ExpandableText
-                          text={data.longTailKeywords[index].phrase}
-                          maxLength={20}
-                          singleLine
-                        />
-                      </div>
-                      <span className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">
-                        ({data.longTailKeywords[index].count})
-                      </span>
-                    </div>
-                  )}
-                </TableCell>
+      {/* Keywords Table - Container with responsive design */}
+      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+        {/* 👇 Use a responsive container with horizontal scroll for small screens */}
+        <div className="w-full overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                {/* 🎯 Header cells with minimum width and flexible growth */}
+                <TableHead className="w-1/2 bg-gray-50 py-2 dark:bg-gray-800">
+                  <div className="flex items-center gap-2">
+                    <span className="truncate text-xs font-medium">
+                      Top Focus Keywords
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 flex-shrink-0"
+                      onClick={() => handleCopyKeywords("top")}
+                    >
+                      {copyingTop ? (
+                        <Check className="h-3.5 w-3.5 text-green-500" />
+                      ) : (
+                        <Copy className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
+                  </div>
+                </TableHead>
+                <TableHead className="w-1/2 bg-gray-50 py-2 dark:bg-gray-800">
+                  <div className="flex items-center gap-2">
+                    <span className="truncate text-xs font-medium">
+                      Long-Tail Keywords
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 flex-shrink-0"
+                      onClick={() => handleCopyKeywords("long")}
+                    >
+                      {copyingLong ? (
+                        <Check className="h-3.5 w-3.5 text-green-500" />
+                      ) : (
+                        <Copy className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
+                  </div>
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: displayCount }).map((_, index) => (
+                <TableRow
+                  key={index}
+                  className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50"
+                >
+                  {/* ✨ Cell styling for responsive content */}
+                  <TableCell className="w-1/2 py-1.5">
+                    {data.topKeywords[index] && (
+                      <div className="flex items-center justify-between gap-2">
+                        {/* 📏 Ensure text has minimum width of 0 to enable proper truncation */}
+                        <div className="min-w-0 flex-1">
+                          <ExpandableText
+                            text={data.topKeywords[index].word}
+                            singleLine
+                            showIcon={false}
+                          />
+                        </div>
+                        <span className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">
+                          ({data.topKeywords[index].count})
+                        </span>
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell className="w-1/2 py-1.5">
+                    {data.longTailKeywords[index] && (
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <ExpandableText
+                            text={data.longTailKeywords[index].phrase}
+                            singleLine
+                            showIcon={false}
+                          />
+                        </div>
+                        <span className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">
+                          ({data.longTailKeywords[index].count})
+                        </span>
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
+      {/* 🔽 Show More/Less button - full width with proper spacing */}
       {Math.max(data.topKeywords.length, data.longTailKeywords.length) > 5 && (
         <Button
           onClick={() => setExpanded(!expanded)}
           variant="outline"
           size="sm"
-          className="w-full bg-transparent hover:bg-gray-100/50 dark:hover:bg-gray-800/50"
+          className="w-full bg-transparent text-sm hover:bg-gray-100/50 dark:hover:bg-gray-800/50"
         >
           {expanded ? (
             <>

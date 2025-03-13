@@ -1,5 +1,11 @@
 import React from "react";
-import { DollarSign, Info } from "lucide-react";
+import {
+  BadgeDollarSign,
+  CircleDollarSign,
+  DollarSign,
+  Eye,
+  Info,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import {
@@ -29,23 +35,25 @@ const CPMDisplay: React.FC<CPMDisplayProps> = ({ value, className }) => {
         <TooltipTrigger asChild>
           <div
             className={cn(
-              "group flex min-w-[160px] max-w-[160px] cursor-default flex-col rounded-lg bg-gray-100/50 p-2 transition-all duration-200",
-              "hover:bg-gray-100/70 dark:bg-gray-800/50 dark:hover:bg-gray-800/70",
+              // 📐 Intrinsic Web Design - fill available space
+              "group flex w-full cursor-default flex-col rounded-lg bg-gradient-to-br from-white to-gray-100/80 p-3 transition-all duration-200",
+              "hover:shadow-md dark:from-gray-800/70 dark:to-gray-900/50 dark:hover:shadow-gray-900/20",
+              "border border-transparent hover:border-gray-200 dark:hover:border-gray-700",
               className,
             )}
           >
-            {/* Header */}
-            <div className="flex flex-row items-center justify-between gap-1">
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            {/* Enhanced Header with Gradient */}
+            <div className="mb-1 flex flex-row items-center justify-between gap-1">
+              <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-sm font-bold text-transparent">
                 CPM Rate
               </span>
-              <Info className="h-3.5 w-3.5 text-gray-600 transition-colors group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+              <Eye className="h-5 w-5 text-gray-500 transition-colors group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />{" "}
             </div>
 
-            {/* Value Display */}
-            <div className="mt-2 flex items-center justify-center">
+            {/* Value Display with Enhanced Styling */}
+            <div className="mt-2 flex items-center justify-center rounded-lg bg-white/70 py-2 dark:bg-gray-800/30">
               <div className="flex items-center gap-1">
-                <DollarSign className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                <DollarSign className="h-6 w-6 text-[#8A70FA] dark:text-[#A37FF8]" />
                 <span
                   className={cn(
                     "font-bold tracking-tight text-gray-900 dark:text-gray-100",
@@ -57,9 +65,9 @@ const CPMDisplay: React.FC<CPMDisplayProps> = ({ value, className }) => {
               </div>
             </div>
 
-            {/* Subtitle */}
-            <div className="mt-1 text-center">
-              <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">
+            {/* Enhanced Subtitle */}
+            <div className="mt-2 text-center">
+              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
                 Per 1k Impressions
               </span>
             </div>

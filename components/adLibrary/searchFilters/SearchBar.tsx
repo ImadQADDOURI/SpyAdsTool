@@ -56,7 +56,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       <div
         className={`w-full max-w-[600px] transition-all duration-100 ${
           isSticky
-            ? "fixed top-16 z-50 animate-in fade-in slide-in-from-top-4"
+            ? "fixed top-16 z-10 animate-in fade-in slide-in-from-top-4"
             : ""
         }`}
       >

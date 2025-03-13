@@ -50,3 +50,7 @@ npx update-browserslist-db@latest
 ---
 
 pnpm add react-window @types/react-window
+
+---
+
+pnpm update lucide-react@latest

@@ -83,10 +83,10 @@ const GenderPieChart: React.FC<GenderPieChartProps> = ({
   return (
     <div className="flex flex-col">
       {/* Compact Header */}
-      <div className="px-2 py-1.5">
-        <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400">
+      <div className="mb-2 px-2 py-2">
+        <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-sm font-bold text-transparent">
           Gender Distribution
-        </h4>
+        </span>
       </div>
 
       {/* Maximized Chart Area */}

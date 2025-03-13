@@ -5,6 +5,7 @@ import {
   CircleCheck,
   CircleX,
   Facebook,
+  Flame,
   Info,
   Instagram,
   MessageCircle,
@@ -106,6 +107,9 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
           <TooltipTrigger className="absolute left-0 top-0 flex items-center rounded-br-2xl bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-4 py-1.5 text-white transition-colors duration-300 hover:from-[#5455E0] hover:to-[#A866E7]">
             <span className="font-semibold">{collation_count || 0}</span>
             <span className="ml-1 text-sm">ADS</span>
+            {collation_count && collation_count >= 5 && (
+              <span className="ml-2 animate-pulse">🔥</span>
+            )}
           </TooltipTrigger>
           <TooltipContent>
             <p>{collation_count} ads use this creative and text</p>

@@ -151,12 +151,9 @@ export const AgeBarChart: React.FC<AgeBarChartProps> = ({ data }) => {
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between px-2 py-1.5">
-        <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400">
+      <div className="mb-2 px-2 py-2">
+        <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-sm font-bold text-transparent">
           Age Distribution
-        </h4>
-        <span className="text-[10px] text-gray-400 dark:text-gray-500">
-          Stacked View
         </span>
       </div>
 
