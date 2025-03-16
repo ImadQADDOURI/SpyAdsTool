@@ -40,8 +40,8 @@ export default function AffiliateCalculatorPage() {
       </FirefliesWrapper>
 
       {/* 📝 Description Section */}
-      <div className="mx-auto max-w-4xl px-4 py-6">
-        <div className="mb-8 rounded-xl bg-white p-6 shadow-sm dark:bg-gray-900">
+      <div className="mx-auto px-4 py-6">
+        <div className="mx-auto mb-8 max-w-6xl rounded-xl bg-white p-6 shadow-sm dark:bg-gray-900">
           <div className="flex items-start space-x-3">
             <Info className="mt-1 h-5 w-5 text-[#6566F1]" />
             <div>
@@ -68,7 +68,7 @@ export default function AffiliateCalculatorPage() {
         </div>
 
         {/* 📊 Formulas & Methodology */}
-        <div className="mb-8">
+        <div className="mx-auto mb-8 max-w-6xl">
           <div className="rounded-xl bg-white shadow-sm dark:bg-gray-900">
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="formulas">
@@ -133,7 +133,7 @@ export default function AffiliateCalculatorPage() {
         </div>
 
         {/* 💡 Usage Guide & Tips */}
-        <div className="mb-8">
+        <div className="mx-auto mb-8 max-w-6xl">
           <div className="rounded-xl bg-white shadow-sm dark:bg-gray-900">
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="guide">
@@ -210,7 +210,7 @@ export default function AffiliateCalculatorPage() {
         </div>
 
         {/* 🚀 Use Cases & Strategy */}
-        <div className="mb-8">
+        <div className="mx-auto mb-8 max-w-6xl">
           <div className="rounded-xl bg-white shadow-sm dark:bg-gray-900">
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="use-cases">
@@ -281,7 +281,7 @@ export default function AffiliateCalculatorPage() {
         </div>
 
         {/* ❓ Common Questions */}
-        <div className="mb-8">
+        <div className="mx-auto mb-8 max-w-6xl">
           <div className="rounded-xl bg-white shadow-sm dark:bg-gray-900">
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="faq">
