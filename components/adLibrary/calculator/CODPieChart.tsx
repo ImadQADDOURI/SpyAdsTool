@@ -29,9 +29,9 @@ const CODPieChart: React.FC<CODPieChartProps> = ({
 }) => {
   // Modern color palette matching the app's theme
   const colors = {
-    profit: "#6566F1", // Primary brand color
-    spending: "#B977F8", // Secondary brand color
-    refund: "#F87171", // Complementary red
+    profit: "#10B981",
+    spending: "#A855F7",
+    refund: "#F87171",
   };
 
   const chartData = [
@@ -107,7 +107,7 @@ const CODPieChart: React.FC<CODPieChartProps> = ({
   };
 
   return (
-    <div className="relative h-80 w-full">
+    <div className="relative h-full w-full">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie

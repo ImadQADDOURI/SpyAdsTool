@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Check, Copy, ExternalLink, MoreVertical } from "lucide-react";
 
+import { AdData } from "@/types/ad";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -24,12 +25,8 @@ interface Snapshot {
   page_profile_uri?: string;
 }
 
-interface AdOptionsProps {
-  ad_archive_id: string;
-  snapshot: any;
-}
-
-export function AdOptions({ ad_archive_id, snapshot }: AdOptionsProps) {
+export function AdOptions({ ad }: { ad: AdData }) {
+  const { ad_archive_id, snapshot } = ad;
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 

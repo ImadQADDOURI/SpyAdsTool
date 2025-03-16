@@ -5,6 +5,7 @@ import {
   BarChart,
   CreditCard,
   DollarSign,
+  Info,
   Package,
   PackageOpen,
   Plus,
@@ -474,6 +475,17 @@ const CODCalculator: React.FC = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+
+            {/* ℹ️ User Note */}
+            <div className="mx-auto mb-8 max-w-6xl rounded-xl bg-purple-50 p-2 shadow-sm dark:bg-gray-900/60">
+              <div className="flex items-center space-x-2 text-sm text-purple-700 dark:text-purple-300">
+                <Info className="h-5 w-5" />
+                <p>
+                  <span className="font-medium">Note:</span> Refund costs are
+                  calculated only if a refund amount is entered (default: 0).
+                </p>
               </div>
             </div>
           </CardContent>

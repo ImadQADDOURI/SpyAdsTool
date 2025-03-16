@@ -160,7 +160,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
         {trigger || (
           <Button
             variant="outline"
-            className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-md border-0 bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-5 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:from-[#7677FF] hover:to-[#CA88FF] hover:shadow-xl hover:shadow-[#B977F8]/20 focus:ring-2 focus:ring-[#6566F1]/50 dark:text-white dark:shadow-[#6566F1]/20"
+            className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-md border-0 bg-gradient-to-r from-purple-600 to-pink-500 px-5 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:from-purple-500 hover:to-pink-400 hover:shadow-xl hover:shadow-pink-500/20 focus:border-0 focus:bg-gradient-to-r focus:from-purple-600 focus:to-pink-500 focus:outline-none focus:ring-2 focus:ring-purple-600/50 dark:text-white dark:shadow-purple-600/20"
           >
             <div className="absolute inset-0 bg-white opacity-0 mix-blend-overlay transition-opacity duration-300 group-hover:opacity-10" />
             <BarChart3 className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />

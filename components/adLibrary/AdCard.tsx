@@ -117,14 +117,25 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
         </Tooltip>
       </TooltipProvider>
 
+      {/* Save button in top middle (positioned more to the right) */}
+      <div className="absolute -top-1 right-12 pt-1.5">
+        <SaveAdButton ad={ad} />
+      </div>
+
       {/* Options button in top right */}
-      <AdOptions ad_archive_id={ad.ad_archive_id} snapshot={snapshot} />
+      <AdOptions ad={ad} />
 
       <CardContent className="mt-10 flex flex-grow flex-col justify-between px-0.5 py-0">
         <div className="flex flex-grow flex-col justify-between">
           <div className="space-y-2.5">
-            {/* First row: EU transparency and Save button */}
+            {/* Row: Date and EU transparency with justify-between */}
             <div className="flex items-center justify-between px-2 pt-1">
+              {/* Left: Date */}
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                <span>{renderDate()}</span>
+              </div>
+
+              {/* Right: EU transparency */}
               <div className="flex items-center">
                 {is_aaa_eligible && (
                   <TooltipProvider>
@@ -146,7 +157,6 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
                   </TooltipProvider>
                 )}
               </div>
-              <SaveAdButton ad={ad} />
             </div>
 
             {/* Second row: Status and Platform */}
@@ -175,11 +185,6 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
               <div className="flex items-center">{renderPlatformIcons()}</div>
             </div>
 
-            {/* Third row: Date */}
-            <div className="flex items-center justify-end px-2 text-sm text-gray-600 dark:text-gray-400">
-              <span>{renderDate()}</span>
-            </div>
-
             {/* Fourth row: Page name */}
             <div className="px-2">
               <PageNameWithPopover snapshot={snapshot} />
@@ -194,14 +199,14 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
             <hr className="m-0.5 border-t border-gray-200 dark:border-gray-700" />
 
             {/* Pixel, Platform, Payment info */}
-            <DisplayPixelPlatformPayment
+            {/* <DisplayPixelPlatformPayment
               url={snapshot?.link_url || undefined}
               usePuppeteer={true}
               keepBrowserOpen={true}
               useCache={true}
               dynamicTimeout={1000}
               autoDetect={false}
-            />
+            /> */}
           </div>
         </div>
       </CardContent>

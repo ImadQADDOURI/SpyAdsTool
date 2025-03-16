@@ -37,7 +37,7 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
   error,
 }) => {
   if (isLoading) {
-    return <Loading message="Loading Statistics..." size="small" />;
+    return <Loading message="Loading EU Statistics..." size="small" />;
   }
 
   // if (error) {

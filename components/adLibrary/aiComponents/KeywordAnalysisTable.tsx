@@ -77,7 +77,7 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
   };
 
   if (isLoading) {
-    return <Loading message="Analyzing keywords..." size="small" />;
+    return <Loading message="Loading Worldwide Statistics..." size="small" />;
   }
 
   if (error) {

@@ -209,7 +209,7 @@ export function SaveAdButton({ ad }: SaveAdButtonProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="rounded-full transition-all duration-200 hover:scale-110 hover:bg-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:hover:bg-purple-900"
+            className="rounded-full px-2 py-1 transition-all duration-200 hover:scale-110 hover:bg-purple-100 focus:outline-none focus:ring-purple-500 dark:hover:bg-purple-900"
             aria-label={isAdSaved ? "Unsave ad" : "Save ad"}
           >
             <Heart

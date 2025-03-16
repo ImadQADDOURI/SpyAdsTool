@@ -42,12 +42,17 @@ const CPMDisplay: React.FC<CPMDisplayProps> = ({ value, className }) => {
               className,
             )}
           >
-            {/* Enhanced Header with Gradient */}
-            <div className="mb-1 flex flex-row items-center justify-between gap-1">
+            {/* Enhanced Header with Gradient Title and Interactive Icon */}
+            <div className="flex flex-row items-center justify-between">
               <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-sm font-bold text-transparent">
                 CPM Rate
               </span>
-              <Eye className="h-5 w-5 text-gray-500 transition-colors group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />{" "}
+
+              <Eye
+                className={cn(
+                  "h-5 w-5 text-[#9C5FF5] transition-transform duration-300 ease-in-out group-hover:scale-110 dark:text-[#B977F8]",
+                )}
+              />
             </div>
 
             {/* Value Display with Enhanced Styling */}

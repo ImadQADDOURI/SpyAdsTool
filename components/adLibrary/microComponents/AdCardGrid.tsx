@@ -31,7 +31,7 @@ export const AdCardGrid: React.FC<AdCardGridProps> = ({ ads }) => {
   });
 
   return (
-    <div className="grid w-full auto-rows-fr grid-cols-[repeat(auto-fit,minmax(min(100%,350px),1fr))] gap-4">
+    <div className="grid w-full auto-rows-fr grid-cols-[repeat(auto-fit,minmax(min(100%,250px),1fr))] gap-4">
       {filteredAds.map((ad) => (
         <AdCard key={ad.ad_archive_id} ad={ad} />
       ))}

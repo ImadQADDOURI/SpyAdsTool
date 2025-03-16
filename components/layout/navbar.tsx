@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import AffiliateLinks from "@/components/adLibrary/microComponents/affiliate-links";
 import { DocsSearch } from "@/components/docs/search";
 import { ModalContext } from "@/components/modals/providers";
 import { Icons } from "@/components/shared/icons";
@@ -91,6 +92,8 @@ export function NavBar({ scroll = false }: NavBarProps) {
                 </Link>
               ))}
               <ToolsNavigationMenu />
+              {/* 🔗 Affiliate Links Section */}
+              <AffiliateLinks />
             </nav>
           ) : null}
         </div>

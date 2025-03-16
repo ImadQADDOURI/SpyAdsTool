@@ -26,8 +26,6 @@ interface RenderMediaProps {
 }
 
 export const RenderMedia: React.FC<RenderMediaProps> = ({ snapshot }) => {
-  const [playingVideo, setPlayingVideo] = useState<number | null>(null);
-
   const mediaItems = [
     ...(snapshot.cards || []),
     ...(snapshot.images || []),
@@ -59,35 +57,23 @@ export const RenderMedia: React.FC<RenderMediaProps> = ({ snapshot }) => {
                   />
                 )}
                 {item.video_preview_image_url && (
-                  <>
-                    {playingVideo === index ? (
-                      <video
-                        src={item.video_sd_url || undefined}
-                        controls
-                        autoPlay
-                        className="h-full w-full object-contain"
-                      />
-                    ) : (
-                      <>
-                        <Image
+                  <video
+                    src={item.video_sd_url || undefined}
+                    controls
+                    autoPlay
+                    muted
+                    className="h-full w-full object-contain"
+                  />
+
+                  /*
+                    <Image
                           src={item.video_preview_image_url}
                           alt={`Video preview ${index + 1}`}
                           fill
                           style={{ objectFit: "contain" }}
                           unoptimized
                           priority={false}
-                        />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="absolute inset-0 m-auto h-12 w-12 rounded-full bg-black bg-opacity-50 text-white transition-all duration-300 hover:bg-opacity-70"
-                          onClick={() => setPlayingVideo(index)}
-                        >
-                          <Play className="h-6 w-6" />
-                        </Button>
-                      </>
-                    )}
-                  </>
+                        /> */
                 )}
               </div>
 

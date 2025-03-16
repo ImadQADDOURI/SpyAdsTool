@@ -6,7 +6,7 @@ import CPACalculator from "@/components/adLibrary/calculator/CPACalculator";
 import DropshippingCalculator from "@/components/adLibrary/calculator/DropshippingCalculator";
 import { Loading } from "@/components/adLibrary/microComponents/Loading";
 
-export default function CollectionsPage() {
+export default function Tools() {
   return (
     <Suspense fallback={<Loading message="Loading content..." size="large" />}>
       <CODCalculator />

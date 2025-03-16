@@ -63,14 +63,18 @@ const BudgetIndicator: React.FC<BudgetIndicatorProps> = ({
               className,
             )}
           >
-            {/* Enhanced Header */}
-            <div className="mb-1 flex flex-row items-center justify-between gap-2">
+            {/* Enhanced Header with Gradient Title and Interactive Icon */}
+            <div className="flex flex-row items-center justify-between">
               <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-sm font-bold text-transparent">
                 Budget Level
               </span>
-              <DollarSign className="h-5 w-5 text-gray-500 transition-colors group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />{" "}
-            </div>
 
+              <DollarSign
+                className={cn(
+                  "h-5 w-5 text-[#9C5FF5] transition-transform duration-300 ease-in-out group-hover:scale-110 dark:text-[#B977F8]",
+                )}
+              />
+            </div>
             {/* Progress Bar Container with enhanced styling */}
             <div className="mt-3 space-y-3">
               {/* Budget Label with card-like background */}

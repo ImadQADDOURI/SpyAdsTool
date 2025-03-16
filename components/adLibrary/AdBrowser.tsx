@@ -3,8 +3,10 @@
 
 import React, { useCallback, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AdLibrarySearchPaginationQuery } from "@/utils/MetaGraphQLConstsAndFunctions";
-import { getAdSearchVariables } from "@/utils/MetaGraphQLConstsAndFunctions";
+import {
+  AdLibrarySearchPaginationQuery,
+  getAdSearchVariables,
+} from "@/utils/MetaGraphQLConstsAndFunctions";
 import { Loader2 } from "lucide-react";
 
 import { AdData } from "@/types/ad";
@@ -107,7 +109,7 @@ export const AdBrowser = () => {
         <div className="group relative py-6">
           <div className="relative z-10 flex flex-col items-center justify-center space-y-2">
             <h1 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text px-4 text-4xl font-bold tracking-tight text-transparent transition-all duration-300 ease-in-out hover:scale-[1.01]">
-              Ad Browser
+              Ad Search
             </h1>
             <div className="relative">
               <div className="h-0.5 w-16 rounded-full bg-gradient-to-r from-[#6566F1]/40 to-[#B977F8]/40 transition-all duration-300 ease-in-out group-hover:w-24" />

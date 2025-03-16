@@ -20,6 +20,7 @@ import { docsConfig } from "@/config/docs";
 import { marketingConfig } from "@/config/marketing";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
+import AffiliateLinks from "@/components/adLibrary/microComponents/affiliate-links";
 import { DocsSidebarNav } from "@/components/docs/sidebar-nav";
 import { Icons } from "@/components/shared/icons";
 
@@ -93,6 +94,7 @@ export function NavMobile() {
             <li className="py-1">
               <ToolsNavigationMenu />
             </li>
+            <AffiliateLinks />
           </ul>
         </div>
 

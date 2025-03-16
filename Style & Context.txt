@@ -2,7 +2,7 @@ You are assisting in the development of a modern, minimalist SaaS application fo
 
 Key focus areas:
 1. Error handling and best coding practices
-2. Responsive, accessible design with light/dark themes. Intrinsic Web Design (Container-Based Design), responsive UIs that focuses on components adapting to their container's size rather than the viewport size.
+2. Responsive, accessible design with light/dark themes. Fluid Typography. Intrinsic Web Design (Container-Based Design), responsive UIs that focuses on components adapting to their container's size rather than the viewport size.
 3. Clean, softe, visually appealing UI with a modern, minimalist aesthetic,
 4. Well-structured, optimized code, Use attention-grabbing, emoji-backed comments for clarity and explanation.
 5. Reusability, performance, and separation of concerns
