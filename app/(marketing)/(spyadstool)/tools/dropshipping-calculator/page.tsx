@@ -163,7 +163,7 @@ export default function CalculatorPage() {
                       </li>
                       <li>If applicable, enter your return cost per unit</li>
                       <li>
-                        Add any additional charges using the "Add Extra Charge"
+                        Add any additional charges using the Add Extra Charge
                         button
                       </li>
                       <li>
@@ -283,11 +283,11 @@ export default function CalculatorPage() {
                         Why is my ROI negative?
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400">
-                        A negative ROI indicates that you're spending more than
-                        you're earning. Review your costs, especially
-                        advertising expenses, and consider increasing your
-                        selling price or finding a supplier with lower product
-                        costs.
+                        A negative ROI indicates that you`&apos;`re spending
+                        more than you`&apos;`re earning. Review your costs,
+                        especially advertising expenses, and consider increasing
+                        your selling price or finding a supplier with lower
+                        product costs.
                       </p>
                     </div>
 
@@ -305,7 +305,7 @@ export default function CalculatorPage() {
 
                     <div className="py-3">
                       <h3 className="mb-1 font-medium text-gray-800 dark:text-gray-200">
-                        What's a good return rate percentage?
+                        What`&apos;`s a good return rate percentage?
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400">
                         Return rates vary by industry, but generally, aim to

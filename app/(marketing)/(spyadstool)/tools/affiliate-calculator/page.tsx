@@ -168,7 +168,7 @@ export default function AffiliateCalculatorPage() {
                         If applicable, set your refund rate and cost per refund
                       </li>
                       <li>
-                        Add any additional charges using the "Add Extra Charge"
+                        Add any additional charges using the Add Extra Charge
                         button
                       </li>
                       <li>
@@ -297,7 +297,8 @@ export default function AffiliateCalculatorPage() {
                   <div className="divide-y dark:divide-gray-800">
                     <div className="py-3">
                       <h3 className="mb-1 font-medium text-gray-800 dark:text-gray-200">
-                        What's a good conversion rate for affiliate marketing?
+                        What`&apos;`s a good conversion rate for affiliate
+                        marketing?
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400">
                         Conversion rates vary by industry, but generally, 1-5%

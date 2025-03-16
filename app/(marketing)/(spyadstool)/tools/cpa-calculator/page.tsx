@@ -162,7 +162,7 @@ export default function CalculatorPage() {
                         refund rate percentage
                       </li>
                       <li>
-                        Add any additional charges using the "Add Extra Charge"
+                        Add any additional charges using the Add Extra Charge
                         button
                       </li>
                       <li>
@@ -292,7 +292,7 @@ export default function CalculatorPage() {
                   <div className="divide-y dark:divide-gray-800">
                     <div className="py-3">
                       <h3 className="mb-1 font-medium text-gray-800 dark:text-gray-200">
-                        What's a good CPA for my business?
+                        What`&apos;`s a good CPA for my business?
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400">
                         A good CPA varies by industry and product price point.
@@ -345,11 +345,11 @@ export default function CalculatorPage() {
                         Why is my ROI negative?
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400">
-                        A negative ROI means you're spending more on acquiring
-                        customers than you're earning from their purchases.
-                        Either your CPA is too high, your average order value is
-                        too low, or your refund rate is too high. Adjust these
-                        factors to reach a positive ROI.
+                        A negative ROI means you`&apos;`re spending more on
+                        acquiring customers than you`&apos;`re earning from
+                        their purchases. Either your CPA is too high, your
+                        average order value is too low, or your refund rate is
+                        too high. Adjust these factors to reach a positive ROI.
                       </p>
                     </div>
                   </div>

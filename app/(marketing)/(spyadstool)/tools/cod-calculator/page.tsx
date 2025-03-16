@@ -178,7 +178,7 @@ export default function CODCalculatorPage() {
                       </li>
                       <li>If applicable, enter your product refund cost</li>
                       <li>
-                        Add any additional charges using the "Add Extra Charge"
+                        Add any additional charges using the Add Extra Charge
                         button
                       </li>
                       <li>

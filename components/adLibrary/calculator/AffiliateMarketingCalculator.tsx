@@ -421,8 +421,12 @@ const AffiliateMarketingCalculator: React.FC = () => {
               <div className="flex items-center space-x-2 text-sm text-purple-700 dark:text-purple-300">
                 <Info className="h-5 w-5" />
                 <p>
-                  <span className="font-medium">Note:</span> Refund costs are
-                  calculated only if a refund amount is entered (default: 0).
+                  <span className="font-medium">Note:</span>
+                  <span>
+                    {" "}
+                    Refund costs are calculated only if a refund amount is
+                    entered (default: $0).
+                  </span>
                 </p>
               </div>
             </div>
