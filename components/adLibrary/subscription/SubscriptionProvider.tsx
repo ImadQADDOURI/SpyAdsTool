@@ -5,7 +5,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { SubscriptionResponse, UserSubscriptionPlan } from "types";
 
 // ⚡ Configurable constants for the subscription system
-const AUTO_REFRESH_INTERVAL = 10 * 60 * 1000; // 🕒 Refresh every 10 minutes
+const AUTO_REFRESH_INTERVAL = 24 * 60 * 60 * 1000; // 🕒 Refresh every 24 hours (86400000ms)
 const SUBSCRIPTION_ENDPOINT = "/api/subscription";
 
 // 📋 Define the shape of our subscription context
@@ -61,7 +61,10 @@ export function SubscriptionProvider({
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch(SUBSCRIPTION_ENDPOINT);
+      // Use cache-first strategy for regular refreshes
+      const response = await fetch(SUBSCRIPTION_ENDPOINT, {
+        cache: "default", // Use HTTP cache when available
+      });
 
       if (!response.ok) {
         throw new Error(`Failed to fetch subscription: ${response.status}`);
@@ -83,9 +86,41 @@ export function SubscriptionProvider({
     }
   };
 
+  // 🚨 Force-refresh function that bypasses cache for critical updates
+  const forceRefresh = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await fetch(SUBSCRIPTION_ENDPOINT, {
+        cache: "no-store", // Skip cache completely
+        headers: {
+          "x-force-refresh": "true", // Custom header to signal importance
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to refresh subscription: ${response.status}`);
+      }
+
+      const data: SubscriptionResponse = await response.json();
+
+      setSubscription(data.subscription);
+      setHasAccess(data.userHasAccess);
+      setLastRefreshed(new Date());
+
+      return data;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error occurred");
+      console.error("💥 Forced subscription refresh error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // 🧠 Exposed refresh function for manual updates (memoized to prevent dependency loops)
   const refresh = React.useCallback(async () => {
-    await fetchSubscription();
+    await forceRefresh(); // Use force refresh for manual requests
   }, []);
 
   // ⏱️ Set up auto-refresh interval when enabled

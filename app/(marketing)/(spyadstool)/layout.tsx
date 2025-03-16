@@ -22,10 +22,15 @@ export default async function ProtectedLayout({
   let subscriptionData: SubscriptionResponse | null = null;
 
   try {
-    // 📡 Fetch from our internal API
+    // 📡 Fetch from our internal API with 24-hour cache
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_APP_URL}/api/subscription?userId=${user.id}`,
-      { next: { revalidate: 60 } }, // Cache for 60 seconds
+      {
+        next: {
+          tags: [`subscription-${user.id}`], // For targeted invalidation
+          revalidate: 86400, // Cache for 24 hours (in seconds)
+        },
+      },
     );
 
     if (response.ok) {

@@ -1,20 +1,15 @@
-// components\adLibrary\AdBrowser.tsx
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   AdLibrarySearchPaginationQuery,
   getAdSearchVariables,
 } from "@/utils/MetaGraphQLConstsAndFunctions";
-import { Loader2 } from "lucide-react";
 
 import { AdData } from "@/types/ad";
 
-import { Button } from "../ui/button";
-import { AdCardGrid } from "./microComponents/AdCardGrid";
 import FirefliesWrapper from "./microComponents/FirefliesWrapper";
-import LoadingTrigger from "./microComponents/LoadingTrigger";
 import { ScrollButtons } from "./microComponents/ScrollButtons";
 import SearchResults from "./microComponents/SearchResults";
 import FilterPanel from "./searchFilters/FilterPanel";
@@ -24,39 +19,74 @@ export const AdBrowser = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // 🔍 Search state
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [searchResults, setSearchResults] = useState<AdData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // 📊 Pagination state
   const [totalCount, setTotalCount] = useState<number | null>(null);
   const [remainingCount, setRemainingCount] = useState<number | null>(null);
   const [endCursor, setEndCursor] = useState<string | null>(null);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
 
+  // 🔒 Search lock mechanism to prevent multiple simultaneous searches
+  const isSearchInProgress = useRef(false);
+  // ⏱️ Debounce timer
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // 🔄 Track the latest search query
+  const latestQueryRef = useRef(searchQuery);
+
+  // 📜 Scroll to top on page load or new search
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [searchParams.get("q")]);
+
+  // 🔄 Sync searchQuery state with URL param when it changes externally
+  useEffect(() => {
+    const queryParam = searchParams.get("q") || "";
+    if (queryParam !== searchQuery) {
+      setSearchQuery(queryParam);
+      latestQueryRef.current = queryParam;
+    }
+  }, [searchParams, searchQuery]);
+
   const handleSearchAds = useCallback(
     async (useExistingParams = false) => {
+      // 🛑 If this is a new search (not loading more), ensure we're not already searching
+      if (!useExistingParams && isSearchInProgress.current) {
+        return;
+      }
+
+      isSearchInProgress.current = true;
       setIsLoading(true);
       setError(null);
+
       try {
+        // 🔄 Get variables for the search query
         const variables = getAdSearchVariables(
           searchParams,
           useExistingParams ? endCursor : null,
-          //page_id,
         );
 
+        // 🔍 Execute search query
         const results = await AdLibrarySearchPaginationQuery(variables);
 
+        // ✅ For load more, append results; for new search, replace results
         if (useExistingParams && searchResults) {
           setSearchResults((prevResults) => [...prevResults!, ...results.ads]);
         } else {
+          // 🧹 Clear previous results for new search
           setSearchResults(results.ads);
-          setTotalCount(results.count); // setTotalCount in the First Search Only
+          setTotalCount(results.count);
         }
 
+        // 📊 Update pagination state
         setEndCursor(results.end_cursor);
         setHasNextPage(results.has_next_page);
 
-        // Calculate remaining count
+        // 🧮 Calculate remaining items
         const newRemainingCount =
           results.count >= 50001
             ? results.count
@@ -70,37 +100,57 @@ export const AdBrowser = () => {
         setError(
           "An error occurred while searching for ads. Please try again.",
         );
-        setSearchResults(null);
+        // 🧹 Clear results on error for new searches
+        if (!useExistingParams) {
+          setSearchResults(null);
+        }
       } finally {
         setIsLoading(false);
+        isSearchInProgress.current = false;
       }
     },
     [searchParams, searchResults, endCursor],
   );
 
   const handleLoadMore = useCallback(() => {
-    if (hasNextPage && !isLoading) {
+    if (hasNextPage && !isLoading && !isSearchInProgress.current) {
       handleSearchAds(true);
     }
   }, [hasNextPage, handleSearchAds, isLoading]);
 
-  //////////////////
-  //In essence, handleSearch acts as the bridge between user input (search query) and the underlying data fetching mechanism. It ensures that the UI and the data stay synchronized, providing a seamless search experience for the user.
-  //Here's a breakdown of its usage in different contexts:
-  //In FilterPanel: When the user applies filters in the filter panel and clicks the "Apply Filters" button, the handleSearch function is called without any arguments. This triggers a search using the current searchQuery state value, along with any applied filters.
-  //In SearchBar: When the user enters a search term in the search bar and either presses Enter or clicks the "Search" button, the handleSearch function is called with the entered search query as the argument. This initiates a search with the specific search term entered by the user.
+  // 🔍 Enhanced search handler with debounce
   const handleSearch = useCallback(
     (query: string = searchQuery) => {
-      // Use default value from searchQuery
+      // 🧹 Clear any pending debounce timer
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      // 📝 Update local state immediately for UI responsiveness
       setSearchQuery(query);
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("q", query); // Use the passed query directly
-      router.push(`?${params.toString()}`);
-      handleSearchAds();
+      latestQueryRef.current = query;
+
+      // ⏱️ Debounce the actual search execution
+      debounceTimerRef.current = setTimeout(() => {
+        // 🔒 Ensure we're not already searching
+        if (isSearchInProgress.current) return;
+
+        // 🔄 Update URL parameters
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("q", query);
+        router.push(`?${params.toString()}`);
+
+        // ⏳ Small delay to ensure URL is updated before search
+        setTimeout(() => {
+          // 🧐 Double-check that the query hasn't changed during the delay
+          if (latestQueryRef.current === query) {
+            handleSearchAds();
+          }
+        }, 50);
+      }, 200); // 200ms debounce delay
     },
     [searchParams, router, handleSearchAds, searchQuery],
   );
-  /////////////////////////
 
   return (
     <div className="min-h-screen bg-gray-100 pb-8 dark:bg-gray-800">
@@ -121,10 +171,14 @@ export const AdBrowser = () => {
       </FirefliesWrapper>
 
       {/* Sticky SearchBar & Filter Section */}
-
       <SearchBar onSearch={handleSearch} isLoading={isLoading} />
 
-      <FilterPanel onSearch={handleSearch} variant="full" />
+      <FilterPanel
+        onSearch={handleSearch}
+        isLoading={isLoading}
+        variant="full"
+      />
+
       {/* Search Results */}
       <SearchResults
         isLoading={isLoading}

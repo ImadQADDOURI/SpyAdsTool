@@ -72,12 +72,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 type="text"
                 placeholder="Search ads..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onChange={(e) => !isLoading && setSearchQuery(e.target.value)}
+                onKeyPress={(e) => !isLoading && handleKeyPress(e)}
                 aria-label="Search ads"
-                className="h-9 w-full rounded-full border-0 bg-white/60 px-4 text-[15px] font-medium text-gray-700 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-[#6566F1] dark:bg-gray-900/60 dark:text-white dark:placeholder:text-gray-400"
+                disabled={isLoading}
+                className="h-9 w-full rounded-full border-0 bg-white/60 px-4 text-[15px] font-medium text-gray-700 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-[#6566F1] disabled:cursor-progress disabled:opacity-50 dark:bg-gray-900/60 dark:text-white dark:placeholder:text-gray-400"
               />
-              {searchQuery && (
+              {searchQuery && !isLoading && (
                 <Button
                   variant="ghost"
                   size="icon"
@@ -107,7 +108,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
             {/* Filter Panel and Display Filters */}
             <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-              <FilterPanel onSearch={onSearch} variant="button" />
+              <FilterPanel
+                onSearch={onSearch}
+                variant="button"
+                isLoading={isLoading}
+              />
               <DisplayFilters />
             </div>
           </div>

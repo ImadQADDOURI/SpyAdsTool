@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   AdLibraryMobileFocusedStateProviderRefetchQuery,
   AdLibrarySearchPaginationQuery,
-} from "@/utils/MetaGraphQLConstsAndFunctions";
-import {
   getAdLibraryMobileVariables,
   getAdSearchVariables,
 } from "@/utils/MetaGraphQLConstsAndFunctions";
@@ -30,40 +28,87 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // 🔍 Search state
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [searchResults, setSearchResults] = useState<AdData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // 📊 Pagination state
   const [totalCount, setTotalCount] = useState<number | null>(null);
   const [remainingCount, setRemainingCount] = useState<number | null>(null);
+  const [endCursor, setEndCursor] = useState<string | null>(null);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(false);
+
+  // 📄 Page info state
   const [pageInfo, setPageInfo] = useState<any | null>(null);
   const [page, setPage] = useState<any | null>(null);
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
     null,
   );
   const [pageTotalAds, setPageTotalAds] = useState<number | null>(null);
-  const [endCursor, setEndCursor] = useState<string | null>(null);
-  const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  // 🔒 Control references to handle race conditions
+  const isSearchInProgress = useRef(false);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const latestQueryRef = useRef(searchQuery);
+  const initialLoadCompletedRef = useRef(false);
+  const searchRequestIdRef = useRef(0); // For tracking the latest search request
+
+  // 📜 Scroll to top on page load or new search
+  useEffect(() => {
+    if (!isInitialLoad) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [searchParams.get("q"), isInitialLoad]);
+
+  // 🔄 Sync searchQuery state with URL param when it changes externally
+  useEffect(() => {
+    const queryParam = searchParams.get("q") || "";
+    if (queryParam !== searchQuery) {
+      setSearchQuery(queryParam);
+      latestQueryRef.current = queryParam;
+    }
+  }, [searchParams, searchQuery]);
 
   const handleSearchAds = useCallback(
     async (useExistingParams = false) => {
+      // 🛑 If this is a new search (not loading more), ensure we're not already searching
+      if (!useExistingParams && isSearchInProgress.current && !isInitialLoad) {
+        return;
+      }
+
+      // 🔢 Generate a unique request ID to track this specific search
+      const currentRequestId = ++searchRequestIdRef.current;
+
+      isSearchInProgress.current = true;
       setIsLoading(true);
       setError(null);
+
       try {
         let results;
+
+        // 🔄 First load special case: fetch page info
         if (isInitialLoad) {
           // First search on page load
           const variables = getAdLibraryMobileVariables(pageId);
           results =
             await AdLibraryMobileFocusedStateProviderRefetchQuery(variables);
+
+          // 🛑 Check if this is still the relevant request
+          if (currentRequestId !== searchRequestIdRef.current) return;
+
           setPageInfo(results.page_info);
           setPage(results.page);
-          setProfilePictureUrl(
-            results.ads[0].snapshot.page_profile_picture_url,
-          );
+          if (results.ads && results.ads.length > 0) {
+            setProfilePictureUrl(
+              results.ads[0].snapshot.page_profile_picture_url,
+            );
+          }
           setPageTotalAds(results.count);
           setIsInitialLoad(false);
+          initialLoadCompletedRef.current = true;
         } else {
           // Subsequent searches or pagination
           const variables = getAdSearchVariables(
@@ -72,6 +117,9 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
             pageId,
           );
           results = await AdLibrarySearchPaginationQuery(variables);
+
+          // 🛑 Check if this is still the relevant request
+          if (currentRequestId !== searchRequestIdRef.current) return;
         }
 
         // Update total count on first search or when search params change
@@ -79,6 +127,7 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
           setTotalCount(results.count);
         }
 
+        // ✅ For load more, append results; for new search, replace results
         if (useExistingParams && searchResults) {
           setSearchResults((prevResults) => [...prevResults!, ...results.ads]);
         } else {
@@ -88,7 +137,7 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
         setEndCursor(results.end_cursor);
         setHasNextPage(results.has_next_page);
 
-        // Calculate remaining count
+        // 🧮 Calculate remaining count
         const newRemainingCount =
           results.count >= 50001
             ? results.count
@@ -99,37 +148,93 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
         setRemainingCount(newRemainingCount > 0 ? newRemainingCount : 0);
       } catch (error) {
         console.error("Error searching ads:", error);
+
+        // 🛑 Check if this is still the relevant request
+        if (currentRequestId !== searchRequestIdRef.current) return;
+
         setError(
           "An error occurred while searching for ads. Please try again.",
         );
-        setSearchResults(null);
+
+        // 🧹 Clear results on error for new searches
+        if (!useExistingParams && !isInitialLoad) {
+          setSearchResults(null);
+        }
       } finally {
-        setIsLoading(false);
+        // 🛑 Only update loading state if this is the most recent request
+        if (currentRequestId === searchRequestIdRef.current) {
+          setIsLoading(false);
+          isSearchInProgress.current = false;
+        }
       }
     },
     [searchParams, searchResults, endCursor, pageId, isInitialLoad],
   );
 
   const handleLoadMore = useCallback(() => {
-    if (hasNextPage && !isLoading) {
+    if (hasNextPage && !isLoading && !isSearchInProgress.current) {
       handleSearchAds(true);
     }
   }, [hasNextPage, handleSearchAds, isLoading]);
 
+  // 🔍 Enhanced search handler with debounce
   const handleSearch = useCallback(
     (query: string = searchQuery) => {
+      // 🧹 Clear any pending debounce timer
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      // 📝 Update local state immediately for UI responsiveness
       setSearchQuery(query);
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("q", query);
-      router.push(`?${params.toString()}`);
-      handleSearchAds(false); // Force a new search with updated params
+      latestQueryRef.current = query;
+
+      // ⏱️ Debounce the actual search execution
+      debounceTimerRef.current = setTimeout(() => {
+        // 🔒 Ensure initial load is complete before allowing manual searches
+        if (!initialLoadCompletedRef.current) return;
+
+        // 🔒 Ensure we're not already searching
+        if (isSearchInProgress.current) return;
+
+        // 🔄 Update URL parameters
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("q", query);
+        router.push(`?${params.toString()}`);
+
+        // ⏳ Small delay to ensure URL is updated before search
+        setTimeout(() => {
+          // 🧐 Double-check that the query hasn't changed during the delay
+          if (latestQueryRef.current === query) {
+            // 🛑 Cancel any previous searches
+            searchRequestIdRef.current++;
+            handleSearchAds(false); // Force a new search with updated params
+          }
+        }, 50);
+      }, 200); // 200ms debounce delay
     },
     [searchParams, router, handleSearchAds, searchQuery],
   );
 
-  // Initial load effect
+  // 🚀 Initial load effect - safely handle the initial search
   useEffect(() => {
-    handleSearchAds();
+    // Only execute once
+    if (initialLoadCompletedRef.current) return;
+
+    const initializeSearch = async () => {
+      // Wait a tiny bit to ensure all component mounting is complete
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      handleSearchAds();
+    };
+
+    initializeSearch();
+
+    // Clean up any pending searches on unmount
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
   }, []);
 
   return (

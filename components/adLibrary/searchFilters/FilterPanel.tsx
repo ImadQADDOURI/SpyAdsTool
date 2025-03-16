@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFilterReset } from "@/utils/useFilterReset";
-import { Filter } from "lucide-react";
+import { Filter, Loader2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ import Status from "./status";
 interface FilterPanelProps {
   onSearch: () => void;
   variant?: "button" | "full";
+  isLoading: boolean;
 }
 
 type FilterComponentType = React.ComponentType<{
@@ -156,30 +157,43 @@ const FilterActions = React.memo(
     onClear,
     onApply,
     appliedFiltersCount,
+    isLoading,
   }: {
     onClear: () => void;
     onApply: () => void;
     appliedFiltersCount: number;
+    isLoading: boolean;
   }) => (
     <div className="flex justify-end space-x-3">
       <Button
         onClick={onClear}
         variant="outline"
         size="sm"
-        className="rounded-full px-4 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+        disabled={isLoading}
+        className="rounded-full px-4 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-progress dark:text-gray-200 dark:hover:bg-gray-700"
       >
         Clear
       </Button>
       <Button
         onClick={onApply}
         size="sm"
-        className="rounded-full bg-gradient-to-r from-purple-600 to-pink-500 px-4 py-1 text-xs font-medium text-white transition-all duration-300 hover:from-purple-700 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+        disabled={isLoading}
+        className="rounded-full bg-gradient-to-r from-purple-600 to-pink-500 px-4 py-1 text-xs font-medium text-white transition-all duration-300 hover:from-purple-700 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:cursor-progress dark:focus:ring-offset-gray-800"
       >
-        Apply
-        {appliedFiltersCount > 0 && (
-          <Badge variant="secondary" className="ml-2 bg-white text-purple-600">
-            {appliedFiltersCount}
-          </Badge>
+        {isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <>
+            Apply
+            {appliedFiltersCount > 0 && (
+              <Badge
+                variant="secondary"
+                className="ml-2 bg-white text-purple-600"
+              >
+                {appliedFiltersCount}
+              </Badge>
+            )}
+          </>
         )}
       </Button>
     </div>
@@ -188,7 +202,7 @@ const FilterActions = React.memo(
 FilterActions.displayName = "FilterActions";
 
 export const FilterPanel: React.FC<FilterPanelProps> = React.memo(
-  ({ onSearch, variant = "button" }) => {
+  ({ onSearch, variant = "button", isLoading }) => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [isOpen, setIsOpen] = useState(false);
@@ -319,6 +333,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = React.memo(
                 onClear={handleClearFilters}
                 onApply={applyFilters}
                 appliedFiltersCount={countAppliedFilters()}
+                isLoading={isLoading}
               />
             </div>
           </FilterCard>
@@ -347,6 +362,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = React.memo(
               onClear={handleClearFilters}
               onApply={applyFilters}
               appliedFiltersCount={countAppliedFilters()}
+              isLoading={isLoading}
             />
           </div>
         </DialogContent>

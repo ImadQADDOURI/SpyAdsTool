@@ -7,6 +7,7 @@ import { getUserSubscriptionPlan } from "@/lib/subscription";
 /**
  * Secure API route to fetch user subscription data
  * Handles both authenticated requests and external queries with userId
+ * Uses a 24-hour cache strategy
  */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
@@ -45,13 +46,19 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     // 🔑 Determine access - a user has access if their plan is paid and still valid
     const userHasAccess = subscriptionPlan.isPaid;
 
-    // 📤 Return subscription data and access status
+    // 📤 Return subscription data and access status with cache headers
     const response: SubscriptionResponse = {
       subscription: subscriptionPlan,
       userHasAccess,
     };
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, {
+      headers: {
+        // Cache for 24 hours, but allow stale data for 48 hours while revalidating in background
+        "Cache-Control":
+          "public, s-maxage=86400, stale-while-revalidate=172800",
+      },
+    });
   } catch (error) {
     // 💥 Detailed error handling with appropriate status codes
     console.error("Subscription API error:", error);
