@@ -59,7 +59,7 @@ export const toolsLinks: ToolLink[] = [
     href: "/tools/cpa-calculator",
     description: "Analyze Cost Per Acquisition metrics for your campaigns",
     icon: DollarSign,
-    isFree: false,
+    isFree: true,
     isNew: true,
     gradient: {
       from: "#059669",
@@ -72,6 +72,8 @@ export const toolsLinks: ToolLink[] = [
     href: "/tools/affiliate-calculator",
     description: "Track affiliate commissions and conversion metrics",
     icon: LineChart,
+    isFree: true,
+    isNew: false,
     gradient: {
       from: "#EA580C",
       to: "#F59E0B",

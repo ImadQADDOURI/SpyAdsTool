@@ -354,7 +354,7 @@ const CODCalculator: React.FC = () => {
             </div>
 
             {/* Performance Metrics */}
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2">
               <SliderInput
                 label="Order Confirmation"
                 value={orderConfirmationRate}
@@ -375,10 +375,6 @@ const CODCalculator: React.FC = () => {
                 icon={<TicketX size={20} />}
                 variant="optional"
               />
-            </div>
-
-            {/* Additional Costs */}
-            <div className="grid gap-4 md:grid-cols-2">
               <InputComponent
                 label="Advertising"
                 value={advertisingCosts}
@@ -387,94 +383,94 @@ const CODCalculator: React.FC = () => {
                 icon={<TrendingUp size={20} />}
                 variant="secondary"
               />
+            </div>
 
-              {/* Extra Charges */}
+            {/* Extra Charges */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+                  <Plus size={16} />
+                  Extra Charges
+                </Label>
+                <Button
+                  onClick={addExtraCharge}
+                  variant="outline"
+                  size="sm"
+                  className="group border-[#6566F1]/20 bg-white/50 transition-all duration-300 hover:bg-[#6566F1]/10 dark:bg-gray-900/50"
+                >
+                  <Plus
+                    size={16}
+                    className="mr-2 transition-transform duration-300 group-hover:rotate-90"
+                  />
+                  Add Charge
+                </Button>
+              </div>
+
+              {/* Extra Charges List */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
-                    <Plus size={16} />
-                    Extra Charges
-                  </Label>
-                  <Button
-                    onClick={addExtraCharge}
-                    variant="outline"
-                    size="sm"
-                    className="group border-[#6566F1]/20 bg-white/50 transition-all duration-300 hover:bg-[#6566F1]/10 dark:bg-gray-900/50"
+                {extraCharges.map((charge) => (
+                  <div
+                    key={charge.id}
+                    className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white/50 p-2 transition-all duration-300 hover:border-[#6566F1]/20 dark:border-gray-700 dark:bg-gray-900/50"
                   >
-                    <Plus
-                      size={16}
-                      className="mr-2 transition-transform duration-300 group-hover:rotate-90"
+                    <Input
+                      placeholder="Label"
+                      value={charge.label}
+                      onChange={(e) =>
+                        updateExtraCharge(charge.id, {
+                          label: e.target.value,
+                        })
+                      }
+                      className="flex-grow border-0 bg-transparent"
                     />
-                    Add Charge
-                  </Button>
-                </div>
-
-                {/* Extra Charges List */}
-                <div className="space-y-2">
-                  {extraCharges.map((charge) => (
-                    <div
-                      key={charge.id}
-                      className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white/50 p-2 transition-all duration-300 hover:border-[#6566F1]/20 dark:border-gray-700 dark:bg-gray-900/50"
+                    <Input
+                      type="number"
+                      value={charge.amount}
+                      onChange={(e) =>
+                        updateExtraCharge(charge.id, {
+                          amount: Number(e.target.value),
+                        })
+                      }
+                      className="w-24 border-0 bg-transparent"
+                    />
+                    <Select
+                      value={charge.type}
+                      onValueChange={(value: "flat" | "percentage") =>
+                        updateExtraCharge(charge.id, { type: value })
+                      }
                     >
-                      <Input
-                        placeholder="Label"
-                        value={charge.label}
-                        onChange={(e) =>
-                          updateExtraCharge(charge.id, {
-                            label: e.target.value,
-                          })
-                        }
-                        className="flex-grow border-0 bg-transparent"
-                      />
-                      <Input
-                        type="number"
-                        value={charge.amount}
-                        onChange={(e) =>
-                          updateExtraCharge(charge.id, {
-                            amount: Number(e.target.value),
-                          })
-                        }
-                        className="w-24 border-0 bg-transparent"
-                      />
-                      <Select
-                        value={charge.type}
-                        onValueChange={(value: "flat" | "percentage") =>
-                          updateExtraCharge(charge.id, { type: value })
-                        }
-                      >
-                        <SelectTrigger className="w-32 border-0 bg-transparent">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="flat">Flat</SelectItem>
-                          <SelectItem value="percentage">Percentage</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Select
-                        value={charge.application}
-                        onValueChange={(value: "perOrder" | "total") =>
-                          updateExtraCharge(charge.id, { application: value })
-                        }
-                      >
-                        <SelectTrigger className="w-32 border-0 bg-transparent">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="perOrder">Per Order</SelectItem>
-                          <SelectItem value="total">Total</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeExtraCharge(charge.id)}
-                        className="text-gray-400 hover:text-red-500"
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                      <SelectTrigger className="w-32 border-0 bg-transparent">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="flat">Flat</SelectItem>
+                        <SelectItem value="percentage">Percentage</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={charge.application}
+                      onValueChange={(value: "perOrder" | "total") =>
+                        updateExtraCharge(charge.id, { application: value })
+                      }
+                    >
+                      <SelectTrigger className="w-32 border-0 bg-transparent">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="perOrder">Per Order</SelectItem>
+                        <SelectItem value="total">Total</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeExtraCharge(charge.id)}
+                      className="text-gray-400 hover:text-red-500"
+                    >
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                ))}
               </div>
             </div>
 
