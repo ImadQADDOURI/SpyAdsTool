@@ -146,7 +146,7 @@ export const getAdSearchVariables = (
 
 export const getAdLibraryMobileVariables = (pageId: string) => {
   return {
-    activeStatus: "ACTIVE",
+    activeStatus: "ALL",
     adType: "ALL",
     audienceTimeframe: "LAST_7_DAYS",
     bylines: [],

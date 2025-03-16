@@ -38,10 +38,10 @@ export const AdBrowser = () => {
   // 🔄 Track the latest search query
   const latestQueryRef = useRef(searchQuery);
 
-  // 📜 Scroll to top on page load or new search
+  // 📜 Scroll to top on page load
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [searchParams.get("q")]);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
 
   // 🔄 Sync searchQuery state with URL param when it changes externally
   useEffect(() => {

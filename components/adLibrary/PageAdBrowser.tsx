@@ -56,12 +56,12 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
   const initialLoadCompletedRef = useRef(false);
   const searchRequestIdRef = useRef(0); // For tracking the latest search request
 
-  // 📜 Scroll to top on page load or new search
+  // 📜 Scroll to top on page load
   useEffect(() => {
     if (!isInitialLoad) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "auto" });
     }
-  }, [searchParams.get("q"), isInitialLoad]);
+  }, [isInitialLoad]);
 
   // 🔄 Sync searchQuery state with URL param when it changes externally
   useEffect(() => {
