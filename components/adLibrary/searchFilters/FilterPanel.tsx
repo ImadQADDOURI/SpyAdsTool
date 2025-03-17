@@ -188,7 +188,7 @@ const FilterActions = React.memo(
             {appliedFiltersCount > 0 && (
               <Badge
                 variant="secondary"
-                className="ml-2 bg-white text-purple-600"
+                className="ml-2 flex h-6 items-center rounded-full bg-white text-purple-600"
               >
                 {appliedFiltersCount}
               </Badge>
@@ -240,7 +240,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = React.memo(
           count > 0 ? (
             <Badge
               variant="secondary"
-              className="flex h-5 items-center rounded-full bg-gradient-to-r from-[#6566F1] to-[#B977F8] text-[10px] font-medium text-white"
+              className="flex h-6 items-center rounded-full bg-gradient-to-r from-[#6566F1] to-[#B977F8] text-[10px] font-medium text-white"
             >
               {count}
             </Badge>
@@ -257,11 +257,11 @@ export const FilterPanel: React.FC<FilterPanelProps> = React.memo(
         return (
           <Button
             aria-label="Open Search Filters"
-            className="relative h-8 rounded-full bg-white/70 px-3 text-gray-700 transition-all duration-300 hover:bg-white/90 hover:shadow-sm dark:bg-gray-800/70 dark:text-gray-200 dark:hover:bg-gray-800/90"
+            className="relative h-9 rounded-full bg-white/70 px-2.5 text-gray-700 transition-all duration-300 hover:bg-white/90 hover:shadow-sm dark:bg-gray-800/70 dark:text-gray-200 dark:hover:bg-gray-800/90"
             onClick={() => setIsOpen(true)}
           >
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4" />
+            <div className="flex items-center gap-1">
+              <Filter className="h-5 w-5" />
               <FilterBadge count={filterCount} />
             </div>
           </Button>

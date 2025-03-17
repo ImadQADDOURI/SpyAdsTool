@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Filter, Loader2, Search, Settings, X } from "lucide-react";
+import { Loader2, Search, X } from "lucide-react";
 
-import { Button } from "../../ui/button";
-import { Input } from "../../ui/input";
-import { DisplayFilters } from "./DisplayFilters";
-import FilterPanel from "./FilterPanel";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { DisplayFilters } from "@/components/adLibrary/searchFilters/DisplayFilters";
+import { FilterPanel } from "@/components/adLibrary/searchFilters/FilterPanel";
+import {
+  SearchTypeKey,
+  SearchTypeSelector,
+} from "@/components/adLibrary/searchFilters/SearchTypeSelector";
 
 interface SearchBarProps {
   onSearch: (query?: string) => void;
@@ -21,6 +25,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [isSticky, setIsSticky] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  // 🔡 Placeholder state for search input based on search type
+  const [placeholder, setPlaceholder] = useState("Search ads...");
 
   const handleScroll = () => {
     if (ref.current) {
@@ -51,6 +58,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     setSearchQuery("");
   };
 
+  // 🔄 Handle search type changes - just updates the placeholder
+  const handleSearchTypeChange = (
+    _type: SearchTypeKey,
+    newPlaceholder: string,
+  ) => {
+    setPlaceholder(newPlaceholder);
+  };
+
   return (
     <div className="flex justify-center px-4 py-2" ref={ref}>
       <div
@@ -65,12 +80,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             <div className="h-full w-full rounded-full bg-background/80" />
           </div>
 
-          <div className="flex h-12 min-h-[48px] w-full items-center gap-2 rounded-full bg-gradient-to-r from-[#6566F1]/25 to-[#B977F8]/25 p-1.5 shadow-[0_4px_20px_-4px_rgba(101,102,241,0.25)] transition-all duration-300 ease-in-out hover:scale-[1.01] dark:bg-[#6566F1]/10 dark:shadow-[0_4px_20px_-4px_rgba(101,102,241,0.25)] sm:gap-3">
+          <div className="flex h-12 min-h-[48px] w-full items-center gap-1 rounded-full bg-gradient-to-r from-[#6566F1]/25 to-[#B977F8]/25 p-1.5 shadow-[0_4px_20px_-4px_rgba(101,102,241,0.25)] transition-all duration-300 ease-in-out hover:scale-[1.01] dark:bg-[#6566F1]/10 dark:shadow-[0_4px_20px_-4px_rgba(101,102,241,0.25)] sm:gap-2">
+            {/* Search Type Selector */}
+            <SearchTypeSelector
+              onTypeChange={handleSearchTypeChange}
+              disabled={isLoading}
+            />
+
             {/* Search Input */}
             <div className="relative min-w-0 flex-1">
               <Input
                 type="text"
-                placeholder="Search ads..."
+                placeholder={placeholder}
                 value={searchQuery}
                 onChange={(e) => !isLoading && setSearchQuery(e.target.value)}
                 onKeyPress={(e) => !isLoading && handleKeyPress(e)}
@@ -78,6 +99,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 disabled={isLoading}
                 className="h-9 w-full rounded-full border-0 bg-white/60 px-4 text-[15px] font-medium text-gray-700 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-[#6566F1] disabled:cursor-progress disabled:opacity-50 dark:bg-gray-900/60 dark:text-white dark:placeholder:text-gray-400"
               />
+
+              {/* Clear search button */}
               {searchQuery && !isLoading && (
                 <Button
                   variant="ghost"
@@ -97,7 +120,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               disabled={isLoading}
               size="icon"
               aria-label="Search"
-              className="h-9 w-9 shrink-0 rounded-full bg-gradient-to-r from-[#6566F1] to-[#B977F8] text-white shadow-md transition-all hover:from-[#5455E0] hover:to-[#A866E7] hover:shadow-lg disabled:opacity-50 dark:from-[#6566F1] dark:to-[#6566F1] dark:hover:from-[#5455E0] dark:hover:to-[#5455E0]"
+              className="h-9 w-9 shrink-0 rounded-full bg-gradient-to-r from-[#6566F1] to-[#B977F8] text-white shadow-md transition-all hover:shadow-lg hover:brightness-105 disabled:opacity-50 dark:from-[#6566F1] dark:to-[#B977F8] dark:hover:brightness-105"
             >
               {isLoading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />

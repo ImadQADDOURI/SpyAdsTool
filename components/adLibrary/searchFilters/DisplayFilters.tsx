@@ -74,7 +74,7 @@ export const DisplayFilters: React.FC = () => {
       <DialogTrigger asChild>
         <Button
           aria-label="Open Display Filters"
-          className="relative h-9 rounded-full bg-white/60 px-3 text-gray-700 transition-all duration-300 hover:bg-white/80 hover:shadow-md dark:bg-gray-900/60 dark:text-gray-200 dark:hover:bg-gray-900/80"
+          className="relative h-9 rounded-full bg-white/60 px-2.5 text-gray-700 transition-all duration-300 hover:bg-white/80 hover:shadow-md dark:bg-gray-900/60 dark:text-gray-200 dark:hover:bg-gray-900/80"
         >
           <div className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
