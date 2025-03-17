@@ -89,7 +89,7 @@ export const DisplayFilters: React.FC = () => {
           </div>
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-gray-100/70 dark:bg-gray-800/70 sm:max-w-[90%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%]">
+      <DialogContent className="bg-white dark:bg-gray-800 sm:max-w-[90%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%]">
         <DialogHeader>
           <DialogTitle className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-2xl font-bold text-transparent">
             Display Filters
@@ -107,7 +107,7 @@ export const DisplayFilters: React.FC = () => {
           </div>
           <Slider
             min={1}
-            max={20}
+            max={5}
             step={1}
             defaultValue={[collationCountValue]}
             onValueChange={handleCollationCountChange}

@@ -54,3 +54,9 @@ pnpm add react-window @types/react-window
 ---
 
 pnpm update lucide-react@latest
+
+---
+
+pnpm dlx shadcn@latest add drawer
+
+---

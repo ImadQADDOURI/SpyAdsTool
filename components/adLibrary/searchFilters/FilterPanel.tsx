@@ -347,7 +347,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = React.memo(
         <DialogTrigger asChild>
           <FilterTrigger />
         </DialogTrigger>
-        <DialogContent className="bg-gray-50/90 p-4 dark:bg-gray-800/90 sm:max-w-[85%] md:max-w-[75%] lg:max-w-[65%]">
+        <DialogContent className="bg-white dark:bg-gray-800 sm:max-w-[85%] md:max-w-[75%] lg:max-w-[65%]">
           <DialogHeader className="space-y-1 pb-2">
             <DialogTitle className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-xl font-bold text-transparent">
               Search Filters
