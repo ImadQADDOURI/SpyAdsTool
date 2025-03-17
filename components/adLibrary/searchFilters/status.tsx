@@ -31,7 +31,7 @@ export const Status: React.FC = () => {
   const searchParams = useSearchParams();
 
   const selectedStatus = React.useMemo(
-    () => searchParams.get("active_status") || "ACTIVE",
+    () => searchParams.get("active_status") || "ALL",
     [searchParams],
   );
 
