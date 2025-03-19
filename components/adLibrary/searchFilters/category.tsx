@@ -5,20 +5,22 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Briefcase,
   Check,
-  ChevronsUpDown,
+  ChevronDown,
   CircleDollarSign,
   Home,
   LayoutGrid,
   MegaphoneIcon,
+  X,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const categories = [
   { value: "ALL", label: "All Ads", icon: LayoutGrid },
@@ -45,7 +47,10 @@ const categories = [
 ];
 
 export const Category: React.FC = () => {
+  // 🔄 State management
   const [open, setOpen] = React.useState(false);
+
+  // 🧭 Navigation and URL handling
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -54,6 +59,7 @@ export const Category: React.FC = () => {
     [searchParams],
   );
 
+  // 🎯 Selection handler
   const handleSelect = React.useCallback(
     (categoryValue: string) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -68,6 +74,18 @@ export const Category: React.FC = () => {
     [router, searchParams],
   );
 
+  // 🧹 Clear selection handler
+  const handleClear = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("ad_type");
+      router.push(`?${params.toString()}`, { scroll: false });
+    },
+    [router, searchParams],
+  );
+
+  // 📝 Selected item with icon
   const selectedItem = React.useMemo(() => {
     return (
       categories.find((category) => category.value === selectedCategory) ||
@@ -75,52 +93,86 @@ export const Category: React.FC = () => {
     );
   }, [selectedCategory]);
 
+  // 🔍 Check if a non-default category is selected
+  const hasSelection = selectedCategory !== "ALL";
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-full justify-between"
-        >
-          <div className="flex min-w-0 flex-1 items-center">
-            <div className="flex items-center truncate">
-              {React.createElement(selectedItem.icon, {
-                className: "mr-2 h-4 w-4 flex-shrink-0",
-              })}
-              <span className="truncate">{selectedItem.label}</span>
-            </div>
-          </div>
-          <ChevronsUpDown className="ml-2 h-4 w-4 flex-shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
-        <div className="max-h-[300px] overflow-y-auto">
-          {categories.map((category) => (
+    <div className="w-full max-w-full">
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <div className="flex max-w-full items-center">
+          <DropdownMenuTrigger asChild>
             <Button
-              key={category.value}
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => handleSelect(category.value)}
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className={cn(
+                "min-w-0 flex-1 justify-between transition-all",
+                hasSelection && "rounded-r-none border-r-0 pr-3",
+              )}
             >
-              <Check
+              <div className="flex min-w-0 flex-1 items-center">
+                <div className="flex items-center truncate">
+                  {React.createElement(selectedItem.icon, {
+                    className: "mr-2 h-4 w-4 flex-shrink-0",
+                  })}
+                  <span className="truncate">{selectedItem.label}</span>
+                </div>
+              </div>
+              <ChevronDown
                 className={cn(
-                  "mr-2 h-4 w-4 flex-shrink-0",
-                  selectedCategory === category.value
-                    ? "opacity-100"
-                    : "opacity-0",
+                  "ml-2 h-4 w-4 flex-shrink-0 opacity-50 transition-transform duration-200",
+                  open && "rotate-180",
                 )}
               />
-              {React.createElement(category.icon, {
-                className: "mr-2 h-4 w-4 flex-shrink-0",
-              })}
-              <span className="truncate">{category.label}</span>
             </Button>
-          ))}
+          </DropdownMenuTrigger>
+
+          {/* ❌ Clear selection button as half-circle extension */}
+          {hasSelection && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleClear}
+              aria-label="Clear selection"
+              className="h-10 flex-shrink-0 rounded-l-none rounded-r-full border-l-0 bg-background px-2 transition-colors hover:bg-muted"
+            >
+              <X className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+            </Button>
+          )}
         </div>
-      </PopoverContent>
-    </Popover>
+
+        <DropdownMenuContent
+          className="w-[300px] max-w-[calc(100vw-2rem)] p-0"
+          align="start"
+        >
+          <ScrollArea className="max-h-[40vh]">
+            <div className="py-2">
+              {categories.map((category) => (
+                <Button
+                  key={category.value}
+                  variant="ghost"
+                  className="h-auto w-full justify-start rounded-none px-3 py-2 text-left"
+                  onClick={() => handleSelect(category.value)}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4 flex-shrink-0",
+                      selectedCategory === category.value
+                        ? "opacity-100"
+                        : "opacity-0",
+                    )}
+                  />
+                  {React.createElement(category.icon, {
+                    className: "mr-2 h-4 w-4 flex-shrink-0",
+                  })}
+                  <span className="truncate">{category.label}</span>
+                </Button>
+              ))}
+            </div>
+          </ScrollArea>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 };
 

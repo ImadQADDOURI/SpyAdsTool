@@ -3,18 +3,19 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { languages } from "@/utils/languages";
-import { Check, ChevronsUpDown, X } from "lucide-react";
+import { Check, ChevronDown, X } from "lucide-react";
 import { FixedSizeList } from "react-window"; // 🚀 Virtualization library
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // 🔄 Language Item renderer for virtualized list
 type LanguageItemProps = {
@@ -36,20 +37,24 @@ const LanguageItem = React.memo(({ index, style, data }: LanguageItemProps) => {
     <Button
       key={language.code}
       variant="ghost"
-      className="w-full justify-start"
+      className="h-auto w-full justify-start rounded-none px-3 py-2 text-left"
       style={style}
       onClick={() => data.handleSelect(language.code)}
     >
       <Check
-        className={cn("mr-2 h-4 w-4", isSelected ? "opacity-100" : "opacity-0")}
+        className={cn(
+          "mr-2 h-4 w-4 flex-shrink-0",
+          isSelected ? "opacity-100" : "opacity-0",
+        )}
       />
-      {language.name}
+      <span className="truncate">{language.name}</span>
     </Button>
   );
 });
 LanguageItem.displayName = "LanguageItem";
 
 export const Language: React.FC = () => {
+  // 🔄 State management
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const router = useRouter();
@@ -124,7 +129,7 @@ export const Language: React.FC = () => {
 
   // 📊 Calculate visible selections only when needed
   const visibleSelections = React.useMemo(
-    () => selectedLanguages.slice(0, 2),
+    () => selectedLanguages.slice(0, 1),
     [selectedLanguages],
   );
 
@@ -151,90 +156,118 @@ export const Language: React.FC = () => {
   );
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="h-auto min-h-[2.5rem] w-full justify-between py-2"
-        >
-          <div className="mr-2 flex flex-wrap items-center gap-1">
-            {selectedLanguages.length > 0 ? (
-              <>
-                {visibleSelections.map((code) => {
-                  // 🧠 Cache lookup for performance
-                  const language = languages.find((lang) => lang.code === code);
-                  return (
-                    <Badge
-                      key={code}
-                      variant="secondary"
-                      className="mr-1 p-0 pl-0.5"
-                    >
-                      {language?.code}
-                      <button
-                        className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            handleRemove(code);
-                          }
-                        }}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemove(code);
-                        }}
+    <div className="w-full max-w-full">
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <div className="flex max-w-full items-center">
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className={cn(
+                "h-auto min-h-[2.5rem] min-w-0 flex-1 justify-between py-2 transition-all",
+                selectedLanguages.length > 0 &&
+                  "rounded-r-none border-r-0 pr-3",
+              )}
+            >
+              <div className="mr-2 flex flex-wrap items-center gap-1 overflow-hidden">
+                {selectedLanguages.length > 0 ? (
+                  <>
+                    {visibleSelections.map((code) => {
+                      // 🧠 Cache lookup for performance
+                      const language = languages.find(
+                        (lang) => lang.code === code,
+                      );
+                      return (
+                        <Badge
+                          key={code}
+                          variant="secondary"
+                          className="mr-1 flex-shrink-0 p-0 pl-0.5"
+                        >
+                          <span className="max-w-16 truncate">
+                            {language?.code}
+                          </span>
+                          <button
+                            className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                handleRemove(code);
+                              }
+                            }}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemove(code);
+                            }}
+                          >
+                            <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                          </button>
+                        </Badge>
+                      );
+                    })}
+                    {remainingCount > 0 && (
+                      <Badge
+                        className="flex-shrink-0 p-0.5"
+                        variant="secondary"
                       >
-                        <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-                      </button>
-                    </Badge>
-                  );
-                })}
-                {remainingCount > 0 && (
-                  <Badge className="p-0.5" variant="secondary">
-                    +{remainingCount}
-                  </Badge>
+                        +{remainingCount}
+                      </Badge>
+                    )}
+                  </>
+                ) : (
+                  <span className="truncate text-muted-foreground">
+                    All Languages
+                  </span>
                 )}
-              </>
-            ) : (
-              <span className="text-muted-foreground">All Languages</span>
-            )}
+              </div>
+              <ChevronDown
+                className={cn(
+                  "ml-1 h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
+                  open && "rotate-180",
+                )}
+              />
+            </Button>
+          </DropdownMenuTrigger>
+
+          {/* ❌ Clear selection button as half-circle extension */}
+          {selectedLanguages.length > 0 && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleDeselectAll}
+              aria-label="Clear all selections"
+              className="h-10 flex-shrink-0 rounded-l-none rounded-r-full border-l-0 bg-background px-2 transition-colors hover:bg-muted"
+            >
+              <X className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+            </Button>
+          )}
+        </div>
+
+        <DropdownMenuContent
+          className="w-[250px] max-w-[calc(100vw-2rem)] p-0"
+          align="start"
+        >
+          <div className="border-b p-3">
+            <Input
+              placeholder="Search languages..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full"
+              aria-label="Search languages"
+            />
           </div>
-          <div className="ml-auto flex items-center gap-1">
-            {selectedLanguages.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-5 w-5 rounded-full p-0"
-                onClick={handleDeselectAll}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
-            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
-          </div>
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
-        <div className="p-2">
-          <Input
-            placeholder="Search languages..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="mb-2"
-            aria-label="Search languages"
-          />
-          <div>
-            {filteredLanguages.length === 0 ? (
-              <p className="p-2 text-sm text-muted-foreground">
-                No language found.
-              </p>
-            ) : (
-              <div className="h-[300px]">
-                {/* 🚀 Virtualized list for better performance */}
+
+          <ScrollArea className="h-[300px] max-h-[40vh]">
+            <div className="py-2">
+              {filteredLanguages.length === 0 ? (
+                <p className="px-3 py-2 text-sm text-muted-foreground">
+                  No language found.
+                </p>
+              ) : (
+                // 🚀 Keep the virtualized list for better performance
                 <FixedSizeList
                   ref={listRef}
                   height={300}
@@ -242,15 +275,16 @@ export const Language: React.FC = () => {
                   itemCount={filteredLanguages.length}
                   itemSize={36} // Height of each item
                   itemData={itemData}
+                  className="scrollbar-none" // Hide default scrollbar
                 >
                   {LanguageItem}
                 </FixedSizeList>
-              </div>
-            )}
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+              )}
+            </div>
+          </ScrollArea>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 };
 

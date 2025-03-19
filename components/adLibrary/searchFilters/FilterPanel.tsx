@@ -45,12 +45,12 @@ const filterComponents: {
   label: string;
   icon: string;
 }[] = [
-  // {
-  //   key: "searchType",
-  //   component: SearchType,
-  //   label: "Search Type",
-  //   icon: "/filters/search.svg",
-  // },
+  {
+    key: "searchType",
+    component: SearchType,
+    label: "Search Type",
+    icon: "/filters/search.svg",
+  },
   {
     key: "category",
     component: Category,

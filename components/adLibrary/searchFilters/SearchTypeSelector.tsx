@@ -140,7 +140,7 @@ export const SearchTypeSelector: React.FC<SearchTypeSelectorProps> = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="w-56 rounded-xl border-0 bg-white/95 p-1 shadow-lg backdrop-blur-sm dark:bg-gray-900/95 dark:text-white"
+        className="w-full rounded-xl border-0 bg-white/95 p-1 shadow-lg backdrop-blur-sm dark:bg-gray-900/95 dark:text-white"
       >
         {Object.entries(SEARCH_TYPES).map(([key, config]) => {
           const TypeIcon = config.icon;

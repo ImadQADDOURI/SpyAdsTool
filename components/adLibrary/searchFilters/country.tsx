@@ -3,18 +3,19 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { countryCodesAlpha2Flag } from "@/utils/countryCodesAlpha2Flag";
-import { Check, ChevronsUpDown, X } from "lucide-react";
+import { Check, ChevronDown, X } from "lucide-react";
 import { FixedSizeList } from "react-window"; // 🚀 Virtualization library
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // 🔄 Country Item renderer for virtualized list
 type CountryItemProps = {
@@ -36,26 +37,30 @@ const CountryItem = React.memo(({ index, style, data }: CountryItemProps) => {
     <Button
       key={country.value}
       variant="ghost"
-      className="w-full justify-start"
+      className="h-auto w-full justify-start rounded-none px-3 py-2 text-left"
       style={style}
       onClick={() => data.handleSelect(country.value)}
     >
       <Check
-        className={cn("mr-2 h-4 w-4", isSelected ? "opacity-100" : "opacity-0")}
+        className={cn(
+          "mr-2 h-4 w-4 flex-shrink-0",
+          isSelected ? "opacity-100" : "opacity-0",
+        )}
       />
       <img
         src={country.icon}
         alt={`${country.label} flag`}
-        className="mr-2 inline-block h-5 w-5 rounded-sm"
+        className="mr-2 inline-block h-5 w-5 flex-shrink-0 rounded-sm"
         loading="lazy" // 🖼️ Lazy load images
       />
-      {country.label}
+      <span className="truncate">{country.label}</span>
     </Button>
   );
 });
 CountryItem.displayName = "CountryItem";
 
 export const Country: React.FC = () => {
+  // 🔄 State management
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const router = useRouter();
@@ -74,7 +79,7 @@ export const Country: React.FC = () => {
 
   // 🌐 Parse selected countries from URL only when needed
   const selectedCountries = React.useMemo(() => {
-    return searchParams.get("countries")?.split(",") || [];
+    return searchParams.get("countries")?.split(",").filter(Boolean) || [];
   }, [searchParams]);
 
   // 🔄 URL update with request batching
@@ -113,7 +118,7 @@ export const Country: React.FC = () => {
     [selectedCountries, updateURL],
   );
 
-  const handleDeselectAll = React.useCallback(
+  const handleClear = React.useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       updateURL([]);
@@ -132,7 +137,7 @@ export const Country: React.FC = () => {
 
   // 📊 Calculate visible selections only when needed
   const visibleSelections = React.useMemo(
-    () => selectedCountries.slice(0, 2),
+    () => selectedCountries.slice(0, 1),
     [selectedCountries],
   );
 
@@ -159,113 +164,140 @@ export const Country: React.FC = () => {
   );
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="h-auto min-h-[2.5rem] w-full justify-between py-2"
-        >
-          <div className="mr-0 flex flex-wrap items-center gap-1">
-            {selectedCountries.length > 0 ? (
-              <>
-                {visibleSelections.map((code) => {
-                  // 🧠 Cache lookup for better performance
-                  const country = countryCodesAlpha2Flag.find(
-                    (c) => c.value === code,
-                  );
-                  return (
-                    <Badge
-                      key={code}
-                      variant="secondary"
-                      className="mr-0 p-0 pl-0.5"
-                    >
-                      <img
-                        src={country?.icon}
-                        alt={`${country?.label} flag`}
-                        className="mr-0 inline-block h-5 w-5 rounded-sm"
-                        loading="lazy" // 🖼️ Lazy load images
-                      />
-                      <button
-                        className="ml-0.5 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            handleRemove(code);
-                          }
-                        }}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemove(code);
-                        }}
+    <div className="w-full max-w-full">
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <div className="flex max-w-full items-center">
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className={cn(
+                "h-auto min-h-[2.5rem] min-w-0 flex-1 justify-between py-2 transition-all",
+                selectedCountries.length > 0 &&
+                  "rounded-r-none border-r-0 pr-3",
+              )}
+            >
+              <div className="mr-2 flex flex-wrap items-center gap-1 overflow-hidden">
+                {selectedCountries.length > 0 ? (
+                  <>
+                    {visibleSelections.map((code) => {
+                      // 🧠 Cache lookup for better performance
+                      const country = countryCodesAlpha2Flag.find(
+                        (c) => c.value === code,
+                      );
+                      return (
+                        <Badge
+                          key={code}
+                          variant="secondary"
+                          className="mr-0 flex-shrink-0 p-0 pl-0.5"
+                        >
+                          <img
+                            src={country?.icon}
+                            alt={`${country?.label} flag`}
+                            className="mr-0 inline-block h-5 w-5 rounded-sm"
+                            loading="lazy" // 🖼️ Lazy load images
+                          />
+                          <button
+                            className="ml-0.5 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                handleRemove(code);
+                              }
+                            }}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemove(code);
+                            }}
+                          >
+                            <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                          </button>
+                        </Badge>
+                      );
+                    })}
+                    {remainingCount > 0 && (
+                      <Badge
+                        className="flex-shrink-0 p-0.5"
+                        variant="secondary"
                       >
-                        <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-                      </button>
-                    </Badge>
-                  );
-                })}
-                {remainingCount > 0 && (
-                  <Badge className="p-0.5" variant="secondary">
-                    +{remainingCount}
-                  </Badge>
+                        +{remainingCount}
+                      </Badge>
+                    )}
+                  </>
+                ) : (
+                  <span className="truncate text-muted-foreground">
+                    All Countries
+                  </span>
                 )}
-              </>
-            ) : (
-              <span className="text-muted-foreground">All Countries</span>
-            )}
-          </div>
-          <div className="ml-auto flex items-center gap-1">
-            {selectedCountries.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-5 w-5 rounded-full p-0"
-                onClick={handleDeselectAll}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
-            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
-          </div>
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[250px] p-0">
-        <div className="p-2">
-          <Input
-            placeholder="Search countries..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="mb-2"
-            aria-label="Search countries"
-          />
-          <div>
-            {filteredCountries.length === 0 ? (
-              <p className="p-2 text-sm text-muted-foreground">
-                No country found.
-              </p>
-            ) : (
-              <div className="h-[300px]">
-                {/* 🚀 Virtualized list for better performance */}
-                <FixedSizeList
-                  ref={listRef}
-                  height={300}
-                  width="100%"
-                  itemCount={filteredCountries.length}
-                  itemSize={36} // Height of each item
-                  itemData={itemData}
-                >
-                  {CountryItem}
-                </FixedSizeList>
               </div>
-            )}
-          </div>
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
+                  open && "rotate-180",
+                )}
+              />
+            </Button>
+          </DropdownMenuTrigger>
+
+          {/* ❌ Clear selection button as half-circle extension */}
+          {selectedCountries.length > 0 && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleClear}
+              aria-label="Clear selection"
+              className="h-10 flex-shrink-0 rounded-l-none rounded-r-full border-l-0 bg-background px-2 transition-colors hover:bg-muted"
+            >
+              <X className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+            </Button>
+          )}
         </div>
-      </PopoverContent>
-    </Popover>
+
+        <DropdownMenuContent
+          className="w-[300px] max-w-[calc(100vw-2rem)] p-0"
+          align="start"
+        >
+          <div className="border-b p-3">
+            <Input
+              placeholder="Search countries..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full"
+              aria-label="Search countries"
+            />
+          </div>
+
+          <ScrollArea className="h-[300px] max-h-[40vh]">
+            <div className="py-2">
+              {filteredCountries.length === 0 ? (
+                <p className="px-3 py-2 text-sm text-muted-foreground">
+                  No country found.
+                </p>
+              ) : (
+                <div>
+                  {/* 🚀 Virtualized list for better performance */}
+                  <FixedSizeList
+                    ref={listRef}
+                    height={300}
+                    width="100%"
+                    itemCount={filteredCountries.length}
+                    itemSize={36} // Height of each item
+                    itemData={itemData}
+                    className="scrollbar-hide" // Hide default scrollbar to use ScrollArea's
+                  >
+                    {CountryItem}
+                  </FixedSizeList>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 };
 
