@@ -10,10 +10,11 @@ import {
 } from "@/config/affiliateLinks";
 import { cn } from "@/lib/utils";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function AffiliateLinks() {
   const [open, setOpen] = useState(false);
@@ -51,17 +52,17 @@ export default function AffiliateLinks() {
         <AffiliateButton key={link.id} link={link} />
       ))}
 
-      {/* 🔽 Popover for additional links */}
+      {/* 🔽 Dropdown for additional links */}
       {affiliateLinks.length > visibleLinks.length && (
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 transition-all hover:shadow-md dark:border-gray-700 dark:from-gray-800 dark:to-gray-900">
+        <DropdownMenu open={open} onOpenChange={setOpen}>
+          <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 transition-all hover:shadow-md dark:border-gray-700 dark:from-gray-800 dark:to-gray-900">
             {open ? (
               <ChevronUp className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             ) : (
               <ChevronDown className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             )}
-          </PopoverTrigger>
-          <PopoverContent align="end" className="grid w-full gap-2 p-3">
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="grid w-full gap-2 p-3">
             <div className="mb-1">
               <h3 className="text-lg font-semibold">Affiliate Links</h3>
               <p className="text-sm text-muted-foreground">
@@ -69,13 +70,15 @@ export default function AffiliateLinks() {
               </p>
             </div>
 
-            <div className="grid gap-2">
-              {popoverLinks.map((link) => (
-                <AffiliatePopoverItem key={link.id} link={link} />
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
+            <ScrollArea className="max-h-[50vh]">
+              <div className="grid gap-2">
+                {popoverLinks.map((link) => (
+                  <AffiliatePopoverItem key={link.id} link={link} />
+                ))}
+              </div>
+            </ScrollArea>
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
   );

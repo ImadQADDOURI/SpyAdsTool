@@ -82,7 +82,7 @@ const CODPieChart: React.FC<CODPieChartProps> = ({
   // Enhanced Legend with modern styling
   const CustomLegend = ({ payload }: any) => {
     return (
-      <div className="mt-6 flex flex-wrap justify-center gap-4">
+      <div className="flex flex-wrap justify-center gap-4">
         {payload.map((entry: any, index: number) => (
           <div
             key={`item-${index}`}
@@ -107,69 +107,86 @@ const CODPieChart: React.FC<CODPieChartProps> = ({
   };
 
   return (
-    <div className="relative h-full w-full">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={chartData}
-            cx="50%"
-            cy="50%"
-            innerRadius="65%"
-            outerRadius="85%"
-            paddingAngle={4}
-            dataKey="value"
-            labelLine={false}
-          >
-            {chartData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={entry.color}
-                className="transition-all duration-300 hover:opacity-80"
-                strokeWidth={0}
-              />
-            ))}
-            <Label
-              content={({ viewBox }) => {
-                if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                  return (
-                    <text
-                      x={viewBox.cx}
-                      y={viewBox.cy}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                    >
-                      <tspan
+    <div className="flex h-full w-full flex-col justify-between">
+      {/* Chart container with fixed height */}
+      <div className="h-full w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={chartData}
+              cx="50%"
+              cy="50%"
+              innerRadius="65%"
+              outerRadius="85%"
+              paddingAngle={4}
+              dataKey="value"
+              labelLine={false}
+            >
+              {chartData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={entry.color}
+                  className="transition-all duration-300 hover:opacity-80"
+                  strokeWidth={0}
+                />
+              ))}
+              <Label
+                content={({ viewBox }) => {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                    return (
+                      <text
                         x={viewBox.cx}
                         y={viewBox.cy}
-                        className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text fill-foreground text-3xl font-bold text-transparent"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
                       >
-                        ${totalRevenue.toFixed(2)}
-                      </tspan>
-                      <tspan
-                        x={viewBox.cx}
-                        y={(viewBox.cy || 0) + 24}
-                        className="fill-muted-foreground text-sm font-medium text-gray-500 dark:text-gray-400"
-                      >
-                        Total Revenue
-                      </tspan>
-                    </text>
-                  );
-                }
-              }}
+                        <tspan
+                          x={viewBox.cx}
+                          y={viewBox.cy}
+                          className="fill-foreground text-3xl font-bold"
+                          style={{ fill: "url(#gradient)" }}
+                        >
+                          ${totalRevenue.toFixed(2)}
+                        </tspan>
+                        <tspan
+                          x={viewBox.cx}
+                          y={(viewBox.cy || 0) + 24}
+                          className="fill-muted-foreground text-sm font-medium"
+                        >
+                          Total Revenue
+                        </tspan>
+                      </text>
+                    );
+                  }
+                }}
+              />
+            </Pie>
+            <Tooltip
+              content={<CustomTooltip />}
+              cursor={false}
+              animationDuration={200}
             />
-          </Pie>
-          <Tooltip
-            content={<CustomTooltip />}
-            cursor={false}
-            animationDuration={200}
-          />
-          <Legend
-            content={<CustomLegend />}
-            verticalAlign="bottom"
-            height={60}
-          />
-        </PieChart>
-      </ResponsiveContainer>
+            {/* Define gradient for text */}
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#6566F1" />
+                <stop offset="100%" stopColor="#B977F8" />
+              </linearGradient>
+            </defs>
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Legend container with its own space */}
+      <div className="mt-4 w-full">
+        <CustomLegend
+          payload={chartData.map((item) => ({
+            value: item.name,
+            color: item.color,
+            payload: item,
+          }))}
+        />
+      </div>
     </div>
   );
 };

@@ -491,14 +491,14 @@ const DropshippingCalculator: React.FC = () => {
           </div>
 
           {/* Pie Chart */}
-          <Card className="overflow-hidden border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
+          <Card className="border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
             <CardHeader>
               <CardTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-transparent">
                 Cost Breakdown
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
+              <div className="h-[350px]">
                 <CODPieChart
                   totalRevenue={totalRevenue}
                   netProfit={netProfit}

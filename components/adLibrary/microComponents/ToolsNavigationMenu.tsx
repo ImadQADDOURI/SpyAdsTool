@@ -8,10 +8,11 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { toolsLinks, type ToolLink } from "@/config/toolsLinks";
 import { cn } from "@/lib/utils";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function ToolsNavigationMenu() {
   const [open, setOpen] = useState(false);
@@ -21,8 +22,8 @@ export default function ToolsNavigationMenu() {
   const freeToolsCount = toolsLinks.filter((tool) => tool.isFree).length;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
         <button
           className={cn(
             "flex items-center gap-0 text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm",
@@ -50,9 +51,9 @@ export default function ToolsNavigationMenu() {
             </span>
           )} */}
         </button>
-      </PopoverTrigger>
+      </DropdownMenuTrigger>
 
-      <PopoverContent align="end" className="grid w-72 gap-2 p-3">
+      <DropdownMenuContent align="end" className="grid w-96 gap-2 p-3">
         <div className="mb-1">
           <h3 className="text-lg font-semibold">Tools</h3>
           <p className="text-sm text-muted-foreground">
@@ -60,15 +61,17 @@ export default function ToolsNavigationMenu() {
           </p>
         </div>
 
-        <div className="grid gap-2">
-          {toolsLinks.map((tool) => (
-            <div onClick={() => setOpen(false)}>
-              <ToolLink key={tool.id} tool={tool} />
-            </div>
-          ))}
-        </div>
-      </PopoverContent>
-    </Popover>
+        <ScrollArea className="max-h-[50vh]">
+          <div className="grid gap-2">
+            {toolsLinks.map((tool) => (
+              <div key={tool.id} onClick={() => setOpen(false)}>
+                <ToolLink tool={tool} />
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
