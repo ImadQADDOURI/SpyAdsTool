@@ -163,7 +163,7 @@ export const AgeBarChart: React.FC<AgeBarChartProps> = ({ data }) => {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={sortedData}
-              margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
+              margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
               barGap={0}
               barCategoryGap={8}
             >
