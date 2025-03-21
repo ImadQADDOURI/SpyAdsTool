@@ -19,6 +19,7 @@ export interface AdAnalysis {
   seasonTarget: string[];
   competition: number;
   cpm: number;
+  cpmEurope: number; // European CPM in euros
 }
 
 export interface AdCreative {
@@ -90,6 +91,7 @@ function parseResponse(responseText: string): AdAnalysis {
     seasonTarget: parsedResponse.season_target || [],
     competition: parsedResponse.competition || 0,
     cpm: parsedResponse.cpm || 0,
+    cpmEurope: parsedResponse.cpm_europe || 0,
   };
 }
 
@@ -102,7 +104,7 @@ export async function analyzeKeywords(ad: AdData): Promise<AdAnalysis> {
   const genAI = geminiKeyManager.getNextModel();
 
   const model = genAI.getGenerativeModel({
-    model: process.env.GEMINI_AI_MODEL || "gemini-1.5-flash",
+    model: process.env.GEMINI_AI_MODEL || "gemini-2.0-flash-lite",
   });
 
   const prompt = `
@@ -118,13 +120,15 @@ Analyze ad. Return JSON:
   "marketing_strategies": ["Problem-Solving"|"Prestige"|"Emotional"|"Trends"|"Holidays"],
   "season_target": ["Spring"|"Summer"|"Autumn"|"Winter"],
   "competition": 0-100,
-  "cpm": estimated USD
+  "cpm": estimated USD,
+  "cpm_europe": estimated EUR
 }
 Rules:
 - top/long: 15 most relevant, exclude common words
 - Infer from content, tone, and context
 - competition: market competitiveness
-- cpm: based on targeting and content quality
+- cpm: based on targeting and content quality in USD
+- cpm_europe: estimated CPM for European markets in euros
 - Concise, accurate analysis
 Ad: "${parsedText}"
 `;
@@ -163,6 +167,7 @@ Ad: "${parsedText}"
       seasonTarget: [],
       competition: 0,
       cpm: 0,
+      cpmEurope: 0, // Default value for European CPM
     };
   }
 }
@@ -182,7 +187,7 @@ export async function generateAdCreative(
   const genAI = geminiKeyManager.getNextModel();
 
   const model = genAI.getGenerativeModel({
-    model: process.env.GOOGLE_AI_API_MODEL || "gemini-1.5-flash",
+    model: process.env.GOOGLE_AI_API_MODEL || "gemini-2.0-flash-lite",
   });
 
   const prompt = `

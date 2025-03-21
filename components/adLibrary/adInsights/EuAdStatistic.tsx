@@ -5,6 +5,7 @@ import {
   Baby,
   ChartPie,
   Earth,
+  Euro,
   Info,
   Loader2,
   Megaphone,
@@ -29,28 +30,30 @@ interface EuAdStatisticProps {
   data: any;
   isLoading: boolean;
   error: string | null;
+  cpmEurope?: number; // Make it optional with a question mark
 }
 
 export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
   data,
   isLoading,
   error,
+  cpmEurope = 0, // Provide default value of 0
 }) => {
   if (isLoading) {
     return <Loading message="Loading EU Statistics..." size="small" />;
   }
 
-  // if (error) {
-  //   return (
-  //     <div
-  //       className="rounded-lg bg-red-100/80 p-3 text-red-700 dark:bg-red-900/80 dark:text-red-300"
-  //       role="alert"
-  //     >
-  //       <p className="font-bold">Error</p>
-  //       <p>{error}</p>
-  //     </div>
-  //   );
-  // }
+  if (error) {
+    return (
+      <div
+        className="rounded-lg bg-red-100/80 p-3 text-red-700 dark:bg-red-900/80 dark:text-red-300"
+        role="alert"
+      >
+        <p className="font-bold">Error</p>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   if (!data) {
     return (
@@ -182,15 +185,15 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-2 p-2 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-1 p-2 sm:grid-cols-4">
         <InsightItem
-          label="Gender Audience"
+          label="Gender"
           value={gender_audience || "Not specified"}
           description=""
           icon={VenusAndMars}
         />
         <InsightItem
-          label="Age Audience"
+          label="Age"
           value={
             age_audience
               ? `${age_audience.min}-${age_audience.max}`
@@ -200,10 +203,26 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
           icon={Baby}
         />
         <InsightItem
-          label="EU Total Reach"
+          label="Reach"
           value={eu_total_reach.toLocaleString()}
           description=""
           icon={ChartPie}
+        />
+        <InsightItem
+          label="Spend"
+          value={
+            cpmEurope
+              ? `${((cpmEurope * eu_total_reach) / 1000).toLocaleString(
+                  undefined,
+                  {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2,
+                  },
+                )} €`
+              : "Not specified"
+          }
+          description=""
+          icon={Euro}
         />
       </div>
 

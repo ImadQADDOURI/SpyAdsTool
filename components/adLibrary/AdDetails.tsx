@@ -132,6 +132,11 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
       setKeywordAnalysis(result);
     } catch (error) {
       setKeywordError("Failed to analyze keywords");
+      // Initialize with a fallback value so EuAdStatistic can still render
+      setKeywordAnalysis((prev) => ({
+        ...prev,
+        cpmEurope: 0, // Fallback value
+      }));
     } finally {
       setIsLoadingKeywords(false);
     }
@@ -146,6 +151,12 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
         fetchKeywordAnalysis(),
       ]);
     }
+  };
+
+  // Safe access to cpmEurope with fallback
+  const getCpmEurope = () => {
+    if (!keywordAnalysis) return 0;
+    return keywordAnalysis.cpmEurope ?? 0;
   };
 
   const handleLoadMore = () => {
@@ -247,8 +258,11 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
               <div className="grid min-h-[200px] grid-cols-1 gap-1 lg:grid-cols-2">
                 <EuAdStatistic
                   data={adDetails}
-                  isLoading={isLoadingEuStats}
+                  isLoading={
+                    isLoadingEuStats || (isLoadingKeywords && !keywordAnalysis)
+                  }
                   error={euStatsError}
+                  cpmEurope={getCpmEurope()}
                 />
                 <KeywordAnalysisTable
                   data={keywordAnalysis}
