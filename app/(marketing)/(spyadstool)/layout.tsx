@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { SubscriptionResponse } from "types";
 import { getCurrentUser } from "@/lib/session";
+import { SavedAdsProvider } from "@/components/adLibrary/favorites/SavedAdsContext";
 import { SubscriptionProvider } from "@/components/adLibrary/subscription/SubscriptionProvider";
 
 // 🔒 Protected layout that requires authentication and loads subscription data
@@ -44,10 +45,12 @@ export default async function ProtectedLayout({
   return (
     // 🧠 Hydrate the subscription context with server-fetched data
     <SubscriptionProvider initialData={subscriptionData}>
-      <main className="flex min-h-screen flex-col">
-        {/* 🎈 Render the protected route content */}
-        {children}
-      </main>
+      <SavedAdsProvider>
+        <main className="flex min-h-screen flex-col">
+          {/* 🎈 Render the protected route content */}
+          {children}
+        </main>
+      </SavedAdsProvider>
     </SubscriptionProvider>
   );
 }

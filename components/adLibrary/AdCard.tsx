@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { AdData } from "@/types/ad";
+import SaveAdButton from "@/components/adLibrary/favorites/SaveAdButton";
 
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
@@ -23,7 +24,6 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { AdDetails } from "./AdDetails";
-import { SaveAdButton } from "./collections/SaveAdButton";
 import { AdOptions } from "./microComponents/AdOptions";
 import DisplayPixelPlatformPayment from "./microComponents/DisplayPixelPlatformPayment";
 import PageNameWithPopover from "./microComponents/PageNameWithPopover";

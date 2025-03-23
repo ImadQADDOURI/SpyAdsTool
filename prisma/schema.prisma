@@ -59,10 +59,13 @@ model User {
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @default(now()) @map(name: "updated_at")
   role          UserRole  @default(USER)
+  savedAds      SavedAd[]
 
+  
   accounts Account[]
   sessions Session[]
-  collections Collection[]
+
+ 
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
@@ -81,36 +84,25 @@ model VerificationToken {
   @@map(name: "verification_tokens")
 }
 
-model Collection {
-  id            String   @id @default(cuid())
-  name          String
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  savedAds      SavedAd[]
-  savedAdsCount Int      @default(0)
-  lastSavedAt   DateTime @default(now())
-  imageUrl      String? 
 
-  @@index([userId])
-  @@map(name: "collections")
-}
 
 model SavedAd {
-  id            String     @id @default(cuid())
+  id            String    @id @default(cuid())
   ad_archive_id String
-  collectionId  String
-  collection    Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  board         String
   adData        Json
   imageUrl      String?
-  collation_id  String?    
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-
-  @@unique([ad_archive_id, collectionId])
-  @@index([collectionId])
-  @@map(name: "saved_ads")
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+ 
+  // Index for faster queries by user
+  @@index([userId])
+// Index for faster querying by board name
+  @@index([board])
+  // Unique constraint to prevent duplicate saves
+  @@unique([userId, ad_archive_id, board])
 }
 
 model MetaGraphQLConfig {
