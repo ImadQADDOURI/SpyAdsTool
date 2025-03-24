@@ -222,13 +222,15 @@ export const Language: React.FC = () => {
                     All Languages
                   </span>
                 )}
-              </div>
-              <ChevronDown
-                className={cn(
-                  "ml-1 h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
-                  open && "rotate-180",
-                )}
-              />
+              </div>{" "}
+              {selectedLanguages.length === 0 && (
+                <ChevronDown
+                  className={cn(
+                    "ml-1 h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
+                    open && "rotate-180",
+                  )}
+                />
+              )}
             </Button>
           </DropdownMenuTrigger>
 

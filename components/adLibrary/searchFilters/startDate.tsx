@@ -77,7 +77,7 @@ export const StartDate: React.FC = () => {
 
   // 📝 Format display date
   const displayDate = React.useMemo(() => {
-    if (!selectedDate) return "Select start date";
+    if (!selectedDate) return "mm/dd/yyyy";
     return format(new Date(selectedDate), "MMM d, yyyy");
   }, [selectedDate]);
 
@@ -106,12 +106,14 @@ export const StartDate: React.FC = () => {
                 <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
                 <span className="truncate">{displayDate}</span>
               </div>
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
-                  open && "rotate-180",
-                )}
-              />
+              {!selectedDate && (
+                <ChevronDown
+                  className={cn(
+                    "h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
+                    open && "rotate-180",
+                  )}
+                />
+              )}
             </Button>
           </DropdownMenuTrigger>
 

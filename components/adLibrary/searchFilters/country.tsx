@@ -234,12 +234,14 @@ export const Country: React.FC = () => {
                   </span>
                 )}
               </div>
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
-                  open && "rotate-180",
-                )}
-              />
+              {selectedCountries.length === 0 && (
+                <ChevronDown
+                  className={cn(
+                    "h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
+                    open && "rotate-180",
+                  )}
+                />
+              )}
             </Button>
           </DropdownMenuTrigger>
 

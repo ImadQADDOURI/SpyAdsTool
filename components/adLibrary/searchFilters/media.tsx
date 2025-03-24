@@ -98,12 +98,14 @@ export const Media: React.FC = () => {
                   )}
                 </div>
               </div>
-              <ChevronDown
-                className={cn(
-                  "ml-2 h-4 w-4 flex-shrink-0 opacity-50 transition-transform duration-200",
-                  open && "rotate-180",
-                )}
-              />
+              {!selectedMedia && (
+                <ChevronDown
+                  className={cn(
+                    "ml-2 h-4 w-4 flex-shrink-0 opacity-50 transition-transform duration-200",
+                    open && "rotate-180",
+                  )}
+                />
+              )}
             </Button>
           </DropdownMenuTrigger>
 

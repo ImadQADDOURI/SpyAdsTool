@@ -97,12 +97,14 @@ export const Status: React.FC = () => {
                   <span className="truncate">{selectedOption.label}</span>
                 </div>
               </div>
-              <ChevronDown
-                className={cn(
-                  "ml-2 h-4 w-4 flex-shrink-0 opacity-50 transition-transform duration-200",
-                  open && "rotate-180",
-                )}
-              />
+              {!hasCustomSelection && (
+                <ChevronDown
+                  className={cn(
+                    "ml-2 h-4 w-4 flex-shrink-0 opacity-50 transition-transform duration-200",
+                    open && "rotate-180",
+                  )}
+                />
+              )}
             </Button>
           </DropdownMenuTrigger>
 

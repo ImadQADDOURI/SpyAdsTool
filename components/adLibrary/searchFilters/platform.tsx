@@ -199,12 +199,14 @@ export const Platform: React.FC = () => {
                   <span className="text-muted-foreground">All Platforms</span>
                 )}
               </div>
-              <ChevronDown
-                className={cn(
-                  "ml-2 h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
-                  open && "rotate-180",
-                )}
-              />
+              {selectedPlatforms.length === 0 && (
+                <ChevronDown
+                  className={cn(
+                    "ml-2 h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
+                    open && "rotate-180",
+                  )}
+                />
+              )}
             </Button>
           </DropdownMenuTrigger>
 

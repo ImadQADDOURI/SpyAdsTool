@@ -25,6 +25,7 @@ import GenderPieChart from "@/components/adLibrary/adInsights/GenderPieChart";
 
 import InsightItem from "../aiComponents/InsightItem";
 import { Loading } from "../microComponents/Loading";
+import AmountSpend from "./AmountSpend";
 
 interface EuAdStatisticProps {
   data: any;
@@ -185,7 +186,7 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-1 p-2 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-1 p-2 sm:grid-cols-3">
         <InsightItem
           label="Gender"
           value={gender_audience || "Not specified"}
@@ -208,7 +209,7 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
           description=""
           icon={ChartPie}
         />
-        <InsightItem
+        {/* <InsightItem
           label="Spend"
           value={
             cpmEurope
@@ -223,8 +224,9 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
           }
           description=""
           icon={Euro}
-        />
+        /> */}
       </div>
+      <AmountSpend cpm={cpmEurope} totalReach={eu_total_reach} />
 
       {/* Charts Section */}
       <div className="space-y-2 p-2">
