@@ -163,7 +163,7 @@ const FavoritesContent = () => {
             {searchQuery ? (
               <>
                 <p className="text-lg font-medium text-gray-600 dark:text-gray-300">
-                  No boards match "{searchQuery}"
+                  No boards match `&quot;`{searchQuery}`&quot;`
                 </p>
                 <button
                   className="mt-4 text-sm text-[#6566F1] hover:underline dark:text-[#B977F8]"
@@ -175,7 +175,7 @@ const FavoritesContent = () => {
             ) : (
               <>
                 <p className="text-lg font-medium text-gray-600 dark:text-gray-300">
-                  You don't have any boards yet
+                  You don`&apos;`t have any boards yet
                 </p>
                 <p className="mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
                   Save ads by clicking the heart icon on any ad in the library.

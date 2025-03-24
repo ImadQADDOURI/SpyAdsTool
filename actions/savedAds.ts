@@ -378,3 +378,96 @@ export async function moveAdsToBoard(sourceBoard: string, targetBoard: string) {
     return { error: "Failed to move ads" };
   }
 }
+
+// 📈 Fetch trending ads from specified admin users and boards
+export async function fetchTrendingAds(page = 1, pageSize = 10) {
+  const ADS_PER_PAGE = pageSize;
+
+  try {
+    // Get admin emails and trend boards from environment variables
+    const adminEmails = process.env.ADMIN_EMAILS?.split(",") || [];
+    const trendBoards = process.env.TREND_BOARDS?.split(",") || [];
+
+    // Calculate pagination
+    const skip = (page - 1) * ADS_PER_PAGE;
+
+    // Verify we have admins and boards to query
+    if (adminEmails.length === 0 || trendBoards.length === 0) {
+      return {
+        ads: [],
+        pagination: {
+          total: 0,
+          pages: 0,
+          current: page,
+        },
+      };
+    }
+
+    // Find admin user IDs from their emails
+    const adminUsers = await prisma.user.findMany({
+      where: {
+        email: {
+          in: adminEmails,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const adminUserIds = adminUsers.map((user) => user.id);
+
+    // No admins found with those emails
+    if (adminUserIds.length === 0) {
+      return {
+        ads: [],
+        pagination: {
+          total: 0,
+          pages: 0,
+          current: page,
+        },
+      };
+    }
+
+    // Query trending ads from admin users in the specified boards
+    const [trendingAds, totalCount] = await Promise.all([
+      prisma.savedAd.findMany({
+        where: {
+          userId: {
+            in: adminUserIds,
+          },
+          board: {
+            in: trendBoards,
+          },
+        },
+        orderBy: {
+          updatedAt: "desc",
+        },
+        skip,
+        take: ADS_PER_PAGE,
+      }),
+      prisma.savedAd.count({
+        where: {
+          userId: {
+            in: adminUserIds,
+          },
+          board: {
+            in: trendBoards,
+          },
+        },
+      }),
+    ]);
+
+    return {
+      ads: trendingAds,
+      pagination: {
+        total: totalCount,
+        pages: Math.ceil(totalCount / ADS_PER_PAGE),
+        current: page,
+      },
+    };
+  } catch (error) {
+    console.error("Failed to fetch trending ads:", error);
+    return { error: "Failed to fetch trending ads" };
+  }
+}

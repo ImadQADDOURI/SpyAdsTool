@@ -2,16 +2,16 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
 
+import TrendAds from "@/components/adLibrary/favorites/TrendAds";
 import { Loading } from "@/components/adLibrary/microComponents/Loading";
 import { SubscriptionPageGuard } from "@/components/adLibrary/subscription/SubscriptionPageGuard";
-import { TrendAds } from "@/components/adLibrary/TrendAds";
 
 export const metadata: Metadata = {
   title: "Trending Ads",
-  description: "Explore the latest trending ads curated by our experts.",
+  description: "Discover trending and popular ads curated by our team",
 };
 
-export default function TrendPage() {
+export default function TrendingPage() {
   return (
     <SubscriptionPageGuard>
       <Suspense
