@@ -155,14 +155,22 @@ export default function SaveAdButton({
               return (
                 <DropdownMenuItem
                   key={board.name}
-                  className="flex cursor-pointer items-center gap-2 py-3"
+                  className={cn(
+                    "group relative flex cursor-pointer items-center gap-2 py-3 transition-colors",
+                    // Stronger background for saved items
+                    isBoardSaved && "bg-purple-200/70 dark:bg-purple-800/40",
+                    // More vibrant hover states with increased opacity
+                    isBoardSaved
+                      ? "hover:bg-red-300/80 hover:text-red-800 dark:hover:bg-red-800/50 dark:hover:text-red-200"
+                      : "hover:bg-green-300/80 hover:text-green-800 dark:hover:bg-green-800/50 dark:hover:text-green-200",
+                  )}
                   onClick={() => handleSaveToBoard(board.name)}
                 >
                   <div
                     className={cn(
                       "flex h-8 w-8 items-center justify-center overflow-hidden rounded-md",
                       !board.coverImage &&
-                        "bg-purple-100 dark:bg-purple-900/30",
+                        "bg-purple-300 dark:bg-purple-700/50",
                     )}
                   >
                     {board.coverImage ? (
@@ -172,12 +180,17 @@ export default function SaveAdButton({
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <Heart className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                      <Heart className="h-4 w-4 text-purple-800 dark:text-purple-300" />
                     )}
                   </div>
                   <div className="flex-1">{board.name}</div>
-                  {isBoardSaved && (
-                    <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  {isBoardSaved ? (
+                    <>
+                      <Check className="h-4 w-4 text-purple-800 group-hover:hidden dark:text-purple-300" />
+                      <X className="hidden h-4 w-4 text-red-800 group-hover:block dark:text-red-300" />
+                    </>
+                  ) : (
+                    <Plus className="hidden h-4 w-4 text-green-800 group-hover:block dark:text-green-300" />
                   )}
                 </DropdownMenuItem>
               );
