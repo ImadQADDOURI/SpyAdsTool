@@ -181,7 +181,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ ads }) => {
             <ResponsiveContainer width="100%" height={220}>
               <AreaChart
                 data={chartData}
-                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
               >
                 <XAxis
                   dataKey="date"
