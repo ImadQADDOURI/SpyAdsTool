@@ -274,6 +274,11 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
 
                 {/* Bottom Stats Grid */}
                 <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                  <KeywordAnalysisTable
+                    data={keywordAnalysis}
+                    isLoading={isLoadingKeywords}
+                    error={keywordError}
+                  />
                   <EuAdStatistic
                     data={adDetails}
                     isLoading={
@@ -282,11 +287,6 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
                     }
                     error={euStatsError}
                     cpmEurope={getCpmEurope()}
-                  />
-                  <KeywordAnalysisTable
-                    data={keywordAnalysis}
-                    isLoading={isLoadingKeywords}
-                    error={keywordError}
                   />
                 </div>
               </div>
