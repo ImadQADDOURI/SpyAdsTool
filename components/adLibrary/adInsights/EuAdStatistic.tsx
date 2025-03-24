@@ -43,18 +43,6 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
     return <Loading message="Loading EU Statistics..." size="small" />;
   }
 
-  if (error) {
-    return (
-      <div
-        className="rounded-lg bg-red-100/80 p-3 text-red-700 dark:bg-red-900/80 dark:text-red-300"
-        role="alert"
-      >
-        <p className="font-bold">Error</p>
-        <p>{error}</p>
-      </div>
-    );
-  }
-
   if (!data) {
     return (
       <div className="flex flex-col items-center justify-center space-y-2 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
@@ -65,6 +53,18 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
         <p className="text-xs text-gray-500 dark:text-gray-400">
           this ad is not targeted to the European Union.
         </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div
+        className="rounded-lg bg-red-100/80 p-3 text-red-700 dark:bg-red-900/80 dark:text-red-300"
+        role="alert"
+      >
+        <p className="font-bold">Error</p>
+        <p>{error}</p>
       </div>
     );
   }
