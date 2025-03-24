@@ -118,13 +118,20 @@ export default function TrendAds() {
         </div>
       ) : (
         <>
-          <AdCardGrid ads={ads} />
+          <div className="space-y-8 p-4">
+            <AdCardGrid ads={ads} />
 
-          {/* Load more trigger */}
-          <LoadingTrigger onIntersect={handleLoadMore} isLoading={isLoading} />
+            {/* Load more trigger */}
+            <LoadingTrigger
+              onIntersect={handleLoadMore}
+              isLoading={isLoading}
+            />
 
-          {/* Loading More indicator */}
-          {isLoading && <Loading size="medium" message="Loading more ads..." />}
+            {/* Loading More indicator */}
+            {isLoading && (
+              <Loading size="medium" message="Loading more ads..." />
+            )}
+          </div>
         </>
       )}
 
