@@ -28,6 +28,7 @@ import { AdOptions } from "./microComponents/AdOptions";
 import DisplayPixelPlatformPayment from "./microComponents/DisplayPixelPlatformPayment";
 import PageNameWithPopover from "./microComponents/PageNameWithPopover";
 import RenderMedia from "./microComponents/renderMedia";
+import SubscriptionAccessGuard from "./subscription/SubscriptionAccessGuard";
 
 interface AdCardProps {
   ad: AdData;
@@ -119,7 +120,9 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
 
       {/* Save button in top middle (positioned more to the right) */}
       <div className="absolute -top-1 right-12 pt-1.5">
-        <SaveAdButton ad={ad} />
+        <SubscriptionAccessGuard minimalUI>
+          <SaveAdButton ad={ad} />
+        </SubscriptionAccessGuard>
       </div>
 
       {/* Options button in top right */}
