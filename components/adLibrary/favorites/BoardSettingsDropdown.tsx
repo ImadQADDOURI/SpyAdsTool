@@ -140,7 +140,7 @@ export default function BoardSettingsDropdown({
               Delete Board
             </DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete `&quot;`{boardName}`&quot;`? This
+              Are you sure you want to delete &quot;{boardName}&quot;? This
               action cannot be undone.
             </DialogDescription>
           </DialogHeader>

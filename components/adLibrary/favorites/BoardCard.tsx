@@ -239,7 +239,7 @@ export default function BoardCard({ board, onUpdate }: BoardCardProps) {
           <DialogHeader>
             <DialogTitle>Rename board</DialogTitle>
             <DialogDescription>
-              Enter a new name for `&quot;`{board.name}`&quot;`
+              Enter a new name for &quot;{board.name}&quot;
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-3">
@@ -271,7 +271,7 @@ export default function BoardCard({ board, onUpdate }: BoardCardProps) {
           <DialogHeader>
             <DialogTitle>Delete board</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete `&quot;`{board.name}`&quot;`? This
+              Are you sure you want to delete &quot;{board.name}&quot;? This
               will remove all {board.count} saved ads from this board.
             </DialogDescription>
           </DialogHeader>
@@ -292,8 +292,8 @@ export default function BoardCard({ board, onUpdate }: BoardCardProps) {
           <DialogHeader>
             <DialogTitle>Merge board</DialogTitle>
             <DialogDescription>
-              Choose a board to merge `&quot;`{board.name}`&quot;` into.
-              Duplicate ads will be skipped.
+              Choose a board to merge &quot;{board.name}&quot; into. Duplicate
+              ads will be skipped.
             </DialogDescription>
           </DialogHeader>
 

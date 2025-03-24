@@ -119,7 +119,7 @@ const FavoritesContent = () => {
         </div>
       </FirefliesWrapper>
 
-      <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
         {/* Search input */}
         <div className="mb-6 flex justify-end">
           <div className="relative w-full max-w-xs transition-all duration-300 focus-within:max-w-sm">
@@ -140,7 +140,7 @@ const FavoritesContent = () => {
 
         {/* Boards grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="aspect-square overflow-hidden rounded-lg">
                 <Skeleton className="h-full w-full" />
@@ -148,7 +148,7 @@ const FavoritesContent = () => {
             ))}
           </div>
         ) : filteredBoards.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {filteredBoards.map((board) => (
               <BoardCard
                 key={board.name}
@@ -163,7 +163,7 @@ const FavoritesContent = () => {
             {searchQuery ? (
               <>
                 <p className="text-lg font-medium text-gray-600 dark:text-gray-300">
-                  No boards match `&quot;`{searchQuery}`&quot;`
+                  No boards match &quot;{searchQuery}&quot;
                 </p>
                 <button
                   className="mt-4 text-sm text-[#6566F1] hover:underline dark:text-[#B977F8]"
@@ -175,7 +175,7 @@ const FavoritesContent = () => {
             ) : (
               <>
                 <p className="text-lg font-medium text-gray-600 dark:text-gray-300">
-                  You don`&apos;`t have any boards yet
+                  You don&apos;t have any boards yet
                 </p>
                 <p className="mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
                   Save ads by clicking the heart icon on any ad in the library.

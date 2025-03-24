@@ -297,7 +297,7 @@ export default function AffiliateCalculatorPage() {
                   <div className="divide-y dark:divide-gray-800">
                     <div className="py-3">
                       <h3 className="mb-1 font-medium text-gray-800 dark:text-gray-200">
-                        What`&apos;`s a good conversion rate for affiliate
+                        What&apos;s a good conversion rate for affiliate
                         marketing?
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400">

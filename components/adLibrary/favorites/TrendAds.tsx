@@ -85,11 +85,9 @@ export default function TrendAds() {
       </FirefliesWrapper>
 
       {isInitialLoad ? (
-        <div className="flex h-40 items-center justify-center">
-          <Loading />
-        </div>
+        <Loading size="medium" message="Loading trending ads..." />
       ) : ads.length > 0 ? (
-        <>
+        <div className="space-y-8 p-4">
           <AdCardGrid ads={ads} />
           {hasMore && (
             <div className="mt-8 flex justify-center">
@@ -103,7 +101,7 @@ export default function TrendAds() {
               )}
             </div>
           )}
-        </>
+        </div>
       ) : (
         <div className="flex h-40 items-center justify-center">
           <p className="text-lg text-gray-500">No trending ads found</p>

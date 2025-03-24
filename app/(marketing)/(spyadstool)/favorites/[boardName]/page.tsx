@@ -27,6 +27,7 @@ import {
 } from "@/components/adLibrary/favorites/SavedAdsContext";
 import AdCardGrid from "@/components/adLibrary/microComponents/AdCardGrid";
 import FirefliesWrapper from "@/components/adLibrary/microComponents/FirefliesWrapper";
+import { Loading } from "@/components/adLibrary/microComponents/Loading";
 import { ScrollButtons } from "@/components/adLibrary/microComponents/ScrollButtons";
 
 export default function BoardPage() {
@@ -156,13 +157,9 @@ export default function BoardPage() {
       </FirefliesWrapper>
 
       {/* Content area */}
-      <div className="mx-auto max-w-7xl px-4 py-8">
+      <div className="space-y-8 p-4">
         {loading ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[...Array(6)].map((_, i) => (
-              <Skeleton key={i} className="h-72 w-full rounded-xl" />
-            ))}
-          </div>
+          <Loading size="medium" message="Loading ads..." />
         ) : ads.length > 0 ? (
           <AdCardGrid ads={ads} />
         ) : (
