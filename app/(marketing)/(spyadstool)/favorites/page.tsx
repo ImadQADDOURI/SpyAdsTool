@@ -140,13 +140,7 @@ const FavoritesContent = () => {
 
         {/* Boards grid */}
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="aspect-square overflow-hidden rounded-lg">
-                <Skeleton className="h-full w-full" />
-              </div>
-            ))}
-          </div>
+          <Loading size="medium" message="Loading boards..." />
         ) : filteredBoards.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {filteredBoards.map((board) => (
