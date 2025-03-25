@@ -1,9 +1,10 @@
-import { getMetaGraphQLConfigs } from '@/actions/meta-graphql-config-actions'
-import MetaGraphQLConfigList from '@/components/adLibrary/meta-graphql-configs/MetaGraphQLConfigList'
-import MetaGraphQLConfigForm from '@/components/adLibrary/meta-graphql-configs/MetaGraphQLConfigForm'   
+import { getMetaGraphQLConfigs } from "@/actions/meta-graphql-config-actions";
+
+import MetaGraphQLConfigForm from "@/components/adLibrary/meta-graphql-configs/MetaGraphQLConfigForm";
+import MetaGraphQLConfigList from "@/components/adLibrary/meta-graphql-configs/MetaGraphQLConfigList";
 
 export default async function MetaGraphQLConfigsPage() {
-  const { data: configs = [] } = await getMetaGraphQLConfigs()
+  const { data: configs = [] } = await getMetaGraphQLConfigs();
 
   return (
     <div className="container mx-auto p-4">
@@ -13,5 +14,5 @@ export default async function MetaGraphQLConfigsPage() {
         <MetaGraphQLConfigList initialConfigs={configs} />
       </div>
     </div>
-  )
+  );
 }

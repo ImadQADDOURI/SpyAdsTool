@@ -120,3 +120,25 @@ model MetaGraphQLConfig {
   @@map(name: "meta_graphql_configs")
   /// "Stores GraphQL XHR configurations for Meta API interactions"
 }
+
+
+// ========================================
+//        ✨ Top Stores Model ✨
+// ========================================
+model TopStore {
+  id       String   @id @default(uuid())
+  image    String
+  name     String
+  niche    String
+  link     String
+  revenue  Float
+  sales    Int
+  CTA      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+  @@index([niche])
+  @@index([revenue])
+  @@index([sales])
+}

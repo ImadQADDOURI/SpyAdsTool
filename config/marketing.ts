@@ -34,5 +34,13 @@ export const marketingConfig: MarketingConfig = {
       title: "settings",
       href: "/settings",
     },
+    {
+      title: "Top Stores",
+      href: "/top-stores",
+    },
+    {
+      title: "Top Stores Configuration",
+      href: "/top-stores-config",
+    },
   ],
 };
