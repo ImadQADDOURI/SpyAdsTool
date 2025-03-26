@@ -97,7 +97,7 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
               <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
                 <span className="bg-gradient-to-r from-[#6566F1] via-[#B977F8] to-[#E9A8F2] bg-clip-text text-transparent">
                   Elite Stores
-                </span>{" "}
+                </span>
                 <br className="sm:hidden" />
                 <span className="bg-gradient-to-r from-gray-700 via-gray-900 to-black bg-clip-text text-transparent dark:from-gray-300 dark:via-gray-100 dark:to-white">
                   Driving Results
@@ -403,7 +403,8 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
               No elite stores found
             </h3>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              We couldn't find any top performing stores matching your criteria.
+              We couldn&apos;t find any top performing stores matching your
+              criteria.
             </p>
             <Button variant="outline" className="mt-6">
               Refresh results
