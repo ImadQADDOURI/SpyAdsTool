@@ -153,8 +153,8 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 No Ads Found
               </h2>
               <p className="mx-auto max-w-lg text-lg text-gray-600 dark:text-gray-300">
-                Your search didn't match any ads. Try adjusting your filters or
-                searching with different criteria.
+                Your search didn&apos;t match any ads. Try adjusting your
+                filters or searching with different criteria.
               </p>
 
               <div className="flex flex-wrap justify-center gap-3">
