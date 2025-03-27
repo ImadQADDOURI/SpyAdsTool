@@ -27,17 +27,18 @@ export const marketingConfig: MarketingConfig = {
       href: "/trend",
     },
     {
-      title: "meta-graphql-configs",
-      href: "/meta-graphql-configs",
+      title: "Top Stores",
+      href: "/top-stores",
     },
     {
       title: "settings",
       href: "/settings",
     },
     {
-      title: "Top Stores",
-      href: "/top-stores",
+      title: "meta-graphql-configs",
+      href: "/meta-graphql-configs",
     },
+
     {
       title: "Top Stores Configuration",
       href: "/top-stores-config",

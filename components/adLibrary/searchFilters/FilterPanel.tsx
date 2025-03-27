@@ -137,7 +137,7 @@ const filterParams = [
 
 // 🎨 Shared filter card component for consistent styling
 const FilterCard = React.memo(({ children }: { children: React.ReactNode }) => (
-  <div className="rounded-lg bg-white p-4 shadow-sm dark:bg-gray-900">
+  <div className="rounded-lg bg-white p-4 shadow-lg dark:bg-gray-800">
     {children}
   </div>
 ));
@@ -321,7 +321,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = React.memo(
     // 📱 Full variant (directly in page)
     if (variant === "full") {
       return (
-        <div className="mx-auto mt-3 max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto mt-3 max-w-6xl px-1">
           <FilterCard>
             <div className="flex items-center justify-between">
               <FilterHeader />

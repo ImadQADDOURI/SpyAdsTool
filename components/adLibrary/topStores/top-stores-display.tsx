@@ -16,6 +16,7 @@ import {
   Shield,
   ShoppingBag,
   Sparkles,
+  Store,
   TrendingUp,
   Zap,
 } from "lucide-react";
@@ -89,15 +90,15 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
               className="flex flex-col items-center space-y-4 text-center"
             >
               <div className="flex items-center space-x-2">
-                <Sparkles className="h-6 w-6 text-[#B977F8]" />
+                <Store className="h-6 w-6 text-[#B977F8]" />
                 <span className="rounded-full bg-[#B977F8]/10 px-4 py-1 text-sm font-medium text-[#B977F8]">
-                  Premium Collection
+                  Top Stores
                 </span>
               </div>
               <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
                 <span className="bg-gradient-to-r from-[#6566F1] via-[#B977F8] to-[#E9A8F2] bg-clip-text text-transparent">
                   Elite Stores
-                </span>
+                </span>{" "}
                 <br className="sm:hidden" />
                 <span className="bg-gradient-to-r from-gray-700 via-gray-900 to-black bg-clip-text text-transparent dark:from-gray-300 dark:via-gray-100 dark:to-white">
                   Driving Results
@@ -111,7 +112,7 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
                 <div className="h-1 w-24 rounded-full bg-gradient-to-r from-[#6566F1]/40 to-[#B977F8]/40 transition-all duration-500 ease-in-out group-hover:w-32 group-hover:from-[#6566F1]/60 group-hover:to-[#B977F8]/60" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 blur-lg" />
               </div>
-              <div className="mt-8 flex items-center gap-x-4">
+              {/* <div className="mt-8 flex items-center gap-x-4">
                 <Button
                   size="lg"
                   className="group rounded-full bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-6 shadow-lg transition-all hover:shadow-[0_10px_25px_-5px_rgba(101,102,241,0.3)]"
@@ -127,7 +128,7 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
                   How we rank
                   <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
-              </div>
+              </div> */}
             </motion.div>
           </div>
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-gray-100 to-transparent dark:from-gray-900" />

@@ -116,7 +116,7 @@ const DownloadMedia: React.FC<DownloadMediaProps> = ({ item }) => {
               )}
               {item.video_hd_url && (
                 <DownloadMenuItem
-                  label="HD Video"
+                  label="HD Video ⚠️ (Add .mp4)"
                   icon={
                     <Video className="mr-2 h-4 w-4 text-purple-500 dark:text-purple-400" />
                   }

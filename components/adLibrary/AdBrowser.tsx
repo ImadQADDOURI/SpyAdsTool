@@ -1,3 +1,4 @@
+// @/components/adLibrary/AdBrowser.tsx
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -6,8 +7,32 @@ import {
   AdLibrarySearchPaginationQuery,
   getAdSearchVariables,
 } from "@/utils/MetaGraphQLConstsAndFunctions";
+import { motion } from "framer-motion";
+import {
+  Activity,
+  ArrowRight,
+  Award,
+  BarChart,
+  BarChart2,
+  BrainCircuit,
+  CheckCircle,
+  ChevronRight,
+  Database,
+  Download,
+  Filter,
+  PieChart,
+  Rocket,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
 
 import { AdData } from "@/types/ad";
+import { Button } from "@/components/ui/button";
 
 import FirefliesWrapper from "./microComponents/FirefliesWrapper";
 import { ScrollButtons } from "./microComponents/ScrollButtons";
@@ -151,22 +176,75 @@ export const AdBrowser = () => {
     },
     [searchParams, router, handleSearchAds, searchQuery],
   );
-
   return (
-    <div className="min-h-screen bg-gray-100 pb-8 dark:bg-gray-800">
-      <FirefliesWrapper intensity={"medium"}>
-        {/* Title */}
-        <div className="group relative py-6">
-          <div className="relative z-10 flex flex-col items-center justify-center space-y-2">
-            <h1 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text px-4 text-4xl font-bold tracking-tight text-transparent transition-all duration-300 ease-in-out hover:scale-[1.01]">
-              Ad Search
-            </h1>
-            <div className="relative">
-              <div className="h-0.5 w-16 rounded-full bg-gradient-to-r from-[#6566F1]/40 to-[#B977F8]/40 transition-all duration-300 ease-in-out group-hover:w-24" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 blur-sm" />
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pb-16 dark:from-gray-900 dark:to-gray-800">
+      <FirefliesWrapper intensity="high">
+        {/* Premium Header Section */}
+        <div className="group relative overflow-hidden py-4">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#6566F1]/5 via-transparent to-[#B977F8]/5" />
+          <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="flex flex-col items-center space-y-4 text-center"
+            >
+              <div className="flex items-center space-x-2">
+                <Zap className="h-6 w-6 text-[#B977F8]" />
+                <span className="rounded-full bg-[#B977F8]/10 px-4 py-1 text-sm font-medium text-[#B977F8]">
+                  Professional Ad Tools
+                </span>
+              </div>
+              <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
+                <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-transparent">
+                  Ad Search
+                </span>{" "}
+                <br className="sm:hidden" />
+                <span className="bg-gradient-to-r from-gray-700 via-gray-900 to-black bg-clip-text text-transparent dark:from-gray-300 dark:via-gray-100 dark:to-white">
+                  Data & Insights
+                </span>
+              </h1>
+              <p className="max-w-2xl text-lg text-gray-600 dark:text-gray-300">
+                Search millions of ads with powerful filters, visual analytics
+                and AI tools
+              </p>
+              {/* Decorative line */}
+              <div className="relative pt-4">
+                <div className="h-1 w-24 rounded-full bg-gradient-to-r from-[#6566F1]/40 to-[#B977F8]/40 transition-all duration-500 ease-in-out group-hover:w-32 group-hover:from-[#6566F1]/60 group-hover:to-[#B977F8]/60" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 blur-lg" />
+              </div>
+
+              {/* Compact Feature Highlights */}
+              <div className="mt-6 flex flex-wrap justify-center gap-2">
+                <div className="flex items-center space-x-2 rounded-full bg-white/50 px-4 py-2 backdrop-blur-sm dark:bg-gray-800/50">
+                  <Filter className="h-4 w-4 text-[#6566F1]" />
+                  <span className="text-sm">Filters</span>
+                </div>
+                <div className="flex items-center space-x-2 rounded-full bg-white/50 px-4 py-2 backdrop-blur-sm dark:bg-gray-800/50">
+                  <BarChart className="h-4 w-4 text-[#B977F8]" />
+                  <span className="text-sm">Analytics</span>
+                </div>
+
+                <div className="flex items-center space-x-2 rounded-full bg-white/50 px-4 py-2 backdrop-blur-sm dark:bg-gray-800/50">
+                  <TrendingUp className="h-4 w-4 text-[#E9A8F2]" />
+                  <span className="text-sm">Trends</span>
+                </div>
+                <div className="flex items-center space-x-2 rounded-full bg-white/50 px-4 py-2 backdrop-blur-sm dark:bg-gray-800/50">
+                  <PieChart className="h-4 w-4 text-[#6566F1]" />
+                  <span className="text-sm">Charts</span>
+                </div>
+                <div className="flex items-center space-x-2 rounded-full bg-white/50 px-4 py-2 backdrop-blur-sm dark:bg-gray-800/50">
+                  <BrainCircuit className="h-4 w-4 text-[#B977F8]" />
+                  <span className="text-sm">AI Tools</span>
+                </div>
+                <div className="flex items-center space-x-2 rounded-full bg-white/50 px-4 py-2 backdrop-blur-sm dark:bg-gray-800/50">
+                  <Download className="h-4 w-4 text-[#6566F1]" />
+                  <span className="text-sm">Media</span>
+                </div>
+              </div>
+            </motion.div>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/10 via-transparent to-[#B977F8]/10" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-gray-100 to-transparent dark:from-gray-900" />
         </div>
       </FirefliesWrapper>
 

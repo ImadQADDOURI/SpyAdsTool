@@ -66,27 +66,27 @@ export default function BoardSettingsDropdown({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <div className="group flex cursor-pointer items-center space-x-2">
-            <Settings className="h-5 w-5 text-[#6566F1] transition-all duration-300 group-hover:scale-110 dark:text-[#B977F8]" />
-            <span className="text-sm font-medium text-gray-600 group-hover:text-[#6566F1] dark:text-gray-300 dark:group-hover:text-[#B977F8]">
+          <button className="group flex cursor-pointer items-center space-x-2 rounded-full bg-gray-200/70 px-4 py-1.5 transition-all hover:bg-gray-300/50 dark:bg-gray-700/50 dark:hover:bg-gray-600/50">
+            <Settings className="h-5 w-5 text-gray-600 transition-all duration-300 group-hover:scale-110 dark:text-gray-300" />
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
               Settings
             </span>
-          </div>
+          </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="w-56 rounded-lg border border-gray-100 bg-white p-1 shadow-lg dark:border-gray-800 dark:bg-gray-900"
+          className="w-56 rounded-xl border border-gray-200 bg-white/90 p-1 shadow-lg backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/90 dark:backdrop-blur-sm"
         >
           <DropdownMenuItem
-            className="flex cursor-pointer items-center space-x-2 rounded-md px-3 py-2.5 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="flex cursor-pointer items-center space-x-2 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
             onClick={() => setRenameDialogOpen(true)}
           >
             <Edit className="h-4 w-4 text-[#6566F1] dark:text-[#B977F8]" />
             <span>Rename board</span>
           </DropdownMenuItem>
-          <DropdownMenuSeparator className="my-1 bg-gray-100 dark:bg-gray-800" />
+          <DropdownMenuSeparator className="my-1 bg-gray-200 dark:bg-gray-700" />
           <DropdownMenuItem
-            className="flex cursor-pointer items-center space-x-2 rounded-md px-3 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/50"
+            className="flex cursor-pointer items-center space-x-2 rounded-lg px-3 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
             onClick={() => setDeleteDialogOpen(true)}
           >
             <Trash className="h-4 w-4" />
@@ -97,10 +97,12 @@ export default function BoardSettingsDropdown({
 
       {/* Rename Dialog */}
       <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="rounded-xl border-gray-200 bg-white/90 backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/90 sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Rename Board</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg font-semibold">
+              Rename Board
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 dark:text-gray-300">
               Enter a new name for your board
             </DialogDescription>
           </DialogHeader>
@@ -110,6 +112,7 @@ export default function BoardSettingsDropdown({
               value={newBoardName}
               onChange={(e) => setNewBoardName(e.target.value)}
               placeholder="Board name"
+              className="rounded-lg border-gray-300 bg-gray-50 dark:border-gray-600 dark:bg-gray-700"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleRename();
@@ -119,11 +122,16 @@ export default function BoardSettingsDropdown({
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button
+                variant="outline"
+                className="rounded-lg border-gray-300 dark:border-gray-600"
+              >
+                Cancel
+              </Button>
             </DialogClose>
             <Button
               onClick={handleRename}
-              className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] hover:opacity-90"
+              className="rounded-lg bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-6 shadow-lg transition-all hover:shadow-[0_10px_25px_-5px_rgba(101,102,241,0.3)]"
             >
               Save Changes
             </Button>
@@ -133,22 +141,31 @@ export default function BoardSettingsDropdown({
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="rounded-xl border-gray-200 bg-white/90 backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/90 sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-lg font-semibold">
               <AlertCircle className="h-5 w-5 text-red-500" />
               Delete Board
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-gray-600 dark:text-gray-300">
               Are you sure you want to delete &quot;{boardName}&quot;? This
               action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button
+                variant="outline"
+                className="rounded-lg border-gray-300 dark:border-gray-600"
+              >
+                Cancel
+              </Button>
             </DialogClose>
-            <Button onClick={handleDelete} variant="destructive">
+            <Button
+              onClick={handleDelete}
+              variant="destructive"
+              className="rounded-lg bg-red-600 px-6 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
+            >
               Delete Board
             </Button>
           </DialogFooter>
