@@ -202,14 +202,16 @@ export const AdCard: React.FC<AdCardProps> = ({ ad, compact = false }) => {
             <hr className="m-0.5 border-t border-gray-200 dark:border-gray-700" />
 
             {/* Pixel, Platform, Payment info */}
-            {/* <DisplayPixelPlatformPayment
-              url={snapshot?.link_url || undefined}
-              usePuppeteer={true}
-              keepBrowserOpen={true}
-              useCache={true}
-              dynamicTimeout={1000}
-              autoDetect={false}
-            /> */}
+            {/* <SubscriptionAccessGuard>
+              <DisplayPixelPlatformPayment
+                url={snapshot?.link_url || undefined}
+                usePuppeteer={true}
+                keepBrowserOpen={true}
+                useCache={true}
+                dynamicTimeout={1000}
+                autoDetect={false}
+              />
+            </SubscriptionAccessGuard> */}
           </div>
         </div>
       </CardContent>

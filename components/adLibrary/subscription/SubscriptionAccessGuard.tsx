@@ -80,27 +80,30 @@ export default function SubscriptionAccessGuard({
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
-        {/* 🌫️ Original content with light blur effect */}
-        <div className="pointer-events-none opacity-90 blur-[2px] filter">
+        {/* 🌫️ Original content with lighter blur effect */}
+        <div className="pointer-events-none opacity-95 blur-[1px] filter">
           {children}
         </div>
 
-        {/* 🔮 Premium overlay with lighter purple gradient and lock icon */}
+        {/* 🔮 Premium overlay with transparent to purple gradient */}
         <div
           className={cn(
             "absolute inset-0 flex items-center justify-center",
-            "bg-gradient-to-br from-[#6566F1]/40 to-[#B977F8]/40",
+            "bg-gradient-to-br from-transparent to-[#B977F8]/70",
             "transition-all duration-300",
-            isHovering ? "opacity-90" : "opacity-75",
           )}
         >
-          <LockIcon
-            className={cn(
-              "text-white drop-shadow-md transition-all",
-              isHovering ? "scale-110" : "scale-100",
-              minimalUI ? "h-5 w-5" : "h-8 w-8",
+          <div className="flex flex-col items-center gap-2">
+            {!minimalUI && (
+              <LockIcon
+                className={cn(
+                  "text-white/90 drop-shadow-lg transition-all",
+                  isHovering ? "scale-110" : "scale-100",
+                  minimalUI ? "h-5 w-5" : "h-6 w-6",
+                )}
+              />
             )}
-          />
+          </div>
         </div>
       </div>
 
