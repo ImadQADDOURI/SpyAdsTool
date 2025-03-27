@@ -68,8 +68,8 @@ const SpendDisplay: React.FC<SpendDisplayProps> = ({
           >
             {/* Enhanced Header with Gradient Title and Dynamic Icon */}
             <div className="mb-2 flex flex-row items-center justify-between">
-              <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-base font-bold text-transparent">
-                Total Spend
+              <span className="text-md font-semibold text-gray-600 dark:text-gray-300">
+                Spend
               </span>
               <BarChart2
                 className={cn(

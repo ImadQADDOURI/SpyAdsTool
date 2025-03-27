@@ -62,8 +62,8 @@ const CompetitionRadialChart: React.FC<CompetitionRadialChartProps> = ({
           >
             {/* Enhanced Header with Gradient Title and Interactive Icon */}
             <div className="flex flex-row items-center justify-between">
-              <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-sm font-bold text-transparent">
-                Competition Level
+              <span className="text-md font-semibold text-gray-600 dark:text-gray-300">
+                Competition
               </span>
 
               <Gauge

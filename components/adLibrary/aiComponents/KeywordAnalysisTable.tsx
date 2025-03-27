@@ -155,7 +155,7 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
 
         {/* Additional Insights */}
         <InsightItem
-          label="Target Audience"
+          label="Target"
           value={data.targetAudience}
           description="Target audience characteristics and preferences"
           icon={UserRound}
@@ -167,7 +167,7 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
           icon={Tags}
         />
         <InsightItem
-          label="Marketing Strategies"
+          label="Marketing"
           value={data.marketingStrategies}
           description="Recommended marketing approaches"
           icon={Megaphone}

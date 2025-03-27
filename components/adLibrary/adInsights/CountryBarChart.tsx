@@ -172,7 +172,7 @@ export const CountryBarChart: React.FC<CountryBarChartProps> = ({ data }) => {
       {/* Header with Search */}
       <div>
         <div className="mb-2 px-2 py-2">
-          <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-sm font-bold text-transparent">
+          <span className="text-md font-semibold text-gray-600 dark:text-gray-300">
             Country Distribution
           </span>
         </div>
