@@ -1,3 +1,4 @@
+//@/lib\user.ts
 import { prisma } from "@/lib/db";
 
 export const getUserByEmail = async (email: string) => {

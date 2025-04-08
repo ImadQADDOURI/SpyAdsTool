@@ -1,3 +1,4 @@
+// @/auth.ts
 import authConfig from "@/auth.config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { UserRole } from "@prisma/client";
@@ -49,24 +50,24 @@ export const {
 
     async jwt({ token }) {
       if (!token.sub) return token;
-  
+
       const dbUser = await getUserById(token.sub);
-  
+
       if (!dbUser) return token;
-  
+
       token.name = dbUser.name;
       token.email = dbUser.email;
       token.picture = dbUser.image;
       token.role = dbUser.role;
-  
+
       // Retrieve admin emails from environment variables
       const adminEmails = process.env.ADMIN_EMAILS?.split(",") || [];
-  
+
       // Check if the user's email is in the list of admin emails
       if (dbUser.email && adminEmails.includes(dbUser.email)) {
         token.role = UserRole.ADMIN; // Assign admin role if email matches
       }
-  
+
       return token;
     },
   },
