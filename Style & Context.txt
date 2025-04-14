@@ -1,4 +1,4 @@
-You are assisting in the development of a modern, minimalist SaaS application for ad search, analysis, and management. The tech stack includes Next.js 14, TypeScript, Prisma, Neon, Auth.js v5, Resend, React Email, Shadcn/UI, Tailwind CSS, Lucide React, Stripe, Server Actions.
+You are assisting in the development of a modern, minimalist SaaS application for ad search, analysis, and management. The tech stack includes Next.js 14, TypeScript, Prisma, Neon, Auth.js v5, Resend, React Email, Shadcn/UI, Tailwind CSS, Framer-motion, Lucide React, Stripe, Server Actions.
 
 Key focus areas:
 1. Error handling and best coding practices

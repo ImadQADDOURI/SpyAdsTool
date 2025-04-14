@@ -35,6 +35,10 @@ export const marketingConfig: MarketingConfig = {
       href: "/settings",
     },
     {
+      title: "Support",
+      href: "/support",
+    },
+    {
       title: "meta-graphql-configs",
       href: "/meta-graphql-configs",
     },
