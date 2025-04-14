@@ -268,7 +268,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
 
                   {/* Analytics Content */}
                   <div className="min-h-[250px]">
-                    <Analytics ads={detailedAds} />
+                    <Analytics ads={detailedAds} isComplete={isComplete} />
                   </div>
                 </div>
 

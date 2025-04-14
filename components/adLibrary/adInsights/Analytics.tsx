@@ -27,9 +27,10 @@ import AnalyzeTrends from "./AnalyzeTrends";
 
 interface AnalyticsProps {
   ads: AdData[];
+  isComplete?: boolean;
 }
 
-const Analytics: React.FC<AnalyticsProps> = ({ ads }) => {
+const Analytics: React.FC<AnalyticsProps> = ({ ads, isComplete }) => {
   const { theme } = useTheme();
 
   const { chartData, activeAdsCount } = useMemo(() => {
@@ -79,8 +80,8 @@ const Analytics: React.FC<AnalyticsProps> = ({ ads }) => {
     });
 
     //// Adding Extra Days:
-    // Add a day at the start with value 0
-    if (dataMap.size > 0) {
+    // Add a day at the start with value 0 only if all ads are Loaded
+    if (dataMap.size > 0 && isComplete) {
       const firstDay = new Date(
         Math.min(
           ...Array.from(dataMap.keys()).map((date) => new Date(date).getTime()),
