@@ -88,7 +88,7 @@ const SupportRequestEmail: React.FC<SupportRequestEmailProps> = ({
 
             <Hr className="mx-0 my-[26px] w-full border border-solid border-gray-200" />
             <Text className="text-center text-[12px] leading-[24px] text-gray-500">
-              This email was sent from your application's support system.
+              This email was sent from your application&apos;s support system.
             </Text>
           </Container>
         </Body>

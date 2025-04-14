@@ -43,7 +43,7 @@ export default function SupportPage() {
               <div className="flex items-center space-x-3">
                 <LifeBuoy className="h-8 w-8 text-[#6566F1]" />
                 <span className="rounded-full bg-[#6566F1]/10 px-5 py-1.5 text-base font-medium text-[#6566F1]">
-                  We're Here to Help
+                  We&apos;re Here to Help
                 </span>
               </div>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
@@ -150,8 +150,8 @@ export default function SupportPage() {
               Frequently Asked Questions
             </h2>
             <p className="mt-4 max-w-xl text-lg text-gray-600 dark:text-gray-300">
-              Have questions? Find quick answers below. If you can't find what
-              you're looking for, feel free to reach out.
+              Have questions? Find quick answers below. If you can&apos;t find
+              what you&apos;re looking for, feel free to reach out.
             </p>
           </div>
           {/* Render the FAQ Component */}

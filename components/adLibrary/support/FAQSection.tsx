@@ -28,10 +28,10 @@ const faqData: FAQItem[] = [
     question: "How do I reset my password?",
     answer: (
       <p>
-        You can reset your password by clicking the "Forgot Password?" link on
-        the login page. Follow the instructions sent to your registered email
-        address. If you encounter issues, please contact support via the email
-        form above.
+        You can reset your password by clicking the &quot;Forgot Password?&quot;
+        link on the login page. Follow the instructions sent to your registered
+        email address. If you encounter issues, please contact support via the
+        email form above.
       </p>
     ),
   },
