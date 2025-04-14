@@ -169,15 +169,17 @@ export const Platform: React.FC = () => {
                             {platform.label}
                           </span> */}
                           <button
-                            className="ml-1 flex-shrink-0 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            type="button"
+                            style={{ pointerEvents: "all" }} // ensure the button is clickable
+                            className="ml-0.5 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
                             onKeyDown={(e) => {
                               if (e.key === "Enter") {
                                 handleRemove(value);
                               }
-                            }}
-                            onMouseDown={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
