@@ -34,7 +34,7 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
   profilePictureUrl,
   totalAds,
 }) => {
-  const creationDate = page.pages_transparency_info?.history_items.find(
+  const creationDate = page?.pages_transparency_info?.history_items?.find(
     (item) => item.item_type === "CREATION",
   )?.event_time;
   const adminLocations =
