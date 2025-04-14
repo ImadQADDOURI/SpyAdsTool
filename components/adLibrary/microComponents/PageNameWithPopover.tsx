@@ -99,7 +99,10 @@ const PageNameWithHoverCard: React.FC<PageNameWithHoverCardProps> = ({
         {page_profile_uri && (
           <div className="mt-4 flex justify-end space-x-2">
             <Link
-              href={`/adlibrary/${page_id}`}
+              href={{
+                pathname: `/adlibrary/${page_id}`,
+                query: { page_id: page_id },
+              }}
               target="_blank"
               rel="noopener noreferrer"
               passHref

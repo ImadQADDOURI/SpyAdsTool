@@ -141,6 +141,9 @@ export async function fetchGraphQL(params: MetaGraphQLApiProps) {
       if (docId) bodyParams.set("doc_id", docId.toString());
     }
 
+    // 🔍 Log Fetch Variables
+    console.log("🔍 Fetching GraphQL with variables:", params.variables);
+
     // 🌐 Execute network request
     const response = await fetch(url, {
       method,

@@ -34,11 +34,16 @@ export const Status: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // 📌 Default status
+  const getDefaultStatus = (searchParams: URLSearchParams) => {
+    return searchParams.has("page_id") ? "ALL" : "ACTIVE";
+  };
+
   // 📌 Selected status from URL params
-  const selectedStatus = React.useMemo(
-    () => searchParams.get("active_status") || "ALL",
-    [searchParams],
-  );
+  const selectedStatus = React.useMemo(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    return params.get("active_status") || getDefaultStatus(params);
+  }, [searchParams]);
 
   // 🎯 Selection handler
   const handleSelect = React.useCallback(
@@ -46,7 +51,7 @@ export const Status: React.FC = () => {
       const params = new URLSearchParams(searchParams.toString());
       if (selectedStatus === statusValue) {
         params.delete("active_status");
-        params.set("active_status", "ALL"); // Default to ALL when deselecting
+        params.set("active_status", getDefaultStatus(params));
       } else {
         params.set("active_status", statusValue);
       }
@@ -61,7 +66,7 @@ export const Status: React.FC = () => {
     (e: React.MouseEvent) => {
       e.stopPropagation();
       const params = new URLSearchParams(searchParams.toString());
-      params.set("active_status", "ALL"); // Reset to default
+      params.set("active_status", getDefaultStatus(params));
       router.push(`?${params.toString()}`, { scroll: false });
     },
     [router, searchParams],
@@ -75,7 +80,11 @@ export const Status: React.FC = () => {
   }, [selectedStatus]);
 
   // 🔍 Check if status is not default
-  const hasCustomSelection = selectedStatus !== "ALL";
+  const hasCustomSelection = React.useMemo(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const defaultStatus = getDefaultStatus(params);
+    return selectedStatus !== defaultStatus;
+  }, [searchParams, selectedStatus]);
 
   return (
     <div className="w-full max-w-full">
