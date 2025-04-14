@@ -21,8 +21,36 @@ import {
 } from "@/components/ui/tooltip";
 import FirefliesWrapper from "@/components/adLibrary/microComponents/FirefliesWrapper";
 
+interface TransparencyInfo {
+  history_items?: Array<{
+    item_type: string;
+    event_time: number;
+  }>;
+  admin_locations?: {
+    admin_country_counts?: Array<{
+      country: {
+        iso_name: string;
+      };
+      count: number;
+    }>;
+  };
+}
+
+interface PageType {
+  name?: string;
+  pages_transparency_info?: TransparencyInfo;
+  about?: {
+    text?: string;
+  };
+  ad_library_page_targeting_insight?: {
+    ad_library_page_targeting_summary?: {
+      total_spend_formatted?: string;
+    };
+  };
+}
+
 interface PageInfoSectionProps {
-  page: any;
+  page: PageType | null;
   pageInfo: any;
   profilePictureUrl: string | null;
   totalAds: number;
@@ -35,10 +63,11 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
   totalAds,
 }) => {
   const creationDate = page?.pages_transparency_info?.history_items?.find(
-    (item) => item.item_type === "CREATION",
+    (item) => item?.item_type === "CREATION",
   )?.event_time;
+
   const adminLocations =
-    page.pages_transparency_info?.admin_locations?.admin_country_counts || [];
+    page?.pages_transparency_info?.admin_locations?.admin_country_counts ?? [];
 
   const MetricItem = ({
     icon: Icon,
@@ -134,7 +163,7 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
                 <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-white/90 bg-gray-100 shadow-lg dark:bg-gray-800">
                   <Image
                     src={profilePictureUrl || "/icons/user.png"}
-                    alt={pageInfo.page_name || page.name}
+                    alt={pageInfo.page_name || page?.name || "Profile"}
                     fill
                     style={{ objectFit: "contain" }}
                     className="transition-transform duration-300 hover:scale-105"
@@ -148,7 +177,7 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
               <div className="flex-1 text-center sm:text-left">
                 <div className="flex items-center justify-center space-x-2 sm:justify-start">
                   <h1 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-2xl font-bold text-transparent">
-                    {pageInfo.page_name || page.name}
+                    {pageInfo.page_name || page?.name || "Unnamed Page"}
                   </h1>
                   {pageInfo.page_verification !== "NOT_VERIFIED" && (
                     <Image
@@ -164,7 +193,7 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
                 <div className="mt-1 text-sm font-medium text-[#6566F1] dark:text-[#B977F8]">
                   {pageInfo.page_category || "Uncategorized"}
                 </div>
-                {page.about?.text && (
+                {page?.about?.text && (
                   <p className="mt-1 line-clamp-2 max-w-2xl text-sm leading-relaxed text-gray-600 dark:text-gray-300">
                     {page.about.text}
                   </p>
@@ -200,11 +229,11 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
                 <MetricItem
                   icon={DollarSign}
                   value={
-                    page.ad_library_page_targeting_insight
+                    page?.ad_library_page_targeting_insight
                       ?.ad_library_page_targeting_summary
                       ?.total_spend_formatted === "0"
                       ? "Unknown"
-                      : page.ad_library_page_targeting_insight
+                      : page?.ad_library_page_targeting_insight
                           ?.ad_library_page_targeting_summary
                           ?.total_spend_formatted || "Unknown"
                   }
