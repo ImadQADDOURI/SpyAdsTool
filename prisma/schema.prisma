@@ -90,8 +90,8 @@ model SavedAd {
   id            String    @id @default(cuid())
   ad_archive_id String
   board         String
-  adData        Json
-  imageUrl      String?
+  adData        Json     // ✅ This will now store the JSON with R2 URLs
+  imageUrl      String?  // ✅ This might store an R2 URL for the preview image
   userId        String
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt     DateTime  @default(now())

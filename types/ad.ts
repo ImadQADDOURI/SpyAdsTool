@@ -46,7 +46,7 @@ export interface AdData {
       page_id: string;
       page_is_deleted: boolean;
       page_name: string;
-      page_profile_pic_url: string;
+      page_profile_pic_url: string | null;
       page_profile_uri: string;
     } | null;
     brazil_tax_id: string | null;
@@ -71,7 +71,7 @@ export interface AdData {
     page_is_profile_page: boolean;
     page_like_count: number;
     page_name: string;
-    page_profile_picture_url: string;
+    page_profile_picture_url: string | null;
     page_profile_uri: string;
     root_reshared_post: any | null;
     title: string | null;
@@ -100,31 +100,9 @@ export interface Media {
   resized_image_url?: string | null;
   watermarked_resized_image_url?: string | null;
   title?: string;
-  video_hd_url?: string;
-  video_preview_image_url?: string;
-  video_sd_url?: string;
-  watermarked_video_hd_url?: string;
-  watermarked_video_sd_url?: string;
-}
-
-export interface Collection {
-  id: string;
-  name: string;
-  userId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  savedAdsCount: number;
-  lastSavedAt: Date;
-  savedAds?: SavedAd[];
-}
-
-export interface SavedAd {
-  id: string;
-  ad_archive_id: string;
-  collectionId: string;
-  adData: any;
-  imageUrl?: string | null;
-  collation_id?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  video_hd_url?: string | null;
+  video_preview_image_url?: string | null;
+  video_sd_url?: string | null;
+  watermarked_video_hd_url?: string | null;
+  watermarked_video_sd_url?: string | null;
 }

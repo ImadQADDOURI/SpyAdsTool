@@ -60,3 +60,8 @@ pnpm update lucide-react@latest
 pnpm dlx shadcn@latest add drawer
 
 ---
+
+pnpm add @aws-sdk/client-s3 uuid
+pnpm add -D @types/uuid
+
+---
