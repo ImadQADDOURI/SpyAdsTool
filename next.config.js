@@ -61,43 +61,56 @@ const nextConfig = {
       // Consider throwing an error or using a default restrictive value if this is critical
     }
 
-    return [
+    // Define common CORS headers for reuse
+    const commonCorsHeaders = [
       {
-        // 👇 Apply these headers to your new API route
-        source: "/api/extension/auth", // Match the API route path
+        key: "Access-Control-Allow-Origin",
+        value: allowedOrigin || "*", // Fallback to '*' if undefined (less secure)
+      },
+      {
+        key: "Access-Control-Allow-Headers",
+        value: "Content-Type, Authorization", // Add other headers if needed by your requests
+      },
+      {
+        key: "Access-Control-Allow-Credentials",
+        value: "true", // Crucial for sending/receiving cookies
+      },
+      // --- Security Headers (Optional but Recommended) ---
+      // { key: "X-Content-Type-Options", value: "nosniff" },
+      // { key: "X-Frame-Options", value: "DENY" },
+      // { key: "Referrer-Policy", value: "origin-when-cross-origin" },
+      // { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+    ];
+
+    return [
+      // --- Configuration for /api/extension/auth ---
+      {
+        source: "/api/extension/auth", // Match the auth API route path
         headers: [
-          // --- CORS Headers ---
-          {
-            key: "Access-Control-Allow-Origin",
-            //  '*' for development, specific origin for production
-            value: allowedOrigin || "*", // Fallback to '*' if undefined (less secure)
-          },
+          ...commonCorsHeaders, // Spread the common headers
           {
             key: "Access-Control-Allow-Methods",
-            // 👇 Specify allowed methods (GET is needed for auth check)
-            value: "GET, OPTIONS",
+            // 👇 Only GET is needed for the auth check endpoint
+            value: "GET, OPTIONS", // OPTIONS is needed for preflight requests
           },
+        ],
+      },
+      // --- Configuration for /api/extension/ads ---
+      {
+        source: "/api/extension/ads", // Match the ads API route path
+        headers: [
+          ...commonCorsHeaders, // Spread the common headers
           {
-            key: "Access-Control-Allow-Headers",
-            // 👇 Headers allowed in the request (Content-Type is common)
-            value: "Content-Type, Authorization", // Add other headers if needed
+            key: "Access-Control-Allow-Methods",
+            // 👇 Allow POST (to save) and DELETE (to unsave) for this endpoint
+            value: "POST, DELETE, OPTIONS", // OPTIONS is needed for preflight requests
           },
-          {
-            key: "Access-Control-Allow-Credentials",
-            // 👇 Crucial for sending/receiving cookies with the request!
-            value: "true",
-          },
-          // --- Security Headers (Optional but Recommended) ---
-          // { key: "X-Content-Type-Options", value: "nosniff" },
-          // { key: "X-Frame-Options", value: "DENY" },
-          // { key: "Referrer-Policy", value: "origin-when-cross-origin" },
-          // { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
         ],
       },
       // 💡 Add more source paths here if other API routes need CORS for the extension
       // {
       //   source: "/api/extension/other-data",
-      //   headers: [ ... same headers ... ],
+      //   headers: [ ... ],
       // },
     ];
   },
