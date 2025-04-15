@@ -1,5 +1,5 @@
+// @components\adLibrary\microComponents\DownloadMedia.tsx
 import React from "react";
-import { saveAs } from "file-saver";
 import { DownloadCloud, Image, Video } from "lucide-react";
 
 import { Media } from "@/types/ad";
@@ -22,18 +22,20 @@ interface DownloadMediaProps {
 }
 
 const DownloadMedia: React.FC<DownloadMediaProps> = ({ item }) => {
-  const downloadImage = async (url: string, filename: string) => {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      saveAs(blob, filename);
-    } catch (error) {
-      console.error("Error downloading image:", error);
-    }
-  };
-
-  const openVideoInNewTab = (url: string) => {
-    window.open(url, "_blank");
+  // Construct the proxy endpoint URL with proper query parameters
+  const proxyDownload = (remoteUrl: string, filename: string) => {
+    const proxyUrl = `/api/download?url=${encodeURIComponent(remoteUrl)}&filename=${encodeURIComponent(
+      filename,
+    )}`;
+    // Create an invisible anchor to trigger download
+    const anchor = document.createElement("a");
+    anchor.href = proxyUrl;
+    // Some browsers use the "download" attribute if the resource is same-origin.
+    // In our case, our API endpoint sets headers to force a download.
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
   };
 
   return (
@@ -59,10 +61,8 @@ const DownloadMedia: React.FC<DownloadMediaProps> = ({ item }) => {
                     <Image className="mr-2 h-4 w-4 text-purple-500 dark:text-purple-400" />
                   }
                   onClick={() =>
-                    downloadImage(
-                      item.original_image_url!,
-                      "original_image.jpg",
-                    )
+                    item.original_image_url &&
+                    proxyDownload(item.original_image_url, "original_image.jpg")
                   }
                 />
               )}
@@ -73,7 +73,8 @@ const DownloadMedia: React.FC<DownloadMediaProps> = ({ item }) => {
                     <Image className="mr-2 h-4 w-4 text-purple-500 dark:text-purple-400" />
                   }
                   onClick={() =>
-                    downloadImage(item.resized_image_url!, "resized_image.jpg")
+                    item.resized_image_url &&
+                    proxyDownload(item.resized_image_url, "resized_image.jpg")
                   }
                 />
               )}
@@ -84,8 +85,9 @@ const DownloadMedia: React.FC<DownloadMediaProps> = ({ item }) => {
                     <Image className="mr-2 h-4 w-4 text-purple-500 dark:text-purple-400" />
                   }
                   onClick={() =>
-                    downloadImage(
-                      item.watermarked_resized_image_url!,
+                    item.watermarked_resized_image_url &&
+                    proxyDownload(
+                      item.watermarked_resized_image_url,
                       "watermarked_image.jpg",
                     )
                   }
@@ -98,8 +100,9 @@ const DownloadMedia: React.FC<DownloadMediaProps> = ({ item }) => {
                     <Image className="mr-2 h-4 w-4 text-purple-500 dark:text-purple-400" />
                   }
                   onClick={() =>
-                    downloadImage(
-                      item.video_preview_image_url!,
+                    item.video_preview_image_url &&
+                    proxyDownload(
+                      item.video_preview_image_url,
                       "video_thumbnail.jpg",
                     )
                   }
@@ -111,16 +114,22 @@ const DownloadMedia: React.FC<DownloadMediaProps> = ({ item }) => {
                   icon={
                     <Video className="mr-2 h-4 w-4 text-purple-500 dark:text-purple-400" />
                   }
-                  onClick={() => openVideoInNewTab(item.video_sd_url!)}
+                  onClick={() =>
+                    item.video_sd_url &&
+                    proxyDownload(item.video_sd_url, "video_sd.mp4")
+                  }
                 />
               )}
               {item.video_hd_url && (
                 <DownloadMenuItem
-                  label="HD Video ⚠️ (Add .mp4)"
+                  label="HD Video"
                   icon={
                     <Video className="mr-2 h-4 w-4 text-purple-500 dark:text-purple-400" />
                   }
-                  onClick={() => openVideoInNewTab(item.video_hd_url!)}
+                  onClick={() =>
+                    item.video_hd_url &&
+                    proxyDownload(item.video_hd_url, "video_hd.mp4")
+                  }
                 />
               )}
               {item.watermarked_video_sd_url && (
@@ -130,7 +139,11 @@ const DownloadMedia: React.FC<DownloadMediaProps> = ({ item }) => {
                     <Video className="mr-2 h-4 w-4 text-purple-500 dark:text-purple-400" />
                   }
                   onClick={() =>
-                    openVideoInNewTab(item.watermarked_video_sd_url!)
+                    item.watermarked_video_sd_url &&
+                    proxyDownload(
+                      item.watermarked_video_sd_url,
+                      "watermarked_video_sd.mp4",
+                    )
                   }
                 />
               )}
@@ -141,7 +154,11 @@ const DownloadMedia: React.FC<DownloadMediaProps> = ({ item }) => {
                     <Video className="mr-2 h-4 w-4 text-purple-500 dark:text-purple-400" />
                   }
                   onClick={() =>
-                    openVideoInNewTab(item.watermarked_video_hd_url!)
+                    item.watermarked_video_hd_url &&
+                    proxyDownload(
+                      item.watermarked_video_hd_url,
+                      "watermarked_video_hd.mp4",
+                    )
                   }
                 />
               )}
