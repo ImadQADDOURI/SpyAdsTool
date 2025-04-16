@@ -2,37 +2,23 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   AdLibrarySearchPaginationQuery,
   getAdSearchVariables,
 } from "@/utils/MetaGraphQLConstsAndFunctions";
 import { motion } from "framer-motion";
 import {
-  Activity,
-  ArrowRight,
-  Award,
   BarChart,
-  BarChart2,
   BrainCircuit,
-  CheckCircle,
-  ChevronRight,
-  Database,
   Download,
   Filter,
   PieChart,
-  Rocket,
-  Search,
-  ShieldCheck,
-  Sparkles,
-  Target,
   TrendingUp,
-  Users,
   Zap,
 } from "lucide-react";
 
 import { AdData } from "@/types/ad";
-import { Button } from "@/components/ui/button";
 
 import FirefliesWrapper from "./microComponents/FirefliesWrapper";
 import { ScrollButtons } from "./microComponents/ScrollButtons";
@@ -41,11 +27,9 @@ import FilterPanel from "./searchFilters/FilterPanel";
 import { SearchBar } from "./searchFilters/SearchBar";
 
 export const AdBrowser = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   // 🔍 Search state
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [searchResults, setSearchResults] = useState<AdData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,24 +42,11 @@ export const AdBrowser = () => {
 
   // 🔒 Search lock mechanism to prevent multiple simultaneous searches
   const isSearchInProgress = useRef(false);
-  // ⏱️ Debounce timer
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-  // 🔄 Track the latest search query
-  const latestQueryRef = useRef(searchQuery);
 
   // 📜 Scroll to top on page load
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
-
-  // 🔄 Sync searchQuery state with URL param when it changes externally
-  useEffect(() => {
-    const queryParam = searchParams.get("q") || "";
-    if (queryParam !== searchQuery) {
-      setSearchQuery(queryParam);
-      latestQueryRef.current = queryParam;
-    }
-  }, [searchParams, searchQuery]);
 
   const handleSearchAds = useCallback(
     async (useExistingParams = false) => {
@@ -143,39 +114,6 @@ export const AdBrowser = () => {
     }
   }, [hasNextPage, handleSearchAds, isLoading]);
 
-  // 🔍 Enhanced search handler with debounce
-  const handleSearch = useCallback(
-    (query: string = searchQuery) => {
-      // 🧹 Clear any pending debounce timer
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-
-      // 📝 Update local state immediately for UI responsiveness
-      setSearchQuery(query);
-      latestQueryRef.current = query;
-
-      // ⏱️ Debounce the actual search execution
-      debounceTimerRef.current = setTimeout(() => {
-        // 🔒 Ensure we're not already searching
-        if (isSearchInProgress.current) return;
-
-        // 🔄 Update URL parameters
-        const params = new URLSearchParams(searchParams.toString());
-        params.set("q", query);
-        router.push(`?${params.toString()}`);
-
-        // ⏳ Small delay to ensure URL is updated before search
-        setTimeout(() => {
-          // 🧐 Double-check that the query hasn't changed during the delay
-          if (latestQueryRef.current === query) {
-            handleSearchAds();
-          }
-        }, 50);
-      }, 200); // 200ms debounce delay
-    },
-    [searchParams, router, handleSearchAds, searchQuery],
-  );
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pb-16 dark:from-gray-900 dark:to-gray-800">
       <FirefliesWrapper intensity="high">
@@ -249,10 +187,10 @@ export const AdBrowser = () => {
       </FirefliesWrapper>
 
       {/* Sticky SearchBar & Filter Section */}
-      <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+      <SearchBar onSearch={handleSearchAds} isLoading={isLoading} />
 
       <FilterPanel
-        onSearch={handleSearch}
+        onSearch={handleSearchAds}
         isLoading={isLoading}
         variant="full"
       />

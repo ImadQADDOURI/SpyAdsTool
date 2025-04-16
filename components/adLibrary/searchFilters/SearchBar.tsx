@@ -1,3 +1,4 @@
+// @/components/adLibrary/searchFilters/SearchBar.tsx
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, Search, X } from "lucide-react";
@@ -12,7 +13,7 @@ import {
 } from "@/components/adLibrary/searchFilters/SearchTypeSelector";
 
 interface SearchBarProps {
-  onSearch: (query?: string) => void;
+  onSearch: (useExistingParams?: boolean) => void;
   isLoading: boolean;
 }
 
@@ -22,9 +23,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  // Initialize with URL param but don't sync afterward to allow user input
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [isSticky, setIsSticky] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const searchPending = useRef(false);
 
   // 🔡 Placeholder state for search input based on search type
   const [placeholder, setPlaceholder] = useState("Search ads...");
@@ -42,20 +45,42 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     };
   }, []);
 
+  // Listen for URL changes and trigger search when needed
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("q", searchQuery);
-    router.push(`?${params.toString()}`, { scroll: false });
-  }, [searchQuery, router, searchParams]);
+    // If we have a pending search request, execute it now that URL is updated
+    if (searchPending.current) {
+      searchPending.current = false;
+      onSearch(false);
+    }
+  }, [searchParams, onSearch]);
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      onSearch(searchQuery);
+      executeSearch();
     }
   };
 
   const resetSearch = () => {
     setSearchQuery("");
+  };
+
+  // Execute search with URL param update
+  const executeSearch = () => {
+    if (isLoading) return;
+
+    // Create a new URLSearchParams object to preserve all existing parameters
+    const params = new URLSearchParams(searchParams.toString());
+
+    // Only update the 'q' parameter
+    params.set("q", searchQuery);
+
+    // Set the pending flag so we know to trigger search after URL update
+    searchPending.current = true;
+
+    // Push the updated URL without scrolling
+    router.push(`?${params.toString()}`, { scroll: false });
+
+    // The actual search will be triggered by the useEffect that listens for searchParams changes
   };
 
   // 🔄 Handle search type changes - just updates the placeholder
@@ -94,7 +119,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 placeholder={placeholder}
                 value={searchQuery}
                 onChange={(e) => !isLoading && setSearchQuery(e.target.value)}
-                onKeyPress={(e) => !isLoading && handleKeyPress(e)}
+                onKeyPress={handleKeyPress}
                 aria-label="Search ads"
                 disabled={isLoading}
                 className="h-9 w-full rounded-full border-0 bg-white/60 px-4 text-[15px] font-medium text-gray-700 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-[#6566F1] disabled:cursor-progress disabled:opacity-50 dark:bg-gray-900/60 dark:text-white dark:placeholder:text-gray-400"
@@ -116,7 +141,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
             {/* Search Button */}
             <Button
-              onClick={() => onSearch(searchQuery)}
+              onClick={executeSearch}
               disabled={isLoading}
               size="icon"
               aria-label="Search"

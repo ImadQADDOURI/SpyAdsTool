@@ -141,8 +141,59 @@ export async function fetchGraphQL(params: MetaGraphQLApiProps) {
       if (docId) bodyParams.set("doc_id", docId.toString());
     }
 
-    // 🔍 Log Fetch Variables
-    console.log("🔍 Fetching GraphQL with variables:", params.variables);
+    // 🔍 Log Fetch VariablesactiveStatus: 'ACTIVE',
+    {
+      /*
+      activeStatus: 'ACTIVE',
+      adType: 'CREDIT_ADS',
+      bylines: [],
+      collationToken: null,
+      contentLanguages: [],
+      countries: [ 'BR', 'IN' ],
+      cursor: null,
+      excludedIDs: [],
+      first: 30,
+      location: null,
+      mediaType: 'IMAGE',
+      pageIDs: [],
+      potentialReachInput: [],
+      publisherPlatforms: [],
+      queryString: 'garden',
+      regions: [],
+      searchType: 'KEYWORD_UNORDERED',
+      sessionID: '36350c01-dbe2-4778-b84f-b1d1ec03ae57',
+      sortData: null,
+      source: 'NAV_HEADER',
+      startDate: null,
+      v: '7218b1',
+      viewAllPageID: '0'
+    */
+    }
+    const variableKeys = [
+      "adType",
+      "queryString",
+      "searchType",
+      "activeStatus",
+      "mediaType",
+      "publisherPlatforms",
+      "contentLanguages",
+      "countries",
+      "startDate",
+      "viewAllPageID",
+      "cursor",
+    ] as const;
+
+    console.log(
+      "🔍 Fetching GraphQL with variables:\n" +
+        variableKeys
+          .map((key) => {
+            const value = params.variables?.[key];
+            const display =
+              typeof value === "object" ? JSON.stringify(value) : value;
+            return `  ${key}: \x1b[33m${display}\x1b[0m`;
+          })
+          .join("\n"),
+    );
 
     // 🌐 Execute network request
     const response = await fetch(url, {

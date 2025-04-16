@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   AdLibraryMobileFocusedStateProviderRefetchQuery,
   AdLibrarySearchPaginationQuery,
@@ -25,11 +25,9 @@ interface PageAdBrowserProps {
 }
 
 export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   // 🔍 Search state
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [searchResults, setSearchResults] = useState<AdData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +50,6 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
   // 🔒 Control references to handle race conditions
   const isSearchInProgress = useRef(false);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const latestQueryRef = useRef(searchQuery);
   const initialLoadCompletedRef = useRef(false);
   const searchRequestIdRef = useRef(0); // For tracking the latest search request
 
@@ -62,15 +59,6 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
       window.scrollTo({ top: 0, behavior: "auto" });
     }
   }, [isInitialLoad]);
-
-  // 🔄 Sync searchQuery state with URL param when it changes externally
-  useEffect(() => {
-    const queryParam = searchParams.get("q") || "";
-    if (queryParam !== searchQuery) {
-      setSearchQuery(queryParam);
-      latestQueryRef.current = queryParam;
-    }
-  }, [searchParams, searchQuery]);
 
   const handleSearchAds = useCallback(
     async (useExistingParams = false) => {
@@ -177,45 +165,6 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
     }
   }, [hasNextPage, handleSearchAds, isLoading]);
 
-  // 🔍 Enhanced search handler with debounce
-  const handleSearch = useCallback(
-    (query: string = searchQuery) => {
-      // 🧹 Clear any pending debounce timer
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-
-      // 📝 Update local state immediately for UI responsiveness
-      setSearchQuery(query);
-      latestQueryRef.current = query;
-
-      // ⏱️ Debounce the actual search execution
-      debounceTimerRef.current = setTimeout(() => {
-        // 🔒 Ensure initial load is complete before allowing manual searches
-        if (!initialLoadCompletedRef.current) return;
-
-        // 🔒 Ensure we're not already searching
-        if (isSearchInProgress.current) return;
-
-        // 🔄 Update URL parameters
-        const params = new URLSearchParams(searchParams.toString());
-        params.set("q", query);
-        router.push(`?${params.toString()}`);
-
-        // ⏳ Small delay to ensure URL is updated before search
-        setTimeout(() => {
-          // 🧐 Double-check that the query hasn't changed during the delay
-          if (latestQueryRef.current === query) {
-            // 🛑 Cancel any previous searches
-            searchRequestIdRef.current++;
-            handleSearchAds(false); // Force a new search with updated params
-          }
-        }, 50);
-      }, 200); // 200ms debounce delay
-    },
-    [searchParams, router, handleSearchAds, searchQuery],
-  );
-
   // 🚀 Initial load effect - safely handle the initial search
   useEffect(() => {
     // Only execute once
@@ -250,7 +199,7 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
       )}
 
       {/* Sticky SearchBar Section */}
-      <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+      <SearchBar onSearch={handleSearchAds} isLoading={isLoading} />
 
       {/* Search Results */}
       <SearchResults
