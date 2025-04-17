@@ -71,16 +71,22 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     // Create a new URLSearchParams object to preserve all existing parameters
     const params = new URLSearchParams(searchParams.toString());
 
-    // Only update the 'q' parameter
-    params.set("q", searchQuery);
+    // Get the current q parameter
+    const currentQ = searchParams.get("q");
 
-    // Set the pending flag so we know to trigger search after URL update
-    searchPending.current = true;
-
-    // Push the updated URL without scrolling
-    router.push(`?${params.toString()}`, { scroll: false });
-
-    // The actual search will be triggered by the useEffect that listens for searchParams changes
+    // Only update the URL if the search query has changed
+    if (currentQ !== searchQuery) {
+      params.set("q", searchQuery);
+      // Set the pending flag so we know to trigger search after URL update
+      searchPending.current = true;
+      // Push the updated URL without scrolling
+      router.push(`?${params.toString()}`, { scroll: false });
+    } else {
+      // If query hasn't changed, execute search directly
+      onSearch(false);
+    }
+    // The actual search will be triggered by the useEffect for changed params
+    // or executed directly if params haven't changed
   };
 
   // 🔄 Handle search type changes - just updates the placeholder
