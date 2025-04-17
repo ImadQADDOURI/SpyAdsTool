@@ -78,7 +78,7 @@ const PageNameWithHoverCard: React.FC<PageNameWithHoverCardProps> = ({
             {page_like_count !== undefined && (
               <p className="mt-1 flex items-center text-sm text-gray-600 dark:text-gray-300">
                 <ThumbsUp className="mr-1 h-4 w-4 text-blue-500" />
-                {page_like_count.toLocaleString()} likes
+                {page_like_count?.toLocaleString()} likes
               </p>
             )}
             {domain && (
