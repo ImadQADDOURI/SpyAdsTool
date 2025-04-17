@@ -3,11 +3,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@prisma/client"; // Keep for general DB types if needed
 import { z } from "zod";
 
-import { AdData, Media } from "@/types/ad"; // Make sure Media is exported from types
+import { AdData, Media } from "@/types/ad";
 import { prisma } from "@/lib/db";
-import { uploadMediaToR2 } from "@/lib/r2"; // 👈
+import {
+  deleteMultipleMediaFromR2, // 👈 Import R2 deletion function
+  R2_PUBLIC_URL_BASE, // 👈 Import R2 base URL for key extraction
+  uploadMediaToR2,
+} from "@/lib/r2";
 import { getCurrentUser } from "@/lib/session";
 
 // 🎯 Helper function to extract image URL
@@ -164,7 +169,89 @@ async function processAdMediaForR2(
       // Add conditions for extra_images, extra_videos if processing them
     }
   }
-  // console.log(`🏁 [${ad_archive_id}] Finished R2 processing.`);
+  console.log(`✅ 💭 _ [${ad_archive_id}] Finished R2 processing.`);
+}
+
+// --- Helper Function to Extract R2 Keys ---
+
+/**
+ * 🔑 Extracts R2 object keys from various fields within the AdData structure.
+ * @param adData - The strongly-typed AdData object.
+ * @returns An array of unique R2 object keys found.
+ */
+function extractR2KeysFromAdData(adData: AdData): string[] {
+  // 👈 Use AdData type
+  const keys = new Set<string>();
+  // Base URL check is important before proceeding
+  if (!R2_PUBLIC_URL_BASE) {
+    console.warn("⚠️ R2_PUBLIC_URL_BASE not set, cannot extract keys.");
+    return [];
+  }
+
+  // 👇 Internal helper function to reduce repetition
+  const extractKey = (url: string | null | undefined) => {
+    if (url && typeof url === "string" && url.startsWith(R2_PUBLIC_URL_BASE!)) {
+      // Extract the key part after the base URL
+      // Use URL constructor for robust parsing
+      try {
+        const urlObject = new URL(url);
+        // Remove leading slash from pathname if present
+        const key = urlObject.pathname.startsWith("/")
+          ? urlObject.pathname.substring(1)
+          : urlObject.pathname;
+        if (key) {
+          // Ensure key is not empty
+          keys.add(key);
+        }
+      } catch (e) {
+        console.warn(
+          `[Key Extraction] Failed to parse potential R2 URL: ${url}`,
+          e,
+        );
+      }
+    }
+  };
+
+  // Use the specific types from AdData now
+  if (adData.snapshot) {
+    extractKey(adData.snapshot.page_profile_picture_url); // Already optional string | null
+    if (adData.snapshot.branded_content) {
+      // Check if branded_content exists
+      extractKey(adData.snapshot.branded_content.page_profile_pic_url); // Already optional string | null
+    }
+
+    // Check media arrays (handle optional arrays)
+    const mediaArrays: (Media[] | undefined)[] = [
+      adData.snapshot.cards,
+      adData.snapshot.images,
+      adData.snapshot.videos,
+    ];
+
+    for (const mediaArray of mediaArrays) {
+      if (Array.isArray(mediaArray)) {
+        for (const item of mediaArray) {
+          // No need to check item type if Media[] is guaranteed by AdData type
+          // Check all relevant URL fields within a media item (already optional strings | null)
+          extractKey(item.resized_image_url);
+          extractKey(item.watermarked_resized_image_url);
+          extractKey(item.video_preview_image_url);
+          extractKey(item.video_sd_url);
+          extractKey(item.watermarked_video_sd_url);
+          // Add other fields here if they might contain R2 URLs
+        }
+      }
+    }
+  } else {
+    // Should not happen if AdData type is correct, but good to log
+    console.warn("[Key Extraction] AdData object missing snapshot field.");
+  }
+
+  const uniqueKeys = Array.from(keys);
+  if (uniqueKeys.length > 0) {
+    // Only log if keys were found
+    // console.log(`🔑 Extracted ${uniqueKeys.length} unique R2 keys.`);
+  }
+  return uniqueKeys;
 }
 
 // 💾 Save ad to a user's board (Updated Logic)
@@ -233,7 +320,7 @@ export async function saveAdToBoard(
         },
       });
       console.log(
-        `✅ Ad ${ad_archive_id} saved to board ${board} with processed R2/nullified URLs.`,
+        `✅ 🔽 _ Ad ${ad_archive_id} saved to board ${board} with processed R2/nullified URLs.`,
       );
     }
 
@@ -249,28 +336,68 @@ export async function saveAdToBoard(
   }
 }
 
-// 🗑️ Unsave/remove ad from board
+// 🗑️ Unsave/remove ad from board (Updated with R2 Deletion)
 export async function removeAdFromBoard(ad_archive_id: string, board: string) {
   try {
     // 🔐 Authenticate user
     const user = await getCurrentUser();
-    if (!user || !user.id) {
-      return { error: "Unauthorized" };
+    if (!user || !user.id) return { error: "Unauthorized" };
+
+    // 1. Find the ad first to get its data for R2 key extraction
+
+    const savedAd = await prisma.savedAd.findFirst({
+      where: { userId: user.id, ad_archive_id, board },
+    });
+
+    if (!savedAd) {
+      console.log(
+        `[Delete Ad] Ad ${ad_archive_id} in board ${board} not found for user ${user.id}.`,
+      );
+      return { success: true }; // Or return an error if needed: { error: "Ad not found" }
+    }
+    // 2. Extract R2 keys from the ad data
+
+    // 👇 Assert type here: We expect the JSON stored in Prisma
+    //    to conform to the AdData structure from our types.
+    const keysToDelete = extractR2KeysFromAdData(
+      savedAd.adData as unknown as AdData,
+    );
+
+    // 3. Attempt to delete files from R2
+
+    let r2DeletionSuccess = true; // Assume success if no keys
+    if (keysToDelete.length > 0) {
+      console.log(
+        `[Delete Ad] Attempting R2 deletion for ${keysToDelete.length} keys for ad ${ad_archive_id}...`,
+      );
+      r2DeletionSuccess = await deleteMultipleMediaFromR2(keysToDelete);
+      if (!r2DeletionSuccess) {
+        console.error(
+          `[Delete Ad] R2 deletion failed or partially failed for ad ${ad_archive_id}. Proceeding with DB deletion.`,
+        );
+        // Decide on error handling - return error or continue
+        // Optionally, you could return an error here if R2 deletion is critical
+        // return { error: "Failed to delete associated media files." };
+      }
+    } else {
+      // console.log(
+      //   `[Delete Ad] No R2 keys found to delete for ad ${ad_archive_id}.`,
+      // );
     }
 
-    // 🧹 Delete the saved ad
-    await prisma.savedAd.deleteMany({
-      where: {
-        userId: user.id,
-        ad_archive_id,
-        board,
-      },
-    });
+    // 4. Delete the saved ad from the database
+    await prisma.savedAd.delete({ where: { id: savedAd.id } });
+    console.log(
+      `✅ 🗑️ _ [Delete Ad] Successfully deleted ad ${ad_archive_id} from board ${board} in DB.`,
+    );
 
     revalidatePath("/favorites");
     return { success: true };
   } catch (error) {
-    console.error("Failed to remove ad:", error);
+    console.error(
+      `❌ [Delete Ad] Failed to remove ad ${ad_archive_id} from board ${board}:`,
+      error,
+    );
     return { error: "Failed to remove ad" };
   }
 }
@@ -432,31 +559,71 @@ export async function renameBoard(oldName: string, newName: string) {
   }
 }
 
-// 🗑️ Delete all ads in a board
+// 🗑️ Delete all ads in a board (Updated with R2 Deletion)
 export async function deleteBoard(board: string) {
   try {
     // 🔐 Authenticate user
     const user = await getCurrentUser();
-    if (!user || !user.id) {
-      return { error: "Unauthorized" };
+    if (!user || !user.id) return { error: "Unauthorized" };
+
+    // 1. Find all ads in the board to extract keys
+    const adsInBoard = await prisma.savedAd.findMany({
+      where: { userId: user.id, board: board },
+      select: { adData: true }, // Only select needed data
+    });
+
+    if (adsInBoard.length === 0) {
+      console.log(
+        `[Delete Board] No ads found in board "${board}" for user ${user.id}.`,
+      );
+      return { success: true }; // Nothing to delete
+    }
+    // console.log(
+    //   `[Delete Board] Found ${adsInBoard.length} ads in board "${board}".`,
+    // );
+
+    const allKeysToDelete = new Set<string>();
+    for (const ad of adsInBoard) {
+      // 👇 Assert type here, same reason as above
+      const keys = extractR2KeysFromAdData(ad.adData as unknown as AdData);
+      keys.forEach((key) => allKeysToDelete.add(key));
+    }
+    const uniqueKeysList = Array.from(allKeysToDelete);
+
+    let r2DeletionSuccess = true;
+    if (uniqueKeysList.length > 0) {
+      // console.log(
+      //   `[Delete Board] Attempting R2 deletion for ${uniqueKeysList.length} unique keys for board "${board}"...`,
+      // );
+      r2DeletionSuccess = await deleteMultipleMediaFromR2(uniqueKeysList);
+      if (!r2DeletionSuccess) {
+        console.error(
+          `❌ [Delete Board] R2 deletion failed or partially failed for board "${board}". Proceeding with DB deletion.`,
+        );
+        // Decide on error handling
+        // Optionally return an error: return { error: "Failed to delete some media files." };
+      }
+    } else {
+      // console.log(
+      //   `[Delete Board] No R2 keys found to delete for board "${board}".`,
+      // );
     }
 
-    // ❌ Delete all ads in the board
-    await prisma.savedAd.deleteMany({
-      where: {
-        userId: user.id,
-        board,
-      },
+    // 4. Delete all ads in the board from the database
+    const deleteResult = await prisma.savedAd.deleteMany({
+      where: { userId: user.id, board: board },
     });
+    console.log(
+      `✅ 🗑️ _ [Delete Board] Successfully deleted ${deleteResult.count} ad records for board "${board}" from DB.`,
+    );
 
     revalidatePath("/favorites");
     return { success: true };
   } catch (error) {
-    console.error("Failed to delete board:", error);
+    console.error(`[Delete Board] Failed to delete board "${board}":`, error);
     return { error: "Failed to delete board" };
   }
 }
-
 // 🔄 Move all ads from one board to another
 export async function moveAdsToBoard(sourceBoard: string, targetBoard: string) {
   try {

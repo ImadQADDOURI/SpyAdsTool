@@ -1,17 +1,23 @@
 // @/lib/r2.ts
-// ✨ File to handle Cloudflare R2 interactions (with Buffering) ✨
+// ✨ File to handle Cloudflare R2 interactions (with Buffering and Batched Deletion) ✨
 
 import { Buffer } from "buffer"; // Import Buffer
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-// import { getSignedUrl } from "@aws-sdk/s3-request-presigner"; // Optional: If you need signed URLs later
-import { v4 as uuidv4 } from "uuid"; // For generating unique filenames
+import {
+  DeleteObjectsCommand,
+  DeleteObjectsCommandOutput, // Import output type for result aggregation
+  ObjectIdentifier,
+  PutObjectCommand,
+  S3Client,
+  S3ServiceException, // Import specific exception type
+} from "@aws-sdk/client-s3";
+import { v4 as uuidv4 } from "uuid";
 
-// 🛠️ Get R2 configuration from environment variables
+// 🛠️ Get R2 configuration  and S3 Client Initialization from environment variables
 const R2_ENDPOINT = process.env.R2_ENDPOINT;
 const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID;
 const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY;
 const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME;
-const R2_PUBLIC_URL_BASE = process.env.R2_PUBLIC_URL_BASE; // e.g., https://pub-xxx.r2.dev
+export const R2_PUBLIC_URL_BASE = process.env.R2_PUBLIC_URL_BASE; // 👈 Export base URL
 
 // 🚨 Basic validation for environment variables
 if (
@@ -57,7 +63,7 @@ export async function uploadMediaToR2(
     );
     return null;
   }
-  // Basic check if it's already an R2 URL
+  // Basic check if it's already an R2 URL (prevent re-uploading)
   if (mediaUrl.startsWith(R2_PUBLIC_URL_BASE)) {
     // console.log(
     //   `⏭️ [${adArchiveId}] Skipping upload, already an R2 URL: ${mediaUrl}`,
@@ -115,15 +121,102 @@ export async function uploadMediaToR2(
     const publicUrl = `${R2_PUBLIC_URL_BASE.replace(/\/$/, "")}/${uniqueKey}`;
 
     // console.log(
-    //   `✅ [${adArchiveId}] ${mediaType} uploaded successfully: ${publicUrl}`,
+    //   `✅ ☁️ [${adArchiveId}] ${mediaType} uploaded successfully: ${publicUrl}`,
     // );
     return publicUrl;
   } catch (error) {
-    // Log the specific error, which might be different now
     console.error(
-      `🔥 [${adArchiveId}] Error processing/uploading ${mediaType} from ${mediaUrl}:`,
+      `❌ 🔥 [${adArchiveId}] Error processing/uploading ${mediaType} from ${mediaUrl}:`,
       error,
     );
     return null; // Return null to indicate failure
   }
+}
+
+/**
+ * 🗑️ Deletes multiple objects from Cloudflare R2 bucket with batching.
+ * @param keys - An array of object keys (paths) to delete.
+ * @returns True if all deletion requests were successful without errors, false otherwise.
+ */
+export async function deleteMultipleMediaFromR2(
+  keys: string[],
+): Promise<boolean> {
+  if (!keys || keys.length === 0) {
+    console.log("🤷 No R2 keys provided for deletion.");
+    return true; // Nothing to delete, consider it successful
+  }
+  if (!R2_BUCKET_NAME) {
+    console.error("🔥 R2_BUCKET_NAME is not configured. Cannot delete media.");
+    return false;
+  }
+
+  // R2/S3 expects keys in a specific format for DeleteObjectsCommand
+  const objectsToDelete: ObjectIdentifier[] = keys.map((key) => ({ Key: key }));
+  const BATCH_SIZE = 1000; // S3 limit per DeleteObjects request
+  let overallSuccess = true;
+  let totalSuccessfullyDeleted = 0;
+  let totalErrors = 0;
+
+  // console.log(
+  //   `🗑️ Attempting to delete ${objectsToDelete.length} objects from R2 bucket: ${R2_BUCKET_NAME} in batches of ${BATCH_SIZE}...`,
+  // );
+
+  // S3 DeleteObjectsCommand has a limit of 1000 keys per request.
+  // Implemented batching : split objectsToDelete into chunks of 1000
+  // and send multiple DeleteObjectsCommand requests.
+  for (let i = 0; i < objectsToDelete.length; i += BATCH_SIZE) {
+    const batch = objectsToDelete.slice(i, i + BATCH_SIZE);
+    // console.log(
+    //   `  - Processing batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} keys)...`,
+    // );
+
+    const deleteCommand = new DeleteObjectsCommand({
+      Bucket: R2_BUCKET_NAME,
+      Delete: {
+        Objects: batch,
+        Quiet: false, // Get results per object // Set to true if you don't need detailed
+      },
+    });
+
+    try {
+      const result = await s3Client.send(deleteCommand);
+
+      if (result.Deleted) {
+        totalSuccessfullyDeleted += result.Deleted.length;
+        // console.log(`    Batch ${Math.floor(i / BATCH_SIZE) + 1}: Successfully deleted ${result.Deleted.length} objects.`);
+      }
+
+      if (result.Errors && result.Errors.length > 0) {
+        overallSuccess = false; // Mark failure if any batch reports errors
+        totalErrors += result.Errors.length;
+        console.error(
+          `    ❌ Errors encountered in batch ${Math.floor(i / BATCH_SIZE) + 1} (${result.Errors.length} failed):`,
+        );
+        result.Errors.forEach((err) =>
+          console.error(
+            `      - Key: ${err.Key}, Code: ${err.Code}, Message: ${err.Message}`,
+          ),
+        );
+      }
+    } catch (error) {
+      overallSuccess = false; // Mark failure if the command itself fails
+      console.error(
+        `❌ 🔥 Failed to send R2 delete command for batch ${Math.floor(i / BATCH_SIZE) + 1}:`,
+        error,
+      );
+      // If the error is an S3ServiceException, it might contain more details
+      if (error instanceof S3ServiceException) {
+        console.error(
+          `❌  S3 Error Details: RequestId: ${error.$metadata?.requestId}, ExtendedRequestId: ${error.$metadata?.cfId}`,
+        );
+      }
+      // Depending on the error, you might want to stop processing further batches
+      // break; // Uncomment to stop after the first failed batch command
+    }
+  }
+
+  console.log(
+    `✅ 🗑️ _ R2 Deletion finished. Total successfully deleted: ${totalSuccessfullyDeleted}, Total errors: ${totalErrors}. Overall success: ${overallSuccess}`,
+  );
+  return overallSuccess;
 }
