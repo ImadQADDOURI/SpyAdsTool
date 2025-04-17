@@ -9,6 +9,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { LinkPreview } from "@/components/ui/link-preview";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface PageNameWithHoverCardProps {
@@ -98,20 +99,19 @@ const PageNameWithHoverCard: React.FC<PageNameWithHoverCardProps> = ({
         </div>
         {page_profile_uri && (
           <div className="mt-4 flex justify-end space-x-2">
-            <Link
-              href={{
-                pathname: `/adlibrary/${page_id}`,
-                query: { page_id: page_id, active_status: "ALL" },
-              }}
-              target="_blank"
-              rel="noopener noreferrer"
-              passHref
+            <LinkPreview
+              url={`/adlibrary/${page_id}?page_id=${page_id}&active_status=ALL`}
+              isStatic={true}
+              imageSrc="/pagead.png"
+              width={400} // optional: adjust width as needed
+              height={400} // optional: adjust height as needed
+              className="inline-block" // optional: add custom styling
             >
               <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 ease-in-out hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
                 <Eye className="mr-2 h-4 w-4" />
                 View Ads
               </button>
-            </Link>
+            </LinkPreview>
             <a
               href={page_profile_uri}
               target="_blank"

@@ -185,6 +185,9 @@ importers:
       puppeteer:
         specifier: ^23.5.3
         version: 23.5.3(typescript@5.5.3)
+      qss:
+        specifier: ^3.0.0
+        version: 3.0.0
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -5488,6 +5491,10 @@ packages:
   qs@6.11.2:
     resolution: {integrity: sha512-tDNIz22aBzCDxLtVH++VnTfzxlfeK5CbqohpSqpJgj1Wg/cQbStNAz3NuqCs5vV+pjBsK4x4pN9HlVh7rcYRiA==}
     engines: {node: '>=0.6'}
+
+  qss@3.0.0:
+    resolution: {integrity: sha512-ZHoCB3M/3Voev64zhLLUOKDtaEdJ/lymsJJ7R3KBusVZ2ovNiIB7XOq3Xh6V1a8O+Vho+g2B5YElq9zW7D8aQw==}
+    engines: {node: '>=4'}
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
@@ -12969,6 +12976,8 @@ snapshots:
   qs@6.11.2:
     dependencies:
       side-channel: 1.0.6
+
+  qss@3.0.0: {}
 
   queue-microtask@1.2.3: {}
 
