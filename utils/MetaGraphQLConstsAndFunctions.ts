@@ -134,7 +134,12 @@ export const getAdSearchVariables = (
     source: "NAV_HEADER",
     startDate: (() => {
       const startDate = searchParams.get("start_date");
-      const endDate = searchParams.get("end_date");
+      let endDate = searchParams.get("end_date");
+      if (endDate) {
+        const updatedDate = new Date(endDate);
+        updatedDate.setDate(updatedDate.getDate() + 1);
+        endDate = updatedDate.toISOString().split("T")[0];
+      }
       return startDate || endDate
         ? { min: startDate || null, max: endDate || null }
         : null;
