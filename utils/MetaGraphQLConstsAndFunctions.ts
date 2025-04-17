@@ -110,7 +110,7 @@ export const getAdSearchVariables = (
   }
 
   return {
-    activeStatus: getParam("active_status", page_id ? "ALL" : "ACTIVE"),
+    activeStatus: getParam("active_status", "ACTIVE"),
     adType: getParam("ad_type", "ALL"),
     bylines: [],
     collationToken: null,

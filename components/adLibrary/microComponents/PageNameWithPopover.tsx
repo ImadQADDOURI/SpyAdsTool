@@ -101,7 +101,7 @@ const PageNameWithHoverCard: React.FC<PageNameWithHoverCardProps> = ({
             <Link
               href={{
                 pathname: `/adlibrary/${page_id}`,
-                query: { page_id: page_id },
+                query: { page_id: page_id, active_status: "ALL" },
               }}
               target="_blank"
               rel="noopener noreferrer"
