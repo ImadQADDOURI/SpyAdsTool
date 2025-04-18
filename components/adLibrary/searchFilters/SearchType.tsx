@@ -1,3 +1,5 @@
+// @/components\adLibrary\searchFilters\SearchType.tsx
+
 "use client";
 
 import * as React from "react";

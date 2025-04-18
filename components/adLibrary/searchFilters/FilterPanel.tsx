@@ -1,3 +1,5 @@
+// @/components\adLibrary\searchFilters\FilterPanel.tsx
+
 import React, { useCallback, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";

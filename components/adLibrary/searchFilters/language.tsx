@@ -1,3 +1,5 @@
+// @/components\adLibrary\searchFilters\language.tsx
+
 "use client";
 
 import * as React from "react";
@@ -31,15 +33,15 @@ type LanguageItemProps = {
 // ✨ Memoized language item component
 const LanguageItem = React.memo(({ index, style, data }: LanguageItemProps) => {
   const language = data.items[index];
-  const isSelected = data.selectedLanguages.includes(language.code);
+  const isSelected = data.selectedLanguages.includes(language.value);
 
   return (
     <Button
-      key={language.code}
+      key={language.value}
       variant="ghost"
       className="h-auto w-full justify-start rounded-none px-3 py-2 text-left"
       style={style}
-      onClick={() => data.handleSelect(language.code)}
+      onClick={() => data.handleSelect(language.value)}
     >
       <Check
         className={cn(
@@ -47,7 +49,7 @@ const LanguageItem = React.memo(({ index, style, data }: LanguageItemProps) => {
           isSelected ? "opacity-100" : "opacity-0",
         )}
       />
-      <span className="truncate">{language.name}</span>
+      <span className="truncate">{language.label}</span>
     </Button>
   );
 });
@@ -123,7 +125,7 @@ export const Language: React.FC = () => {
     if (!debouncedSearchTerm) return languages;
 
     return languages.filter((language) =>
-      language.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
+      language.label.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
     );
   }, [debouncedSearchTerm]);
 
@@ -176,7 +178,7 @@ export const Language: React.FC = () => {
                     {visibleSelections.map((code) => {
                       // 🧠 Cache lookup for performance
                       const language = languages.find(
-                        (lang) => lang.code === code,
+                        (lang) => lang.value === code,
                       );
                       return (
                         <Badge
@@ -185,7 +187,7 @@ export const Language: React.FC = () => {
                           className="mr-1 flex-shrink-0 p-0 pl-0.5"
                         >
                           <span className="max-w-16 truncate">
-                            {language?.code}
+                            {language?.value}
                           </span>
                           <button
                             type="button"

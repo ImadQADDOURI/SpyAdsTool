@@ -1,3 +1,5 @@
+// @/components\adLibrary\searchFilters\category.tsx
+
 "use client";
 
 import * as React from "react";

@@ -27,17 +27,13 @@ export const DisplayFilters: React.FC = () => {
   const searchParams = useSearchParams();
   const [open, setOpen] = React.useState(false);
 
-  // 🔢 Get the current collation count from URL params, default to 1
-  const collationCountValue = parseInt(
-    searchParams.get("collationCount") || "1",
-    10,
-  );
+  // 🔢 Get the current collation count from URL params, default to 1, and store it locally
+  const initialCount = parseInt(searchParams.get("collationCount") || "1", 10);
+  const [collationCount, setCollationCount] = React.useState(initialCount);
 
-  // 🎚️ Handle changes to the collation count slider
+  // 🎚️ Update local state when slider value changes
   const handleCollationCountChange = (value: number[]) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("collationCount", value[0].toString());
-    router.push(`?${params.toString()}`, { scroll: false });
+    setCollationCount(value[0]);
   };
 
   // 🧮 Count the number of applied filters
@@ -46,16 +42,11 @@ export const DisplayFilters: React.FC = () => {
     return filterParams.filter((key) => params.has(key)).length;
   };
 
-  // ✅ Apply filters with proper validation
+  // ✅ Apply filters with proper validation (updates URL once)
   const handleApplyFilters = () => {
     const params = new URLSearchParams(searchParams.toString());
 
-    // If collationCount is 1 (default), remove it from URL, otherwise keep it
-    if (collationCountValue === 1) {
-      params.delete("collationCount");
-    } else {
-      params.set("collationCount", collationCountValue.toString());
-    }
+    params.set("collationCount", collationCount.toString());
 
     router.push(`?${params.toString()}`, { scroll: false });
     setOpen(false);
@@ -66,6 +57,8 @@ export const DisplayFilters: React.FC = () => {
 
   const handleClearFilters = () => {
     clearFilters();
+    // Reset local state to default value if needed:
+    setCollationCount(1);
     setOpen(false);
   };
 
@@ -102,14 +95,14 @@ export const DisplayFilters: React.FC = () => {
           <div className="flex items-center justify-between">
             <span className="text-gray-500 dark:text-gray-400">Total Ads</span>
             <span className="font-bold text-gray-800 dark:text-gray-200">
-              {collationCountValue}+
+              {collationCount}+
             </span>
           </div>
           <Slider
-            min={1}
+            min={0}
             max={5}
             step={1}
-            defaultValue={[collationCountValue]}
+            value={[collationCount]}
             onValueChange={handleCollationCountChange}
             className="w-full"
           />

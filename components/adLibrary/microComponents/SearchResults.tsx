@@ -59,7 +59,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   );
 
   return (
-    <div className="mx-auto w-full p-1">
+    <div className="mx-auto w-full">
       {/* Initial Loading indicator */}
       {isLoading && <Loading size="large" />}
 
@@ -80,7 +80,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="mx-auto my-8 max-w-4xl rounded-2xl bg-white p-8 shadow-lg dark:bg-gray-800"
+          className="mx-auto max-w-7xl rounded-2xl bg-white p-8 shadow-lg dark:bg-gray-800"
         >
           <div className="flex flex-col items-center gap-8 md:flex-row">
             <div className="flex-1">
@@ -139,7 +139,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="mx-auto my-8 max-w-4xl rounded-2xl bg-white p-8 shadow-lg dark:bg-gray-800"
+          className="mx-auto max-w-7xl rounded-2xl bg-white p-8 shadow-lg dark:bg-gray-800"
         >
           <div className="flex flex-col items-center gap-8 text-center">
             <Image
@@ -181,7 +181,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="my-6 text-center"
+          className="text-center"
         >
           <span
             className="inline-block rounded-full bg-gradient-to-r from-purple-100 to-pink-100 px-6 py-3 text-lg font-bold text-purple-800 shadow-md dark:from-purple-900 dark:to-pink-900 dark:text-purple-200"

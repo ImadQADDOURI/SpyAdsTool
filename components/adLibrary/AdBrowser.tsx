@@ -23,7 +23,9 @@ import { AdData } from "@/types/ad";
 import FirefliesWrapper from "./microComponents/FirefliesWrapper";
 import { ScrollButtons } from "./microComponents/ScrollButtons";
 import SearchResults from "./microComponents/SearchResults";
+import AdaptiveSearchFilters from "./searchFilters/adaptive-search-filters";
 import FilterPanel from "./searchFilters/FilterPanel";
+import SearchFilters from "./searchFilters/search-filters";
 import { SearchBar } from "./searchFilters/SearchBar";
 
 export const AdBrowser = () => {
@@ -115,7 +117,7 @@ export const AdBrowser = () => {
   }, [hasNextPage, handleSearchAds, isLoading]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pb-16 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen space-y-2 bg-gradient-to-b from-gray-50 to-gray-100 pb-16 dark:from-gray-900 dark:to-gray-800">
       <FirefliesWrapper intensity="high">
         {/* Premium Header Section */}
         <div className="group relative overflow-hidden py-4">
@@ -189,10 +191,10 @@ export const AdBrowser = () => {
       {/* Sticky SearchBar & Filter Section */}
       <SearchBar onSearch={handleSearchAds} isLoading={isLoading} />
 
-      <FilterPanel
+      <AdaptiveSearchFilters
         onSearch={handleSearchAds}
         isLoading={isLoading}
-        variant="full"
+        displayMode="full"
       />
 
       {/* Search Results */}
