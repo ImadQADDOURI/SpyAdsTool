@@ -9,11 +9,13 @@ import {
   CircleDot,
   CircleSlash2,
   CircleX,
+  Dices,
   Facebook,
   Home,
   ImageIcon,
   Images,
   Instagram,
+  KeyRound,
   Laugh,
   LayoutGrid,
   MegaphoneIcon,
@@ -43,8 +45,12 @@ export interface FilterConfig {
 
 // 🔍 Search types
 const searchTypes: FilterOption[] = [
-  { value: "KEYWORD_UNORDERED", label: "Keyword Unordered" },
-  { value: "KEYWORD_EXACT_PHRASE", label: "Keyword Exact Phrase" },
+  { value: "KEYWORD_UNORDERED", label: "Keyword Unordered", icon: Dices },
+  {
+    value: "KEYWORD_EXACT_PHRASE",
+    label: "Keyword Exact Phrase",
+    icon: KeyRound,
+  },
 ];
 
 // 📋 Categories
