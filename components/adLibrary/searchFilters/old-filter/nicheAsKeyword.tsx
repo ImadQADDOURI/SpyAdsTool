@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { niches } from "@/utils/Niches";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -13,6 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { niches } from "@/components/adLibrary/searchFilters/old-filter/Niches";
 
 export const NicheAsKeyword: React.FC = () => {
   const [open, setOpen] = React.useState(false);

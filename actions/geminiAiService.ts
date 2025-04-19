@@ -1,8 +1,8 @@
 // app/actions/geminiAi.ts
 "use server";
 
-import { extractText, parseText } from "@/utils/adTextExtractor";
-import { geminiKeyManager } from "@/utils/geminiKeyManager";
+import { extractText, parseText } from "@/actions/adTextExtractor";
+import { geminiKeyManager } from "@/actions/geminiKeyManager";
 
 import { AdData } from "@/types/ad";
 

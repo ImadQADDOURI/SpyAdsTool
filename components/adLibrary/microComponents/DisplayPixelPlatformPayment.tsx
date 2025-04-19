@@ -7,7 +7,7 @@ import {
   paymentDetectors,
   platformDetectors,
   trackingPixelDetectors,
-} from "@/utils/Scrape_Detectorpatterns_NonTrackableWebsites";
+} from "@/actions/Scrape_Detectorpatterns_NonTrackableWebsites";
 import {
   AlertCircle,
   ChevronLeft,

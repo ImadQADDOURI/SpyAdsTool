@@ -1,10 +1,9 @@
-// @/components\adLibrary\searchFilters\language.tsx
+// @/components\adLibrary\searchFilters\country.tsx
 
 "use client";
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { languages } from "@/utils/languages";
 import { Check, ChevronDown, X } from "lucide-react";
 import { FixedSizeList } from "react-window"; // 🚀 Virtualization library
 
@@ -18,30 +17,31 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { countryCodesAlpha2Flag } from "@/components/adLibrary/searchFilters/old-filter/countryCodesAlpha2Flag";
 
-// 🔄 Language Item renderer for virtualized list
-type LanguageItemProps = {
+// 🔄 Country Item renderer for virtualized list
+type CountryItemProps = {
   index: number;
   style: React.CSSProperties;
   data: {
-    items: typeof languages;
-    selectedLanguages: string[];
-    handleSelect: (languageCode: string) => void;
+    items: typeof countryCodesAlpha2Flag;
+    selectedCountries: string[];
+    handleSelect: (countryCode: string) => void;
   };
 };
 
-// ✨ Memoized language item component
-const LanguageItem = React.memo(({ index, style, data }: LanguageItemProps) => {
-  const language = data.items[index];
-  const isSelected = data.selectedLanguages.includes(language.value);
+// ✨ Memoized country item component for virtualized rendering
+const CountryItem = React.memo(({ index, style, data }: CountryItemProps) => {
+  const country = data.items[index];
+  const isSelected = data.selectedCountries.includes(country.value);
 
   return (
     <Button
-      key={language.value}
+      key={country.value}
       variant="ghost"
       className="h-auto w-full justify-start rounded-none px-3 py-2 text-left"
       style={style}
-      onClick={() => data.handleSelect(language.value)}
+      onClick={() => data.handleSelect(country.value)}
     >
       <Check
         className={cn(
@@ -49,13 +49,19 @@ const LanguageItem = React.memo(({ index, style, data }: LanguageItemProps) => {
           isSelected ? "opacity-100" : "opacity-0",
         )}
       />
-      <span className="truncate">{language.label}</span>
+      <img
+        src={country.icon}
+        alt={`${country.label} flag`}
+        className="mr-2 inline-block h-5 w-5 flex-shrink-0 rounded-sm"
+        loading="lazy" // 🖼️ Lazy load images
+      />
+      <span className="truncate">{country.label}</span>
     </Button>
   );
 });
-LanguageItem.displayName = "LanguageItem";
+CountryItem.displayName = "CountryItem";
 
-export const Language: React.FC = () => {
+export const Country: React.FC = () => {
   // 🔄 State management
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -73,46 +79,48 @@ export const Language: React.FC = () => {
     return () => clearTimeout(timerId);
   }, [searchTerm]);
 
-  // 🌐 Parse selected languages from URL only when needed
-  const selectedLanguages = React.useMemo(() => {
-    return searchParams.get("content_languages")?.split(",") || [];
+  // 🌐 Parse selected countries from URL only when needed
+  const selectedCountries = React.useMemo(() => {
+    return searchParams.get("countries")?.split(",").filter(Boolean) || [];
   }, [searchParams]);
 
   // 🔄 URL update with request batching
   const updateURL = React.useCallback(
-    (newLanguages: string[]) => {
+    (newCountries: string[]) => {
       const params = new URLSearchParams(searchParams.toString());
-      if (newLanguages.length === 0) {
-        params.delete("content_languages");
+      if (newCountries.length === 0) {
+        params.delete("countries");
       } else {
-        params.set("content_languages", newLanguages.join(","));
+        params.set("countries", newCountries.join(","));
       }
+
+      // 🛑 Use non-blocking navigation with scroll prevention
       router.push(`?${params.toString()}`, { scroll: false });
     },
     [router, searchParams],
   );
 
   const handleSelect = React.useCallback(
-    (languageCode: string) => {
-      const newSelection = selectedLanguages.includes(languageCode)
-        ? selectedLanguages.filter((code) => code !== languageCode)
-        : [...selectedLanguages, languageCode];
+    (countryCode: string) => {
+      const newSelection = selectedCountries.includes(countryCode)
+        ? selectedCountries.filter((code) => code !== countryCode)
+        : [...selectedCountries, countryCode];
       updateURL(newSelection);
     },
-    [selectedLanguages, updateURL],
+    [selectedCountries, updateURL],
   );
 
   const handleRemove = React.useCallback(
-    (languageCode: string) => {
-      const newSelection = selectedLanguages.filter(
-        (code) => code !== languageCode,
+    (countryCode: string) => {
+      const newSelection = selectedCountries.filter(
+        (code) => code !== countryCode,
       );
       updateURL(newSelection);
     },
-    [selectedLanguages, updateURL],
+    [selectedCountries, updateURL],
   );
 
-  const handleDeselectAll = React.useCallback(
+  const handleClear = React.useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       updateURL([]);
@@ -120,22 +128,22 @@ export const Language: React.FC = () => {
     [updateURL],
   );
 
-  // 🧠 Memoized filtered languages with debounced search term
-  const filteredLanguages = React.useMemo(() => {
-    if (!debouncedSearchTerm) return languages;
+  // 🧠 Memoized filtered countries with debounced search term
+  const filteredCountries = React.useMemo(() => {
+    if (!debouncedSearchTerm) return countryCodesAlpha2Flag;
 
-    return languages.filter((language) =>
-      language.label.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
+    return countryCodesAlpha2Flag.filter((country) =>
+      country.label.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
     );
   }, [debouncedSearchTerm]);
 
   // 📊 Calculate visible selections only when needed
   const visibleSelections = React.useMemo(
-    () => selectedLanguages.slice(0, 1),
-    [selectedLanguages],
+    () => selectedCountries.slice(0, 1),
+    [selectedCountries],
   );
 
-  const remainingCount = selectedLanguages.length - visibleSelections.length;
+  const remainingCount = selectedCountries.length - visibleSelections.length;
 
   // 📝 Keep track of list ref for scrolling
   const listRef = React.useRef<FixedSizeList>(null);
@@ -150,11 +158,11 @@ export const Language: React.FC = () => {
   // 🧩 Memoize item data to prevent unnecessary re-renders
   const itemData = React.useMemo(
     () => ({
-      items: filteredLanguages,
-      selectedLanguages,
+      items: filteredCountries,
+      selectedCountries,
       handleSelect,
     }),
-    [filteredLanguages, selectedLanguages, handleSelect],
+    [filteredCountries, selectedCountries, handleSelect],
   );
 
   return (
@@ -168,27 +176,30 @@ export const Language: React.FC = () => {
               aria-expanded={open}
               className={cn(
                 "h-auto min-h-[2.5rem] min-w-0 flex-1 justify-between py-2 transition-all",
-                selectedLanguages.length > 0 &&
+                selectedCountries.length > 0 &&
                   "rounded-r-none border-r-0 pr-3",
               )}
             >
               <div className="mr-2 flex flex-wrap items-center gap-1 overflow-hidden">
-                {selectedLanguages.length > 0 ? (
+                {selectedCountries.length > 0 ? (
                   <>
                     {visibleSelections.map((code) => {
-                      // 🧠 Cache lookup for performance
-                      const language = languages.find(
-                        (lang) => lang.value === code,
+                      // 🧠 Cache lookup for better performance
+                      const country = countryCodesAlpha2Flag.find(
+                        (c) => c.value === code,
                       );
                       return (
                         <Badge
                           key={code}
                           variant="secondary"
-                          className="mr-1 flex-shrink-0 p-0 pl-0.5"
+                          className="mr-0 flex-shrink-0 p-0 pl-0.5"
                         >
-                          <span className="max-w-16 truncate">
-                            {language?.value}
-                          </span>
+                          <img
+                            src={country?.icon}
+                            alt={`${country?.label} flag`}
+                            className="mr-0 inline-block h-5 w-5 rounded-sm"
+                            loading="lazy" // 🖼️ Lazy load images
+                          />
                           <button
                             type="button"
                             style={{ pointerEvents: "all" }} // ensure the button is clickable
@@ -223,14 +234,14 @@ export const Language: React.FC = () => {
                   </>
                 ) : (
                   <span className="truncate text-muted-foreground">
-                    All Languages
+                    All Countries
                   </span>
                 )}
-              </div>{" "}
-              {selectedLanguages.length === 0 && (
+              </div>
+              {selectedCountries.length === 0 && (
                 <ChevronDown
                   className={cn(
-                    "ml-1 h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
+                    "h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
                     open && "rotate-180",
                   )}
                 />
@@ -239,12 +250,12 @@ export const Language: React.FC = () => {
           </DropdownMenuTrigger>
 
           {/* ❌ Clear selection button as half-circle extension */}
-          {selectedLanguages.length > 0 && (
+          {selectedCountries.length > 0 && (
             <Button
               variant="outline"
               size="icon"
-              onClick={handleDeselectAll}
-              aria-label="Clear all selections"
+              onClick={handleClear}
+              aria-label="Clear selection"
               className="h-10 flex-shrink-0 rounded-l-none rounded-r-full border-l-0 bg-background px-2 transition-colors hover:bg-muted"
             >
               <X className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
@@ -253,38 +264,40 @@ export const Language: React.FC = () => {
         </div>
 
         <DropdownMenuContent
-          className="w-[250px] max-w-[calc(100vw-2rem)] p-0"
+          className="w-[300px] max-w-[calc(100vw-2rem)] p-0"
           align="start"
         >
           <div className="border-b p-3">
             <Input
-              placeholder="Search languages..."
+              placeholder="Search countries..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full"
-              aria-label="Search languages"
+              aria-label="Search countries"
             />
           </div>
 
           <ScrollArea className="h-[300px] max-h-[40vh]">
             <div className="py-2">
-              {filteredLanguages.length === 0 ? (
+              {filteredCountries.length === 0 ? (
                 <p className="px-3 py-2 text-sm text-muted-foreground">
-                  No language found.
+                  No country found.
                 </p>
               ) : (
-                // 🚀 Keep the virtualized list for better performance
-                <FixedSizeList
-                  ref={listRef}
-                  height={300}
-                  width="100%"
-                  itemCount={filteredLanguages.length}
-                  itemSize={36} // Height of each item
-                  itemData={itemData}
-                  className="scrollbar-none" // Hide default scrollbar
-                >
-                  {LanguageItem}
-                </FixedSizeList>
+                <div>
+                  {/* 🚀 Virtualized list for better performance */}
+                  <FixedSizeList
+                    ref={listRef}
+                    height={300}
+                    width="100%"
+                    itemCount={filteredCountries.length}
+                    itemSize={36} // Height of each item
+                    itemData={itemData}
+                    className="scrollbar-hide" // Hide default scrollbar to use ScrollArea's
+                  >
+                    {CountryItem}
+                  </FixedSizeList>
+                </div>
               )}
             </div>
           </ScrollArea>
@@ -294,4 +307,4 @@ export const Language: React.FC = () => {
   );
 };
 
-export default Language;
+export default Country;

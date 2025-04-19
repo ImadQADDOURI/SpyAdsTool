@@ -14,7 +14,7 @@ import {
   AdLibraryAdDetailsV2Query,
   getAdLibraryAdCollationVariables,
   getAdLibraryAdDetailsV2Variables,
-} from "@/utils/MetaGraphQLConstsAndFunctions";
+} from "@/actions/MetaGraphQLConstsAndFunctions";
 import {
   BarChart3,
   CheckCircle,

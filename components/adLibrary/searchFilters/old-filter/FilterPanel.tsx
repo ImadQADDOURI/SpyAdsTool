@@ -3,7 +3,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useFilterReset } from "@/utils/useFilterReset";
 import { Filter, Loader2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useFilterReset } from "@/components/adLibrary/searchFilters/useFilterReset";
 
 import Category from "./category";
 import CategoryAsKeyword from "./categoryAsKeyword";

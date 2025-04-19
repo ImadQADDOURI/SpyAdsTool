@@ -3,7 +3,6 @@
 
 import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useFilterReset } from "@/utils/useFilterReset";
 import { Settings } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
+import { useFilterReset } from "@/components/adLibrary/searchFilters/useFilterReset";
 
 // ✨ Array of filter parameters
 const filterParams = ["collationCount"];

@@ -4,7 +4,6 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { categories } from "@/utils/Categories";
 import { Check, ChevronDown, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { categories } from "@/components/adLibrary/searchFilters/old-filter/Categories";
 
 export const CategoryAsKeyword: React.FC = () => {
   // 🔄 State management

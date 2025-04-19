@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import { countryCodesAlpha2Flag } from "@/utils/countryCodesAlpha2Flag";
 import {
   Calendar,
   DollarSign,
@@ -20,6 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import FirefliesWrapper from "@/components/adLibrary/microComponents/FirefliesWrapper";
+import { countryCodesAlpha2Flag } from "@/components/adLibrary/searchFilters/old-filter/countryCodesAlpha2Flag";
 
 interface TransparencyInfo {
   history_items?: Array<{

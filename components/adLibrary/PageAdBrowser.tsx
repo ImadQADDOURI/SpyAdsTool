@@ -7,7 +7,7 @@ import {
   AdLibrarySearchPaginationQuery,
   getAdLibraryMobileVariables,
   getAdSearchVariables,
-} from "@/utils/MetaGraphQLConstsAndFunctions";
+} from "@/actions/MetaGraphQLConstsAndFunctions";
 import { Loader2 } from "lucide-react";
 
 import { AdData } from "@/types/ad";

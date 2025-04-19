@@ -7,7 +7,7 @@ import {
   platformDetectors,
   TrackingDetector,
   trackingPixelDetectors,
-} from "@/utils/Scrape_Detectorpatterns_NonTrackableWebsites";
+} from "@/actions/Scrape_Detectorpatterns_NonTrackableWebsites";
 import * as puppeteer from "puppeteer";
 
 // Optimized settings for balancing speed and data collection

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { generateAdCreative } from "@/actions/geminiAiService";
-import { aiSupportedLanguages } from "@/utils/AiSupportedLanguages";
 import {
   AlertCircle,
   Check,
@@ -31,6 +30,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { aiSupportedLanguages } from "@/components/adLibrary/aiComponents/AiSupportedLanguages";
 
 interface AdCreative {
   primaryText: string;

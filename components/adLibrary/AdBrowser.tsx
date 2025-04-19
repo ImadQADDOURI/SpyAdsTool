@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import {
   AdLibrarySearchPaginationQuery,
   getAdSearchVariables,
-} from "@/utils/MetaGraphQLConstsAndFunctions";
+} from "@/actions/MetaGraphQLConstsAndFunctions";
 import { motion } from "framer-motion";
 import {
   BarChart,
@@ -25,7 +25,7 @@ import FirefliesWrapper from "./microComponents/FirefliesWrapper";
 import { ScrollButtons } from "./microComponents/ScrollButtons";
 import SearchResults from "./microComponents/SearchResults";
 import AdaptiveSearchFilters from "./searchFilters/adaptive-search-filters";
-import FilterPanel from "./searchFilters/FilterPanel";
+import FilterPanel from "./searchFilters/old-filter/FilterPanel";
 import SearchFilters from "./searchFilters/search-filters";
 import { SearchBar } from "./searchFilters/SearchBar";
 

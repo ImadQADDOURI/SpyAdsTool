@@ -7,7 +7,7 @@ import { revalidateTag, unstable_cache } from "next/cache";
 import {
   apiNameToDocId,
   DEFAULT_GRAPHQL_CONFIG,
-} from "@/utils/MetaGraphQLConstsAndFunctions";
+} from "@/actions/MetaGraphQLConstsAndFunctions";
 
 import { prisma } from "@/lib/db";
 
