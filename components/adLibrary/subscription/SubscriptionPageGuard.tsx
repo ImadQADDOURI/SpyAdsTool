@@ -75,7 +75,7 @@ const UpgradeDialog: React.FC = () => {
 export function SubscriptionPageGuard({
   children,
   requireSubscription = true,
-  loadingMessage = "Verifying subscription...",
+  loadingMessage = "",
   loadingSize = "medium",
 }: SubscriptionPageGuardProps) {
   const { hasAccess, isLoading, refresh } = useSubscription();

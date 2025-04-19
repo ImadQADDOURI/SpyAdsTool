@@ -1,6 +1,7 @@
 // @/components/top-stores-display.tsx
 "use client";
 
+import { useState } from "react";
 import { type TopStore } from "@prisma/client";
 import { motion } from "framer-motion";
 import {
@@ -11,8 +12,10 @@ import {
   ChevronRight,
   DollarSign,
   ExternalLink,
+  Folder,
   LocateFixed,
   Rocket,
+  Search,
   Shield,
   ShoppingBag,
   Sparkles,
@@ -28,6 +31,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
@@ -57,6 +61,8 @@ const cardVariants = {
 };
 
 export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+
   const calculateMetrics = (store: TopStore) => {
     const conversionRate = (store.sales / 10000) * 100;
     const aov = store.revenue / store.sales;
@@ -66,6 +72,19 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
       visitorValue: (store.revenue / 10000).toFixed(2), // Assuming 10k visitors
     };
   };
+
+  // Filter stores based on search query
+  const filteredStores = stores.filter((store) => {
+    if (!searchQuery) return true;
+
+    const query = searchQuery.toLowerCase();
+    return (
+      store.name.toLowerCase().includes(query) ||
+      store.niche.toLowerCase().includes(query) ||
+      store.link.toLowerCase().includes(query) ||
+      store.CTA.toLowerCase().includes(query)
+    );
+  });
 
   if (isLoading) {
     return (
@@ -112,23 +131,6 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
                 <div className="h-1 w-24 rounded-full bg-gradient-to-r from-[#6566F1]/40 to-[#B977F8]/40 transition-all duration-500 ease-in-out group-hover:w-32 group-hover:from-[#6566F1]/60 group-hover:to-[#B977F8]/60" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 blur-lg" />
               </div>
-              {/* <div className="mt-8 flex items-center gap-x-4">
-                <Button
-                  size="lg"
-                  className="group rounded-full bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-6 shadow-lg transition-all hover:shadow-[0_10px_25px_-5px_rgba(101,102,241,0.3)]"
-                >
-                  Explore Stores
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="rounded-full border-gray-900/10 px-6 dark:border-gray-100/10"
-                >
-                  How we rank
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div> */}
             </motion.div>
           </div>
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-gray-100 to-transparent dark:from-gray-900" />
@@ -209,188 +211,235 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
           </div>
         </motion.div>
 
-        {/* Stores Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {stores.map((store, index) => {
-            const metrics = calculateMetrics(store);
-            return (
-              <motion.div
-                key={store.id}
-                variants={cardVariants}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: 0.1 * index }}
-              >
-                <Card className="group relative h-full overflow-hidden border border-gray-200/50 transition-all duration-300 hover:border-[#B977F8]/30 hover:shadow-xl dark:border-gray-700/50 dark:hover:border-[#B977F8]/30 dark:hover:shadow-[#B977F8]/10">
-                  {/* Hot Store Badge */}
-                  {(store.revenue > 50000 || store.sales > 1000) && (
-                    <div className="absolute right-3 top-3 z-10">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="flex items-center justify-center rounded-full bg-amber-500 p-2 text-white">
-                              <Zap className="h-4 w-4 fill-white" />
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Hot Store - High Performance</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                  )}
-
-                  {/* Store Image */}
-                  <CardHeader className="relative p-0">
-                    <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={store.image}
-                        alt={store.name}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                      <div className="absolute bottom-0 left-0 p-4">
-                        <h3 className="text-xl font-bold text-white">
-                          {store.name}
-                        </h3>
-                        <div className="flex items-center space-x-2">
-                          <span className="inline-flex items-center space-x-1 rounded-full bg-[#B977F8]/90 px-3 py-1 text-xs font-medium text-white">
-                            <LocateFixed className="h-4 w-4" />{" "}
-                            {/* Add niche icon */}
-                            <span>{store.niche}</span>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-
-                  {/* Store Metrics */}
-                  <CardContent className="p-4">
-                    <div className="grid grid-cols-2 gap-3">
-                      {/* Revenue */}
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <motion.div
-                              whileHover={{ y: -2 }}
-                              className="flex items-center space-x-2 rounded-lg bg-[#6566F1]/10 p-3 dark:bg-[#6566F1]/20"
-                            >
-                              <DollarSign className="h-5 w-5 text-[#6566F1]" />
-                              <div>
-                                <p className="text-xs text-muted-foreground">
-                                  Revenue
-                                </p>
-                                <p className="font-bold">
-                                  ${(store.revenue / 1000).toFixed(1)}K
-                                </p>
-                              </div>
-                            </motion.div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>
-                              ${store.revenue.toLocaleString()} total revenue
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-
-                      {/* Sales */}
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <motion.div
-                              whileHover={{ y: -2 }}
-                              className="flex items-center space-x-2 rounded-lg bg-[#B977F8]/10 p-3 dark:bg-[#B977F8]/20"
-                            >
-                              <ShoppingBag className="h-5 w-5 text-[#B977F8]" />
-                              <div>
-                                <p className="text-xs text-muted-foreground">
-                                  Sales
-                                </p>
-                                <p className="font-bold">
-                                  {store.sales.toLocaleString()}
-                                </p>
-                              </div>
-                            </motion.div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{store.sales.toLocaleString()} total orders</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-
-                      {/* Conversion Rate */}
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <motion.div
-                              whileHover={{ y: -2 }}
-                              className="flex items-center space-x-2 rounded-lg bg-emerald-500/10 p-3 dark:bg-emerald-500/20"
-                            >
-                              <BarChart2 className="h-5 w-5 text-emerald-500" />
-                              <div>
-                                <p className="text-xs text-muted-foreground">
-                                  Conv. Rate
-                                </p>
-                                <p className="font-bold">
-                                  {metrics.conversionRate}%
-                                </p>
-                              </div>
-                            </motion.div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Estimated from 10,000 visitors</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-
-                      {/* AOV */}
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <motion.div
-                              whileHover={{ y: -2 }}
-                              className="flex items-center space-x-2 rounded-lg bg-amber-500/10 p-3 dark:bg-amber-500/20"
-                            >
-                              <ArrowUpRight className="h-5 w-5 text-amber-500" />
-                              <div>
-                                <p className="text-xs text-muted-foreground">
-                                  Avg. Order
-                                </p>
-                                <p className="font-bold">${metrics.aov}</p>
-                              </div>
-                            </motion.div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Average order value</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                  </CardContent>
-
-                  {/* CTA */}
-                  <CardFooter className="p-4 pt-0">
-                    <a
-                      href={store.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex w-full items-center justify-center space-x-2 rounded-lg bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-4 py-3 text-sm font-medium text-white shadow-md transition-all hover:shadow-lg hover:shadow-[#B977F8]/40"
-                    >
-                      <Zap className="h-4 w-4" />
-                      <span>{store.CTA}</span>
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-            );
-          })}
+        {/* Search input */}
+        <div className="mb-8 flex justify-end">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="relative w-full max-w-xs transition-all duration-300 focus-within:max-w-sm"
+          >
+            <div className="group relative flex items-center">
+              <Input
+                className="h-10 rounded-full border-gray-200 bg-white/70 pl-4 pr-12 text-sm backdrop-blur-sm transition-all duration-300 placeholder:text-gray-400 hover:bg-white/90 focus:border-[#6566F1] focus:bg-white focus:ring-2 focus:ring-[#6566F1]/20 dark:border-gray-700 dark:bg-gray-800/70 dark:hover:bg-gray-800/90 dark:focus:border-[#B977F8] dark:focus:ring-[#B977F8]/20"
+                placeholder="Search Stores..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                disabled={isLoading}
+              />
+              <div className="absolute right-3 flex h-7 w-7 items-center justify-center rounded-full bg-[#6566F1]/10 p-1.5 transition-all duration-300 group-focus-within:bg-[#6566F1]/20 dark:bg-[#B977F8]/10 dark:group-focus-within:bg-[#B977F8]/20">
+                <Search className="h-4 w-4 text-[#6566F1] transition-colors duration-200 dark:text-[#B977F8]" />
+              </div>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Empty State */}
-        {stores.length === 0 && !isLoading && (
+        {/* No results message */}
+        {searchQuery && filteredStores.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-col items-center justify-center rounded-xl bg-white/70 py-16 text-center shadow-sm backdrop-blur-sm dark:bg-gray-800/70"
+          >
+            <div className="rounded-full bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 p-5">
+              <Store className="h-10 w-10 text-[#B977F8]" />
+            </div>
+            <h3 className="mt-6 text-lg font-medium text-gray-700 dark:text-gray-200">
+              No Stores match &quot;{searchQuery}&quot;
+            </h3>
+            <button
+              className="mt-4 text-sm font-medium text-[#6566F1] hover:underline dark:text-[#B977F8]"
+              onClick={() => setSearchQuery("")}
+            >
+              Clear search
+            </button>
+          </motion.div>
+        )}
+
+        {/* Stores Grid */}
+        {(!searchQuery || (searchQuery && filteredStores.length > 0)) && (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredStores.map((store, index) => {
+              const metrics = calculateMetrics(store);
+              return (
+                <motion.div
+                  key={store.id}
+                  variants={cardVariants}
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ delay: 0.1 * index }}
+                >
+                  <Card className="group relative h-full overflow-hidden border border-gray-200/50 transition-all duration-300 hover:border-[#B977F8]/30 hover:shadow-xl dark:border-gray-700/50 dark:hover:border-[#B977F8]/30 dark:hover:shadow-[#B977F8]/10">
+                    {/* Hot Store Badge */}
+                    {(store.revenue > 50000 || store.sales > 1000) && (
+                      <div className="absolute right-3 top-3 z-10">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="flex items-center justify-center rounded-full bg-amber-500 p-2 text-white">
+                                <Zap className="h-4 w-4 fill-white" />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Hot Store - High Performance</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    )}
+
+                    {/* Store Image */}
+                    <CardHeader className="relative p-0">
+                      <div className="relative h-48 overflow-hidden">
+                        <img
+                          src={store.image}
+                          alt={store.name}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                        <div className="absolute bottom-0 left-0 p-4">
+                          <h3 className="text-xl font-bold text-white">
+                            {store.name}
+                          </h3>
+                          <div className="flex items-center space-x-2">
+                            <span className="inline-flex items-center space-x-1 rounded-full bg-[#B977F8]/90 px-3 py-1 text-xs font-medium text-white">
+                              <LocateFixed className="h-4 w-4" />
+                              <span>{store.niche}</span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    {/* Store Metrics */}
+                    <CardContent className="p-4">
+                      <div className="grid grid-cols-2 gap-3">
+                        {/* Revenue */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <motion.div
+                                whileHover={{ y: -2 }}
+                                className="flex items-center space-x-2 rounded-lg bg-[#6566F1]/10 p-3 dark:bg-[#6566F1]/20"
+                              >
+                                <DollarSign className="h-5 w-5 text-[#6566F1]" />
+                                <div>
+                                  <p className="text-xs text-muted-foreground">
+                                    Revenue
+                                  </p>
+                                  <p className="font-bold">
+                                    ${(store.revenue / 1000).toFixed(1)}K
+                                  </p>
+                                </div>
+                              </motion.div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>
+                                ${store.revenue.toLocaleString()} total revenue
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        {/* Sales */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <motion.div
+                                whileHover={{ y: -2 }}
+                                className="flex items-center space-x-2 rounded-lg bg-[#B977F8]/10 p-3 dark:bg-[#B977F8]/20"
+                              >
+                                <ShoppingBag className="h-5 w-5 text-[#B977F8]" />
+                                <div>
+                                  <p className="text-xs text-muted-foreground">
+                                    Sales
+                                  </p>
+                                  <p className="font-bold">
+                                    {store.sales.toLocaleString()}
+                                  </p>
+                                </div>
+                              </motion.div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{store.sales.toLocaleString()} total orders</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        {/* Conversion Rate */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <motion.div
+                                whileHover={{ y: -2 }}
+                                className="flex items-center space-x-2 rounded-lg bg-emerald-500/10 p-3 dark:bg-emerald-500/20"
+                              >
+                                <BarChart2 className="h-5 w-5 text-emerald-500" />
+                                <div>
+                                  <p className="text-xs text-muted-foreground">
+                                    Conv. Rate
+                                  </p>
+                                  <p className="font-bold">
+                                    {metrics.conversionRate}%
+                                  </p>
+                                </div>
+                              </motion.div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Estimated from 10,000 visitors</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        {/* AOV */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <motion.div
+                                whileHover={{ y: -2 }}
+                                className="flex items-center space-x-2 rounded-lg bg-amber-500/10 p-3 dark:bg-amber-500/20"
+                              >
+                                <ArrowUpRight className="h-5 w-5 text-amber-500" />
+                                <div>
+                                  <p className="text-xs text-muted-foreground">
+                                    Avg. Order
+                                  </p>
+                                  <p className="font-bold">${metrics.aov}</p>
+                                </div>
+                              </motion.div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Average order value</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    </CardContent>
+
+                    {/* CTA */}
+                    <CardFooter className="p-4 pt-0">
+                      <a
+                        href={store.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex w-full items-center justify-center space-x-2 rounded-lg bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-4 py-3 text-sm font-medium text-white shadow-md transition-all hover:shadow-lg hover:shadow-[#B977F8]/40"
+                      >
+                        <Zap className="h-4 w-4" />
+                        <span>{store.CTA}</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </CardFooter>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Empty State - No stores at all */}
+        {stores.length === 0 && !isLoading && !searchQuery && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

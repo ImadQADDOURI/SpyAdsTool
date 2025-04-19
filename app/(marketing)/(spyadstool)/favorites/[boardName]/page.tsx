@@ -171,9 +171,9 @@ export default function BoardPage() {
       </FirefliesWrapper>
 
       {/* Content area */}
-      <div className="mx-auto max-w-7xl space-y-8 p-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full space-y-8 p-4">
         {loading ? (
-          <Loading size="medium" message="Loading ads..." />
+          <Loading size="large" message="Loading ads..." />
         ) : ads.length > 0 ? (
           <AdCardGrid ads={ads} />
         ) : (

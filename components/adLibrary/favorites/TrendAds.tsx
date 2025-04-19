@@ -151,7 +151,7 @@ export default function TrendAds() {
       </FirefliesWrapper>
 
       {/* Content Section */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full">
         {/* Show loading for initial load */}
         {isLoading && ads.length === 0 ? (
           <div className="flex h-60 items-center justify-center">
@@ -165,7 +165,7 @@ export default function TrendAds() {
           </div>
         ) : (
           <>
-            <div className="space-y-8 py-8">
+            <div className="space-y-8 p-4">
               <AdCardGrid ads={ads} />
 
               {/* Load more trigger */}
