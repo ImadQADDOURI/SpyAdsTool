@@ -21,10 +21,10 @@ import {
 import AgeBarChart from "@/components/adLibrary/adInsights/AgeBarChart";
 import CountryBarChart from "@/components/adLibrary/adInsights/CountryBarChart";
 import GenderPieChart from "@/components/adLibrary/adInsights/GenderPieChart";
-import { countryCodesAlpha2Flag } from "@/components/adLibrary/searchFilters/old-filter/countryCodesAlpha2Flag";
 
 import InsightItem from "../aiComponents/InsightItem";
 import { Loading } from "../microComponents/Loading";
+import { countryCodesAlpha2Flag } from "../searchFilters/filter-config";
 import AmountSpend from "./AmountSpend";
 
 interface EuAdStatisticProps {

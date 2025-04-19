@@ -19,7 +19,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import FirefliesWrapper from "@/components/adLibrary/microComponents/FirefliesWrapper";
-import { countryCodesAlpha2Flag } from "@/components/adLibrary/searchFilters/old-filter/countryCodesAlpha2Flag";
+
+import { countryCodesAlpha2Flag } from "../searchFilters/filter-config";
 
 interface TransparencyInfo {
   history_items?: Array<{
@@ -120,7 +121,11 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
               return countryInfo ? (
                 <Image
                   key={index}
-                  src={countryInfo.icon}
+                  src={
+                    typeof countryInfo.icon === "string"
+                      ? countryInfo.icon
+                      : "/icons/unknown.png"
+                  }
                   alt={countryInfo.label}
                   width={18}
                   height={18}

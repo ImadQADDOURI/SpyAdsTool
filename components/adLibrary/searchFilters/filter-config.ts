@@ -79,7 +79,7 @@ const categories: FilterOption[] = [
 ];
 
 // 🌎 Countries
-const countryCodesAlpha2Flag: FilterOption[] = [
+export const countryCodesAlpha2Flag: FilterOption[] = [
   //{ value: "ALL", label: "All Countries", icon: "/flags/un.svg" },
   { value: "BR", label: "Brazil", icon: "/flags/br.svg" },
   { value: "IN", label: "India", icon: "/flags/in.svg" },
