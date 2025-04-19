@@ -100,7 +100,7 @@ const PageNameWithHoverCard: React.FC<PageNameWithHoverCardProps> = ({
         {page_profile_uri && (
           <div className="mt-4 flex justify-end space-x-2">
             <LinkPreview
-              url={`/adlibrary/${page_id}?page_id=${page_id}&active_status=ALL`}
+              url={`/adsearch/${page_id}?page_id=${page_id}&active_status=ALL`}
               isStatic={true}
               imageSrc="/pagead.png"
               width={400} // optional: adjust width as needed

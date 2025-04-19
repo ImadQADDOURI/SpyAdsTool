@@ -25,6 +25,9 @@ interface PageAdBrowserProps {
 }
 
 export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
+  // Add ref for the Info Section
+  const infoSectionRef = useRef<HTMLDivElement>(null);
+
   const searchParams = useSearchParams();
 
   // 🔍 Search state
@@ -108,6 +111,16 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
 
           // 🛑 Check if this is still the relevant request
           if (currentRequestId !== searchRequestIdRef.current) return;
+
+          // Only scroll on new searches (not during pagination)
+          if (!useExistingParams && infoSectionRef.current) {
+            const sectionBottom = infoSectionRef.current.offsetTop;
+            // + infoSectionRef.current.offsetHeight;
+            window.scrollTo({
+              top: sectionBottom,
+              behavior: "smooth",
+            });
+          }
         }
 
         // Update total count on first search or when search params change
@@ -189,14 +202,16 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
   return (
     <div className="min-h-screen space-y-2 bg-gray-100 pb-8 dark:bg-gray-800">
       {/* Page Info Section */}
-      {pageInfo && (
-        <PageInfoSection
-          page={page}
-          pageInfo={pageInfo}
-          profilePictureUrl={profilePictureUrl}
-          totalAds={pageTotalAds || 0}
-        />
-      )}
+      <div ref={infoSectionRef}>
+        {pageInfo && (
+          <PageInfoSection
+            page={page}
+            pageInfo={pageInfo}
+            profilePictureUrl={profilePictureUrl}
+            totalAds={pageTotalAds || 0}
+          />
+        )}
+      </div>
 
       {/* Sticky SearchBar Section */}
       <SearchBar onSearch={handleSearchAds} isLoading={isLoading} />

@@ -208,6 +208,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
               <LoadingTrigger
                 onIntersect={handleLoadMore}
                 isLoading={isLoading}
+                triggerMargin={1}
               />
 
               {remainingCount !== null && !isLoading && (
