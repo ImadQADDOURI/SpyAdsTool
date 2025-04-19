@@ -218,71 +218,69 @@ export default function SearchFilters({
   }, [filters, pathname, router, searchParams, onSearch]);
 
   return (
-    <Card className="w-full overflow-hidden rounded-xl border-purple-200/50 bg-gray-50/80 backdrop-blur-sm transition-all dark:border-purple-900/30 dark:bg-gray-900/80">
-      <FirefliesWrapper intensity="high">
-        <CardContent className="p-6 backdrop-blur-sm">
-          {/* 🎛️ Filter header */}
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-purple-100 p-2 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300">
-                <SlidersHorizontal className="h-5 w-5 text-purple-500" />
-              </div>
-              <h3 className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-xl font-bold text-transparent">
-                Filters
-              </h3>
-              {appliedFiltersCount > 0 && (
-                <span className="ml-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-2.5 py-0.5 text-xs font-medium text-white">
-                  {appliedFiltersCount} active
-                </span>
-              )}
+    <Card className="w-full overflow-hidden rounded-xl border-purple-200/50 bg-gray-50/90 backdrop-blur-sm transition-all dark:border-purple-900/30 dark:bg-gray-900/90">
+      <CardContent className="p-6 backdrop-blur-sm">
+        {/* 🎛️ Filter header */}
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="rounded-full bg-purple-100 p-2 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300">
+              <SlidersHorizontal className="h-5 w-5 text-purple-500" />
             </div>
-          </div>
-
-          {/* 🎛️ Filter grid */}
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5">
-            {filterConfig.map((filter) => (
-              <SearchFilterItem
-                key={filter.key}
-                filter={filter}
-                value={filters[filter.key] || null}
-                onChange={(value) => handleFilterChange(filter.key, value)}
-                onClear={() => handleClearFilter(filter.key)}
-              />
-            ))}
-          </div>
-
-          {/* 🔘 Action buttons */}
-          <div className="mt-8 flex justify-end gap-3">
-            <Button
-              variant="outline"
-              onClick={handleClearAllFilters}
-              disabled={isLoading || appliedFiltersCount === 0}
-              className={cn(
-                "border-purple-200 transition-all hover:border-purple-300 hover:bg-purple-50 dark:border-purple-800 dark:hover:border-purple-700 dark:hover:bg-purple-900/30",
-                appliedFiltersCount === 0 && "opacity-50",
-              )}
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Clear
-            </Button>
-
-            <Button
-              onClick={handleApplyFilters}
-              disabled={isLoading}
-              className="relative overflow-hidden bg-gradient-to-r from-purple-500 to-pink-500 text-white transition-all hover:from-purple-600 hover:to-pink-600 dark:from-purple-700 dark:to-pink-700"
-            >
-              <span className="relative z-10 flex items-center">
-                <Sparkles className="mr-2 h-4 w-4" />
-                Apply Filters
-                {isLoading && (
-                  <span className="ml-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                )}
+            <h3 className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-xl font-bold text-transparent">
+              Filters
+            </h3>
+            {appliedFiltersCount > 0 && (
+              <span className="ml-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-2.5 py-0.5 text-xs font-medium text-white">
+                {appliedFiltersCount} active
               </span>
-              <span className="absolute inset-0 -z-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 transition-opacity duration-300 hover:opacity-100"></span>
-            </Button>
+            )}
           </div>
-        </CardContent>
-      </FirefliesWrapper>
+        </div>
+
+        {/* 🎛️ Filter grid */}
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5">
+          {filterConfig.map((filter) => (
+            <SearchFilterItem
+              key={filter.key}
+              filter={filter}
+              value={filters[filter.key] || null}
+              onChange={(value) => handleFilterChange(filter.key, value)}
+              onClear={() => handleClearFilter(filter.key)}
+            />
+          ))}
+        </div>
+
+        {/* 🔘 Action buttons */}
+        <div className="mt-8 flex justify-end gap-3">
+          <Button
+            variant="outline"
+            onClick={handleClearAllFilters}
+            disabled={isLoading || appliedFiltersCount === 0}
+            className={cn(
+              "border-purple-200 transition-all hover:border-purple-300 hover:bg-purple-50 dark:border-purple-800 dark:hover:border-purple-700 dark:hover:bg-purple-900/30",
+              appliedFiltersCount === 0 && "opacity-50",
+            )}
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Clear
+          </Button>
+
+          <Button
+            onClick={handleApplyFilters}
+            disabled={isLoading}
+            className="relative overflow-hidden bg-gradient-to-r from-purple-500 to-pink-500 text-white transition-all hover:from-purple-600 hover:to-pink-600 dark:from-purple-700 dark:to-pink-700"
+          >
+            <span className="relative z-10 flex items-center">
+              <Sparkles className="mr-2 h-4 w-4" />
+              Apply Filters
+              {isLoading && (
+                <span className="ml-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              )}
+            </span>
+            <span className="absolute inset-0 -z-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 transition-opacity duration-300 hover:opacity-100"></span>
+          </Button>
+        </div>
+      </CardContent>
     </Card>
   );
 }

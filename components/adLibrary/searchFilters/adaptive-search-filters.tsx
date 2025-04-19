@@ -38,7 +38,7 @@ export default function AdaptiveSearchFilters({
         transition={{ duration: 0.6 }}
         className=""
       >
-        <div className="mx-auto max-w-7xl rounded-2xl bg-gradient-to-r from-[#6566F1]/25 to-[#B977F8]/25 p-2 shadow-[0_4px_20px_-4px_rgba(101,102,241,0.25)] transition-all duration-300 ease-in-out hover:scale-[1.01] dark:bg-[#6566F1]/10 dark:shadow-[0_4px_20px_-4px_rgba(101,102,241,0.25)]">
+        <div className="mx-auto max-w-7xl rounded-2xl bg-gradient-to-r from-[#6566F1]/25 to-[#B977F8]/25 p-1 shadow-[0_4px_20px_-4px_rgba(101,102,241,0.25)] transition-all duration-300 ease-in-out hover:scale-[1.01] dark:bg-[#6566F1]/10 dark:shadow-[0_4px_20px_-4px_rgba(101,102,241,0.25)]">
           <SearchFilters onSearch={onSearch} isLoading={isLoading} />
         </div>
       </motion.div>
@@ -59,7 +59,7 @@ export default function AdaptiveSearchFilters({
       </Button>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="mx-auto max-w-7xl rounded-2xl bg-gradient-to-r from-[#6566F1]/25 to-[#B977F8]/25 p-2 shadow-[0_4px_20px_-4px_rgba(101,102,241,0.25)] transition-all duration-300 ease-in-out hover:scale-[1.01] dark:bg-[#6566F1]/10 dark:shadow-[0_4px_20px_-4px_rgba(101,102,241,0.25)]">
+        <DialogContent className="mx-auto max-w-7xl rounded-2xl bg-gradient-to-r from-[#6566F1]/25 to-[#B977F8]/25 p-1 shadow-[0_4px_20px_-4px_rgba(101,102,241,0.25)] transition-all duration-300 ease-in-out hover:scale-[1.01] dark:bg-[#6566F1]/10 dark:shadow-[0_4px_20px_-4px_rgba(101,102,241,0.25)]">
           <SearchFilters
             onSearch={() => {
               onSearch();

@@ -101,13 +101,13 @@ export const getAdSearchVariables = (
   const categoryAsKeyword = getParam("category_as_keyword", "");
   let searchType = getParam("search_type", "KEYWORD_UNORDERED");
 
-  if (nicheAsKeyword) {
-    queryString = [queryString, nicheAsKeyword].filter(Boolean).join(", ");
-    searchType = "KEYWORD_EXACT_PHRASE";
-  } else if (categoryAsKeyword) {
-    queryString = [queryString, categoryAsKeyword].filter(Boolean).join(", ");
-    searchType = "KEYWORD_UNORDERED";
-  }
+  // if (nicheAsKeyword) {
+  //   queryString = [queryString, nicheAsKeyword].filter(Boolean).join(", ");
+  //   searchType = "KEYWORD_EXACT_PHRASE";
+  // } else if (categoryAsKeyword) {
+  queryString = [queryString, categoryAsKeyword].filter(Boolean).join(", ");
+  //   searchType = "KEYWORD_UNORDERED";
+  // }
 
   return {
     activeStatus: getParam("active_status", "ACTIVE"),

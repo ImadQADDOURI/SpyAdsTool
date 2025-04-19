@@ -1440,8 +1440,8 @@ export const filterConfig: FilterConfig[] = [
   {
     key: "searchType",
     paramKey: "search_type",
-    label: "Search Type",
-    icon: "/filters/search.svg",
+    label: "Keyword",
+    icon: "/filters/key.svg",
     options: searchTypes,
   },
   {
