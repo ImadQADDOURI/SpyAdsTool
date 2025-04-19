@@ -219,9 +219,9 @@ export default function SearchFilters({
 
   return (
     <Card className="w-full overflow-hidden rounded-xl border-purple-200/50 bg-gray-50/90 backdrop-blur-sm transition-all dark:border-purple-900/30 dark:bg-gray-900/90">
-      <CardContent className="p-6 backdrop-blur-sm">
+      <CardContent className="p-5 backdrop-blur-sm">
         {/* 🎛️ Filter header */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-5 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="rounded-full bg-purple-100 p-2 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300">
               <SlidersHorizontal className="h-5 w-5 text-purple-500" />
@@ -238,7 +238,7 @@ export default function SearchFilters({
         </div>
 
         {/* 🎛️ Filter grid */}
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5">
           {filterConfig.map((filter) => (
             <SearchFilterItem
               key={filter.key}
@@ -251,7 +251,7 @@ export default function SearchFilters({
         </div>
 
         {/* 🔘 Action buttons */}
-        <div className="mt-8 flex justify-end gap-3">
+        <div className="mt-5 flex justify-end gap-3">
           <Button
             variant="outline"
             onClick={handleClearAllFilters}

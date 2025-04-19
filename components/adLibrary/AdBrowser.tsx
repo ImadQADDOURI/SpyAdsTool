@@ -12,6 +12,7 @@ import {
   BarChart,
   BrainCircuit,
   Download,
+  Facebook,
   Filter,
   PieChart,
   TrendingUp,
@@ -136,6 +137,29 @@ export const AdBrowser = () => {
                 </span>
               </div>
               <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
+                <span className="relative inline-block transform transition-transform duration-300 hover:scale-110">
+                  <Facebook
+                    className="-mt-4 mr-2 inline-block size-14"
+                    style={{
+                      filter: "drop-shadow(0px 2px 4px rgba(142, 4, 255, 0.4))",
+                      stroke: "url(#fb-icon-gradient)",
+                    }}
+                  />
+                  <svg width="0" height="0" className="absolute">
+                    <defs>
+                      <linearGradient
+                        id="fb-icon-gradient"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                      >
+                        <stop offset="0%" stopColor="#B977F8" />
+                        <stop offset="100%" stopColor="#6566F1" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </span>
                 <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-transparent">
                   Ad Search
                 </span>{" "}

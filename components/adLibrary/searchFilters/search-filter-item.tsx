@@ -181,7 +181,7 @@ function SearchFilterItemComponent({
 
           {/* Display first two option icons */}
           <span className="flex items-center -space-x-1">
-            {selectedOptions.slice(0, 2).map(
+            {selectedOptions.slice(0, 3).map(
               (option, idx) =>
                 option && (
                   <span
