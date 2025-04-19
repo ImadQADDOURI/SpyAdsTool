@@ -51,11 +51,13 @@ export function AdOptions({ ad }: { ad: AdData }) {
 
   const OptionItem = ({
     icon,
+    urlIcon,
     label,
     href,
     disabled,
   }: {
     icon: string;
+    urlIcon?: string;
     label: string;
     href?: string;
     disabled?: boolean;
@@ -72,18 +74,33 @@ export function AdOptions({ ad }: { ad: AdData }) {
 
     const content = (
       <>
-        <div className="flex h-5 w-5 items-center justify-center">
-          <Image
-            src={`/icons/${icon}`}
-            alt=""
-            width={24}
-            height={24}
-            className={
-              disabled
-                ? "opacity-50"
-                : "transition-transform duration-150 group-hover:scale-105"
-            }
-          />
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-purple-100 to-white shadow-sm dark:from-purple-900/40 dark:to-transparent">
+          {urlIcon ? (
+            <div className="relative h-full w-full overflow-hidden rounded-full border border-purple-600 dark:border-purple-50">
+              <Image
+                src={urlIcon}
+                alt=""
+                fill
+                className={`object-cover ${
+                  disabled
+                    ? "opacity-50"
+                    : "transition-transform duration-200 group-hover:scale-110"
+                }`}
+              />
+            </div>
+          ) : (
+            <Image
+              src={`/icons/${icon}`}
+              alt=""
+              width={24}
+              height={24}
+              className={
+                disabled
+                  ? "opacity-50"
+                  : "transition-transform duration-200 group-hover:scale-110"
+              }
+            />
+          )}
         </div>
         <span className="flex-grow font-medium">{label}</span>
         <ExternalLink
@@ -166,6 +183,7 @@ export function AdOptions({ ad }: { ad: AdData }) {
 
         <OptionItem
           icon="meta.svg"
+          urlIcon={snapshot.page_profile_picture_url || ""}
           label="View All Page Ads"
           href={snapshot.page_id ? `/adlibrary/${snapshot.page_id}` : undefined}
           disabled={!snapshot.page_id}

@@ -42,6 +42,7 @@ import KeywordAnalysisTable from "@/components/adLibrary/aiComponents/KeywordAna
 
 import { AdCard } from "./AdCard";
 import AdCardGrid from "./microComponents/AdCardGrid";
+import AdOptionsCard from "./microComponents/AdOptionsCard";
 
 interface AdDetailsProps {
   /** The advertisement data to display */
@@ -214,6 +215,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
               <div className="space-y-2">
                 <AdCreativeGenerator ad={ad} />
                 <AdCardGrid ads={ad} />
+                <AdOptionsCard ad={ad} />
               </div>
             </div>
 
