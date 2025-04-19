@@ -141,7 +141,7 @@ export const AdBrowser = () => {
                   <Facebook
                     className="-mt-4 mr-2 inline-block size-14"
                     style={{
-                      filter: "drop-shadow(0px 2px 4px rgba(142, 4, 255, 0.4))",
+                      filter: "drop-shadow(0px 1px 6px rgba(142, 4, 255, 0.3))",
                       stroke: "url(#fb-icon-gradient)",
                     }}
                   />
