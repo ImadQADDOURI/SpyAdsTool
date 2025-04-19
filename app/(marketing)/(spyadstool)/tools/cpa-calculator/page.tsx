@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
+import { motion } from "framer-motion";
 import {
   Calculator,
   FileText,
@@ -24,18 +25,46 @@ export default function CalculatorPage() {
   return (
     <div className="min-h-screen bg-gray-100 pb-8 dark:bg-gray-800">
       {/* 🎨 Title Section with Fireflies */}
-      <FirefliesWrapper intensity={"medium"}>
-        <div className="group relative py-6">
-          <div className="relative z-10 flex flex-col items-center justify-center space-y-2">
-            <h1 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text px-4 text-4xl font-bold tracking-tight text-transparent transition-all duration-300 ease-in-out hover:scale-[1.01]">
-              Advanced CPA Calculator
-            </h1>
-            <div className="relative">
-              <div className="h-0.5 w-16 rounded-full bg-gradient-to-r from-[#6566F1]/40 to-[#B977F8]/40 transition-all duration-300 ease-in-out group-hover:w-24" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 blur-sm" />
-            </div>
+
+      <FirefliesWrapper intensity="high">
+        {/* Premium Header Section */}
+        <div className="group relative overflow-hidden py-4">
+          {/* <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-center opacity-10 dark:opacity-[0.03]" /> */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#6566F1]/5 via-transparent to-[#B977F8]/5" />
+          <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="flex flex-col items-center space-y-4 text-center"
+            >
+              <div className="flex items-center space-x-2">
+                <Calculator className="h-6 w-6 text-[#B977F8]" />
+                <span className="rounded-full bg-[#B977F8]/10 px-4 py-1 text-sm font-medium text-[#B977F8]">
+                  Calculator
+                </span>
+              </div>
+              <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
+                <span className="bg-gradient-to-r from-[#6566F1] via-[#B977F8] to-[#E9A8F2] bg-clip-text text-transparent">
+                  CPA
+                </span>{" "}
+                <br className="sm:hidden" />
+                <span className="bg-gradient-to-r from-gray-700 via-gray-900 to-black bg-clip-text text-transparent dark:from-gray-300 dark:via-gray-100 dark:to-white">
+                  Calculator
+                </span>
+              </h1>
+              <p className="max-w-2xl text-lg text-gray-600 dark:text-gray-300">
+                Calculate and optimize your cost per action, track campaign ROI,
+                and maximize advertising profitability with our advanced CPA
+                tools.
+              </p>
+              <div className="relative pt-4">
+                <div className="h-1 w-24 rounded-full bg-gradient-to-r from-[#6566F1]/40 to-[#B977F8]/40 transition-all duration-500 ease-in-out group-hover:w-32 group-hover:from-[#6566F1]/60 group-hover:to-[#B977F8]/60" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 blur-lg" />
+              </div>
+            </motion.div>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#6566F1]/10 via-transparent to-[#B977F8]/10" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-gray-100 to-transparent dark:from-gray-900" />
         </div>
       </FirefliesWrapper>
 
