@@ -541,7 +541,7 @@ function SearchFilterItemComponent({
           <Button
             variant="outline"
             className={cn(
-              "w-full justify-between text-left font-normal transition-all duration-200",
+              "w-full justify-between text-left font-normal",
               hasValue
                 ? "border-purple-300 bg-purple-50/50 text-foreground dark:border-purple-700 dark:bg-purple-900/20"
                 : "text-muted-foreground",
