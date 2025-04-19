@@ -7,7 +7,6 @@ import { Loader2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DisplayFilters } from "@/components/adLibrary/searchFilters/DisplayFilters";
-import { FilterPanel } from "@/components/adLibrary/searchFilters/old-filter/FilterPanel";
 import {
   SearchTypeKey,
   SearchTypeSelector,

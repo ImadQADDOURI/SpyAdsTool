@@ -15,8 +15,8 @@ export const marketingConfig: MarketingConfig = {
     //   href: "/docs",
     // },
     {
-      title: "AdLibrary",
-      href: "/adlibrary",
+      title: "AdSearch",
+      href: "/adsearch",
     },
     {
       title: "Favorites",

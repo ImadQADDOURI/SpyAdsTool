@@ -25,7 +25,6 @@ import FirefliesWrapper from "./microComponents/FirefliesWrapper";
 import { ScrollButtons } from "./microComponents/ScrollButtons";
 import SearchResults from "./microComponents/SearchResults";
 import AdaptiveSearchFilters from "./searchFilters/adaptive-search-filters";
-import FilterPanel from "./searchFilters/old-filter/FilterPanel";
 import SearchFilters from "./searchFilters/search-filters";
 import { SearchBar } from "./searchFilters/SearchBar";
 
