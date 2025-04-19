@@ -218,7 +218,7 @@ export default function SearchFilters({
   }, [filters, pathname, router, searchParams, onSearch]);
 
   return (
-    <Card className="w-full overflow-hidden rounded-xl border-purple-200/50 bg-gray-50/90 backdrop-blur-sm transition-all dark:border-purple-900/30 dark:bg-gray-900/90">
+    <Card className="w-full overflow-hidden rounded-xl border-purple-200/50 bg-white/90 backdrop-blur-sm transition-all dark:border-purple-900/30 dark:bg-gray-900/50">
       <CardContent className="p-5 backdrop-blur-sm">
         {/* 🎛️ Filter header */}
         <div className="mb-5 flex items-center justify-between">

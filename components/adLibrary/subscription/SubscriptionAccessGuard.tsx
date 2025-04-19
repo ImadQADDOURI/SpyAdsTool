@@ -81,12 +81,10 @@ export default function SubscriptionAccessGuard({
         onMouseLeave={() => setIsHovering(false)}
       >
         {/* 🌫️ Original content with lighter blur effect */}
-        <div className="pointer-events-none opacity-95 blur-[1px] filter">
-          {children}
-        </div>
+        <div className="pointer-events-none">{children}</div>
 
         {/* 🔮 Premium overlay with transparent to purple gradient */}
-        <div
+        {/* <div
           className={cn(
             "absolute inset-0 flex items-center justify-center",
             "bg-gradient-to-br from-transparent to-[#B977F8]/70",
@@ -104,7 +102,7 @@ export default function SubscriptionAccessGuard({
               />
             )}
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* ✨ Upgrade dialog */}

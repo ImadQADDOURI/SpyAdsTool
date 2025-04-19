@@ -474,7 +474,7 @@ function SearchFilterItemComponent({
               className={cn(
                 "w-full justify-between text-left font-normal",
                 hasValue
-                  ? "border-slate-300 bg-slate-50/50 text-foreground dark:border-slate-700 dark:bg-slate-900/20"
+                  ? "border-purple-300 bg-purple-50/50 text-foreground dark:border-purple-700 dark:bg-purple-900/20"
                   : "text-muted-foreground",
                 "transition-all duration-200 hover:border-slate-400 dark:hover:border-slate-600",
               )}
@@ -545,7 +545,7 @@ function SearchFilterItemComponent({
               hasValue
                 ? "border-purple-300 bg-purple-50/50 text-foreground dark:border-purple-700 dark:bg-purple-900/20"
                 : "text-muted-foreground",
-              "hover:border-slate-400 dark:hover:border-slate-600",
+              "transition-all duration-200 hover:border-slate-400 dark:hover:border-slate-600",
             )}
           >
             <div className="flex items-center gap-1 truncate">
