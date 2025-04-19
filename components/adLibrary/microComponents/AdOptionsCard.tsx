@@ -220,7 +220,6 @@ export function AdOptionsCard({ ad }: { ad: AdData }) {
                 icon="meta.svg"
                 label="View on Meta Ad Library"
                 href={`https://www.facebook.com/ads/library/?id=${ad_archive_id}`}
-                highlight={true}
               />
               <OptionItem
                 icon="meta.svg"
@@ -232,6 +231,7 @@ export function AdOptionsCard({ ad }: { ad: AdData }) {
                     : undefined
                 }
                 disabled={!snapshot.page_id}
+                highlight={true}
               />
               <OptionItem
                 icon="facebook.svg"
