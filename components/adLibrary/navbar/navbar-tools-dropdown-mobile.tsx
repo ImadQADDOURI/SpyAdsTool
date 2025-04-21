@@ -1,0 +1,162 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Calculator,
+  ChevronDown,
+  ChevronRight,
+  DollarSign,
+  LineChart,
+  PocketKnife,
+  ShoppingBag,
+} from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Icons } from "@/components/shared/icons";
+
+interface NavbarToolsDropdownMobileProps {
+  pathname: string;
+}
+
+export function NavbarToolsDropdownMobile({
+  pathname,
+}: NavbarToolsDropdownMobileProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const tools = [
+    {
+      id: "cod-calculator",
+      title: "COD Calculator",
+      href: "/tools/cod-calculator",
+      description:
+        "Calculate Cash on Delivery fees and profit margins instantly",
+      icon: Calculator,
+      isFree: true,
+      color: "purple",
+    },
+    {
+      id: "dropshipping-calculator",
+      title: "Dropshipping Calculator",
+      href: "/tools/dropshipping-calculator",
+      description:
+        "Estimate dropshipping costs, margins, and potential profits",
+      icon: ShoppingBag,
+      isFree: false,
+      color: "blue",
+    },
+    {
+      id: "cpa-calculator",
+      title: "CPA Calculator",
+      href: "/tools/cpa-calculator",
+      description: "Analyze Cost Per Acquisition metrics for your campaigns",
+      icon: DollarSign,
+      isFree: false,
+      color: "yellow",
+    },
+    {
+      id: "affiliate-calculator",
+      title: "Affiliate Marketing Calculator",
+      href: "/tools/affiliate-calculator",
+      description: "Track affiliate commissions and conversion metrics",
+      icon: LineChart,
+      isFree: true,
+      color: "pink",
+    },
+  ];
+
+  const isToolActive = tools.some((tool) => pathname === tool.href);
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
+      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md px-4 py-3 text-sm font-medium transition-colors hover:bg-muted">
+        <div className="flex items-center gap-3">
+          <PocketKnife
+            className={cn(
+              "size-5",
+              isToolActive ? "text-primary" : "text-muted-foreground",
+            )}
+          />
+          <span
+            className={cn(
+              isToolActive ? "text-primary" : "text-muted-foreground",
+            )}
+          >
+            Tools
+          </span>
+        </div>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronDown className="size-4" />
+        </motion.div>
+      </CollapsibleTrigger>
+      <AnimatePresence>
+        {isOpen && (
+          <CollapsibleContent>
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="px-2"
+            >
+              <div className="mt-1 flex flex-col gap-1">
+                {tools.map((tool) => (
+                  <motion.div
+                    key={tool.id}
+                    initial={{ opacity: 0, x: -5 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Link
+                      href={tool.href}
+                      className={cn(
+                        "flex items-center gap-3 rounded-md px-4 py-2.5 text-sm transition-colors hover:bg-muted",
+                        pathname === tool.href
+                          ? "bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 text-primary"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      <tool.icon
+                        className={cn(
+                          "size-4",
+                          tool.color === "purple" &&
+                            "text-purple-600 dark:text-purple-400",
+                          tool.color === "blue" &&
+                            "text-blue-600 dark:text-blue-400",
+                          tool.color === "yellow" &&
+                            "text-yellow-600 dark:text-yellow-400",
+                          tool.color === "pink" &&
+                            "text-pink-600 dark:text-pink-400",
+                        )}
+                      />
+                      <span className="flex-1">{tool.title}</span>
+                      {tool.isFree && (
+                        <Badge
+                          variant="outline"
+                          className="border-green-500 text-xs text-green-600 dark:text-green-400"
+                        >
+                          Free
+                        </Badge>
+                      )}
+                      <ChevronRight className="size-4" />
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </CollapsibleContent>
+        )}
+      </AnimatePresence>
+    </Collapsible>
+  );
+}

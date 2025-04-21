@@ -28,6 +28,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   // Initialize with URL param but don't sync afterward to allow user input
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [isSticky, setIsSticky] = useState(false);
+  const [navbarVisible, setNavbarVisible] = useState(true);
+  const [lastScrollPos, setLastScrollPos] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const searchPending = useRef(false);
 
@@ -37,6 +39,20 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const handleScroll = () => {
     if (ref.current) {
       setIsSticky(ref.current.getBoundingClientRect().top <= 0);
+
+      // Detect navbar visibility by scroll direction
+      const currentScrollPos = window.scrollY;
+      // Navbar is visible when scrolling up, hidden when scrolling down
+      const isScrollingUp = currentScrollPos < lastScrollPos;
+
+      // Only change navbar visibility state when there's enough scroll
+      if (currentScrollPos > 10) {
+        setNavbarVisible(isScrollingUp);
+      } else {
+        setNavbarVisible(true); // Always visible at top of page
+      }
+
+      setLastScrollPos(currentScrollPos);
     }
   };
 
@@ -45,7 +61,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [lastScrollPos]); // Include lastScrollPos in dependency array
 
   // Listen for URL changes and trigger search when needed
   useEffect(() => {
@@ -108,10 +124,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     >
       <div className="flex justify-center px-4" ref={ref}>
         <div
-          className={`w-full max-w-[600px] transition-all duration-100 ${
-            isSticky
-              ? "fixed top-16 z-10 animate-in fade-in slide-in-from-top-4"
-              : ""
+          className={`w-full max-w-[600px] transition-all duration-200 ${
+            isSticky ? "fixed z-30 animate-in fade-in slide-in-from-top-4" : ""
+          } ${
+            // Dynamic positioning based on navbar visibility
+            isSticky && navbarVisible
+              ? "top-[66px]" // Position below navbar when navbar is visible
+              : isSticky
+                ? "top-[2px]" // Position at top when navbar is hidden
+                : ""
           }`}
         >
           <div className="relative">
