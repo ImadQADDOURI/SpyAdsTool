@@ -89,7 +89,7 @@ export function NavbarLinks({ pathname }: NavbarLinksProps) {
               className={cn(
                 "size-4",
                 pathname === link.href
-                  ? "text-primary text-purple-500"
+                  ? "text-purple-500"
                   : "text-muted-foreground group-hover:text-foreground",
               )}
             />
