@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/collapsible";
 import { Icons } from "@/components/shared/icons";
 
+import { Tools } from "./navbar-links";
+
 interface NavbarToolsDropdownMobileProps {
   pathname: string;
 }
@@ -31,48 +33,7 @@ export function NavbarToolsDropdownMobile({
 }: NavbarToolsDropdownMobileProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const tools = [
-    {
-      id: "cod-calculator",
-      title: "COD Calculator",
-      href: "/tools/cod-calculator",
-      description:
-        "Calculate Cash on Delivery fees and profit margins instantly",
-      icon: Calculator,
-      isFree: true,
-      color: "purple",
-    },
-    {
-      id: "dropshipping-calculator",
-      title: "Dropshipping Calculator",
-      href: "/tools/dropshipping-calculator",
-      description:
-        "Estimate dropshipping costs, margins, and potential profits",
-      icon: ShoppingBag,
-      isFree: false,
-      color: "blue",
-    },
-    {
-      id: "cpa-calculator",
-      title: "CPA Calculator",
-      href: "/tools/cpa-calculator",
-      description: "Analyze Cost Per Acquisition metrics for your campaigns",
-      icon: DollarSign,
-      isFree: false,
-      color: "yellow",
-    },
-    {
-      id: "affiliate-calculator",
-      title: "Affiliate Marketing Calculator",
-      href: "/tools/affiliate-calculator",
-      description: "Track affiliate commissions and conversion metrics",
-      icon: LineChart,
-      isFree: true,
-      color: "pink",
-    },
-  ];
-
-  const isToolActive = tools.some((tool) => pathname === tool.href);
+  const isToolActive = Tools.some((tool) => pathname === tool.href);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
@@ -110,7 +71,7 @@ export function NavbarToolsDropdownMobile({
               className="px-2"
             >
               <div className="mt-1 flex flex-col gap-1">
-                {tools.map((tool) => (
+                {Tools.map((tool) => (
                   <motion.div
                     key={tool.id}
                     initial={{ opacity: 0, x: -5 }}

@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Icons } from "@/components/shared/icons";
 
+import { Tools } from "./navbar-links";
+
 interface NavbarToolsDropdownProps {
   pathname: string;
 }
@@ -29,48 +31,7 @@ interface NavbarToolsDropdownProps {
 export function NavbarToolsDropdown({ pathname }: NavbarToolsDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const tools = [
-    {
-      id: "cod-calculator",
-      title: "COD Calculator",
-      href: "/tools/cod-calculator",
-      description:
-        "Calculate Cash on Delivery fees and profit margins instantly",
-      icon: Calculator,
-      isFree: true,
-      color: "purple",
-    },
-    {
-      id: "dropshipping-calculator",
-      title: "Dropshipping Calculator",
-      href: "/tools/dropshipping-calculator",
-      description:
-        "Estimate dropshipping costs, margins, and potential profits",
-      icon: ShoppingBag,
-      isFree: false,
-      color: "blue",
-    },
-    {
-      id: "cpa-calculator",
-      title: "CPA Calculator",
-      href: "/tools/cpa-calculator",
-      description: "Analyze Cost Per Acquisition metrics for your campaigns",
-      icon: DollarSign,
-      isFree: false,
-      color: "yellow",
-    },
-    {
-      id: "affiliate-calculator",
-      title: "Affiliate Marketing Calculator",
-      href: "/tools/affiliate-calculator",
-      description: "Track affiliate commissions and conversion metrics",
-      icon: LineChart,
-      isFree: true,
-      color: "pink",
-    },
-  ];
-
-  const isToolActive = tools.some((tool) => pathname === tool.href);
+  const isToolActive = Tools.some((tool) => pathname === tool.href);
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -124,7 +85,7 @@ export function NavbarToolsDropdown({ pathname }: NavbarToolsDropdownProps) {
               transition={{ duration: 0.2 }}
             >
               <div className="grid grid-cols-1 gap-2">
-                {tools.map((tool) => (
+                {Tools.map((tool) => (
                   <DropdownMenuItem
                     key={tool.id}
                     asChild
