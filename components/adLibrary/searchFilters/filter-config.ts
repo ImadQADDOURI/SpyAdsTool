@@ -106,7 +106,7 @@ export const countryCodesAlpha2Flag: FilterOption[] = [
   { value: "IE", label: "Ireland", icon: "/flags/ie.svg" },
   {
     value: "IL",
-    label: "Israel",
+    label: "Israel (Occupied Palestine)",
     icon: "/flags/ps.svg", //there is no israel X_X , it's an Occupied Palestinian Territory by a group of WAR Criminals  "/flags/il.svg"
   },
   { value: "IT", label: "Italy", icon: "/flags/it.svg" },

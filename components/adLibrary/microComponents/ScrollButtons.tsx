@@ -1,36 +1,48 @@
-import { useCallback } from "react";
-import { ArrowDown, ArrowUp } from "lucide-react";
+// ========================================
+//        🧩 Scroll Buttons Component 🧩
+// ========================================
+
+import { useCallback, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ArrowUp, ChevronUp } from "lucide-react";
 
 import { Button } from "../../ui/button";
 
-export const ScrollButtons = () => {
-  const scrollTo = useCallback((position: "top" | "bottom") => {
-    window.scrollTo({
-      top: position === "top" ? 0 : document.body.scrollHeight,
-      behavior: "smooth",
-    });
+export function ScrollButtons() {
+  const [showScrollUp, setShowScrollUp] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollUp(window.scrollY > 300);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <div className="fixed bottom-16 right-4 flex flex-col space-y-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => scrollTo("top")}
-        className="rounded-full bg-white p-3 text-gray-800 shadow-md transition-all hover:bg-gray-100 hover:shadow-lg dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
-        aria-label="Scroll to top"
-      >
-        <ArrowUp className="h-5 w-5" />
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => scrollTo("bottom")}
-        className="rounded-full bg-white p-3 text-gray-800 shadow-md transition-all hover:bg-gray-100 hover:shadow-lg dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
-        aria-label="Scroll to bottom"
-      >
-        <ArrowDown className="h-5 w-5" />
-      </Button>
-    </div>
+    <AnimatePresence>
+      {showScrollUp && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          className="fixed bottom-6 right-6 z-50"
+        >
+          <Button
+            onClick={scrollToTop}
+            size="icon"
+            className="h-10 w-10 rounded-full bg-gradient-to-r from-[#6566F1] to-[#B977F8] shadow-lg transition-all duration-300 hover:opacity-90 hover:shadow-xl"
+          >
+            <ChevronUp className="h-5 w-5 text-white" />
+            <span className="sr-only">Scroll to top</span>
+          </Button>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
-};
+}

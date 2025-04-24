@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import {
   AdLibrarySearchPaginationQuery,
@@ -164,13 +165,12 @@ export const AdBrowser = () => {
                 </div>
                 <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
                   <span className="relative inline-block transform transition-transform duration-300 hover:scale-110">
-                    <Facebook
-                      className="-mt-4 mr-2 inline-block size-14"
-                      style={{
-                        filter:
-                          "drop-shadow(0px 1px 6px rgba(142, 4, 255, 0.3))",
-                        stroke: "url(#fb-icon-gradient)",
-                      }}
+                    <Image
+                      src="/facebook.svg"
+                      alt="Facebook Icon"
+                      className="-mt-4 mr-2 inline-block size-24"
+                      width={100} // adjust width as needed
+                      height={100} // adjust height as needed
                     />
                     <svg width="0" height="0" className="absolute">
                       <defs>
