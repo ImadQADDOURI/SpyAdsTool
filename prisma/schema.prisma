@@ -142,3 +142,33 @@ model TopStore {
   @@index([revenue])
   @@index([sales])
 }
+
+// ========================================
+//        📦 Top Product Model 📦
+// ========================================
+model Product {
+  
+  id String @id @default(cuid())// ✨ Unique identifier for the product (using CUID)
+  image String// 🖼️ URL of the product image
+  title String  // 🏷️ Title or name of the product
+  niche String?  // 틈️ Niche or category of the product (optional)
+  link String  // 🔗 Direct link to the product page or source
+  uploadDate DateTime?  // 📅 Date when the product was added/uploaded (optional)
+  stars Float?  // ⭐ Star rating out of 5 (optional)
+  buyPrice Float?  // 💰 Price to buy the product (optional)
+  sellPrice Float?  // 💲 Price to sell the product (optional)
+  totalSales Int?  // 📈 Estimated total sales per month (optional)
+  countries String[]  // 🌍 List of countries where the product is relevant/available (optional)  // Stored as an array of strings
+
+
+
+  createdAt DateTime @default(now())  // 🕰️ Timestamp when the product record was created
+  updatedAt DateTime @updatedAt  // 🕰️ Timestamp when the product record was last updated
+
+
+  // --- Indexes ---
+  @@index([title])  // 🔍 Index for faster searching/filtering by title
+  @@index([niche])  // 🔍 Index for faster searching/filtering by niche
+  @@index([createdAt])  // 🕒 Index for sorting by creation date
+
+}

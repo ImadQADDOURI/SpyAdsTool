@@ -1,5 +1,6 @@
 "use client";
 
+import { title } from "process";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -8,10 +9,12 @@ import {
   DollarSign,
   Heart,
   LineChart,
+  PackageOpen,
   Search,
   ShoppingBag,
   Store,
   TrendingUp,
+  Trophy,
   Zap,
 } from "lucide-react";
 
@@ -24,31 +27,12 @@ interface NavbarLinksProps {
   pathname: string;
 }
 export const Links = [
-  {
-    title: "Pricing",
-    href: "/pricing",
-    icon: DollarSign,
-  },
-  {
-    title: "AdSearch",
-    href: "/adsearch",
-    icon: Search,
-  },
-  {
-    title: "Favorites",
-    href: "/favorites",
-    icon: Heart,
-  },
-  {
-    title: "Trend",
-    href: "/trend",
-    icon: TrendingUp,
-  },
-  {
-    title: "Top Stores",
-    href: "/top-stores",
-    icon: Store,
-  },
+  { title: "Pricing", href: "/pricing", icon: DollarSign },
+  { title: "AdSearch", href: "/adsearch", icon: Search },
+  { title: "Favorites", href: "/favorites", icon: Heart },
+  { title: "Trend", href: "/trend", icon: TrendingUp },
+  { title: "Top Stores", href: "/top-stores", icon: Store },
+  { title: "Top Products", href: "/top-products", icon: PackageOpen },
 ];
 
 export const Tools = [

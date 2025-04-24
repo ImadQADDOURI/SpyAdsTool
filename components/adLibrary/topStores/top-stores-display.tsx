@@ -1,46 +1,51 @@
-// @/components/top-stores-display.tsx
 "use client";
 
-import { useState } from "react";
-import { type TopStore } from "@prisma/client";
-import { motion } from "framer-motion";
+import type React from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { TopStore } from "@prisma/client";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  ArrowRight,
+  ArrowUpDown,
   ArrowUpRight,
-  BadgeCheck,
-  BarChart2,
-  ChevronRight,
+  ChevronUp,
+  Crosshair,
   DollarSign,
   ExternalLink,
-  Folder,
+  Filter,
+  Globe,
   LocateFixed,
+  Medal,
   Rocket,
   Search,
-  Shield,
   ShoppingBag,
-  Sparkles,
+  Star,
   Store,
+  Target,
   TrendingUp,
+  X,
   Zap,
 } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import FirefliesWrapper from "@/components/adLibrary/microComponents/FirefliesWrapper";
 import { Loading } from "@/components/adLibrary/microComponents/Loading";
 
+import FirefliesWrapper from "../microComponents/FirefliesWrapper";
 import { ScrollButtons } from "../microComponents/ScrollButtons";
 
 interface TopStoresDisplayProps {
@@ -48,21 +53,59 @@ interface TopStoresDisplayProps {
   isLoading?: boolean;
 }
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut",
-    },
-  },
+// Sort options type
+type SortOption = {
+  label: string;
+  value: keyof TopStore | "conversionRate" | "aov";
+  icon: React.ReactNode;
+  direction: "asc" | "desc";
 };
 
-export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+// Scroll Buttons Component
 
+// Store Card Skeleton Component
+function StoreCardSkeleton() {
+  return (
+    <Card className="h-full overflow-hidden rounded-xl border-0 bg-white/90 backdrop-blur-sm dark:bg-gray-900/90">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-t-xl">
+        <Skeleton className="h-full w-full" />
+      </div>
+      <CardContent className="p-4">
+        <div className="mb-3 flex gap-1.5">
+          <Skeleton className="h-5 w-7 rounded-sm" />
+          <Skeleton className="h-5 w-7 rounded-sm" />
+        </div>
+        <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+          <Skeleton className="h-3.5 w-16" />
+          <Skeleton className="ml-auto h-3.5 w-14" />
+          <Skeleton className="h-3.5 w-16" />
+          <Skeleton className="ml-auto h-3.5 w-12" />
+          <Skeleton className="h-3.5 w-16" />
+          <Skeleton className="ml-auto h-3.5 w-14" />
+          <Skeleton className="h-3.5 w-16" />
+          <Skeleton className="ml-auto h-3.5 w-12" />
+        </div>
+      </CardContent>
+      <CardFooter className="border-t border-gray-100 bg-gradient-to-r from-gray-50/50 to-white/50 p-3 dark:border-gray-800 dark:from-gray-900/50 dark:to-gray-800/50">
+        <Skeleton className="h-8 w-full rounded-full" />
+      </CardFooter>
+    </Card>
+  );
+}
+
+export function TopStoresDisplay({
+  stores,
+  isLoading = false,
+}: TopStoresDisplayProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOption, setSortOption] = useState<SortOption>({
+    label: "Highest Revenue",
+    value: "revenue",
+    icon: <DollarSign className="mr-2 h-4 w-4" />,
+    direction: "desc",
+  });
+
+  // Calculate metrics for a store
   const calculateMetrics = (store: TopStore) => {
     const conversionRate = (store.sales / 10000) * 100;
     const aov = store.revenue / store.sales;
@@ -74,17 +117,101 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
   };
 
   // Filter stores based on search query
-  const filteredStores = stores.filter((store) => {
-    if (!searchQuery) return true;
+  const filteredStores = useMemo(() => {
+    if (!searchQuery.trim()) return stores;
 
-    const query = searchQuery.toLowerCase();
-    return (
-      store.name.toLowerCase().includes(query) ||
-      store.niche.toLowerCase().includes(query) ||
-      store.link.toLowerCase().includes(query) ||
-      store.CTA.toLowerCase().includes(query)
-    );
-  });
+    const query = searchQuery.toLowerCase().trim();
+    return stores.filter((store) => {
+      return (
+        store.name.toLowerCase().includes(query) ||
+        store.niche.toLowerCase().includes(query) ||
+        store.link.toLowerCase().includes(query) ||
+        store.CTA.toLowerCase().includes(query)
+      );
+    });
+  }, [stores, searchQuery]);
+
+  // Sort stores based on selected option
+  const sortedStores = useMemo(() => {
+    return [...filteredStores].sort((a, b) => {
+      // Handle special calculated metrics
+      if (sortOption.value === "conversionRate") {
+        const convRateA = (a.sales / 10000) * 100;
+        const convRateB = (b.sales / 10000) * 100;
+        return sortOption.direction === "desc"
+          ? convRateB - convRateA
+          : convRateA - convRateB;
+      }
+
+      if (sortOption.value === "aov") {
+        const aovA = a.revenue / a.sales;
+        const aovB = b.revenue / b.sales;
+        return sortOption.direction === "desc" ? aovB - aovA : aovA - aovB;
+      }
+
+      // Handle regular properties
+      const valueA = a[sortOption.value as keyof TopStore];
+      const valueB = b[sortOption.value as keyof TopStore];
+
+      // Handle string values
+      if (typeof valueA === "string" && typeof valueB === "string") {
+        return sortOption.direction === "desc"
+          ? valueB.localeCompare(valueA)
+          : valueA.localeCompare(valueB);
+      }
+
+      // Handle number values
+      return sortOption.direction === "desc"
+        ? (valueB as number) - (valueA as number)
+        : (valueA as number) - (valueB as number);
+    });
+  }, [filteredStores, sortOption]);
+
+  // Sort options
+  const sortOptions: SortOption[] = [
+    {
+      label: "Highest Revenue",
+      value: "revenue",
+      icon: <DollarSign className="mr-2 h-4 w-4" />,
+      direction: "desc",
+    },
+    {
+      label: "Lowest Revenue",
+      value: "revenue",
+      icon: <DollarSign className="mr-2 h-4 w-4" />,
+      direction: "asc",
+    },
+    {
+      label: "Highest Sales",
+      value: "sales",
+      icon: <ShoppingBag className="mr-2 h-4 w-4" />,
+      direction: "desc",
+    },
+    {
+      label: "Highest Conversion Rate",
+      value: "conversionRate",
+      icon: <TrendingUp className="mr-2 h-4 w-4" />,
+      direction: "desc",
+    },
+    {
+      label: "Highest AOV",
+      value: "aov",
+      icon: <ArrowUpRight className="mr-2 h-4 w-4" />,
+      direction: "desc",
+    },
+    {
+      label: "A-Z",
+      value: "name",
+      icon: <Globe className="mr-2 h-4 w-4" />,
+      direction: "asc",
+    },
+    {
+      label: "Z-A",
+      value: "name",
+      icon: <Globe className="mr-2 h-4 w-4" />,
+      direction: "desc",
+    },
+  ];
 
   if (isLoading) {
     return (
@@ -144,85 +271,156 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mb-8 grid grid-cols-2 gap-4 rounded-xl bg-white/50 p-6 backdrop-blur-sm dark:bg-gray-800/50 md:grid-cols-4"
+          className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4"
         >
-          <div className="flex items-center space-x-3">
-            <div className="rounded-lg bg-[#6566F1]/10 p-3 dark:bg-[#6566F1]/20">
-              <DollarSign className="h-6 w-6 text-[#6566F1]" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Avg Revenue</p>
-              <p className="text-xl font-bold">
-                $
-                {(
-                  stores.reduce((sum, store) => sum + store.revenue, 0) /
-                  (stores.length || 1)
-                ).toLocaleString()}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="rounded-lg bg-[#B977F8]/10 p-3 dark:bg-[#B977F8]/20">
-              <ShoppingBag className="h-6 w-6 text-[#B977F8]" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Avg Sales</p>
-              <p className="text-xl font-bold">
-                {(
-                  stores.reduce((sum, store) => sum + store.sales, 0) /
-                  (stores.length || 1)
-                ).toLocaleString()}
-              </p>
+          <div className="rounded-xl bg-white/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md dark:bg-gray-800/80">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Avg Revenue
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  $
+                  {(
+                    stores.reduce((sum, store) => sum + store.revenue, 0) /
+                    (stores.length || 1)
+                  ).toLocaleString()}
+                </p>
+              </div>
+              <div className="rounded-full bg-[#6566F1]/10 p-3 dark:bg-[#6566F1]/20">
+                <DollarSign className="h-5 w-5 text-[#6566F1]" />
+              </div>
             </div>
           </div>
-          <div className="flex items-center space-x-3">
-            <div className="rounded-lg bg-emerald-500/10 p-3 dark:bg-emerald-500/20">
-              <TrendingUp className="h-6 w-6 text-emerald-500" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Avg Conversion</p>
-              <p className="text-xl font-bold">
-                {(
-                  stores.reduce(
-                    (sum, store) => sum + (store.sales / 10000) * 100,
-                    0,
-                  ) / (stores.length || 1)
-                ).toFixed(1)}
-                %
-              </p>
+
+          <div className="rounded-xl bg-white/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md dark:bg-gray-800/80">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Avg Sales
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {(
+                    stores.reduce((sum, store) => sum + store.sales, 0) /
+                    (stores.length || 1)
+                  ).toLocaleString()}
+                </p>
+              </div>
+              <div className="rounded-full bg-[#B977F8]/10 p-3 dark:bg-[#B977F8]/20">
+                <ShoppingBag className="h-5 w-5 text-[#B977F8]" />
+              </div>
             </div>
           </div>
-          <div className="flex items-center space-x-3">
-            <div className="rounded-lg bg-amber-500/10 p-3 dark:bg-amber-500/20">
-              <Rocket className="h-6 w-6 text-amber-500" />
+
+          <div className="rounded-xl bg-white/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md dark:bg-gray-800/80">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Avg Conversion
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {(
+                    stores.reduce(
+                      (sum, store) => sum + (store.sales / 10000) * 100,
+                      0,
+                    ) / (stores.length || 1)
+                  ).toFixed(1)}
+                  %
+                </p>
+              </div>
+              <div className="rounded-full bg-emerald-500/10 p-3 dark:bg-emerald-500/20">
+                <TrendingUp className="h-5 w-5 text-emerald-500" />
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Avg Order Value</p>
-              <p className="text-xl font-bold">
-                $
-                {(
-                  stores.reduce(
-                    (sum, store) => sum + store.revenue / store.sales,
-                    0,
-                  ) / (stores.length || 1)
-                ).toFixed(2)}
-              </p>
+          </div>
+
+          <div className="rounded-xl bg-white/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md dark:bg-gray-800/80">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Avg Order Value
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  $
+                  {(
+                    stores.reduce(
+                      (sum, store) => sum + store.revenue / store.sales,
+                      0,
+                    ) / (stores.length || 1)
+                  ).toFixed(2)}
+                </p>
+              </div>
+              <div className="rounded-full bg-amber-500/10 p-3 dark:bg-amber-500/20">
+                <Rocket className="h-5 w-5 text-amber-500" />
+              </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Search input */}
-        <div className="mb-8 flex justify-end">
+        {/* Search and Sort Controls */}
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-wrap gap-2"
+          >
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-10 gap-1 border-0 bg-white/90 shadow-sm backdrop-blur-sm hover:bg-white/100 dark:bg-gray-800/90 dark:hover:bg-gray-800/100"
+                >
+                  <ArrowUpDown className="mr-2 h-4 w-4 text-[#6566F1] dark:text-[#B977F8]" />
+                  <span className="text-gray-700 dark:text-gray-300">
+                    Sort:{" "}
+                  </span>
+                  <span className="font-medium text-[#6566F1] dark:text-[#B977F8]">
+                    {sortOption.label}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                {sortOptions.map((option) => (
+                  <DropdownMenuItem
+                    key={`${option.value}-${option.direction}`}
+                    onClick={() => setSortOption(option)}
+                    className="flex items-center"
+                  >
+                    {option.icon}
+                    {option.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button
+              variant="outline"
+              className="h-10 gap-1 border-0 bg-white/90 shadow-sm backdrop-blur-sm hover:bg-white/100 dark:bg-gray-800/90 dark:hover:bg-gray-800/100"
+              onClick={() => setSearchQuery("")}
+              disabled={!searchQuery}
+            >
+              <Filter className="mr-2 h-4 w-4 text-[#6566F1] dark:text-[#B977F8]" />
+              <span className="text-gray-700 dark:text-gray-300">Filters</span>
+              {searchQuery && (
+                <Badge className="ml-2 bg-[#6566F1] hover:bg-[#5758E0] dark:bg-[#B977F8] dark:hover:bg-[#A866E7]">
+                  <X className="mr-1 h-3 w-3" /> Clear
+                </Badge>
+              )}
+            </Button>
+          </motion.div>
+
+          {/* Search input */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="relative w-full max-w-xs transition-all duration-300 focus-within:max-w-sm"
+            transition={{ delay: 0.3 }}
+            className="relative w-full max-w-xs transition-all duration-300 focus-within:max-w-sm sm:w-auto"
           >
             <div className="group relative flex items-center">
               <Input
-                className="h-10 rounded-full border-gray-200 bg-white/70 pl-4 pr-12 text-sm backdrop-blur-sm transition-all duration-300 placeholder:text-gray-400 hover:bg-white/90 focus:border-[#6566F1] focus:bg-white focus:ring-2 focus:ring-[#6566F1]/20 dark:border-gray-700 dark:bg-gray-800/70 dark:hover:bg-gray-800/90 dark:focus:border-[#B977F8] dark:focus:ring-[#B977F8]/20"
-                placeholder="Search Stores..."
+                className="h-10 rounded-full border-0 bg-white/90 pl-4 pr-12 text-sm shadow-sm backdrop-blur-sm transition-all duration-300 placeholder:text-gray-400 hover:bg-white/100 focus:ring-2 focus:ring-[#6566F1]/20 dark:bg-gray-800/90 dark:hover:bg-gray-800/100 dark:focus:ring-[#B977F8]/20"
+                placeholder="Search stores..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 disabled={isLoading}
@@ -234,16 +432,27 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
           </motion.div>
         </div>
 
+        {/* Results Count */}
+        <div className="mb-6">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {isLoading
+              ? "Loading stores..."
+              : `Showing ${sortedStores.length} ${sortedStores.length === 1 ? "store" : "stores"}${
+                  searchQuery ? ` for "${searchQuery}"` : ""
+                }`}
+          </p>
+        </div>
+
         {/* No results message */}
-        {searchQuery && filteredStores.length === 0 && (
+        {searchQuery && sortedStores.length === 0 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="flex flex-col items-center justify-center rounded-xl bg-white/70 py-16 text-center shadow-sm backdrop-blur-sm dark:bg-gray-800/70"
+            className="flex flex-col items-center justify-center rounded-xl bg-white/90 py-16 text-center shadow-sm backdrop-blur-sm dark:bg-gray-800/90"
           >
             <div className="rounded-full bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 p-5">
-              <Store className="h-10 w-10 text-[#B977F8]" />
+              <Search className="h-10 w-10 text-[#B977F8]" />
             </div>
             <h3 className="mt-6 text-lg font-medium text-gray-700 dark:text-gray-200">
               No Stores match &quot;{searchQuery}&quot;
@@ -258,183 +467,117 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
         )}
 
         {/* Stores Grid */}
-        {(!searchQuery || (searchQuery && filteredStores.length > 0)) && (
+        {(!searchQuery || (searchQuery && sortedStores.length > 0)) && (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredStores.map((store, index) => {
-              const metrics = calculateMetrics(store);
-              return (
-                <motion.div
-                  key={store.id}
-                  variants={cardVariants}
-                  initial="hidden"
-                  animate="visible"
-                  transition={{ delay: 0.1 * index }}
-                >
-                  <Card className="group relative h-full overflow-hidden border border-gray-200/50 transition-all duration-300 hover:border-[#B977F8]/30 hover:shadow-xl dark:border-gray-700/50 dark:hover:border-[#B977F8]/30 dark:hover:shadow-[#B977F8]/10">
-                    {/* Hot Store Badge */}
-                    {(store.revenue > 50000 || store.sales > 1000) && (
-                      <div className="absolute right-3 top-3 z-10">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="flex items-center justify-center rounded-full bg-amber-500 p-2 text-white">
-                                <Zap className="h-4 w-4 fill-white" />
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Hot Store - High Performance</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    )}
+            {isLoading
+              ? Array.from({ length: 8 }).map((_, index) => (
+                  <StoreCardSkeleton key={index} />
+                ))
+              : sortedStores.map((store, index) => {
+                  const metrics = calculateMetrics(store);
+                  return (
+                    <motion.div
+                      key={store.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: 0.05 * index }}
+                      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                      className="group h-full"
+                    >
+                      <Card className="h-full overflow-hidden rounded-xl border-0 bg-white/90 backdrop-blur-sm transition-all duration-300 hover:shadow-xl dark:bg-gray-900/90">
+                        {/* Store Image */}
+                        <div className="relative aspect-[4/3] overflow-hidden rounded-t-xl">
+                          <img
+                            src={store.image || "/placeholder.svg"}
+                            alt={store.name}
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            loading="lazy"
+                          />
 
-                    {/* Store Image */}
-                    <CardHeader className="relative p-0">
-                      <div className="relative h-48 overflow-hidden">
-                        <img
-                          src={store.image}
-                          alt={store.name}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                        <div className="absolute bottom-0 left-0 p-4">
-                          <h3 className="text-xl font-bold text-white">
-                            {store.name}
-                          </h3>
-                          <div className="flex items-center space-x-2">
-                            <span className="inline-flex items-center space-x-1 rounded-full bg-[#B977F8]/90 px-3 py-1 text-xs font-medium text-white">
-                              <LocateFixed className="h-4 w-4" />
-                              <span>{store.niche}</span>
-                            </span>
+                          {/* Enhanced overlay gradient for better text visibility */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-90 transition-opacity duration-300" />
+
+                          {/* Hot Store Badge */}
+                          {(store.revenue > 50000 || store.sales > 1000) && (
+                            <div className="absolute right-3 top-3 z-10">
+                              <div className="flex items-center justify-center rounded-full bg-black/60 p-2 text-yellow-300 shadow-md">
+                                <Star className="h-4 w-4" />
+                              </div>
+                            </div>
+                          )}
+
+                          {/* niche overlay on image */}
+                          <div className="absolute left-3 top-3 rounded-full bg-black/60 py-1 pl-1 pr-2 text-xs font-medium text-white backdrop-blur-sm">
+                            <LocateFixed className="mr-1 inline-block h-4 w-4" />
+                            {store.niche}
+                          </div>
+
+                          {/* Store name  */}
+                          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                            <h3 className="line-clamp-2 text-lg font-semibold leading-tight drop-shadow-md">
+                              {store.name}
+                            </h3>
                           </div>
                         </div>
-                      </div>
-                    </CardHeader>
 
-                    {/* Store Metrics */}
-                    <CardContent className="p-4">
-                      <div className="grid grid-cols-2 gap-3">
-                        {/* Revenue */}
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <motion.div
-                                whileHover={{ y: -2 }}
-                                className="flex items-center space-x-2 rounded-lg bg-[#6566F1]/10 p-3 dark:bg-[#6566F1]/20"
-                              >
-                                <DollarSign className="h-5 w-5 text-[#6566F1]" />
-                                <div>
-                                  <p className="text-xs text-muted-foreground">
-                                    Revenue
-                                  </p>
-                                  <p className="font-bold">
-                                    ${(store.revenue / 1000).toFixed(1)}K
-                                  </p>
-                                </div>
-                              </motion.div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>
-                                ${store.revenue.toLocaleString()} total revenue
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <CardContent className="p-4">
+                          {/* Compact metrics grid with highlights */}
+                          <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+                            {/* Revenue */}
+                            <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                              <DollarSign className="mr-1.5 h-3.5 w-3.5" />
+                              <span>Revenue</span>
+                            </div>
+                            <div className="text-right font-medium">
+                              <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-transparent">
+                                ${(store.revenue / 1000).toFixed(1)}K
+                              </span>
+                            </div>
 
-                        {/* Sales */}
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <motion.div
-                                whileHover={{ y: -2 }}
-                                className="flex items-center space-x-2 rounded-lg bg-[#B977F8]/10 p-3 dark:bg-[#B977F8]/20"
-                              >
-                                <ShoppingBag className="h-5 w-5 text-[#B977F8]" />
-                                <div>
-                                  <p className="text-xs text-muted-foreground">
-                                    Sales
-                                  </p>
-                                  <p className="font-bold">
-                                    {store.sales.toLocaleString()}
-                                  </p>
-                                </div>
-                              </motion.div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{store.sales.toLocaleString()} total orders</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                            {/* Sales */}
+                            <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                              <ShoppingBag className="mr-1.5 h-3.5 w-3.5" />
+                              <span>Sales</span>
+                            </div>
+                            <div className="text-right font-medium">
+                              {store.sales.toLocaleString()}
+                            </div>
 
-                        {/* Conversion Rate */}
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <motion.div
-                                whileHover={{ y: -2 }}
-                                className="flex items-center space-x-2 rounded-lg bg-emerald-500/10 p-3 dark:bg-emerald-500/20"
-                              >
-                                <BarChart2 className="h-5 w-5 text-emerald-500" />
-                                <div>
-                                  <p className="text-xs text-muted-foreground">
-                                    Conv. Rate
-                                  </p>
-                                  <p className="font-bold">
-                                    {metrics.conversionRate}%
-                                  </p>
-                                </div>
-                              </motion.div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Estimated from 10,000 visitors</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                            {/* Conversion Rate */}
+                            <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                              <TrendingUp className="mr-1.5 h-3.5 w-3.5" />
+                              <span>Conv. Rate</span>
+                            </div>
+                            <div className="text-right font-medium text-emerald-600 dark:text-emerald-400">
+                              {metrics.conversionRate}%
+                            </div>
 
-                        {/* AOV */}
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <motion.div
-                                whileHover={{ y: -2 }}
-                                className="flex items-center space-x-2 rounded-lg bg-amber-500/10 p-3 dark:bg-amber-500/20"
-                              >
-                                <ArrowUpRight className="h-5 w-5 text-amber-500" />
-                                <div>
-                                  <p className="text-xs text-muted-foreground">
-                                    Avg. Order
-                                  </p>
-                                  <p className="font-bold">${metrics.aov}</p>
-                                </div>
-                              </motion.div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Average order value</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    </CardContent>
+                            {/* AOV */}
+                            <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                              <ArrowUpRight className="mr-1.5 h-3.5 w-3.5" />
+                              <span>Avg. Order</span>
+                            </div>
+                            <div className="text-right font-medium">
+                              ${metrics.aov}
+                            </div>
+                          </div>
+                        </CardContent>
 
-                    {/* CTA */}
-                    <CardFooter className="p-4 pt-0">
-                      <a
-                        href={store.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex w-full items-center justify-center space-x-2 rounded-lg bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-4 py-3 text-sm font-medium text-white shadow-md transition-all hover:shadow-lg hover:shadow-[#B977F8]/40"
-                      >
-                        <Zap className="h-4 w-4" />
-                        <span>{store.CTA}</span>
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                    </CardFooter>
-                  </Card>
-                </motion.div>
-              );
-            })}
+                        <CardFooter className="border-t border-gray-100 bg-gradient-to-r from-gray-50/50 to-white/50 p-3 dark:border-gray-800 dark:from-gray-900/50 dark:to-gray-800/50">
+                          <a
+                            href={store.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-4 py-2 text-xs font-medium text-white transition-all duration-300 hover:from-[#5758E0] hover:to-[#A866E7] hover:shadow-md"
+                          >
+                            {store.CTA}
+                            <ExternalLink className="ml-1.5 h-3 w-3" />
+                          </a>
+                        </CardFooter>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
           </div>
         )}
 
@@ -444,10 +587,10 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex flex-col items-center justify-center py-16"
+            className="flex flex-col items-center justify-center rounded-xl bg-white/90 py-16 text-center shadow-sm backdrop-blur-sm dark:bg-gray-800/90"
           >
-            <div className="rounded-full bg-gray-200 p-8 dark:bg-gray-700">
-              <ShoppingBag className="h-10 w-10 text-gray-400 dark:text-gray-500" />
+            <div className="rounded-full bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 p-5">
+              <Store className="h-10 w-10 text-[#B977F8]" />
             </div>
             <h3 className="mt-6 text-xl font-medium text-gray-900 dark:text-gray-100">
               No elite stores found
@@ -456,7 +599,10 @@ export function TopStoresDisplay({ stores, isLoading }: TopStoresDisplayProps) {
               We couldn&apos;t find any top performing stores matching your
               criteria.
             </p>
-            <Button variant="outline" className="mt-6">
+            <Button
+              variant="outline"
+              className="mt-6 border-[#6566F1] text-[#6566F1] hover:bg-[#6566F1]/10 dark:border-[#B977F8] dark:text-[#B977F8] dark:hover:bg-[#B977F8]/10"
+            >
               Refresh results
             </Button>
           </motion.div>
