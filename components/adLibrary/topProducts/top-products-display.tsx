@@ -646,7 +646,7 @@ export default function TopProductsDisplay() {
                   <div className="col-span-full rounded-xl bg-white/90 py-12 text-center shadow-sm backdrop-blur-sm dark:bg-gray-800/90">
                     <Search className="mx-auto h-12 w-12 text-gray-400" />
                     <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
-                      No products found matching "{searchQuery}"
+                      No products found matching &quot;{searchQuery}&quot;
                     </h3>
                     <p className="mt-2 text-gray-500 dark:text-gray-400">
                       Try adjusting your search terms
