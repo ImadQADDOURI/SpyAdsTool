@@ -1,14 +1,12 @@
-// @/actions/Meta-GraphQL-Api.ts
 "use server";
 
 import crypto from "crypto";
-import { cache as reactCache } from "react";
 import { unstable_cache as nextCache, revalidateTag } from "next/cache";
 import { toggleMetaGraphQLConfig } from "@/actions/meta-graphql-config-actions";
 import {
   getActiveConfigIds,
-  getNextActiveConfigId,
-  refreshActiveConfigsCache, // Import refresh just in case
+  getRandomActiveConfigId,
+  refreshActiveConfigsCache,
 } from "@/actions/Meta-GraphQL-config-rotation";
 import {
   apiNameToDocId,
@@ -198,34 +196,24 @@ async function executeGraphQLRequest(
     return parsedData.length === 1 ? parsedData[0] : parsedData;
     // --- End of existing JSON parsing logic ---
   } catch (error) {
-    // 💥 Handle fetch errors OR the ConfigDeactivationError thrown above
+    // 💥 Handle fetch errors or the ConfigDeactivationError thrown above
 
-    // If it's already our custom error, just re-throw it up to metaGraphQLApi
+    // If it's already our custom error from the Meta login check, just re-throw it
     if (error instanceof ConfigDeactivationError) {
       throw error;
     }
 
-    // Otherwise, it's likely a network/fetch error or parsing error
+    // For all other errors, log but don't create a ConfigDeactivationError
     console.error(
-      "💥 executeGraphQLRequest Failed (Inner Catch):",
+      "💥 executeGraphQLRequest Failed:",
       error instanceof Error ? error.message : "Unknown error",
       configResult?.id ? `(Config ID: ${configResult.id})` : "",
     );
 
-    // ‼️ If a specific config ID was used, signal deactivation for this general error
-    if (configResult?.id && error instanceof Error) {
-      console.warn(
-        `🚨 General fetch/parse error with config ID: ${configResult.id}. Signaling deactivation.`,
-      );
-      // 🔥 Throw custom error, wrapping the original error
-      throw new ConfigDeactivationError(configResult.id, error);
-    }
-
-    // If no config ID was involved or it wasn't an Error instance, just re-throw
+    // Simply re-throw the original error without deactivating the config
     throw error;
   }
 }
-
 // 🧹 CACHE INVALIDATION FUNCTION ==============================================
 export async function invalidateGraphQLCache(params?: MetaGraphQLApiProps) {
   if (params) {
@@ -346,7 +334,7 @@ export async function fetchGraphQL(
 
 // 🔒 CONFIGURATION RETRIEVAL ==================================================
 // Cache for fetching specific config details by ID
-const fetchConfigById = reactCache(
+const fetchConfigById = nextCache(
   async (configId: string): Promise<GraphQLConfigWithId | null> => {
     // console.log(`💾 Fetching config details for ID: ${configId} from DB`);
     try {
@@ -395,6 +383,11 @@ const fetchConfigById = reactCache(
       throw error;
     }
   },
+  ["fetchConfigById"], // Base key for the cache
+  {
+    revalidate: CACHE_CONFIG.DEFAULT_REVALIDATE_SECONDS,
+    tags: ["config-cache", ACTIVE_CONFIGS_CACHE_TAG], // Add appropriate tags
+  },
 );
 
 export const getGraphQLConfig = async (
@@ -411,7 +404,7 @@ export const getGraphQLConfig = async (
     return specificConfig;
   } else {
     // console.log("⚙️ No specific config ID provided, using rotation...");
-    const nextId = await getNextActiveConfigId();
+    const nextId = await getRandomActiveConfigId();
 
     if (!nextId) {
       console.error(
@@ -454,86 +447,93 @@ export async function getCacheStats() {
 }
 
 // 🧰 JSON PARSING UTILITIES ===================================================
+/**
+ * 🚀 Hyper-optimized JSON objects parser
+ * For well-formed JSONs with minimal overhead
+ */
 function parseJsonObjects(rawText: string): any[] {
-  // 🧼 STEP 1: CLEAN UNWANTED PREFIXES
-  const cleanedText = rawText
-    // 🔄 Remove all "for(;;);" variations (case-insensitive with optional spaces)
-    .replace(/for\s*\(\s*;;\s*\)\s*;?/gim, "")
-    // ✂️ Trim whitespace from both ends
-    .trim();
-
-  // 🎯 STEP 2: ATTEMPT SINGLE JSON PARSE FIRST
+  // 🎯 Quick path: try parsing as single JSON (most common case)
   try {
-    return [JSON.parse(cleanedText)];
+    return [JSON.parse(rawText)];
   } catch {
-    // Continue to multi-json parsing if single parse fails
+    // Continue with multi-JSON parsing
   }
 
-  // 🔄 STEP 3: EFFICIENT MULTI-JSON HANDLING
-  const jsonObjects: unknown[] = [];
-  let currentObject = "";
-  let bracketBalance = 0;
-  let inString = false;
-  let escaped = false;
+  const results: any[] = [];
+  const len = rawText.length;
+  let pos = 0;
 
-  // 🚀 OPTIMIZED CHARACTER ITERATION (O(n) complexity)
-  for (let i = 0; i < cleanedText.length; i++) {
-    const char = cleanedText[i];
+  // Skip initial whitespace
+  while (
+    pos < len &&
+    (rawText[pos] === " " ||
+      rawText[pos] === "\n" ||
+      rawText[pos] === "\t" ||
+      rawText[pos] === "\r")
+  )
+    pos++;
 
-    // 🧭 STATE MANAGEMENT
-    if (char === '"' && !escaped) inString = !inString;
-    escaped = char === "\\" && !escaped;
-
-    // 📦 BRACKET TRACKING (only when not in string)
-    if (!inString) {
-      if (char === "{") bracketBalance++;
-      if (char === "}") bracketBalance--;
+  // 🔍 Process each JSON object
+  while (pos < len) {
+    // Ensure we're starting with an object
+    if (rawText[pos] !== "{") {
+      pos++;
+      // Skip to next potential JSON start
+      while (pos < len && rawText[pos] !== "{") pos++;
+      continue;
     }
 
-    currentObject += char;
+    // Find matching closing brace
+    const startPos = pos;
+    let braceCount = 1;
+    let inString = false;
 
-    // 🎉 COMPLETE OBJECT DETECTION
-    if (bracketBalance === 0 && currentObject.trim() !== "") {
-      try {
-        jsonObjects.push(JSON.parse(currentObject));
-        currentObject = "";
-      } catch (error) {
-        // 🚨 RECOVERY: Attempt to find valid JSON in current buffer
-        const lastValidIndex = findLastValidObjectEnd(currentObject);
-        if (lastValidIndex > -1) {
-          try {
-            jsonObjects.push(
-              JSON.parse(currentObject.slice(0, lastValidIndex + 1)),
-            );
-            currentObject = currentObject.slice(lastValidIndex + 1);
-          } catch {
-            // Continue processing remaining text
-          }
+    pos++;
+
+    // Fast scan for object boundaries
+    while (pos < len && braceCount > 0) {
+      const char = rawText[pos];
+
+      if (char === '"') {
+        // Check if quote is escaped
+        let escaped = false;
+        let checkPos = pos - 1;
+        while (checkPos >= 0 && rawText[checkPos] === "\\") {
+          escaped = !escaped;
+          checkPos--;
         }
+        if (!escaped) inString = !inString;
+      }
+
+      // Only count braces outside of strings
+      if (!inString) {
+        if (char === "{") braceCount++;
+        else if (char === "}") braceCount--;
+      }
+
+      pos++;
+    }
+
+    // Extract and parse the object if we found a complete one
+    if (braceCount === 0) {
+      try {
+        // Slight optimization: use slice instead of substring for newer JS engines
+        results.push(JSON.parse(rawText.slice(startPos, pos)));
+      } catch {
+        // Skip invalid JSON
       }
     }
+
+    // Skip whitespace between objects
+    while (
+      pos < len &&
+      (rawText[pos] === " " ||
+        rawText[pos] === "\n" ||
+        rawText[pos] === "\t" ||
+        rawText[pos] === "\r")
+    )
+      pos++;
   }
 
-  // 🔍 FINAL ATTEMPT FOR REMAINING TEXT
-  if (currentObject.trim()) {
-    try {
-      jsonObjects.push(JSON.parse(currentObject));
-    } catch {
-      // Ignore trailing invalid JSON
-    }
-  }
-
-  return jsonObjects.length > 0 ? jsonObjects : [];
-}
-
-// 🔎 HELPER: FIND LAST VALID OBJECT END =======================================
-function findLastValidObjectEnd(text: string): number {
-  // 🚀 QUICK SCAN FROM END (O(n) worst case)
-  let balance = 0;
-  for (let i = text.length - 1; i >= 0; i--) {
-    if (text[i] === "}") balance++;
-    if (text[i] === "{") balance--;
-    if (balance === 1) return i; // Found closing bracket with balance
-  }
-  return -1;
+  return results;
 }

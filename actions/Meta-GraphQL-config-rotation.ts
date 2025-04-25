@@ -2,7 +2,7 @@
 "use server";
 
 import { unstable_cache as cache, revalidateTag } from "next/cache";
-import { MetaGraphQLConfig } from "@prisma/client"; // 💡 Import Prisma type
+import { MetaGraphQLConfig } from "@prisma/client";
 
 import { prisma } from "@/lib/db";
 
@@ -10,12 +10,6 @@ import {
   ACTIVE_CONFIGS_CACHE_TAG,
   ACTIVE_CONFIGS_TTL_SECONDS,
 } from "./Meta-GraphQL-cache-config";
-
-// 🔄 ROTATION STATE ==========================================================
-// ⚠️ IMPORTANT: Module-level state might have limitations in serverless environments
-// with multiple concurrent instances. For absolute consistency, consider an
-// external store (Redis, KV) if needed, but this is the minimal overhead approach.
-let currentConfigIndex = 0;
 
 // 💾 FETCH AND CACHE ACTIVE CONFIG IDs =======================================
 /**
@@ -30,12 +24,11 @@ export const getActiveConfigIds = cache(
       const activeConfigs = await prisma.metaGraphQLConfig.findMany({
         where: { is_active: true },
         select: { id: true }, // 🚀 Only fetch the ID
-        orderBy: { createdAt: "asc" }, // 🕰️ Consistent ordering for rotation
       });
       return activeConfigs.map((config) => config.id);
     } catch (error) {
       console.error("💥 Failed to fetch active config IDs:", error);
-      return []; // Return empty array on error to prevent breaking rotation logic
+      return []; // Return empty array on error to prevent breaking selection logic
     }
   },
   [ACTIVE_CONFIGS_CACHE_TAG], // 🔗 Associate with the specific cache tag
@@ -45,30 +38,26 @@ export const getActiveConfigIds = cache(
   },
 );
 
-// ➡️ GET NEXT CONFIG ID FOR ROTATION =========================================
+// 🎲 GET RANDOM CONFIG ID ====================================================
 /**
- * @description Retrieves the next active config ID based on the rotation index.
+ * @description Retrieves a randomly selected active config ID.
  * Fetches the list of active IDs using the cached `getActiveConfigIds` function.
- * Handles wrapping around the list and the case where no active configs are found.
- * @returns {Promise<string | null>} A promise resolving to the next config ID or null if none are active.
+ * @returns {Promise<string | null>} A promise resolving to a random config ID or null if none are active.
  */
-export async function getNextActiveConfigId(): Promise<string | null> {
+export async function getRandomActiveConfigId(): Promise<string | null> {
   const activeIds = await getActiveConfigIds();
 
   if (!activeIds || activeIds.length === 0) {
-    console.warn("⚠️ No active GraphQL configurations found for rotation.");
+    console.warn("⚠️ No active GraphQL configurations found.");
     return null; // 🤷 No active configs available
   }
 
-  // 🔄 Calculate next index with wrap-around
-  const indexToUse = currentConfigIndex % activeIds.length;
-  const nextId = activeIds[indexToUse];
+  // 🎲 Select a random index
+  const randomIndex = Math.floor(Math.random() * activeIds.length);
+  const selectedId = activeIds[randomIndex];
 
-  // ⏭️ Increment index for the *next* call (atomic update not guaranteed across instances)
-  currentConfigIndex = (currentConfigIndex + 1) % activeIds.length;
-
-  console.log(`⚙️ Rotating to config ID: ${nextId} (Index: ${indexToUse})`); // 🪵 Log rotation
-  return nextId;
+  console.log(`🎲 Randomly selected config ID: ${selectedId}`); // 🪵 Log selection
+  return selectedId;
 }
 
 // 🔄 MANUAL CACHE REFRESH ACTION ============================================
