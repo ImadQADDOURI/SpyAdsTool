@@ -11,6 +11,8 @@ import {
 } from "@/actions/meta-graphql-config-actions";
 import { MetaGraphQLConfig } from "@prisma/client";
 
+import RefreshConfigsButton from "./RefreshConfigsButton";
+
 type MetaGraphQLConfigListProps = {
   initialConfigs: MetaGraphQLConfig[];
 };
@@ -99,6 +101,16 @@ export default function MetaGraphQLConfigList({
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
           📁 Saved Configurations
         </h2>
+
+        <div className="mt-8 border-t pt-6">
+          <h2 className="mb-3 text-lg font-semibold">Cache Management</h2>
+          <RefreshConfigsButton />
+          <p className="mt-2 text-xs text-muted-foreground">
+            Manually refresh the list of active configurations used for
+            rotation.
+          </p>
+        </div>
+
         <button
           onClick={refreshConfigs}
           disabled={isRefreshing}
