@@ -467,8 +467,8 @@ function SearchFilterItemComponent({
   if (filter.key === "startDate" || filter.key === "endDate") {
     return (
       <div className="relative">
-        <Popover open={dateOpen} onOpenChange={setDateOpen}>
-          <PopoverTrigger asChild>
+        <DropdownMenu open={dateOpen} onOpenChange={setDateOpen}>
+          <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
               className={cn(
@@ -482,7 +482,7 @@ function SearchFilterItemComponent({
               <div className="flex items-center gap-2 truncate">
                 {filter.icon && filter.icon.startsWith("/") ? (
                   <Image
-                    src={filter.icon || "/placeholder.svg"}
+                    src={filter.icon}
                     alt={filter.label}
                     width={16}
                     height={16}
@@ -504,8 +504,8 @@ function SearchFilterItemComponent({
               </div>
               <ChevronDown className="h-4 w-4 opacity-50" />
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-auto p-0" align="start">
             <Calendar
               mode="single"
               selected={value ? new Date(value) : undefined}
@@ -513,8 +513,8 @@ function SearchFilterItemComponent({
               disabled={(date) => date > new Date()}
               initialFocus
             />
-          </PopoverContent>
-        </Popover>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* Clear button */}
         {hasValue && (
