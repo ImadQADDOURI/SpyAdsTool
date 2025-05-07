@@ -187,28 +187,16 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
       </DialogTrigger>
 
       {/* 📌 Updated DialogContent with fixed header and custom close button */}
-      <DialogContent className="flex h-[95dvh] max-h-[95dvh] w-full max-w-[95vw] flex-col bg-gray-100/20 p-0 dark:bg-gray-800/20">
+      <DialogContent className="flex h-[95svh] max-h-[95svh] w-full max-w-[95vw] flex-col bg-gray-100/20 p-0 dark:bg-gray-800/20">
         {/* 🧠 Fixed header with custom close button */}
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200/30 bg-gray-100/90 p-3 backdrop-blur-sm dark:border-gray-700/30 dark:bg-gray-800/90">
-          <DialogTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-2xl font-bold text-transparent">
+        <DialogHeader className="rounded-t-lg bg-gradient-to-r from-[#6566F1]/25 to-[#B977F8]/25 p-2 dark:bg-[#6566F1]/10">
+          <DialogTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-xl font-bold text-transparent">
             Ad Analytics
           </DialogTitle>
-
-          {/* 🔄 Custom close button - repositioned to avoid URL bar overlap on mobile */}
-          <DialogClose asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </Button>
-          </DialogClose>
-        </div>
+        </DialogHeader>
 
         {/* 📦 Main Container using ScrollArea for controlled scrolling */}
-        <ScrollArea className="w-full flex-1">
+        <ScrollArea className="w-full flex-1 overscroll-contain">
           <div className="flex h-full flex-col gap-1 p-3 lg:flex-row">
             {/* 📱 Left Panel */}
             <div className="w-full lg:w-3/12 lg:pr-2">
