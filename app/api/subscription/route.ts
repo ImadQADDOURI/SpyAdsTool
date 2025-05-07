@@ -1,13 +1,15 @@
+// @app/api/subscription/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 
-import { SubscriptionResponse } from "types";
+import { SubscriptionResponse } from "types"; // Assuming 'types' is a project alias or relative path
 import { getCurrentUser } from "@/lib/session";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
 
 /**
- * Secure API route to fetch user subscription data
- * Handles both authenticated requests and external queries with userId
- * Uses a 24-hour cache strategy
+ * 🔒 Secure API route to fetch user subscription data.
+ * This route prioritizes data freshness by not implementing caching.
+ * It handles both authenticated requests and external queries with userId.
  */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
@@ -36,32 +38,28 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         subscription: null, // No actual subscription details in bypass mode
         userHasAccess: true, // Auto-grant access in development
       };
-
+      console.log("✅ [Subscription API] Development bypass active.");
       return NextResponse.json(mockResponse);
     }
 
-    // 📊 Get detailed subscription data
+    // 📊 Get detailed subscription data. This will now always fetch fresh data.
     const subscriptionPlan = await getUserSubscriptionPlan(userId);
 
     // 🔑 Determine access - a user has access if their plan is paid and still valid
     const userHasAccess = subscriptionPlan.isPaid;
 
-    // 📤 Return subscription data and access status with cache headers
+    // 📤 Return subscription data and access status
     const response: SubscriptionResponse = {
       subscription: subscriptionPlan,
       userHasAccess,
     };
 
-    return NextResponse.json(response, {
-      headers: {
-        // Cache for 24 hours, but allow stale data for 48 hours while revalidating in background
-        "Cache-Control":
-          "public, s-maxage=86400, stale-while-revalidate=172800",
-      },
-    });
+    // 🚫 Cache-Control header removed to ensure data freshness on every request.
+    // Vercel and other CDNs will not cache this response by default.
+    return NextResponse.json(response);
   } catch (error) {
     // 💥 Detailed error handling with appropriate status codes
-    console.error("Subscription API error:", error);
+    console.error("💀 [Subscription API Error]:", error);
 
     if (error instanceof Error) {
       // Handle specific error messages from getUserSubscriptionPlan

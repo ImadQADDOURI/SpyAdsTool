@@ -13,7 +13,7 @@ export default function BillingSettingsPage() {
   const { refresh, subscription, isLoading } = useSubscription();
 
   return (
-    <SubscriptionPageGuard requireSubscription={false}>
+    <SubscriptionPageGuard requireSubscription={false} refreshOnMount>
       <div className="space-y-6">
         <DashboardHeader
           heading="Billing & Subscription"

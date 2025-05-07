@@ -11,7 +11,7 @@ export default function AccountSettingsPage() {
   const { refresh, subscription, isLoading } = useSubscription();
 
   return (
-    <SubscriptionPageGuard requireSubscription={false}>
+    <SubscriptionPageGuard requireSubscription={false} refreshOnMount>
       <div className="space-y-6">
         <DashboardHeader
           heading="Account Settings"

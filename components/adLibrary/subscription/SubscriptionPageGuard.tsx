@@ -1,7 +1,6 @@
-// @/components/adLibrary/subscription/SubscriptionPageGuard
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react"; // 🔒 Lock icon from Lucide React
 
@@ -13,6 +12,11 @@ type SubscriptionPageGuardProps = {
   requireSubscription?: boolean; // 🔒 Whether to protect the page
   loadingMessage?: string; // 💬 Custom loading message
   loadingSize?: "small" | "medium" | "large"; // 📏 Size of the loading spinner
+  /**
+   * 🔄 Refresh subscription data on mount even if already loaded.
+   * Use on critical pages (e.g. billing) to guarantee fresh data.
+   */
+  refreshOnMount?: boolean;
 };
 
 // 🛑 UpgradeDialog Component: displays an upgrade prompt instead of redirecting
@@ -68,39 +72,34 @@ const UpgradeDialog: React.FC = () => {
 /**
  * 🛡️ Guards page access based on subscription status.
  *
- * - Refreshes subscription data on mount.
+ * - Conditionally refreshes subscription data on mount when `refreshOnMount` is true.
  * - Displays a loading spinner while checking.
- * - If the user lacks access, shows an upgrade dialog blocking the guarded content.
+ * - If the user lacks access and `requireSubscription` is true, shows upgrade dialog.
  */
 export function SubscriptionPageGuard({
   children,
   requireSubscription = true,
   loadingMessage = "",
   loadingSize = "medium",
+  refreshOnMount = false,
 }: SubscriptionPageGuardProps) {
   const { hasAccess, isLoading, refresh } = useSubscription();
-  const router = useRouter();
-  const hasRefreshed = React.useRef(false);
   const DEBUG = process.env.NEXT_PUBLIC_DEBUG_SUBSCRIPTION === "true";
+  const hasRefreshedOnMount = useRef(false);
 
-  // Refresh subscription on mount (only once)
+  // 🔄 Optionally force a fresh fetch on mount for critical pages
   useEffect(() => {
-    if (!hasRefreshed.current) {
+    if (refreshOnMount && !hasRefreshedOnMount.current) {
       if (DEBUG)
         console.log(
-          "🚀 [SubscriptionPageGuard] Mounted. Triggering refresh...",
+          "🚀 [SubscriptionPageGuard] refreshOnMount, triggering refresh...",
         );
-      refresh()
-        .then(() => {
-          if (DEBUG)
-            console.log("✅ [SubscriptionPageGuard] Refresh completed.");
-        })
-        .catch((err) =>
-          console.error("❌ [SubscriptionPageGuard] Refresh failed:", err),
-        );
-      hasRefreshed.current = true;
+      refresh().catch((err) =>
+        console.error("❌ [SubscriptionPageGuard] refresh failed:", err),
+      );
+      hasRefreshedOnMount.current = true;
     }
-  }, [refresh, DEBUG]);
+  }, [refreshOnMount, refresh, DEBUG]);
 
   // Log subscription state updates (for debugging)
   useEffect(() => {
@@ -128,6 +127,6 @@ export function SubscriptionPageGuard({
     return <UpgradeDialog />;
   }
 
-  // User has access (or subscription not strictly required): render the guarded content.
+  // User has access (or subscription not required): render the guarded content.
   return <>{children}</>;
 }
