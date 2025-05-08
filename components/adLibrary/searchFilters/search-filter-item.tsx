@@ -25,6 +25,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import { CustomDateCaption } from "./CustomDateCaption";
 import type { FilterConfig } from "./filter-config";
 
 interface SearchFilterItemProps {
@@ -510,7 +511,10 @@ function SearchFilterItemComponent({
               mode="single"
               selected={value ? new Date(value) : undefined}
               onSelect={handleDateSelect}
+              fromDate={new Date("2018-05-07")}
+              toDate={new Date()}
               disabled={(date) => date > new Date()}
+              components={{ Caption: CustomDateCaption }}
               initialFocus
             />
           </DropdownMenuContent>
