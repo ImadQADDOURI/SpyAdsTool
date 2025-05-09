@@ -32,7 +32,14 @@ const PageNameWithHoverCard: React.FC<PageNameWithHoverCardProps> = ({
   const categories = page_categories
     ? Object.values(page_categories).join(", ")
     : "";
-  const domain = link_url ? new URL(link_url).hostname : "";
+  let domain = "";
+  if (link_url) {
+    try {
+      domain = new URL(link_url).hostname;
+    } catch (error) {
+      domain = "";
+    }
+  }
 
   return (
     <HoverCard openDelay={300} closeDelay={200}>
