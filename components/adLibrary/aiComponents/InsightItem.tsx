@@ -78,7 +78,7 @@ const InsightItem: React.FC<InsightItemProps> = ({
             {displayValues.map((item, index) => (
               <div
                 key={index}
-                className="flex items-center gap-1 truncate rounded-md bg-white px-2 py-1 text-xs font-semibold transition-colors group-hover:text-gray-900 dark:bg-gray-900 dark:group-hover:text-gray-100"
+                className="flex items-center gap-1 truncate rounded-md bg-white px-2 py-1 text-sm font-semibold transition-colors group-hover:text-gray-900 dark:bg-gray-900 dark:group-hover:text-gray-100"
               >
                 <ChevronRight className="h-3 w-3 text-gray-400/80 transition-colors group-hover:text-gray-500 dark:group-hover:text-gray-300" />
                 <span>{item}</span>
