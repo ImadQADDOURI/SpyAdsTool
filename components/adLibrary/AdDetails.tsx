@@ -134,7 +134,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
       const result = await analyzeKeywords(ad);
       setKeywordAnalysis(result);
     } catch (error) {
-      setKeywordError("Failed to analyze keywords");
+      setKeywordError("Failed to fetch analytics");
       // Initialize with a fallback value so EuAdStatistic can still render
       setKeywordAnalysis((prev) => ({
         ...prev,
