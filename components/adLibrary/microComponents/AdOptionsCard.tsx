@@ -227,7 +227,7 @@ export function AdOptionsCard({ ad }: { ad: AdData }) {
                 label="View All Page Ads"
                 href={
                   snapshot.page_id
-                    ? `/adlibrary/${snapshot.page_id}`
+                    ? `/adsearch/${snapshot.page_id}?page_id=${snapshot.page_id}&active_status=ALL`
                     : undefined
                 }
                 disabled={!snapshot.page_id}

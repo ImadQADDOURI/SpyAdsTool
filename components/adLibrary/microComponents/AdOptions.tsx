@@ -185,7 +185,11 @@ export function AdOptions({ ad }: { ad: AdData }) {
           icon="meta.svg"
           urlIcon={snapshot.page_profile_picture_url || ""}
           label="View All Page Ads"
-          href={snapshot.page_id ? `/adlibrary/${snapshot.page_id}` : undefined}
+          href={
+            snapshot.page_id
+              ? `/adsearch/${snapshot.page_id}?page_id=${snapshot.page_id}&active_status=ALL`
+              : undefined
+          }
           disabled={!snapshot.page_id}
         />
 
