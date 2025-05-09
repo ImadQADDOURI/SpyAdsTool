@@ -127,7 +127,7 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
         </TooltipProvider>
       </div>
       {/* Insights Grid Container */}
-      <div className="grid grid-cols-2 gap-1 sm:grid-cols-3">
+      <div className="grid grid-cols-3 gap-1">
         {/* Demographics Insights */}
         <InsightItem
           label="Gender"
@@ -149,29 +149,36 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
         />
 
         {/* Performance Metrics */}
+
         <CompetitionRadialChart competition={data.competition} />
         <CPMDisplay value={data.cpm} />
         <BudgetIndicator budget={data.estimatedBudget} />
 
         {/* Additional Insights */}
-        <InsightItem
-          label="Target"
-          value={data.targetAudience}
-          description="Target audience characteristics and preferences"
-          icon={UserRound}
-        />
-        <InsightItem
-          label="Category"
-          value={data.adCategories}
-          description="Primary advertising categories"
-          icon={Tags}
-        />
-        <InsightItem
-          label="Marketing"
-          value={data.marketingStrategies}
-          description="Recommended marketing approaches"
-          icon={Megaphone}
-        />
+        <div className="col-span-3">
+          <InsightItem
+            label="Target"
+            value={data.targetAudience}
+            description="Target audience characteristics and preferences"
+            icon={UserRound}
+          />
+        </div>
+        <div className="col-span-3">
+          <InsightItem
+            label="Category"
+            value={data.adCategories}
+            description="Primary advertising categories"
+            icon={Tags}
+          />
+        </div>
+        <div className="col-span-3">
+          <InsightItem
+            label="Marketing"
+            value={data.marketingStrategies}
+            description="Recommended marketing approaches"
+            icon={Megaphone}
+          />
+        </div>
       </div>
       {/* Keywords Table - Container with responsive design */}
       <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">

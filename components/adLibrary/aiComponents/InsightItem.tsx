@@ -74,43 +74,35 @@ const InsightItem: React.FC<InsightItemProps> = ({
             />
           </div>
 
-          {/* Values Display with enhanced visuals */}
-          <div className="mt-3 flex-1 space-y-2">
+          <div className="mt-1 flex-1 space-y-1">
             {displayValues.map((item, index) => (
               <div
                 key={index}
-                className="flex items-center gap-2 rounded-md bg-white/50 p-2 transition-colors group-hover:text-gray-900 dark:bg-gray-900/30 dark:group-hover:text-gray-100"
+                className="flex items-center gap-1 truncate rounded-md bg-white px-2 py-1 text-xs font-semibold transition-colors group-hover:text-gray-900 dark:bg-gray-900 dark:group-hover:text-gray-100"
               >
-                <ChevronRight className="h-3.5 w-3.5 text-gray-400/80 transition-colors group-hover:text-gray-500 dark:group-hover:text-gray-300" />
-                <span className="truncate text-sm font-semibold text-gray-800 dark:text-gray-200">
-                  {item}
-                </span>
+                <ChevronRight className="h-3 w-3 text-gray-400/80 transition-colors group-hover:text-gray-500 dark:group-hover:text-gray-300" />
+                <span>{item}</span>
               </div>
             ))}
-
             {hasMore && (
-              <div className="flex items-center gap-2 px-2">
-                <ChevronRight className="h-3.5 w-3.5 opacity-0" />
+              <div className="flex items-center gap-1 px-2">
+                <ChevronRight className="h-3 w-3 opacity-0" />
                 <span className="text-xs font-medium text-gray-500 transition-colors group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300">
                   +{remainingCount} more
                 </span>
               </div>
             )}
-
-            {/* Empty State with enhanced styling */}
             {values.length === 0 && (
-              <div className="flex items-center gap-2 rounded-md bg-white/50 p-2 dark:bg-gray-900/30">
-                <ChevronRight className="h-3.5 w-3.5 text-gray-400/80" />
-                <span className="text-sm italic text-gray-500 dark:text-gray-400">
-                  Not specified
-                </span>
+              <div className="flex items-center gap-1 rounded-md bg-white/50 px-2 py-1 text-xs italic text-gray-500 dark:bg-gray-900/30 dark:text-gray-400">
+                <ChevronRight className="h-3 w-3 text-gray-400/80" />
+                <span>Not specified</span>
               </div>
             )}
           </div>
         </div>
       </PopoverTrigger>
-      <PopoverContent side="top" align="center" className="max-w-xs">
-        <div className="space-y-3 p-1">
+      <PopoverContent side="top" align="center" className="max-w-xs p-2">
+        <div className="space-y-2">
           <div className="flex items-center justify-between">
             <div className="text-sm font-medium">{label}</div>
             {values.length > 0 && (
@@ -118,7 +110,7 @@ const InsightItem: React.FC<InsightItemProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={handleCopy}
-                className="h-8 w-8 p-0"
+                className="h-6 w-6 p-0"
               >
                 {copied ? (
                   <Check className="h-4 w-4 text-green-500" />
@@ -136,7 +128,7 @@ const InsightItem: React.FC<InsightItemProps> = ({
           <div className="space-y-1">
             {values.length > 0 ? (
               values.map((item, index) => (
-                <div key={index} className="flex items-center gap-1.5">
+                <div key={index} className="flex items-center gap-1">
                   <ChevronRight className="h-3 w-3 text-gray-400" />
                   <span className="text-xs text-gray-600 dark:text-gray-300">
                     {item}

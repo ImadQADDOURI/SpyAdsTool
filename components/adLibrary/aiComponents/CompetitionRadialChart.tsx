@@ -35,9 +35,11 @@ const CompetitionRadialChart: React.FC<CompetitionRadialChartProps> = ({
   ];
 
   function getColorByValue(value: number): string {
-    if (value <= 33) return "#4ade80";
-    if (value <= 66) return "#fbbf24";
-    return "#f87171";
+    if (value <= 20) return "#34D399"; // Teal for very low competition
+    if (value <= 40) return "#4ade80"; // Green for low competition
+    if (value <= 60) return "#fbbf24"; // Yellow for medium competition
+    if (value <= 80) return "#fb923c"; // Orange for high competition
+    return "#f87171"; // Red for very high competition
   }
 
   // Competition level label
@@ -63,7 +65,7 @@ const CompetitionRadialChart: React.FC<CompetitionRadialChartProps> = ({
             {/* Enhanced Header with Gradient Title and Interactive Icon */}
             <div className="flex flex-row items-center justify-between">
               <span className="text-md font-semibold text-gray-600 dark:text-gray-300">
-                Competition
+                Compet
               </span>
 
               <Gauge
@@ -79,7 +81,7 @@ const CompetitionRadialChart: React.FC<CompetitionRadialChartProps> = ({
                   // Set up chart configuration here
                   tooltip: {},
                 }}
-                className="mx-auto aspect-square w-full"
+                className="mx-auto min-h-[120px] w-full lg:min-h-[140px]"
               >
                 <RadialBarChart
                   innerRadius="70%" // Use percentages instead of fixed pixels
@@ -113,7 +115,7 @@ const CompetitionRadialChart: React.FC<CompetitionRadialChartProps> = ({
                               {/* Primary value with gradient text */}
                               <tspan
                                 x={viewBox.cx}
-                                y={(viewBox.cy || 0) - 10}
+                                y={(viewBox.cy || 0) + 12}
                                 className="text-xl font-bold text-gray-900 dark:text-gray-100 xl:text-2xl"
                               >
                                 {competition}%
@@ -121,7 +123,7 @@ const CompetitionRadialChart: React.FC<CompetitionRadialChartProps> = ({
                               {/* Secondary label with branded color */}
                               <tspan
                                 x={viewBox.cx}
-                                y={(viewBox.cy || 0) + 12}
+                                y={(viewBox.cy || 0) + 36}
                                 className="text-sm font-medium"
                                 style={{ fill: data[0].fill }}
                               >

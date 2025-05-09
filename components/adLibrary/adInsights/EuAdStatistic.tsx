@@ -186,7 +186,7 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-1 p-2 sm:grid-cols-3">
+      <div className="grid grid-cols-3 gap-1 p-2">
         <InsightItem
           label="Gender"
           value={gender_audience || "Not specified"}
