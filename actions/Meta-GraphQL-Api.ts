@@ -289,6 +289,7 @@ export async function fetchGraphQL(
 */
   }
   const variableKeys = [
+    "adArchiveID",
     "adType",
     "queryString",
     "searchType",
@@ -299,16 +300,21 @@ export async function fetchGraphQL(
     "countries",
     "startDate",
     "viewAllPageID",
+    "collationGroupID",
+    "pageID",
+    "isAdNotAAAEligible",
     "cursor",
   ] as const;
 
   console.log(
-    "🔍 Fetching GraphQL with variables:\n" +
+    "🔍 GraphQL - " +
+      params.fb_api_req_friendly_name +
+      "\n" +
       variableKeys
         .map((key) => {
           const value = params.variables?.[key];
           const display =
-            typeof value === "object" ? JSON.stringify(value) : value;
+            typeof value === "object" ? JSON.stringify(value) : value || "";
           return `  ${key}: \x1b[33m${display}\x1b[0m`;
         })
         .join("\n"),
