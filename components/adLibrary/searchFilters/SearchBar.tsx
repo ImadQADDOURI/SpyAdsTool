@@ -196,7 +196,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                   isLoading={isLoading}
                   displayMode="compact"
                 />
-                <DisplayFilters />
+                {/* <DisplayFilters /> */}
               </div>
             </div>
           </div>

@@ -265,7 +265,10 @@ export async function AdLibraryAdCollationDetailsQuery(
     if (!collationResults) {
       throw new Error("Unexpected response structure");
     }
-    console.log("🚀🚀🚀🚀 - AdLibraryAdCollationDetailsQuery ");
+    console.log(
+      "🚀🚀🚀🚀 - AdLibraryAdCollationDetailsQuery ",
+      collationResults.ad_cards.length,
+    );
     return {
       ads: collationResults.ad_cards || [],
       forward_cursor: collationResults.forward_cursor,
@@ -313,6 +316,39 @@ export async function AdLibraryAdDetailsV2Query(
 // variables example normal Search   0 filters: {"activeStatus":"ALL","adType":"ALL","bylines":[],"collationToken":null,"contentLanguages":[],"countries":["ALL"],"cursor":"AQHR3E1VCNfnSwNk8uwi9rTjdrwGnsWl-GUN8FnIeRu1Xi_iKJWM5JIAFNrxvS3cmChA","excludedIDs":[],"first":30,"location":null,"mediaType":"ALL","pageIDs":[],"potentialReachInput":[],"publisherPlatforms":[],"queryString":"cat","regions":[],"searchType":"KEYWORD_UNORDERED","sessionID":"6f643586-6dae-4e72-bcb5-779de1d6815b","sortData":null,"source":"NAV_HEADER","startDate":null,"v":"7218b1","viewAllPageID":"0"}
 // variables example normal Search All filters: {"activeStatus":"INACTIVE","adType":"ALL","bylines":[],"collationToken":null,"contentLanguages":["en","zh"],"countries":["ALL"],"cursor":"AQHR1YeuZJ1CH2ok6BxPdMO-DGPfDxJ7AyVR-1GOgZhONm1uzUeHEEPikE4VniBM5h68","excludedIDs":[],"first":30,"location":null,"mediaType":"VIDEO","pageIDs":["110757928736038","375132235684804","107180365516103","108498844313651","112869771908331","144939265372419"],"potentialReachInput":[],"publisherPlatforms":["FACEBOOK","INSTAGRAM","AUDIENCE_NETWORK","MESSENGER"],"queryString":"cat","regions":[],"searchType":"KEYWORD_UNORDERED","sessionID":"6f643586-6dae-4e72-bcb5-779de1d6815b","sortData":null,"source":"NAV_HEADER","startDate":{"max":"2024-09-22","min":"2018-05-07"},"v":"7218b1","viewAllPageID":"0"}
 // variables example PageID search: {"activeStatus":"ACTIVE","adType":"ALL","bylines":[],"collationToken":null,"contentLanguages":null,"countries":["ALL"],"cursor":"AQHRcbL35kOZB3k1ZkVnc8vKTRR5GblNrFy4KxgiGv5ffJ_stE6kuWziroOxBL0JIrN8","excludedIDs":null,"first":30,"location":null,"mediaType":"all","pageIDs":null,"potentialReachInput":null,"publisherPlatforms":null,"queryString":"","regions":null,"searchType":null,"sessionID":null,"sortData":null,"source":null,"startDate":null,"v":"f67402","viewAllPageID":"602563393163238"}
+
+// 🗂️ Define the shape of the GraphQL edge
+interface Edge {
+  node: {
+    collated_results?: AdData[];
+  };
+}
+
+// ✨ Helper: Extract and collate Ads from edges
+// 🍰 Pure, reusable, functional approach
+export const extractCollatedAds = (edges: Edge[]): AdData[] =>
+  edges
+    .map((edge) => edge.node.collated_results ?? []) // 🛠️ Get each group or fallback to []
+    .filter((group) => group.length > 0) // 🚫 Remove empty groups
+    .map((group) => {
+      // 📏 Calculate how many ads in this group
+      const groupCount = group.length;
+
+      // 🔍 Find the maximum original collation_count among ads
+      const maxOriginal = group.reduce(
+        (max, ad) => Math.max(max, ad.collation_count ?? 0),
+        0,
+      );
+
+      // 🎚️ Determine final collation_count (at least 1)
+      const collation_count = Math.max(maxOriginal, groupCount, 1);
+
+      // 📌 Pick the first Ad and override its count
+      const [firstAd] = group;
+      return { ...firstAd, collation_count };
+    });
+
+// 🚀 Main: Perform the GraphQL query and use extractor
 export async function AdLibrarySearchPaginationQuery(
   variables: Record<string, any>,
 ): Promise<AdLibrarySearchPaginationQueryResult> {
@@ -333,10 +369,8 @@ export async function AdLibrarySearchPaginationQuery(
     const pageInfo = searchResultsConnection.page_info;
     const edges = searchResultsConnection.edges;
 
-    // Extract and flatten ads from all nodes and their collated_results
-    const ads = edges.flatMap((edge) =>
-      edge.node.collated_results.flatMap((result) => result),
-    );
+    // 🏭 Extract one ad per collated_results group
+    const ads = extractCollatedAds(edges);
 
     console.log("🚀🚀🚀🚀 - AdLibrarySearchPaginationQuery ");
 
@@ -379,11 +413,10 @@ export async function AdLibraryMobileFocusedStateProviderRefetchQuery(
     const searchResultsConnection =
       data.ad_library_main.search_results_connection;
     const pageInfo = searchResultsConnection.page_info;
+    const edges = searchResultsConnection.edges;
 
-    // Extract and flatten ads from all edges and their collated_results
-    const ads = searchResultsConnection.edges.flatMap((edge: any) =>
-      edge.node.collated_results.flatMap((result: AdData) => result),
-    );
+    // 🏭 Extract one ad per collated_results group
+    const ads = extractCollatedAds(edges);
 
     console.log("🚀🚀🚀🚀 - AdLibraryMobileFocusedStateProviderRefetchQuery ");
 

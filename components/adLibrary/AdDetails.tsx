@@ -76,7 +76,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
     setError(null);
 
     try {
-      if (!ad.collation_id || !ad.collation_count || ad.collation_count <= 1) {
+      if (!ad.collation_id || !ad.collation_count) {
         setDetailedAds([ad]);
         setIsComplete(true);
         setTotalCount(1);
