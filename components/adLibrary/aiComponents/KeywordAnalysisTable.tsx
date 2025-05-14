@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { AdAnalysis } from "@/actions/geminiAiService";
 import {
   Baby,
@@ -35,9 +36,13 @@ import {
 import ExpandableText from "../microComponents/expandableText";
 import { Loading } from "../microComponents/Loading";
 import BudgetIndicator from "./BudgetIndicator";
-import CompetitionRadialChart from "./CompetitionRadialChart";
 import CPMDisplay from "./CPMDisplay";
 import InsightItem from "./InsightItem";
+
+const CompetitionRadialChart = dynamic(
+  () => import("./CompetitionRadialChart"),
+  { ssr: false },
+);
 
 interface KeywordAnalysisTableProps {
   data: AdAnalysis | null;

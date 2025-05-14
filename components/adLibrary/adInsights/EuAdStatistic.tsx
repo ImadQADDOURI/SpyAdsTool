@@ -1,5 +1,6 @@
 // components/adsLibrary/EuAdStatistic.tsx
 import React from "react";
+import dynamic from "next/dynamic";
 import {
   Baby,
   ChartPie,
@@ -18,14 +19,26 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import AgeBarChart from "@/components/adLibrary/adInsights/AgeBarChart";
-import CountryBarChart from "@/components/adLibrary/adInsights/CountryBarChart";
-import GenderPieChart from "@/components/adLibrary/adInsights/GenderPieChart";
 
 import InsightItem from "../aiComponents/InsightItem";
 import { Loading } from "../microComponents/Loading";
 import { countryCodesAlpha2Flag } from "../searchFilters/filter-config";
 import AmountSpend from "./AmountSpend";
+
+const GenderPieChart = dynamic(
+  () => import("@/components/adLibrary/adInsights/GenderPieChart"),
+  { ssr: false },
+);
+
+const CountryBarChart = dynamic(
+  () => import("@/components/adLibrary/adInsights/CountryBarChart"),
+  { ssr: false },
+);
+
+const AgeBarChart = dynamic(
+  () => import("@/components/adLibrary/adInsights/AgeBarChart"),
+  { ssr: false },
+);
 
 interface EuAdStatisticProps {
   data: any;

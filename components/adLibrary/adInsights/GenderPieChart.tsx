@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Cell, Label, Pie, PieChart, ResponsiveContainer } from "recharts";
 

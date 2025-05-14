@@ -8,6 +8,7 @@
  * @package components/adLibrary
  */
 import React, { useCallback, useState } from "react";
+import dynamic from "next/dynamic";
 import { analyzeKeywords } from "@/actions/geminiAiService";
 import {
   AdLibraryAdCollationDetailsQuery,
@@ -35,7 +36,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import Analytics from "@/components/adLibrary/adInsights/Analytics";
 import { EuAdStatistic } from "@/components/adLibrary/adInsights/EuAdStatistic";
 import AdCreativeGenerator from "@/components/adLibrary/aiComponents/AdCreativeGenerator";
 import KeywordAnalysisTable from "@/components/adLibrary/aiComponents/KeywordAnalysisTable";
@@ -43,6 +43,11 @@ import KeywordAnalysisTable from "@/components/adLibrary/aiComponents/KeywordAna
 import { AdCard } from "./AdCard";
 import AdCardGrid from "./microComponents/AdCardGrid";
 import AdOptionsCard from "./microComponents/AdOptionsCard";
+
+const Analytics = dynamic(
+  () => import("@/components/adLibrary/adInsights/Analytics"),
+  { ssr: false },
+);
 
 interface AdDetailsProps {
   /** The advertisement data to display */

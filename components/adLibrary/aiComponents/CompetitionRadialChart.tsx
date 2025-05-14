@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Activity, Gauge, Info } from "lucide-react";
 import {
