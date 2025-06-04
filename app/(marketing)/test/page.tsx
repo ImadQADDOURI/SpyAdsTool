@@ -8,13 +8,14 @@ import GlassVideo from "@/components/adLibrary/landingPage/hero/GlassVideo";
 import HeroSection from "@/components/adLibrary/landingPage/hero/hero-section";
 import ParticlesLayer from "@/components/adLibrary/landingPage/hero/particles-layer";
 import TrustedBySection from "@/components/adLibrary/landingPage/hero/TrustedBySection";
+import { ReviewSection } from "@/components/adLibrary/landingPage/reviewSection/ReviewSection";
 
 export default function HomePage() {
   return (
     <div>
       <HeroSection />
       <FeaturesSection />
-      <HeroSection />
+      <ReviewSection />
       {/* <AnimatedBackground
         horizontalPosition={40}
         verticalPosition={30}
