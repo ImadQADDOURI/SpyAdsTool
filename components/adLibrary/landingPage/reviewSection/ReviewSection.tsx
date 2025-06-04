@@ -61,8 +61,8 @@ export const ReviewSection: React.FC = () => {
         height={16}
         cx={1}
         cy={1}
-        cr={2}
-        className="absolute inset-0 fill-[#B977F8]/30 [mask-image:radial-gradient(500px_circle_at_center,white,transparent)]"
+        cr={1} //Closer: try width={12} height={12}.  Farther: try width={20} height={20}.
+        className="absolute inset-0 fill-[#B977F8]/60 [mask-image:radial-gradient(500px_circle_at_center,white,transparent)]"
       />
 
       <div className="relative z-10 mx-auto mb-12 max-w-7xl text-center">
