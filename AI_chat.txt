@@ -1,0 +1,29 @@
+
+FloatingGlassImage
+https://chatgpt.com/share/68384c29-6938-8010-9441-fb3e6491d961
+
+#
+
+the glass overlay and all hover effects are wrapped tightly around the image’s intrinsic size
+https://chatgpt.com/share/68384b32-d0ac-8010-9061-c7a9fd9512c6
+
+#
+
+<AnimatedBackground />
+https://chatgpt.com/share/68384ba6-c3f0-8010-aae3-4d3e93ffe6c1
+
+#
+<AnimatedBackground /> 
+https://v0.dev/chat/animated-background-p5FBRnTDRPK
+
+#
+<HeroSection />
+https://v0.dev/chat/hero-section-design-5N6OCsULToW
+
+#
+
+<FeaturesSection />
+https://v0.dev/chat/feature-section-design-EVuwYrXFVBt
+
+https://g.co/gemini/share/ff3335b0f935
+#

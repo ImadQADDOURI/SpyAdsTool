@@ -7,6 +7,8 @@ Key focus areas:
 4. Well-structured, optimized code, Use attention-grabbing, emoji-backed comments for clarity and explanation.
 5. Reusability, performance, and separation of concerns
 6. Proper TypeScript typing and standardized approaches
+7. minimum memory use, CPU load, and max perceived smoothness.
+8. Uses inline CSS (styled-JSX) so no external files required.
 
 Styling guide:
 - Colors: Purple gradient (#6566F1 to #B977F8), light/dark grays for backgrounds
