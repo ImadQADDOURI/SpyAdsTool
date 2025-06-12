@@ -1,4 +1,7 @@
-import FeaturesSection from "@/components/adLibrary/landingPage/features-section";
+import ExploreSection from "@/components/adLibrary/landingPage/exploreSection/ExploreSection";
+import TopProductsStoresSection from "@/components/adLibrary/landingPage/exploreSection/TopProductsStoresSection";
+import TrendSection from "@/components/adLibrary/landingPage/exploreSection/TrendSection";
+import FeaturesSection from "@/components/adLibrary/landingPage/featuresSection/features-section";
 import AnimatedBackground from "@/components/adLibrary/landingPage/hero/animated-background";
 import { AuroraText } from "@/components/adLibrary/landingPage/hero/AuroraText";
 import AvatarTrustedby from "@/components/adLibrary/landingPage/hero/AvatarTrustedby";
@@ -9,12 +12,18 @@ import HeroSection from "@/components/adLibrary/landingPage/hero/hero-section";
 import ParticlesLayer from "@/components/adLibrary/landingPage/hero/particles-layer";
 import TrustedBySection from "@/components/adLibrary/landingPage/hero/TrustedBySection";
 import { ReviewSection } from "@/components/adLibrary/landingPage/reviewSection/ReviewSection";
+import FanOutCard from "@/components/adLibrary/landingPage/trendSection/fan-out-card";
 
 export default function HomePage() {
   return (
     <div>
       <HeroSection />
+
+      <ExploreSection />
+      {/* <TrendSection />
+      <TopProductsStoresSection /> */}
       <FeaturesSection />
+
       <ReviewSection />
       {/* <AnimatedBackground
         horizontalPosition={40}

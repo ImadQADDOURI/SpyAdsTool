@@ -12,8 +12,8 @@ import {
   Search,
 } from "lucide-react";
 
-import { AuroraText } from "./hero/AuroraText";
-import FloatingGlassImage from "./hero/FloatingGlassImage";
+import { AuroraText } from "../hero/AuroraText";
+import FloatingGlassImage from "../hero/FloatingGlassImage";
 
 interface Stat {
   label: string;
