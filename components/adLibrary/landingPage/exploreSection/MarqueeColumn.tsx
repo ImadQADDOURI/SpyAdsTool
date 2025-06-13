@@ -30,8 +30,8 @@ export const MarqueeColumn: React.FC<MarqueeColumnProps> = ({
     >
       {/* Mask for fade effect */}
       <div className="pointer-events-none absolute inset-0 z-10">
-        <div className="absolute left-0 right-0 top-0 h-[100px] bg-gradient-to-b from-background to-transparent"></div>
-        <div className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-background to-transparent"></div>
+        <div className="absolute left-0 right-0 top-0 h-[100px] bg-gradient-to-b from-black to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-black to-transparent"></div>
       </div>
 
       <motion.div
@@ -57,7 +57,9 @@ export const MarqueeColumn: React.FC<MarqueeColumnProps> = ({
               <img
                 src={
                   item.image ||
-                  "https://help.apple.com/assets/67EAFA00341984D9AE00EC98/67EAFA0586243791BA0154F5/fr_FR/4e069c10221c319aaf55b730d1313856.png"
+                  "https://help.apple.com/assets/67EAFA00341984D9AE00EC98/67EAFA0586243791BA0154F5/fr_FR/4e069c10221c319aaf55b730d1313856.png" ||
+                  "/placeholder.svg" ||
+                  "/placeholder.svg"
                 }
                 alt={item.name}
                 className="h-auto w-full object-cover transition-transform duration-500 group-hover:scale-105"

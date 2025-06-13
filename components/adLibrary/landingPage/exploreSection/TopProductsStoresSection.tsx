@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 import { AuroraText } from "../hero/AuroraText";
-import { MarqueeColumn } from "../topPicksSection/MarqueeColumn";
+import { MarqueeColumn } from "./MarqueeColumn";
 
 // Centralized configuration for easy customization
 const TOP_PRODUCTS_STORES_CONFIG = {

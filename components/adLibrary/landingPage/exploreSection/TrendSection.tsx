@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 import { AuroraText } from "../hero/AuroraText";
-import FanOutCard, { type CardData } from "../trendSection/fan-out-card";
+import FanOutCard, { type CardData } from "./fan-out-card";
 
 // Centralized configuration for easy customization
 const TREND_CONFIG = {
@@ -30,27 +30,32 @@ const TREND_CONFIG = {
   sampleAds: [
     {
       id: "ad-1",
-      image: "/placeholder.svg?height=400&width=300",
+      image:
+        "https://help.apple.com/assets/67EAFA00341984D9AE00EC98/67EAFA0586243791BA0154F5/fr_FR/4e069c10221c319aaf55b730d1313856.png",
       alt: "Trending Facebook Ad",
     },
     {
       id: "ad-2",
-      image: "/placeholder.svg?height=400&width=300",
+      image:
+        "https://help.apple.com/assets/67EAFA00341984D9AE00EC98/67EAFA0586243791BA0154F5/fr_FR/4e069c10221c319aaf55b730d1313856.png",
       alt: "High Converting Instagram Ad",
     },
+
     {
       id: "ad-3",
-      image: "/placeholder.svg?height=400&width=300",
+      image:
+        "https://cdn-useast1.kapwing.com/static/templates/blank-iphone-x-and-11-frame-mockup-template-full-4521e68d.webp",
       alt: "Viral TikTok Ad",
     },
     {
       id: "ad-4",
-      image: "/placeholder.svg?height=400&width=300",
+      image:
+        "https://cdn-useast1.kapwing.com/static/templates/blank-iphone-x-and-11-frame-mockup-template-full-4521e68d.webp",
       alt: "Successful Google Ad",
     },
     {
       id: "ad-5",
-      image: "/placeholder.svg?height=400&width=300",
+      image: "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
       alt: "Top Performing YouTube Ad",
     },
   ] as CardData[],
@@ -127,7 +132,7 @@ const TrendSection: React.FC<TrendSectionProps> = ({
           {/* Main content container */}
           <div className="relative z-10 px-6 py-8 sm:px-8 sm:py-12 lg:px-12">
             {/* Header content */}
-            <div className="mx-auto mb-6 max-w-4xl text-center">
+            <div className="mx-auto max-w-4xl text-center">
               {/* Main headline */}
               <motion.h1
                 className="mb-3 text-3xl font-bold leading-tight sm:text-4xl md:text-5xl lg:text-6xl"
@@ -195,7 +200,7 @@ const TrendSection: React.FC<TrendSectionProps> = ({
 
             {/* Fan-out cards section */}
             <motion.div className="w-full" variants={itemVariants}>
-              <FanOutCard cards={ads} containerHeight={400} className="mt-2" />
+              <FanOutCard cards={ads} />
             </motion.div>
           </div>
         </motion.div>
