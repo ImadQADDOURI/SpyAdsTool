@@ -7,12 +7,12 @@ import { useTheme } from "next-themes";
 import AnimatedBackground from "../hero/animated-background";
 import ExtensionSection from "./ExtensionSection";
 import TopProductsStoresSection from "./TopProductsStoresSection";
-import TrendSection, { type CardData } from "./TrendSection";
+import TrendSection from "./TrendSection";
 
 interface ExploreSectionProps {
   className?: string;
   // TrendSection props
-  customAds?: CardData[];
+
   // TopProductsStoresSection props
   customProducts?: Array<{ id: number; image: string; name: string }>;
   customStores?: Array<{ id: number; image: string; name: string }>;
@@ -22,7 +22,7 @@ interface ExploreSectionProps {
 
 const ExploreSection: React.FC<ExploreSectionProps> = ({
   className = "",
-  customAds,
+
   customProducts,
   customStores,
   onProductsClick,
@@ -49,7 +49,7 @@ const ExploreSection: React.FC<ExploreSectionProps> = ({
       {/* Explore Section Content */}
       <div className="space-y-8 sm:space-y-12 lg:space-y-16">
         {/* Trend Section Card */}
-        <TrendSection customAds={customAds} />
+        <TrendSection />
 
         {/* Top Products & Stores Section Card */}
         <TopProductsStoresSection
@@ -88,4 +88,3 @@ const ExploreSection: React.FC<ExploreSectionProps> = ({
 };
 
 export default ExploreSection;
-export type { CardData };

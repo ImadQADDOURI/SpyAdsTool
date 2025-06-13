@@ -1,42 +1,36 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
-// 🎛️ Configuration interface for fan‑out behavior
+// Simplified configuration interface
 interface AnimationConfig {
-  cardsPerSide: number; // ➗ Number of cards on each side of center
-  baseScale: number; // 📐 Starting scale (when stacked)
-  maxScale: number; // 📏 Final scale (fully fanned)
-  baseOpacity: number; // 🌫️ Starting opacity
-  maxOpacity: number; // 🌟 Final opacity
-  spreadFactor: number; // ↔️ How much horizontal spread to allow
-  nonLinearFactor: number; // 🔄 Curve factor for “natural” spacing
-  scrollRange: [number, number]; // 🖱️ Scroll progress range to trigger anim
-  borderRadius: number; // 💠 Card corner rounding (px)
-  shadow: string; // 🕶️ Box‑shadow style
-  aspectRatio: number; // 🖼️ Container width/height ratio
+  cardsPerSide: number; // Number of cards on each side of center
+  scaleFactor: number; // How much cards scale down from center (0-1)
+  opacityFactor: number; // How much cards fade from center (0-1)
+  spreadFactor: number; // How much cards spread horizontally (0-1)
+  borderRadius?: number; // Card corner rounding
+  aspectRatio?: number; // Container aspect ratio
 }
 
-// 🔧 Default animation settings
+// Optimized default config with computed values
 const defaultConfig: AnimationConfig = {
   cardsPerSide: 2,
-  baseScale: 0.7,
-  maxScale: 1,
-  baseOpacity: 0.3,
-  maxOpacity: 1,
+  scaleFactor: 0.3, // Cards scale from 1.0 to 0.7 (1.0 - 0.3)
+  opacityFactor: 0.7, // Cards fade from 1.0 to 0.3 (1.0 - 0.7)
   spreadFactor: 0.8,
-  nonLinearFactor: 0.7,
-  scrollRange: [0, 1],
   borderRadius: 10,
-  shadow: "0 10px 30px rgba(255, 255, 255, 0.2)",
   aspectRatio: 16 / 9,
 };
 
+// Fixed values for better performance
+const SCROLL_RANGE: [number, number] = [0, 1];
+const CARD_SHADOW = "0 10px 30px rgba(255, 255, 255, 0.2)";
+
 export interface CardData {
-  id: string; // 🆔 Unique key for React lists
-  image: string; // 🌄 URL of card image
-  alt?: string; // ✍️ Alt text for accessibility
+  id: string;
+  image: string;
+  alt?: string;
 }
 
 interface AnimatedCardProps {
@@ -44,111 +38,102 @@ interface AnimatedCardProps {
   index: number;
   position: "left" | "center" | "right";
   scrollYProgress: any;
-  containerWidth: number; // 📏 Measured width of the parent container
+  containerWidth: number;
   config: AnimationConfig;
 }
 
-// 🎞️ Single animated card
-const AnimatedCard = ({
-  card,
-  index,
-  position,
-  scrollYProgress,
-  containerWidth,
-  config,
-}: AnimatedCardProps) => {
-  // 🔢 Compute how many slots away from center this card is
-  const distance =
-    position === "center" ? 0 : position === "left" ? -(index + 1) : index + 1;
+// Memoized AnimatedCard component
+const AnimatedCard = memo(
+  ({
+    card,
+    index,
+    position,
+    scrollYProgress,
+    containerWidth,
+    config,
+  }: AnimatedCardProps) => {
+    // Calculate distance from center
+    const distance =
+      position === "center"
+        ? 0
+        : position === "left"
+          ? -(index + 1)
+          : index + 1;
 
-  const total = config.cardsPerSide * 2 + 1;
-  const cardW = containerWidth / total; // 📐 Each card’s width
-  const available = (containerWidth - cardW) / 2; // ↔️ Space on one side
+    // Calculate card dimensions once
+    const total = config.cardsPerSide * 2 + 1;
+    const cardW = containerWidth / total;
+    const available = (containerWidth - cardW) / 2;
 
-  // 🔄 Non‑linear spacing function
-  const calcPos = useCallback(
-    (d: number) => {
-      if (Math.abs(d) <= 1) return d;
-      return Math.sign(d) * (1 + (Math.abs(d) - 1) * config.nonLinearFactor);
-    },
-    [config.nonLinearFactor],
-  );
+    // Simplified position calculation
+    const baseTranslate =
+      (distance * (available * config.spreadFactor)) / config.cardsPerSide;
 
-  const nl = calcPos(distance);
-  const rawX = (nl * available * config.spreadFactor) / config.cardsPerSide;
-  // 🚧 Cap to avoid overflow beyond container edges
-  const baseTranslate = Math.max(-available, Math.min(rawX, available));
+    // Simplified calculations using factors
+    const targetScale =
+      1 - (Math.abs(distance) / (config.cardsPerSide + 1)) * config.scaleFactor;
+    const targetOpacity =
+      1 -
+      (Math.abs(distance) / (config.cardsPerSide + 1)) * config.opacityFactor;
 
-  // 🎚️ Scale & opacity per distance from center
-  const stepScale =
-    (config.maxScale - config.baseScale) / (config.cardsPerSide + 1);
-  const stepOpacity =
-    (config.maxOpacity - config.baseOpacity) / (config.cardsPerSide + 1);
+    // Simplified transforms with computed ranges
+    const baseScale = 1 - config.scaleFactor;
+    const baseOpacity = 1 - config.opacityFactor;
 
-  const targetScale = Math.max(
-    config.baseScale,
-    config.maxScale - Math.abs(distance) * stepScale,
-  );
-  const targetOpacity = Math.max(
-    config.baseOpacity,
-    config.maxOpacity - Math.abs(distance) * stepOpacity,
-  );
+    const x = useTransform(scrollYProgress, [0, 1], [0, baseTranslate]);
+    const scale = useTransform(
+      scrollYProgress,
+      [0, 1],
+      [baseScale, targetScale],
+    );
+    const opacity = useTransform(
+      scrollYProgress,
+      [0, 1],
+      [baseOpacity, targetOpacity],
+    );
 
-  // 🔄 Framer Motion transforms
-  const x = useTransform(scrollYProgress, config.scrollRange, [
-    0,
-    baseTranslate,
-  ]);
-  const scale = useTransform(scrollYProgress, config.scrollRange, [
-    config.baseScale,
-    targetScale,
-  ]);
-  const opacity = useTransform(scrollYProgress, config.scrollRange, [
-    config.baseOpacity,
-    targetOpacity,
-  ]);
+    // Z-index based on distance from center
+    const zIndex = config.cardsPerSide + 1 - Math.abs(distance);
 
-  const zIndex = config.cardsPerSide + 1 - Math.abs(distance);
-
-  return (
-    <motion.div
-      style={{
-        x,
-        scale,
-        opacity,
-        zIndex,
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        translateX: "-50%",
-        translateY: "-50%",
-        width: `${100 / total}%`, // 📏 Responsive based on total cards
-        aspectRatio: "auto",
-        borderRadius: config.borderRadius,
-        boxShadow: config.shadow,
-        overflow: "hidden",
-        backgroundColor: "white",
-      }}
-      initial={{ scale: config.baseScale, opacity: config.baseOpacity }}
-    >
-      {/* 🖼️ Image with contain to avoid cropping */}
-      <img
-        src={card.image}
-        alt={card.alt ?? `Card ${card.id}`}
+    return (
+      <motion.div
         style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "contain",
-          objectPosition: "center",
-          display: "block",
-          backgroundColor: "#f8f9fa",
+          x,
+          scale,
+          opacity,
+          zIndex,
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          translateX: "-50%",
+          translateY: "-50%",
+          width: `${100 / total}%`,
+          aspectRatio: "auto",
+          borderRadius: config.borderRadius ?? 10,
+          boxShadow: CARD_SHADOW,
+          overflow: "hidden",
         }}
-        loading="lazy"
-        decoding="async"
-      />
-    </motion.div>
-  );
-};
+        initial={{ scale: baseScale, opacity: baseOpacity }}
+      >
+        <img
+          src={card.image || "/placeholder.svg"}
+          alt={card.alt ?? `Card ${card.id}`}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            objectPosition: "center",
+            display: "block",
+          }}
+          loading="lazy"
+          decoding="async"
+        />
+      </motion.div>
+    );
+  },
+);
+
+AnimatedCard.displayName = "AnimatedCard";
 
 export interface FanOutCardProps {
   cards?: CardData[];
@@ -156,7 +141,7 @@ export interface FanOutCardProps {
   config?: Partial<AnimationConfig>;
 }
 
-// 🃏 Fan‑out card container
+// Optimized FanOutCard component
 const FanOutCard = ({
   cards,
   className = "",
@@ -166,23 +151,41 @@ const FanOutCard = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
 
-  // 📏 Observe container for width changes
+  // Optimized resize observer
   useEffect(() => {
     if (!containerRef.current) return;
-    const update = () => setContainerWidth(containerRef.current!.offsetWidth);
+
+    const update = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    };
+
+    // Initial measurement
     update();
-    const ro = new ResizeObserver(update);
+
+    // Use ResizeObserver with debounce for performance
+    let timeoutId: NodeJS.Timeout;
+    const ro = new ResizeObserver(() => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(update, 100);
+    });
+
     ro.observe(containerRef.current);
-    return () => ro.disconnect();
+
+    return () => {
+      clearTimeout(timeoutId);
+      ro.disconnect();
+    };
   }, []);
 
-  // 🖱️ Track scroll progress relative to container
+  // Optimized scroll tracking
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 0.8", "start 0.2"],
   });
 
-  // 📦 Default sample cards if none provided
+  // Default cards
   const total = cfg.cardsPerSide * 2 + 1;
   const defaultCards: CardData[] = Array.from({ length: total }, (_, i) => ({
     id: `card-${i}`,
@@ -190,8 +193,14 @@ const FanOutCard = ({
       "https://help.apple.com/assets/67EAFA00341984D9AE00EC98/67EAFA0586243791BA0154F5/fr_FR/4e069c10221c319aaf55b730d1313856.png",
     alt: `Sample card ${i + 1}`,
   }));
+
   const list = cards ?? defaultCards;
   const centerIdx = Math.floor(list.length / 2);
+
+  // Memoize card sections for better performance
+  const leftCards = list.slice(0, centerIdx).reverse();
+  const centerCard = list[centerIdx];
+  const rightCards = list.slice(centerIdx + 1);
 
   return (
     <div className={`w-full ${className}`}>
@@ -200,7 +209,7 @@ const FanOutCard = ({
         style={{
           position: "relative",
           width: "100%",
-          aspectRatio: cfg.aspectRatio, // 📐 Keeps height adaptive
+          aspectRatio: String(cfg.aspectRatio),
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -208,25 +217,22 @@ const FanOutCard = ({
           padding: "0 1rem",
         }}
       >
-        {list
-          .slice(0, centerIdx)
-          .reverse()
-          .map((c, i) => (
-            <AnimatedCard
-              key={c.id}
-              card={c}
-              index={i}
-              position="left"
-              scrollYProgress={scrollYProgress}
-              containerWidth={containerWidth}
-              config={cfg}
-            />
-          ))}
-
-        {list[centerIdx] && (
+        {leftCards.map((c, i) => (
           <AnimatedCard
-            key={list[centerIdx].id}
-            card={list[centerIdx]}
+            key={c.id}
+            card={c}
+            index={i}
+            position="left"
+            scrollYProgress={scrollYProgress}
+            containerWidth={containerWidth}
+            config={cfg}
+          />
+        ))}
+
+        {centerCard && (
+          <AnimatedCard
+            key={centerCard.id}
+            card={centerCard}
             index={0}
             position="center"
             scrollYProgress={scrollYProgress}
@@ -235,7 +241,7 @@ const FanOutCard = ({
           />
         )}
 
-        {list.slice(centerIdx + 1).map((c, i) => (
+        {rightCards.map((c, i) => (
           <AnimatedCard
             key={c.id}
             card={c}
