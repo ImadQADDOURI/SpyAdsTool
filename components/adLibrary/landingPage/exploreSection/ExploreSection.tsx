@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
 import AnimatedBackground from "../hero/animated-background";
+import ExtensionSection from "./ExtensionSection";
 import TopProductsStoresSection from "./TopProductsStoresSection";
 import TrendSection, { type CardData } from "./TrendSection";
 
@@ -57,6 +58,7 @@ const ExploreSection: React.FC<ExploreSectionProps> = ({
           onProductsClick={onProductsClick}
           onStoresClick={onStoresClick}
         />
+        <ExtensionSection />
       </div>
 
       {/* Inline styles */}
