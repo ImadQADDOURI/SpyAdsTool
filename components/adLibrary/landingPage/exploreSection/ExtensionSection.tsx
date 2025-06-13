@@ -3,6 +3,7 @@
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { motion, useAnimation, useInView } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { AuroraText } from "../hero/AuroraText";
 
@@ -14,7 +15,7 @@ const EXTENSION_CONFIG = {
   // Animation settings
   staggerDelay: 0.1,
   animationDuration: 0.8,
-  carouselSpeed: 20, // seconds for one complete cycle
+  carouselSpeed: 60, // seconds for one complete cycle (slowed down from 20)
 
   // Content
   headline: {
@@ -32,27 +33,31 @@ const EXTENSION_CONFIG = {
     {
       id: 1,
       image:
-        "https://help.apple.com/assets/67EAFA00341984D9AE00EC98/67EAFA0586243791BA0154F5/fr_FR/4e069c10221c319aaf55b730d1313856.png",
+        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
       alt: "Extension Dashboard",
     },
     {
       id: 2,
-      image: "/placeholder.svg?height=600&width=800",
+      image:
+        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
       alt: "Ad Analysis Feature",
     },
     {
       id: 3,
-      image: "/placeholder.svg?height=600&width=800",
+      image:
+        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
       alt: "Quick Save Feature",
     },
     {
       id: 4,
-      image: "/placeholder.svg?height=600&width=800",
+      image:
+        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
       alt: "Settings Panel",
     },
     {
       id: 5,
-      image: "/placeholder.svg?height=600&width=800",
+      image:
+        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
       alt: "Integration Options",
     },
   ],
@@ -70,9 +75,14 @@ const ExtensionSection: React.FC<ExtensionSectionProps> = ({
   onCtaClick,
 }) => {
   const [mounted, setMounted] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [autoPlay, setAutoPlay] = useState(true);
   const carouselRef = useRef<HTMLDivElement>(null);
   const inView = useInView(carouselRef, { once: false, amount: 0.2 });
   const controls = useAnimation();
+
+  const screenshots = customScreenshots || EXTENSION_CONFIG.screenshots;
+  const totalSlides = screenshots.length;
 
   useEffect(() => {
     setMounted(true);
@@ -84,8 +94,34 @@ const ExtensionSection: React.FC<ExtensionSectionProps> = ({
     }
   }, [controls, inView]);
 
-  const screenshots = customScreenshots || EXTENSION_CONFIG.screenshots;
-  const isDark = true; // Force dark theme
+  // Auto-scroll effect with the ability to pause
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (autoPlay && inView) {
+      interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % totalSlides);
+      }, 5000); // Change slide every 5 seconds
+    }
+
+    return () => clearInterval(interval);
+  }, [autoPlay, inView, totalSlides]);
+
+  // Navigation functions
+  const goToNext = () => {
+    setAutoPlay(false); // Pause auto-scroll when manually navigating
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % totalSlides);
+  };
+
+  const goToPrev = () => {
+    setAutoPlay(false); // Pause auto-scroll when manually navigating
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + totalSlides) % totalSlides);
+  };
+
+  // Resume auto-play after user interaction
+  const handleMouseLeave = () => {
+    setAutoPlay(true);
+  };
 
   // Animation variants
   const containerVariants = {
@@ -243,51 +279,117 @@ const ExtensionSection: React.FC<ExtensionSectionProps> = ({
               </motion.div>
             </div>
 
-            {/* Screenshots carousel section */}
+            {/* Screenshots carousel section - Redesigned */}
             <motion.div
               ref={carouselRef}
               className="w-full overflow-hidden rounded-xl"
               variants={itemVariants}
+              onMouseLeave={handleMouseLeave}
             >
               <div className="relative">
-                {/* Fade overlays for carousel edges */}
-                <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-16 bg-gradient-to-r from-black to-transparent"></div>
-                <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-10 w-16 bg-gradient-to-l from-black to-transparent"></div>
-
-                {/* Auto-scrolling carousel */}
-                <motion.div
-                  className="flex gap-4 py-6"
-                  animate={{
-                    x: [`0%`, `-${(screenshots.length * 100) / 2}%`],
-                  }}
-                  transition={{
-                    x: {
-                      repeat: Number.POSITIVE_INFINITY,
-                      repeatType: "loop",
-                      duration: EXTENSION_CONFIG.carouselSpeed,
-                      ease: "linear",
-                    },
-                  }}
-                  style={{
-                    willChange: "transform",
-                  }}
+                {/* Navigation arrows */}
+                <button
+                  onClick={goToPrev}
+                  className="absolute left-4 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70"
+                  aria-label="Previous slide"
                 >
-                  {/* Double the screenshots for seamless looping */}
-                  {[...screenshots, ...screenshots].map((screenshot, index) => (
-                    <div
-                      key={`${screenshot.id}-${index}`}
-                      className="h-[200px] w-[300px] flex-shrink-0 overflow-hidden rounded-lg border border-white/10 bg-black/20 sm:h-[250px] sm:w-[400px] md:h-[300px] md:w-[500px]"
-                    >
-                      <img
-                        src={screenshot.image || "/placeholder.svg"}
-                        alt={screenshot.alt}
-                        className="h-full w-full object-contain p-2"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </div>
+                  <ChevronLeft size={24} />
+                </button>
+
+                <button
+                  onClick={goToNext}
+                  className="absolute right-4 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70"
+                  aria-label="Next slide"
+                >
+                  <ChevronRight size={24} />
+                </button>
+
+                {/* Carousel container with centered active slide */}
+                <div className="relative h-[350px] w-full overflow-hidden py-6">
+                  <div
+                    className="flex h-full items-center justify-center"
+                    style={{
+                      perspective: "1000px",
+                    }}
+                  >
+                    {screenshots.map((screenshot, index) => {
+                      // Calculate position relative to current index
+                      const position =
+                        (index - currentIndex + totalSlides) % totalSlides;
+                      const isActive = position === 0;
+                      const isPrev = position === totalSlides - 1;
+                      const isNext = position === 1;
+
+                      // Determine styling based on position
+                      let translateX = "0%";
+                      let scale = 0.7;
+                      let zIndex = 0;
+                      let opacity = 0.4;
+
+                      if (isActive) {
+                        translateX = "0%";
+                        scale = 1;
+                        zIndex = 10;
+                        opacity = 1;
+                      } else if (isPrev) {
+                        translateX = "-70%";
+                        zIndex = 5;
+                      } else if (isNext) {
+                        translateX = "70%";
+                        zIndex = 5;
+                      } else {
+                        // Hide other slides
+                        opacity = 0;
+                      }
+
+                      return (
+                        <motion.div
+                          key={screenshot.id}
+                          className="absolute h-[300px] w-[500px] overflow-hidden rounded-lg border border-white/10 bg-black/20"
+                          initial={false}
+                          animate={{
+                            x: translateX,
+                            scale,
+                            zIndex,
+                            opacity,
+                          }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 30,
+                          }}
+                        >
+                          <img
+                            src={screenshot.image || "/placeholder.svg"}
+                            alt={screenshot.alt}
+                            className="h-full w-full object-contain p-2"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Slide indicators */}
+                <div className="mt-4 flex justify-center gap-2">
+                  {screenshots.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setCurrentIndex(index);
+                        setAutoPlay(false);
+                      }}
+                      className={`h-2 w-2 rounded-full transition-all ${
+                        currentIndex === index
+                          ? "w-6 bg-white"
+                          : "bg-white/30 hover:bg-white/50"
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
                   ))}
-                </motion.div>
+                </div>
               </div>
             </motion.div>
           </div>

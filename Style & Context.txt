@@ -10,6 +10,20 @@ Key focus areas:
 7. minimum memory use, CPU load, and max perceived smoothness.
 8. Uses inline CSS (styled-JSX) so no external files required.
 
+app context :
+* Discover winning products & ads instantly
+* Search millions of ads with advanced filters
+* All-in-one tool for scaling sales & boosting eCom profits
+* Unmatched database: ads from 2018 to today
+* 10+ powerful filter types for precise results
+* Visual analytics & performance charts
+* Advertiser insights & detailed statistics
+* Built-in AI tools & profit calculators
+* Download ad media easily
+* Save and organize ads to custom boards
+
+-----------------------------
+
 Styling guide:
 - Colors: Purple gradient (#6566F1 to #B977F8), light/dark grays for backgrounds
 - Typography: System fonts, bold gradient headings, regular body text
