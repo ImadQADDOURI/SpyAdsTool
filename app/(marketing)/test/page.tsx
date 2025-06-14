@@ -1,27 +1,37 @@
-import ExploreSection from "@/components/adLibrary/landingPage/exploreSection/ExploreSection";
+import { AnalyticsSection } from "@/components/adLibrary/landingPage/analyticsSection/AnalyticsSection";
+import ExtensionSection from "@/components/adLibrary/landingPage/exploreSection/ExtensionSection";
 import TopProductsStoresSection from "@/components/adLibrary/landingPage/exploreSection/TopProductsStoresSection";
 import TrendSection from "@/components/adLibrary/landingPage/exploreSection/TrendSection";
 import FeaturesSection from "@/components/adLibrary/landingPage/featuresSection/features-section";
 import AnimatedBackground from "@/components/adLibrary/landingPage/hero/animated-background";
-import { AuroraText } from "@/components/adLibrary/landingPage/hero/AuroraText";
-import AvatarTrustedby from "@/components/adLibrary/landingPage/hero/AvatarTrustedby";
-import { ContainerTextFlip } from "@/components/adLibrary/landingPage/hero/container-text-flip";
-import FloatingGlassImage from "@/components/adLibrary/landingPage/hero/FloatingGlassImage";
-import GlassVideo from "@/components/adLibrary/landingPage/hero/GlassVideo";
 import HeroSection from "@/components/adLibrary/landingPage/hero/hero-section";
-import ParticlesLayer from "@/components/adLibrary/landingPage/hero/particles-layer";
-import TrustedBySection from "@/components/adLibrary/landingPage/hero/TrustedBySection";
 import { ReviewSection } from "@/components/adLibrary/landingPage/reviewSection/ReviewSection";
 
 export default function HomePage() {
   return (
     <div>
       <HeroSection />
-
-      <ExploreSection />
-      {/* <TrendSection />
-      <TopProductsStoresSection /> */}
       <FeaturesSection />
+      <section className={`relative w-full py-12 sm:py-16 lg:py-20`}>
+        {/* Animated Background */}
+        {/* <div className="absolute inset-0 -z-10">
+          <AnimatedBackground />
+        </div> */}
+
+        {/* Explore Section Content */}
+        <div className="space-y-8 sm:space-y-12 lg:space-y-16">
+          {/* Trend Section Card */}
+          <TrendSection />
+
+          {/* Top Products & Stores Section Card */}
+          <TopProductsStoresSection />
+
+          {/* Extension Section Card */}
+          <ExtensionSection />
+
+          <AnalyticsSection />
+        </div>
+      </section>
 
       <ReviewSection />
       {/* <AnimatedBackground
