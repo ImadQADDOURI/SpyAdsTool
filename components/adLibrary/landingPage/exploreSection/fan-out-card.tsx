@@ -25,8 +25,7 @@ const defaultConfig: AnimationConfig = {
 
 // Fixed values for better performance
 const SCROLL_RANGE: [number, number] = [0, 1];
-const CARD_SHADOW = "0 10px 30px rgba(255, 255, 255, 0.2)";
-
+const CARD_SHADOW = "0 10px 30px rgba(165,94,234, 0.4)";
 export interface CardData {
   id: string;
   image: string;

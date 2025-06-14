@@ -88,11 +88,12 @@ export default function TopProductsStoresSection({
     <section className={`relative w-full ${className}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl">
-          {/* 🌟 Subtle background gradient */}
+          {/* 🌟 Radial gradient “soft halo” */}
+          <div className="pointer-events-none absolute left-1/2 top-0 z-0 h-full w-full -translate-x-1/2 -translate-y-1/4 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.35),transparent)] opacity-65 blur-3xl" />
 
           <div className="relative z-10 px-6 py-12 sm:px-8 lg:px-12">
             {/* 📝 Header Content */}
-            <div className="mx-auto mb-12 max-w-4xl text-center">
+            <div className="relative mx-auto mb-12 max-w-4xl text-center">
               <div className="mb-4 flex items-center justify-center gap-2">
                 <Store className="h-8 w-8 text-blue-500" />
                 <span className="rounded-full bg-blue-500/20 px-4 py-1.5 text-sm font-medium uppercase tracking-wider text-blue-400">
