@@ -1,9 +1,9 @@
 "use client";
 
-import { BarChart3, TrendingUp } from "lucide-react";
+import { BarChart3, Flame, Search, TrendingUp } from "lucide-react";
 
 import { AuroraText } from "../hero/AuroraText";
-import { CTAButton } from "./cta-button";
+import { CTAButton } from "./CTAButton";
 import FanOutCard, { type CardData } from "./fan-out-card";
 
 const TREND_CONFIG = {
@@ -62,19 +62,19 @@ export default function TrendSection({
   const ads = customAds || TREND_CONFIG.sampleAds;
 
   return (
-    <section className={`relative w-full py-16 ${className}`}>
+    <section className={`relative w-full ${className}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl">
           {/* 🌟 Subtle background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-transparent to-cyan-500/5" />
 
           <div className="relative z-10 px-6 py-12 sm:px-8 lg:px-12">
             {/* 📝 Header Content */}
-            <div className="mx-auto mb-12 max-w-4xl text-center">
+            <div className="mx-auto max-w-4xl text-center">
+              <div className="flex items-center space-x-2"></div>
               <div className="mb-4 flex items-center justify-center gap-2">
-                <TrendingUp className="h-8 w-8 text-pink-400" />
-                <span className="text-sm font-medium uppercase tracking-wider text-pink-400">
-                  Trend
+                <Flame className="h-8 w-8 text-purple-500" />
+                <span className="rounded-full bg-purple-500/20 px-4 py-1.5 text-sm font-medium uppercase tracking-wider text-purple-400">
+                  Trending Ads
                 </span>
               </div>
 
@@ -95,10 +95,11 @@ export default function TrendSection({
               </p>
 
               <CTAButton
-                onClick={() => console.log("Trends CTA clicked")}
-                icon="search"
+                href="/explore"
+                forceDarkMode
+                icon={Search}
+                iconPosition="right"
                 size="lg"
-                className="shadow-xl"
               >
                 {TREND_CONFIG.ctaText}
               </CTAButton>

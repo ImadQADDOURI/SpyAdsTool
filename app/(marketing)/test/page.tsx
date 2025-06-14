@@ -12,7 +12,6 @@ import HeroSection from "@/components/adLibrary/landingPage/hero/hero-section";
 import ParticlesLayer from "@/components/adLibrary/landingPage/hero/particles-layer";
 import TrustedBySection from "@/components/adLibrary/landingPage/hero/TrustedBySection";
 import { ReviewSection } from "@/components/adLibrary/landingPage/reviewSection/ReviewSection";
-import FanOutCard from "@/components/adLibrary/landingPage/trendSection/fan-out-card";
 
 export default function HomePage() {
   return (

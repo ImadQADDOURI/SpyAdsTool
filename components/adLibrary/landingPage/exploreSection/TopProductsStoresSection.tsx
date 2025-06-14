@@ -3,7 +3,7 @@
 import { Package, Star, Store } from "lucide-react";
 
 import { AuroraText } from "../hero/AuroraText";
-import { CTAButton } from "./cta-button";
+import { CTAButton } from "./CTAButton";
 import { MarqueeColumn } from "./MarqueeColumn";
 
 const TOP_PRODUCTS_STORES_CONFIG = {
@@ -85,19 +85,18 @@ export default function TopProductsStoresSection({
   const stores = customStores || TOP_PRODUCTS_STORES_CONFIG.sampleStores;
 
   return (
-    <section className={`relative w-full py-16 ${className}`}>
+    <section className={`relative w-full ${className}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl">
           {/* 🌟 Subtle background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-cyan-500/5" />
 
           <div className="relative z-10 px-6 py-12 sm:px-8 lg:px-12">
             {/* 📝 Header Content */}
             <div className="mx-auto mb-12 max-w-4xl text-center">
               <div className="mb-4 flex items-center justify-center gap-2">
-                <Store className="h-8 w-8 text-violet-400" />
-                <span className="text-sm font-medium uppercase tracking-wider text-violet-400">
-                  Top Performers
+                <Store className="h-8 w-8 text-blue-500" />
+                <span className="rounded-full bg-blue-500/20 px-4 py-1.5 text-sm font-medium uppercase tracking-wider text-blue-400">
+                  Products & Stores
                 </span>
               </div>
 
@@ -124,13 +123,11 @@ export default function TopProductsStoresSection({
               <div className="space-y-6">
                 <div className="text-center">
                   <CTAButton
-                    onClick={() => {
-                      onProductsClick?.();
-                      console.log("Products CTA clicked");
-                    }}
-                    icon="package"
+                    href="/explore"
+                    forceDarkMode
+                    icon={Package}
+                    iconPosition="right"
                     size="lg"
-                    variant="primary"
                   >
                     {TOP_PRODUCTS_STORES_CONFIG.ctas.products}
                   </CTAButton>
@@ -149,13 +146,11 @@ export default function TopProductsStoresSection({
               <div className="space-y-6">
                 <div className="text-center">
                   <CTAButton
-                    onClick={() => {
-                      onStoresClick?.();
-                      console.log("Stores CTA clicked");
-                    }}
-                    icon="store"
+                    href="/explore"
+                    forceDarkMode
+                    icon={Store}
+                    iconPosition="right"
                     size="lg"
-                    variant="secondary"
                   >
                     {TOP_PRODUCTS_STORES_CONFIG.ctas.stores}
                   </CTAButton>

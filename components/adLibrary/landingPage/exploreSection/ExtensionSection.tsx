@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Chrome } from "lucide-react";
+import { ChevronLeft, ChevronRight, Chrome, Download } from "lucide-react";
 
 import { AuroraText } from "../hero/AuroraText";
-import { CTAButton } from "./cta-button";
+import { CTAButton } from "./CTAButton";
 
 const EXTENSION_CONFIG = {
   gradientColors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
@@ -77,24 +77,18 @@ export default function ExtensionSection({
     setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
-  const handleCtaClick = () => {
-    onCtaClick?.();
-    window.open(EXTENSION_CONFIG.ctaLink, "_blank");
-  };
-
   return (
-    <section className={`relative w-full py-16 ${className}`}>
+    <section className={`relative w-full ${className}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl">
           {/* 🌟 Subtle background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-blue-500/5" />
 
           <div className="relative z-10 px-6 py-12 sm:px-8 lg:px-12">
             {/* 📝 Header Content */}
             <div className="mx-auto mb-12 max-w-4xl text-center">
               <div className="mb-4 flex items-center justify-center gap-2">
-                <Chrome className="h-8 w-8 text-blue-400" />
-                <span className="text-sm font-medium uppercase tracking-wider text-blue-400">
+                <Chrome className="h-8 w-8 text-pink-500" />
+                <span className="rounded-full bg-pink-500/20 px-4 py-1.5 text-sm font-medium uppercase tracking-wider text-pink-400">
                   Browser Extension
                 </span>
               </div>
@@ -116,10 +110,11 @@ export default function ExtensionSection({
               </p>
 
               <CTAButton
-                onClick={handleCtaClick}
-                icon="download"
+                href="/explore"
+                forceDarkMode
+                icon={Download}
+                iconPosition="right"
                 size="lg"
-                className="shadow-xl"
               >
                 {EXTENSION_CONFIG.ctaText}
               </CTAButton>
