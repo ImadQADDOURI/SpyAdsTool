@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   BarChart3,
   Bookmark,
@@ -10,11 +9,11 @@ import {
   CreditCard,
   Database,
   Download,
+  ExternalLink,
   Search,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-
+import { CTAButton } from "../exploreSection/CTAButton";
 // Import the provided components
 import AnimatedBackground from "./animated-background";
 import { AuroraText } from "./AuroraText";
@@ -30,8 +29,6 @@ import TrustedBySection from "./TrustedBySection";
 const CONFIG = {
   // Animation settings
   animations: {
-    staggerDelay: 0.15,
-    itemDuration: 0.6,
     flipWordsDuration: 2500,
   },
   // Background settings
@@ -46,7 +43,7 @@ const CONFIG = {
   },
   // Particles settings
   particles: {
-    quantity: 12,
+    quantity: 20,
     preset: "cosmic" as const,
     size: 0.3,
     speed: 0.8,
@@ -65,33 +62,9 @@ const CONFIG = {
 };
 
 const HeroSection = () => {
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: CONFIG.animations.staggerDelay,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: CONFIG.animations.itemDuration,
-        ease: "easeOut",
-      },
-    },
-  };
-
   return (
     <div className="relative min-h-[75vh] overflow-hidden">
-      {/* Animated Background */}
+      {/* 🌌 Animated Background */}
       <AnimatedBackground
         className="absolute inset-0"
         horizontalPosition={20}
@@ -102,29 +75,24 @@ const HeroSection = () => {
         colors={CONFIG.background.colors}
       />
 
-      {/* Particles Layer */}
+      {/* ✨ Particles Layer */}
       <ParticlesLayer
         quantity={CONFIG.particles.quantity}
         preset={CONFIG.particles.preset}
         size={CONFIG.particles.size}
         speed={CONFIG.particles.speed}
-        className="absolute inset-0"
+        className=""
       />
 
-      {/* Main Hero Content */}
+      {/* 🎯 Main Hero Content */}
       <div className="relative z-10">
         {/* Main Grid Container */}
         <div className="container mx-auto px-6 lg:px-8">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid min-h-[70vh] grid-cols-1 items-center gap-12 pt-16 lg:grid-cols-2 lg:gap-16"
-          >
-            {/* Left Column - Content */}
-            <div className="space-y-8">
-              {/* Main Headline with Aurora Text and Flip Words */}
-              <motion.div variants={itemVariants} className="space-y-4">
+          <div className="grid min-h-[70vh] grid-cols-1 items-center gap-12 pt-16 lg:grid-cols-2 lg:gap-16">
+            {/* 📝 Left Column - Content */}
+            <div className="animate-fade-in-up space-y-8">
+              {/* 🎨 Main Headline with Aurora Text and Flip Words */}
+              <div className="space-y-4">
                 <div className="text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl">
                   <div className="mb-2">
                     Discover winning{" "}
@@ -145,13 +113,10 @@ const HeroSection = () => {
                     filters
                   </div>
                 </div>
-              </motion.div>
+              </div>
 
-              {/* Supporting Subtitle */}
-              <motion.p
-                variants={itemVariants}
-                className="max-w-lg text-lg leading-relaxed text-gray-600 dark:text-gray-300"
-              >
+              {/* 📄 Supporting Subtitle */}
+              <p className="max-w-lg text-lg leading-relaxed text-gray-600 dark:text-gray-300">
                 All-in-one tool for scaling sales & boosting eCom profits.
                 Search millions of ads from 2018 to today with unmatched
                 precision and{" "}
@@ -162,56 +127,44 @@ const HeroSection = () => {
                   AI-powered
                 </AuroraText>{" "}
                 insights.
-              </motion.p>
+              </p>
 
-              {/* CTA Buttons */}
-              <motion.div
-                variants={itemVariants}
-                className="flex flex-col gap-4 sm:flex-row"
-              >
-                <Button
-                  size="lg"
-                  className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-4 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl hover:shadow-purple-500/25"
+              {/* 🚀 CTA Buttons */}
+              <div className="flex flex-row gap-4">
+                <CTAButton
+                  href="/explore"
+                  forceDarkMode
+                  size="md"
+                  icon={Search}
                 >
-                  <Search className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
                   Start Spying Now
-                  <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-700 to-purple-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                </Button>
+                </CTAButton>
 
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="group border-2 border-gray-300 px-8 py-4 transition-all duration-300 hover:scale-105 hover:border-blue-500 hover:bg-blue-50 dark:border-gray-600 dark:hover:border-blue-400 dark:hover:bg-blue-950/20"
+                <CTAButton
+                  href="extension"
+                  // variant="outline"
+                  size="md"
+                  icon={Chrome}
                 >
-                  <Chrome className="mr-2 h-5 w-5 text-blue-600 transition-transform group-hover:scale-110" />
                   Install Extension
-                </Button>
-              </motion.div>
+                </CTAButton>
+              </div>
 
-              {/* Trusted By Avatars */}
-              <motion.div
-                variants={itemVariants}
-                className="flex items-center gap-6"
-              >
+              {/* 👥 Trusted By Avatars */}
+              <div className="flex items-center gap-6">
                 <AvatarTrustedby />
-              </motion.div>
+              </div>
 
-              {/* No Credit Card Required */}
-              <motion.div
-                variants={itemVariants}
-                className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400"
-              >
+              {/* 💳 No Credit Card Required */}
+              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                 <CreditCard className="h-4 w-4" />
                 <span>No credit card required</span>
-              </motion.div>
+              </div>
             </div>
 
-            {/* Right Column - Floating Images with Feature Pills */}
-            <motion.div
-              variants={itemVariants}
-              className="relative flex h-[450px] items-center justify-center lg:h-[500px]"
-            >
-              {/* Main Center Image */}
+            {/* 🖼️ Right Column - Floating Images with Feature Pills */}
+            <div className="animate-fade-in-scale relative flex h-[450px] items-center justify-center lg:h-[500px]">
+              {/* 🎯 Main Center Image */}
               <div className="relative z-20">
                 <FloatingGlassImage
                   src={CONFIG.heroImages[2]}
@@ -226,7 +179,7 @@ const HeroSection = () => {
                 />
               </div>
 
-              {/* Top Left Image */}
+              {/* 🖼️ Surrounding Images */}
               <div className="absolute left-0 top-0 z-10">
                 <FloatingGlassImage
                   src={CONFIG.heroImages[0]}
@@ -239,7 +192,6 @@ const HeroSection = () => {
                 />
               </div>
 
-              {/* Top Right Image */}
               <div className="absolute right-0 top-8 z-10">
                 <FloatingGlassImage
                   src={CONFIG.heroImages[1]}
@@ -252,7 +204,6 @@ const HeroSection = () => {
                 />
               </div>
 
-              {/* Bottom Left Image */}
               <div className="absolute bottom-8 left-8 z-10">
                 <FloatingGlassImage
                   src={CONFIG.heroImages[3]}
@@ -265,7 +216,6 @@ const HeroSection = () => {
                 />
               </div>
 
-              {/* Bottom Right Image */}
               <div className="absolute bottom-0 right-8 z-10">
                 <FloatingGlassImage
                   src={CONFIG.heroImages[4]}
@@ -278,10 +228,8 @@ const HeroSection = () => {
                 />
               </div>
 
-              {/* Feature Pills - Positioned around the edges */}
-
-              {/* Top Left Feature */}
-              <div className="absolute -left-8 top-16 z-30">
+              {/* 🏷️ Feature Pills - Positioned around the edges */}
+              <div className="absolute -left-8 top-16 z-30 hidden lg:block">
                 <FloatingGlassTextIcon
                   text="AI-Powered Insights"
                   Icon={Bot}
@@ -293,8 +241,7 @@ const HeroSection = () => {
                 />
               </div>
 
-              {/* Top Right Feature */}
-              <div className="absolute -right-8 top-4 z-30">
+              <div className="absolute -right-8 top-4 z-30 hidden lg:block">
                 <FloatingGlassTextIcon
                   text="10M+ Ads Database"
                   Icon={Database}
@@ -306,8 +253,7 @@ const HeroSection = () => {
                 />
               </div>
 
-              {/* Middle Left Feature */}
-              <div className="absolute -left-12 top-1/2 z-30">
+              <div className="absolute -left-12 top-1/2 z-30 hidden lg:block">
                 <FloatingGlassTextIcon
                   text="Visual Analytics"
                   Icon={BarChart3}
@@ -319,8 +265,7 @@ const HeroSection = () => {
                 />
               </div>
 
-              {/* Middle Right Feature */}
-              <div className="absolute -right-12 top-1/2 z-30">
+              <div className="absolute -right-12 top-1/2 z-30 hidden lg:block">
                 <FloatingGlassTextIcon
                   text="Download Media"
                   Icon={Download}
@@ -332,8 +277,7 @@ const HeroSection = () => {
                 />
               </div>
 
-              {/* Bottom Left Feature */}
-              <div className="absolute -left-8 bottom-4 z-30">
+              <div className="absolute -left-8 bottom-4 z-30 hidden lg:block">
                 <FloatingGlassTextIcon
                   text="Save to Boards"
                   Icon={Bookmark}
@@ -345,8 +289,7 @@ const HeroSection = () => {
                 />
               </div>
 
-              {/* Bottom Right Feature */}
-              <div className="absolute -right-8 bottom-16 z-30">
+              <div className="absolute -right-8 bottom-16 z-30 hidden lg:block">
                 <FloatingGlassTextIcon
                   text="Profit Calculator"
                   Icon={Calculator}
@@ -357,37 +300,67 @@ const HeroSection = () => {
                   iconClass="w-4 h-4 text-orange-600 dark:text-orange-400"
                 />
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
 
-        {/* Hero Video Section - Positioned to be partially visible */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="relative z-10 flex justify-center px-6 pb-12 pt-4"
-        >
+        {/* 🎬 Hero Video Section */}
+        <div className="animate-fade-in-up-delayed relative z-10 flex justify-center px-6 pb-12 pt-4">
           <GlassVideo src={CONFIG.videoUrl} glass={true} />
-        </motion.div>
+        </div>
 
-        {/* Trusted By Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.3 }}
-          className="relative z-10 pb-16"
-        >
+        {/* 🏢 Trusted By Section */}
+        <div className="animate-fade-in-up-delayed-2 relative z-10 pb-16">
           <TrustedBySection />
-        </motion.div>
+        </div>
       </div>
 
-      {/* Custom Styles */}
+      {/* 🎨 Custom Styles */}
       <style jsx>{`
         .container {
           max-width: 1280px;
         }
 
+        /* 🎭 Optimized animations using CSS instead of Framer Motion */
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out forwards;
+          opacity: 0;
+          transform: translateY(30px);
+        }
+
+        .animate-fade-in-scale {
+          animation: fadeInScale 1s ease-out 0.3s forwards;
+          opacity: 0;
+          transform: scale(0.95);
+        }
+
+        .animate-fade-in-up-delayed {
+          animation: fadeInUp 0.8s ease-out 1s forwards;
+          opacity: 0;
+          transform: translateY(30px);
+        }
+
+        .animate-fade-in-up-delayed-2 {
+          animation: fadeInUp 0.6s ease-out 1.3s forwards;
+          opacity: 0;
+          transform: translateY(30px);
+        }
+
+        @keyframes fadeInUp {
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeInScale {
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        /* 📱 Responsive improvements */
         @media (max-width: 768px) {
           .grid {
             grid-template-columns: 1fr;
@@ -398,14 +371,6 @@ const HeroSection = () => {
             min-height: auto;
             padding-top: 1rem;
             padding-bottom: 1rem;
-          }
-
-          /* Hide feature pills on mobile for cleaner look */
-          .absolute.-left-8,
-          .absolute.-right-8,
-          .absolute.-left-12,
-          .absolute.-right-12 {
-            display: none;
           }
         }
 
@@ -419,6 +384,24 @@ const HeroSection = () => {
             font-size: 3rem;
             line-height: 1.2;
           }
+        }
+
+        /* ♿ Accessibility improvements */
+        @media (prefers-reduced-motion: reduce) {
+          .animate-fade-in-up,
+          .animate-fade-in-scale,
+          .animate-fade-in-up-delayed,
+          .animate-fade-in-up-delayed-2 {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+          }
+        }
+
+        /* 🎯 Enhanced focus states for accessibility */
+        button:focus-visible {
+          outline: 2px solid #3b82f6;
+          outline-offset: 2px;
         }
       `}</style>
     </div>

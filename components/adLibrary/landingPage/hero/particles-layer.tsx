@@ -3,6 +3,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTheme } from "next-themes";
 
+interface Particle {
+  id: number;
+  rotationSpeed: number;
+  flashDelay: number;
+  flashDuration: number;
+  moveKeyframes: string;
+  startX: number;
+  startY: number;
+}
+
 interface ParticlesLayerProps {
   quantity?: number;
   particleColor?: string; // Main color of the particle
@@ -20,7 +30,7 @@ interface ParticlesLayerProps {
     | "ethereal"
     | "ember"
     | "aurora"
-    | "neon"; // Predefined color schemes
+    | "neon";
 }
 
 type ThemeColors = {
@@ -52,16 +62,13 @@ export default function ParticlesLayer({
   className = "",
   preset = "firefly",
 }: ParticlesLayerProps) {
-  // Theme detection with fallback
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Handle mounting to prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Determine current theme with fallback
   const currentTheme = mounted ? resolvedTheme || theme || "light" : "light";
   const isDarkTheme = currentTheme === "dark";
 
@@ -185,29 +192,24 @@ export default function ParticlesLayer({
   const selectedPreset = presets[preset] || presets.firefly;
   const themePreset = isDarkTheme ? selectedPreset.dark : selectedPreset.light;
 
-  // Determine final colors based on props or preset
   const finalParticleColor = particleColor || themePreset.particleColor;
   const finalGlowColor = glowColor || themePreset.glowColor;
   const finalShadowColor = shadowColor || themePreset.shadowColor;
-  const finalOpacity = opacity !== undefined ? opacity : themePreset.opacity;
-  const finalGlowIntensity =
-    glowIntensity !== undefined ? glowIntensity : themePreset.glowIntensity;
+  const finalOpacity = opacity ?? themePreset.opacity;
+  const finalGlowIntensity = glowIntensity ?? themePreset.glowIntensity;
 
-  // Generate random animation keyframes for each particle
-  const particles = useMemo(() => {
+  const particles = useMemo((): Particle[] => {
     return Array.from({ length: quantity }, (_, i) => {
       const steps = Math.floor(Math.random() * 12) + 16;
       const rotationSpeed = (Math.random() * 10 + 8) * speed;
       const flashDelay = Math.random() * 8000 + 500;
       const flashDuration = Math.random() * 6000 + 5000;
 
-      // Generate random movement keyframes
       const moveKeyframes = Array.from({ length: steps + 1 }, (_, step) => {
         const percentage = (step * (100 / steps)).toFixed(1);
         const translateX = (Math.random() * 100 - 50).toFixed(1);
         const translateY = (Math.random() * 100 - 50).toFixed(1);
         const scale = ((Math.random() * 0.75 + 0.25) * (size / 0.4)).toFixed(2);
-
         return `${percentage}% { transform: translateX(${translateX}vw) translateY(${translateY}vh) scale(${scale}); }`;
       }).join("\n");
 
@@ -217,25 +219,21 @@ export default function ParticlesLayer({
         flashDelay,
         flashDuration,
         moveKeyframes,
+        startX: Math.random() * 100,
+        startY: Math.random() * 100,
       };
     });
   }, [quantity, speed, size]);
 
-  // Don't render anything during SSR to prevent hydration mismatch
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   return (
     <div className={`pointer-events-none absolute inset-0 -z-10 ${className}`}>
       <style jsx>{`
         .firefly {
           position: absolute;
-          left: 50%;
-          top: 50%;
           width: ${size}vw;
           height: ${size}vw;
-          margin: ${-size / 2}vw 0 0 ${9.8 * (size / 0.4)}vw;
           animation: ease ${200 * speed}s alternate infinite;
           pointer-events: none;
           mix-blend-mode: ${isDarkTheme ? "screen" : "normal"};
@@ -248,7 +246,7 @@ export default function ParticlesLayer({
           width: 100%;
           height: 100%;
           border-radius: 50%;
-          transform-origin: -10vw;
+          transform-origin: center;
         }
 
         .firefly::before {
@@ -295,6 +293,10 @@ export default function ParticlesLayer({
             animation-name: move${particle.id};
           }
 
+          .firefly:nth-child(${particle.id + 1}) {
+            /* Inline start position applied via style prop */
+          }
+
           .firefly:nth-child(${particle.id + 1})::before {
             animation-duration: ${particle.rotationSpeed}s;
           }
@@ -313,7 +315,11 @@ export default function ParticlesLayer({
       `}</style>
 
       {particles.map((particle) => (
-        <div key={particle.id} className="firefly" />
+        <div
+          key={particle.id}
+          className="firefly"
+          style={{ left: `${particle.startX}%`, top: `${particle.startY}%` }}
+        />
       ))}
     </div>
   );

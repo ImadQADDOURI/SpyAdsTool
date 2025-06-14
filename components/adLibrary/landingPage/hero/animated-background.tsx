@@ -1,12 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-} from "framer-motion";
 
 interface ColorConfig {
   blue: string;
@@ -18,17 +12,11 @@ interface AnimatedBackgroundProps {
   className?: string;
   horizontalPosition?: number; // 0-100, controls left/right position
   verticalPosition?: number; // 0-100, controls up/down position
-  animationDuration?: number; // animation speed in seconds
   opacity?: number; // 0-1, controls transparency
   blur?: number; // blur amount in pixels
-  pauseOnTabHidden?: boolean; // pause animation when tab is not visible
-  vividity?: number; // 0-2, controls color saturation (1 = normal)
-  contrast?: number; // 0-2, controls color contrast (1 = normal)
   colors?: Partial<ColorConfig>;
-  enableReducedMotion?: boolean; // respect user's motion preferences
-  enableMouseInteraction?: boolean; // new prop
+  enableMouseInteraction?: boolean;
   mouseInfluence?: number; // 0-1, controls how much mouse affects position
-  mouseSmoothing?: number; // spring animation config for mouse following
 }
 
 const defaultColors: ColorConfig = {
@@ -41,56 +29,23 @@ export default function AnimatedBackground({
   className = "",
   horizontalPosition = 30,
   verticalPosition = 30,
-  animationDuration = 15,
   opacity = 0.3,
   blur = 100,
-  pauseOnTabHidden = true,
-  vividity = 1,
-  contrast = 1,
   colors = {},
-  enableReducedMotion = true,
-  enableMouseInteraction = true, // new default
-  mouseInfluence = 0.2, // new default
-  mouseSmoothing = 0.1, // new default
+  enableMouseInteraction = true,
+  mouseInfluence = 0.2,
 }: AnimatedBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isTabVisible, setIsTabVisible] = useState(true);
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
+  const [isVisible, setIsVisible] = useState(true);
 
-  // Motion values for smooth mouse following
-  const mouseX = useMotionValue(50);
-  const mouseY = useMotionValue(50);
-  const smoothMouseX = useSpring(mouseX, {
-    damping: 20,
-    stiffness: 100 * mouseSmoothing,
-  });
-  const smoothMouseY = useSpring(mouseY, {
-    damping: 20,
-    stiffness: 100 * mouseSmoothing,
-  });
-  const shouldReduceMotion = useReducedMotion();
-
-  // Merge default colors with custom colors
+  // 🎨 Merge default colors with custom colors
   const finalColors = { ...defaultColors, ...colors };
 
-  // Handle tab visibility
-  const handleVisibilityChange = useCallback(() => {
-    setIsTabVisible(!document.hidden);
-  }, []);
-
-  useEffect(() => {
-    if (!pauseOnTabHidden) return;
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [pauseOnTabHidden, handleVisibilityChange]);
-
-  // Handle mouse movement
+  // 🖱️ Handle mouse movement with throttling for better performance
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
-      if (!enableMouseInteraction || shouldReduceMotion) return;
+      if (!enableMouseInteraction) return;
 
       const { clientX, clientY } = event;
       const { innerWidth, innerHeight } = window;
@@ -99,128 +54,65 @@ export default function AnimatedBackground({
       const y = (clientY / innerHeight) * 100;
 
       setMousePosition({ x, y });
-      mouseX.set(x);
-      mouseY.set(y);
     },
-    [enableMouseInteraction, shouldReduceMotion, mouseX, mouseY],
+    [enableMouseInteraction],
   );
 
-  // Handle mouse leave to reset position
-  const handleMouseLeave = useCallback(() => {
-    if (!enableMouseInteraction) return;
-
-    mouseX.set(horizontalPosition);
-    mouseY.set(verticalPosition);
-  }, [
-    enableMouseInteraction,
-    horizontalPosition,
-    verticalPosition,
-    mouseX,
-    mouseY,
-  ]);
+  // 👁️ Handle visibility change for performance
+  const handleVisibilityChange = useCallback(() => {
+    setIsVisible(!document.hidden);
+  }, []);
 
   useEffect(() => {
-    if (!enableMouseInteraction) return;
+    let throttleTimer: NodeJS.Timeout;
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseleave", handleMouseLeave);
+    const throttledMouseMove = (event: MouseEvent) => {
+      if (throttleTimer) return;
+      throttleTimer = setTimeout(() => {
+        handleMouseMove(event);
+        throttleTimer = null as any;
+      }, 16); // ~60fps
+    };
+
+    if (enableMouseInteraction) {
+      window.addEventListener("mousemove", throttledMouseMove, {
+        passive: true,
+      });
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseleave", handleMouseLeave);
+      if (throttleTimer) clearTimeout(throttleTimer);
+      window.removeEventListener("mousemove", throttledMouseMove);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [enableMouseInteraction, handleMouseMove, handleMouseLeave]);
+  }, [enableMouseInteraction, handleMouseMove, handleVisibilityChange]);
 
-  // Apply vividity and contrast to colors
-  const processColor = useCallback(
-    (colorRgb: string, alpha = 0.7) => {
-      const [r, g, b] = colorRgb.split(", ").map(Number);
-
-      // Apply vividity (saturation)
-      const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-      const processedR = Math.round(gray + (r - gray) * vividity);
-      const processedG = Math.round(gray + (g - gray) * vividity);
-      const processedB = Math.round(gray + (b - gray) * vividity);
-
-      // Apply contrast
-      const contrastR = Math.round(
-        ((processedR / 255 - 0.5) * contrast + 0.5) * 255,
-      );
-      const contrastG = Math.round(
-        ((processedG / 255 - 0.5) * contrast + 0.5) * 255,
-      );
-      const contrastB = Math.round(
-        ((processedB / 255 - 0.5) * contrast + 0.5) * 255,
-      );
-
-      // Clamp values
-      const finalR = Math.max(0, Math.min(255, contrastR));
-      const finalG = Math.max(0, Math.min(255, contrastG));
-      const finalB = Math.max(0, Math.min(255, contrastB));
-
-      return `rgba(${finalR}, ${finalG}, ${finalB}, ${alpha})`;
-    },
-    [vividity, contrast],
-  );
-
-  // Calculate positions for the gradients with mouse influence
-  const basePos1 = {
-    x: Math.max(0, Math.min(100, horizontalPosition)),
-    y: Math.max(0, Math.min(100, verticalPosition)),
-  };
-
-  const basePos2 = {
-    x: Math.max(0, Math.min(100, horizontalPosition + 40)),
-    y: Math.max(0, Math.min(100, verticalPosition + 30)),
-  };
-
-  // Blend base position with mouse position based on influence
+  // 🎯 Calculate positions with mouse influence
   const pos1 = enableMouseInteraction
     ? {
-        x: basePos1.x + (mousePosition.x - basePos1.x) * mouseInfluence,
-        y: basePos1.y + (mousePosition.y - basePos1.y) * mouseInfluence,
+        x:
+          horizontalPosition +
+          (mousePosition.x - horizontalPosition) * mouseInfluence,
+        y:
+          verticalPosition +
+          (mousePosition.y - verticalPosition) * mouseInfluence,
       }
-    : basePos1;
+    : { x: horizontalPosition, y: verticalPosition };
 
   const pos2 = enableMouseInteraction
     ? {
-        x: basePos2.x + (mousePosition.x - basePos2.x) * mouseInfluence * 0.7, // Less influence on second gradient
-        y: basePos2.y + (mousePosition.y - basePos2.y) * mouseInfluence * 0.7,
+        x:
+          horizontalPosition +
+          40 +
+          (mousePosition.x - (horizontalPosition + 40)) * mouseInfluence * 0.7,
+        y:
+          verticalPosition +
+          30 +
+          (mousePosition.y - (verticalPosition + 30)) * mouseInfluence * 0.7,
       }
-    : basePos2;
-
-  // Determine if animation should be paused
-  const shouldPause =
-    (pauseOnTabHidden && !isTabVisible) ||
-    (enableReducedMotion && shouldReduceMotion);
-
-  // Animation variants
-  const createGradientAnimation = (
-    positions: typeof pos1,
-    colorSequence: string[],
-  ) => ({
-    background: colorSequence,
-    transition: {
-      duration: animationDuration,
-      repeat: shouldPause ? 0 : Number.POSITIVE_INFINITY,
-      repeatType: "reverse" as const,
-      ease: "easeInOut",
-    },
-  });
-
-  const gradient1Colors = [
-    `radial-gradient(circle at ${pos1.x}% ${pos1.y}%, ${processColor(finalColors.blue)} 0%, rgba(196, 181, 253, 0) 50%)`,
-    `radial-gradient(circle at ${pos1.x + 10}% ${pos1.y - 10}%, ${processColor(finalColors.purple)} 0%, rgba(196, 181, 253, 0) 50%)`,
-    `radial-gradient(circle at ${pos1.x + 20}% ${pos1.y - 20}%, ${processColor(finalColors.pink)} 0%, rgba(196, 181, 253, 0) 50%)`,
-    `radial-gradient(circle at ${pos1.x}% ${pos1.y}%, ${processColor(finalColors.blue)} 0%, rgba(196, 181, 253, 0) 50%)`,
-  ];
-
-  const gradient2Colors = [
-    `radial-gradient(circle at ${pos2.x}% ${pos2.y}%, ${processColor(finalColors.pink)} 0%, rgba(196, 181, 253, 0) 50%)`,
-    `radial-gradient(circle at ${pos2.x - 10}% ${pos2.y + 10}%, ${processColor(finalColors.blue)} 0%, rgba(196, 181, 253, 0) 50%)`,
-    `radial-gradient(circle at ${pos2.x - 20}% ${pos2.y + 20}%, ${processColor(finalColors.purple)} 0%, rgba(196, 181, 253, 0) 50%)`,
-    `radial-gradient(circle at ${pos2.x}% ${pos2.y}%, ${processColor(finalColors.pink)} 0%, rgba(196, 181, 253, 0) 50%)`,
-  ];
+    : { x: horizontalPosition + 40, y: verticalPosition + 30 };
 
   return (
     <div
@@ -229,43 +121,119 @@ export default function AnimatedBackground({
       role="presentation"
       aria-hidden="true"
     >
+      {/* 🌈 Base background */}
       <div className="absolute inset-0 bg-gray-50 dark:bg-gray-900" />
 
-      <motion.div
-        className="absolute -inset-[25%]"
+      {/* 🎨 Animated gradients using CSS animations for better performance */}
+      <div
+        className={`absolute -inset-[25%] transition-all duration-1000 ease-out ${
+          isVisible ? "animate-gradient-1" : ""
+        }`}
         style={{
           opacity: Math.max(0, Math.min(1, opacity)),
-          x: enableMouseInteraction ? smoothMouseX : 0,
-          y: enableMouseInteraction ? smoothMouseY : 0,
-        }}
-        animate={createGradientAnimation(pos1, gradient1Colors)}
-        initial={{ background: gradient1Colors[0] }}
-      />
-
-      <motion.div
-        className="absolute -inset-[25%]"
-        style={{
-          opacity: Math.max(0, Math.min(1, opacity)),
-          x: enableMouseInteraction ? smoothMouseX : 0,
-          y: enableMouseInteraction ? smoothMouseY : 0,
-        }}
-        animate={createGradientAnimation(pos2, gradient2Colors)}
-        initial={{ background: gradient2Colors[0] }}
-        transition={{
-          duration: animationDuration + 5,
-          repeat: shouldPause ? 0 : Number.POSITIVE_INFINITY,
-          repeatType: "reverse",
-          ease: "easeInOut",
+          background: `radial-gradient(circle at ${pos1.x}% ${pos1.y}%, rgba(${finalColors.blue}, 0.7) 0%, transparent 50%)`,
+          transform: enableMouseInteraction
+            ? `translate(${(mousePosition.x - 50) * 0.1}px, ${(mousePosition.y - 50) * 0.1}px)`
+            : "none",
         }}
       />
 
       <div
+        className={`absolute -inset-[25%] transition-all duration-1000 ease-out ${
+          isVisible ? "animate-gradient-2" : ""
+        }`}
+        style={{
+          opacity: Math.max(0, Math.min(1, opacity)),
+          background: `radial-gradient(circle at ${pos2.x}% ${pos2.y}%, rgba(${finalColors.pink}, 0.6) 0%, transparent 50%)`,
+          transform: enableMouseInteraction
+            ? `translate(${(mousePosition.x - 50) * 0.05}px, ${(mousePosition.y - 50) * 0.05}px)`
+            : "none",
+        }}
+      />
+
+      <div
+        className={`absolute -inset-[25%] transition-all duration-1000 ease-out ${
+          isVisible ? "animate-gradient-3" : ""
+        }`}
+        style={{
+          opacity: Math.max(0, Math.min(1, opacity * 0.8)),
+          background: `radial-gradient(circle at ${(pos1.x + pos2.x) / 2}% ${(pos1.y + pos2.y) / 2}%, rgba(${
+            finalColors.purple
+          }, 0.5) 0%, transparent 50%)`,
+          transform: enableMouseInteraction
+            ? `translate(${(mousePosition.x - 50) * 0.08}px, ${(mousePosition.y - 50) * 0.08}px)`
+            : "none",
+        }}
+      />
+
+      {/* 🌫️ Blur overlay */}
+      <div
         className="absolute inset-0"
         style={{
           backdropFilter: `blur(${Math.max(0, Math.min(200, blur))}px)`,
-          WebkitBackdropFilter: `blur(${Math.max(0, Math.min(200, blur))}px)`, // Safari support
+          WebkitBackdropFilter: `blur(${Math.max(0, Math.min(200, blur))}px)`,
         }}
       />
+
+      {/* 🎭 CSS Animations for better performance */}
+      <style jsx>{`
+        @keyframes gradient-1 {
+          0%,
+          100% {
+            transform: scale(1) rotate(0deg);
+          }
+          33% {
+            transform: scale(1.1) rotate(120deg);
+          }
+          66% {
+            transform: scale(0.9) rotate(240deg);
+          }
+        }
+
+        @keyframes gradient-2 {
+          0%,
+          100% {
+            transform: scale(1) rotate(0deg);
+          }
+          50% {
+            transform: scale(1.2) rotate(180deg);
+          }
+        }
+
+        @keyframes gradient-3 {
+          0%,
+          100% {
+            transform: scale(1) rotate(0deg);
+          }
+          25% {
+            transform: scale(0.8) rotate(90deg);
+          }
+          75% {
+            transform: scale(1.1) rotate(270deg);
+          }
+        }
+
+        .animate-gradient-1 {
+          animation: gradient-1 20s ease-in-out infinite;
+        }
+
+        .animate-gradient-2 {
+          animation: gradient-2 25s ease-in-out infinite reverse;
+        }
+
+        .animate-gradient-3 {
+          animation: gradient-3 30s ease-in-out infinite;
+        }
+
+        /* ♿ Respect reduced motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+          .animate-gradient-1,
+          .animate-gradient-2,
+          .animate-gradient-3 {
+            animation: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
