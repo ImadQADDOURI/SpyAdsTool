@@ -39,8 +39,7 @@ export default function HomePage() {
       {/* CTA Section */}
       <CTASection />
 
-      {/* Footer Section */}
-      <FooterSection />
+      {/* Footer Section in layout */}
     </div>
   );
 }

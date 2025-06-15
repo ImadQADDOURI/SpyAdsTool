@@ -1,7 +1,5 @@
+import { FooterSection } from "@/components/adLibrary/landingPage/FooterSection";
 import { Navbar } from "@/components/adLibrary/navbar/navbar";
-import { NavMobile } from "@/components/layout/mobile-nav";
-import { NavBar } from "@/components/layout/navbar";
-import { SiteFooter } from "@/components/layout/site-footer";
 
 interface MarketingLayoutProps {
   children: React.ReactNode;
@@ -12,7 +10,7 @@ export default function MarketingLayout({ children }: MarketingLayoutProps) {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1 pt-16">{children}</main>
-      <SiteFooter />
+      <FooterSection />
     </div>
   );
 }
