@@ -227,19 +227,18 @@ function FeatureCard({ feature, index }: FeatureCardProps) {
                   ))}
                 </div>
               )}
-              <div className="max-w-xs">
-                {/* 🚀 CTA Button */}
-                <CTAButton
-                  href={`/explore`}
-                  variant="outline"
-                  size="lg"
-                  iconPosition="right"
-                  icon={ArrowRight}
-                  forceDarkMode
-                >
-                  Explore This Feature
-                </CTAButton>
-              </div>
+
+              {/* 🚀 CTA Button */}
+              <CTAButton
+                href={`/explore`}
+                variant="outline"
+                size="lg"
+                iconPosition="right"
+                icon={ArrowRight}
+                forceMode="dark"
+              >
+                Explore This Feature
+              </CTAButton>
             </div>
 
             {/* 🖼️ Image Column */}

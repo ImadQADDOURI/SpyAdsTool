@@ -133,7 +133,7 @@ const HeroSection = () => {
               <div className="flex flex-row gap-4">
                 <CTAButton
                   href="/explore"
-                  forceDarkMode
+                  forceMode="dark"
                   size="md"
                   icon={Search}
                 >
@@ -142,7 +142,7 @@ const HeroSection = () => {
 
                 <CTAButton
                   href="extension"
-                  // variant="outline"
+                  variant="outline"
                   size="md"
                   icon={Chrome}
                 >

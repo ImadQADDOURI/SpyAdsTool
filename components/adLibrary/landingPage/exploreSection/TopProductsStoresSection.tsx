@@ -125,7 +125,7 @@ export default function TopProductsStoresSection({
                 <div className="text-center">
                   <CTAButton
                     href="/explore"
-                    forceDarkMode
+                    forceMode="dark"
                     icon={Package}
                     iconPosition="right"
                     size="lg"
@@ -148,7 +148,7 @@ export default function TopProductsStoresSection({
                 <div className="text-center">
                   <CTAButton
                     href="/explore"
-                    forceDarkMode
+                    forceMode="dark"
                     icon={Store}
                     iconPosition="right"
                     size="lg"

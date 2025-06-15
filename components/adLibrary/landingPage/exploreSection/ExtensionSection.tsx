@@ -112,7 +112,7 @@ export default function ExtensionSection({
 
               <CTAButton
                 href="/explore"
-                forceDarkMode
+                forceMode="dark"
                 icon={Download}
                 iconPosition="right"
                 size="lg"

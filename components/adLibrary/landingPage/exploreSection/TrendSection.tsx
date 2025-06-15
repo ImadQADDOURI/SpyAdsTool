@@ -96,7 +96,7 @@ export default function TrendSection({
 
               <CTAButton
                 href="/explore"
-                forceDarkMode
+                forceMode="dark"
                 icon={Search}
                 iconPosition="right"
                 size="lg"
