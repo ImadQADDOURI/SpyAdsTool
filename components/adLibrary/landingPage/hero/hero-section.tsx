@@ -9,7 +9,6 @@ import {
   CreditCard,
   Database,
   Download,
-  ExternalLink,
   Search,
 } from "lucide-react";
 
@@ -25,12 +24,13 @@ import GlassVideo from "./GlassVideo";
 import ParticlesLayer from "./particles-layer";
 import TrustedBySection from "./TrustedBySection";
 
-// 🎛️ Configuration - Easy to customize
+// 🎛️ Centralized Configuration - Easy to customize everything in one place
 const CONFIG = {
   // Animation settings
   animations: {
     flipWordsDuration: 2500,
   },
+
   // Background settings
   background: {
     opacity: 0.4,
@@ -41,6 +41,7 @@ const CONFIG = {
       pink: "236, 72, 153",
     },
   },
+
   // Particles settings
   particles: {
     quantity: 20,
@@ -48,17 +49,209 @@ const CONFIG = {
     size: 0.3,
     speed: 0.8,
   },
+
   // Content
-  flipWords: ["products", "ads", "insights", "profits"],
-  heroImages: [
-    "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
-    "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
-    "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
-    "https://adsparo.com/home/assets/svg/hero-banner/4.svg",
-    "https://adsparo.com/home/assets/svg/hero-banner/5.svg",
-  ],
+  flipWords: ["Ads", "Products", "Stores", "Trends", "Analytics"],
   videoUrl:
     "https://assets-static.invideo.io/files/Invideo_Demo_HP_18_10_2024_V001_1921f1aee3.mp4",
+
+  // 🖼️ Floating Images Configuration - Centralized positioning and settings
+  heroImages: [
+    {
+      id: "main-center",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
+      alt: "Main hero banner",
+      position: {
+        className: "relative z-20",
+      },
+      animation: {
+        floatAmplitude: 8,
+        floatSpeed: 6,
+        delay: 0,
+      },
+      settings: {
+        glass: true,
+        lens: true,
+        zoomFactor: 1.3,
+        priority: true,
+      },
+    },
+    {
+      id: "top-left",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
+      alt: "Hero banner 1",
+      position: {
+        className: "absolute left-0 top-0 z-10",
+      },
+      animation: {
+        floatAmplitude: 6,
+        floatSpeed: 8,
+        delay: 0.5,
+      },
+      settings: {
+        glass: true,
+        lens: true,
+      },
+    },
+    {
+      id: "top-right",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
+      alt: "Hero banner 2",
+      position: {
+        className: "absolute right-0 top-8 z-10",
+      },
+      animation: {
+        floatAmplitude: 7,
+        floatSpeed: 7,
+        delay: 1,
+      },
+      settings: {
+        glass: true,
+        lens: true,
+      },
+    },
+    {
+      id: "bottom-left",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
+      alt: "Hero banner 4",
+      position: {
+        className: "absolute bottom-8 left-8 z-10",
+      },
+      animation: {
+        floatAmplitude: 5,
+        floatSpeed: 9,
+        delay: 1.5,
+      },
+      settings: {
+        glass: true,
+        lens: true,
+      },
+    },
+    {
+      id: "bottom-right",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
+      alt: "Hero banner 5",
+      position: {
+        className: "absolute bottom-0 right-8 z-10",
+      },
+      animation: {
+        floatAmplitude: 6,
+        floatSpeed: 8,
+        delay: 2,
+      },
+      settings: {
+        glass: true,
+        lens: true,
+      },
+    },
+  ],
+
+  // 🏷️ Feature Pills Configuration - Centralized positioning and styling
+  featurePills: [
+    {
+      id: "ai-insights",
+      text: "AI-Insights",
+      icon: Bot,
+      position: {
+        className: "absolute -left-8 top-16 z-30 hidden lg:block",
+      },
+      animation: {
+        floatAmplitude: 4,
+        floatSpeed: 6,
+        delay: 0.8,
+      },
+      styling: {
+        textClass: "text-gray-600 dark:text-gray-800 font-semibold text-sm",
+        iconClass: "w-4 h-4 text-blue-400 dark:text-blue-500",
+      },
+    },
+    {
+      id: "ads-database",
+      text: "10M+ Ads",
+      icon: Database,
+      position: {
+        className: "absolute -right-8 top-4 z-30 hidden lg:block",
+      },
+      animation: {
+        floatAmplitude: 5,
+        floatSpeed: 7,
+        delay: 1.2,
+      },
+      styling: {
+        textClass: "text-purple-700 dark:text-purple-300 font-semibold text-sm",
+        iconClass: "w-4 h-4 text-purple-600 dark:text-purple-400",
+      },
+    },
+    {
+      id: "visual-analytics",
+      text: "Analytics",
+      icon: BarChart3,
+      position: {
+        className: "absolute -left-12 top-1/2 z-30 hidden lg:block",
+      },
+      animation: {
+        floatAmplitude: 6,
+        floatSpeed: 8,
+        delay: 1.6,
+      },
+      styling: {
+        textClass: "text-pink-700 dark:text-pink-300 font-semibold text-sm",
+        iconClass: "w-4 h-4 text-pink-600 dark:text-pink-400",
+      },
+    },
+    {
+      id: "download-media",
+      text: "Media",
+      icon: Download,
+      position: {
+        className: "absolute -right-12 top-1/2 z-30 hidden lg:block",
+      },
+      animation: {
+        floatAmplitude: 4,
+        floatSpeed: 6,
+        delay: 2,
+      },
+      styling: {
+        textClass: "text-cyan-700 dark:text-cyan-300 font-semibold text-sm",
+        iconClass: "w-4 h-4 text-cyan-600 dark:text-cyan-400",
+      },
+    },
+    {
+      id: "save-boards",
+      text: "Boards",
+      icon: Bookmark,
+      position: {
+        className: "absolute -left-8 bottom-4 z-30 hidden lg:block",
+      },
+      animation: {
+        floatAmplitude: 5,
+        floatSpeed: 7,
+        delay: 2.4,
+      },
+      styling: {
+        textClass:
+          "text-emerald-700 dark:text-emerald-300 font-semibold text-sm",
+        iconClass: "w-4 h-4 text-emerald-600 dark:text-emerald-400",
+      },
+    },
+    {
+      id: "profit-calculator",
+      text: "Calculator",
+      icon: Calculator,
+      position: {
+        className: "absolute -right-8 bottom-16 z-30 hidden lg:block",
+      },
+      animation: {
+        floatAmplitude: 6,
+        floatSpeed: 8,
+        delay: 2.8,
+      },
+      styling: {
+        textClass: "text-orange-700 dark:text-orange-300 font-semibold text-sm",
+        iconClass: "w-4 h-4 text-orange-600 dark:text-orange-400",
+      },
+    },
+  ],
 };
 
 const HeroSection = () => {
@@ -95,38 +288,62 @@ const HeroSection = () => {
               <div className="space-y-4">
                 <div className="text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl">
                   <div className="mb-2">
-                    Discover winning{" "}
-                    <FlipWords
-                      words={CONFIG.flipWords}
-                      duration={CONFIG.animations.flipWordsDuration}
-                      className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text font-bold text-transparent"
-                    />
-                  </div>
-                  <div>
-                    instantly with{" "}
                     <AuroraText
                       colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
                       className="inline-block"
                     >
-                      advanced
+                      Dominate
                     </AuroraText>{" "}
-                    filters
+                    <FlipWords
+                      words={CONFIG.flipWords}
+                      duration={CONFIG.animations.flipWordsDuration}
+                    />
+                  </div>
+
+                  <div>
+                    Slice &amp; Dice with{" "}
+                    <AuroraText
+                      colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+                      className="inline-block"
+                    >
+                      Filters
+                    </AuroraText>{" "}
+                    +{" "}
+                    <AuroraText
+                      colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+                      className="inline-block"
+                    >
+                      AI
+                    </AuroraText>
+                    , Instantly.
                   </div>
                 </div>
               </div>
 
               {/* 📄 Supporting Subtitle */}
-              <p className="max-w-lg text-lg leading-relaxed text-gray-600 dark:text-gray-300">
-                All-in-one tool for scaling sales & boosting eCom profits.
-                Search millions of ads from 2018 to today with unmatched
-                precision and{" "}
+              <p className="max-w-2xl text-xl leading-relaxed text-gray-600 dark:text-gray-300">
+                Tap into{" "}
                 <AuroraText
                   colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
                   className="inline"
                 >
-                  AI-powered
+                  millions of ads
+                </AuroraText>
+                , unleash{" "}
+                <AuroraText
+                  colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+                  className="inline"
+                >
+                  10+ advanced filters
+                </AuroraText>
+                , and leverage{" "}
+                <AuroraText
+                  colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+                  className="inline"
+                >
+                  AI-powered insights
                 </AuroraText>{" "}
-                insights.
+                to skyrocket your eCom profits.
               </p>
 
               {/* 🚀 CTA Buttons */}
@@ -141,7 +358,7 @@ const HeroSection = () => {
                 </CTAButton>
 
                 <CTAButton
-                  href="extension"
+                  href="/extension"
                   variant="outline"
                   size="md"
                   icon={Chrome}
@@ -164,142 +381,37 @@ const HeroSection = () => {
 
             {/* 🖼️ Right Column - Floating Images with Feature Pills */}
             <div className="animate-fade-in-scale relative flex h-[450px] items-center justify-center lg:h-[500px]">
-              {/* 🎯 Main Center Image */}
-              <div className="relative z-20">
-                <FloatingGlassImage
-                  src={CONFIG.heroImages[2]}
-                  alt="Main hero banner"
-                  floatAmplitude={8}
-                  floatSpeed={6}
-                  delay={0}
-                  glass={true}
-                  lens={true}
-                  zoomFactor={1.3}
-                  priority={true}
-                />
-              </div>
+              {/* 🖼️ Render Floating Images from Configuration */}
+              {CONFIG.heroImages.map((image) => (
+                <div key={image.id} className={image.position.className}>
+                  <FloatingGlassImage
+                    src={image.src}
+                    alt={image.alt}
+                    floatAmplitude={image.animation.floatAmplitude}
+                    floatSpeed={image.animation.floatSpeed}
+                    delay={image.animation.delay}
+                    glass={image.settings.glass}
+                    lens={image.settings.lens}
+                    zoomFactor={image.settings.zoomFactor}
+                    priority={image.settings.priority}
+                  />
+                </div>
+              ))}
 
-              {/* 🖼️ Surrounding Images */}
-              <div className="absolute left-0 top-0 z-10">
-                <FloatingGlassImage
-                  src={CONFIG.heroImages[0]}
-                  alt="Hero banner 1"
-                  floatAmplitude={6}
-                  floatSpeed={8}
-                  delay={0.5}
-                  glass={true}
-                  lens={true}
-                />
-              </div>
-
-              <div className="absolute right-0 top-8 z-10">
-                <FloatingGlassImage
-                  src={CONFIG.heroImages[1]}
-                  alt="Hero banner 2"
-                  floatAmplitude={7}
-                  floatSpeed={7}
-                  delay={1}
-                  glass={true}
-                  lens={true}
-                />
-              </div>
-
-              <div className="absolute bottom-8 left-8 z-10">
-                <FloatingGlassImage
-                  src={CONFIG.heroImages[3]}
-                  alt="Hero banner 4"
-                  floatAmplitude={5}
-                  floatSpeed={9}
-                  delay={1.5}
-                  glass={true}
-                  lens={true}
-                />
-              </div>
-
-              <div className="absolute bottom-0 right-8 z-10">
-                <FloatingGlassImage
-                  src={CONFIG.heroImages[4]}
-                  alt="Hero banner 5"
-                  floatAmplitude={6}
-                  floatSpeed={8}
-                  delay={2}
-                  glass={true}
-                  lens={true}
-                />
-              </div>
-
-              {/* 🏷️ Feature Pills - Positioned around the edges */}
-              <div className="absolute -left-8 top-16 z-30 hidden lg:block">
-                <FloatingGlassTextIcon
-                  text="AI-Powered Insights"
-                  Icon={Bot}
-                  floatAmplitude={4}
-                  floatSpeed={6}
-                  delay={0.8}
-                  textClass="text-gray-600 dark:text-gray-800 font-semibold text-sm"
-                  iconClass="w-4 h-4 text-blue-400 dark:text-blue-500"
-                />
-              </div>
-
-              <div className="absolute -right-8 top-4 z-30 hidden lg:block">
-                <FloatingGlassTextIcon
-                  text="10M+ Ads Database"
-                  Icon={Database}
-                  floatAmplitude={5}
-                  floatSpeed={7}
-                  delay={1.2}
-                  textClass="text-purple-700 dark:text-purple-300 font-semibold text-sm"
-                  iconClass="w-4 h-4 text-purple-600 dark:text-purple-400"
-                />
-              </div>
-
-              <div className="absolute -left-12 top-1/2 z-30 hidden lg:block">
-                <FloatingGlassTextIcon
-                  text="Visual Analytics"
-                  Icon={BarChart3}
-                  floatAmplitude={6}
-                  floatSpeed={8}
-                  delay={1.6}
-                  textClass="text-pink-700 dark:text-pink-300 font-semibold text-sm"
-                  iconClass="w-4 h-4 text-pink-600 dark:text-pink-400"
-                />
-              </div>
-
-              <div className="absolute -right-12 top-1/2 z-30 hidden lg:block">
-                <FloatingGlassTextIcon
-                  text="Download Media"
-                  Icon={Download}
-                  floatAmplitude={4}
-                  floatSpeed={6}
-                  delay={2}
-                  textClass="text-cyan-700 dark:text-cyan-300 font-semibold text-sm"
-                  iconClass="w-4 h-4 text-cyan-600 dark:text-cyan-400"
-                />
-              </div>
-
-              <div className="absolute -left-8 bottom-4 z-30 hidden lg:block">
-                <FloatingGlassTextIcon
-                  text="Save to Boards"
-                  Icon={Bookmark}
-                  floatAmplitude={5}
-                  floatSpeed={7}
-                  delay={2.4}
-                  textClass="text-emerald-700 dark:text-emerald-300 font-semibold text-sm"
-                  iconClass="w-4 h-4 text-emerald-600 dark:text-emerald-400"
-                />
-              </div>
-
-              <div className="absolute -right-8 bottom-16 z-30 hidden lg:block">
-                <FloatingGlassTextIcon
-                  text="Profit Calculator"
-                  Icon={Calculator}
-                  floatAmplitude={6}
-                  floatSpeed={8}
-                  delay={2.8}
-                  textClass="text-orange-700 dark:text-orange-300 font-semibold text-sm"
-                  iconClass="w-4 h-4 text-orange-600 dark:text-orange-400"
-                />
-              </div>
+              {/* 🏷️ Render Feature Pills from Configuration */}
+              {CONFIG.featurePills.map((pill) => (
+                <div key={pill.id} className={pill.position.className}>
+                  <FloatingGlassTextIcon
+                    text={pill.text}
+                    Icon={pill.icon}
+                    floatAmplitude={pill.animation.floatAmplitude}
+                    floatSpeed={pill.animation.floatSpeed}
+                    delay={pill.animation.delay}
+                    textClass={pill.styling.textClass}
+                    iconClass={pill.styling.iconClass}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
