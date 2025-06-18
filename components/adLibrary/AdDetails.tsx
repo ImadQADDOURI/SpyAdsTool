@@ -13,9 +13,7 @@ import { analyzeKeywords } from "@/actions/geminiAiService";
 import {
   AdLibraryAdCollationDetailsQuery,
   AdLibraryAdDetailsV2Query,
-  getAdLibraryAdCollationVariables,
-  getAdLibraryAdDetailsV2Variables,
-} from "@/actions/MetaGraphQLConstsAndFunctions";
+} from "@/actions/Meta-GraphQL-Queries";
 import {
   BarChart3,
   CheckCircle,
@@ -89,12 +87,10 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
         return;
       }
 
-      const variables = getAdLibraryAdCollationVariables(
+      const results = await AdLibraryAdCollationDetailsQuery(
         ad.collation_id,
         forwardCursor,
-        "ALL",
       );
-      const results = await AdLibraryAdCollationDetailsQuery(variables);
 
       setDetailedAds((prev) => [...prev, ...results.ads]);
       setForwardCursor(results.forward_cursor);
@@ -118,12 +114,11 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
   const fetchEuAdStats = useCallback(async () => {
     setIsLoadingEuStats(true);
     try {
-      const variables = getAdLibraryAdDetailsV2Variables(
+      const result = await AdLibraryAdDetailsV2Query(
         ad.ad_archive_id,
         ad.page_id,
         ad.is_aaa_eligible,
       );
-      const result = await AdLibraryAdDetailsV2Query(variables);
       setAdDetails(result);
     } catch (err) {
       setEuStatsError("Failed to fetch EU ad statistics");

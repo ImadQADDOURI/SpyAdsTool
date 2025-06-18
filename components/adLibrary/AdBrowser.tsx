@@ -1,4 +1,3 @@
-// @/components/adLibrary/AdBrowser.tsx
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -6,8 +5,8 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import {
   AdLibrarySearchPaginationQuery,
-  getAdSearchVariables,
-} from "@/actions/MetaGraphQLConstsAndFunctions";
+  extractQueryParams,
+} from "@/actions/Meta-GraphQL-Queries";
 import { motion } from "framer-motion";
 import {
   BarChart,
@@ -54,10 +53,14 @@ export const AdBrowser = () => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
+  // extract URL params
+  const getQueryParams = useCallback(() => {
+    return extractQueryParams(searchParams);
+  }, [searchParams]);
+
   const handleSearchAds = useCallback(
     async (useExistingParams = false) => {
       // 🛑 If this is a new search (not loading more), ensure we're not already searching
-
       if (!useExistingParams && isSearchInProgress.current) {
         return;
       }
@@ -78,14 +81,24 @@ export const AdBrowser = () => {
       }
 
       try {
-        // 🔄 Get variables for the search query
-        const variables = getAdSearchVariables(
-          searchParams,
+        // 🔄 Get variables for the search query using the helper
+        const params = getQueryParams();
+        // 🔍 Execute search query
+        const results = await AdLibrarySearchPaginationQuery(
+          params.q,
+          params.category_as_keyword,
+          params.search_type,
+          params.active_status,
+          params.ad_type,
+          params.content_languages,
+          params.countries,
+          params.media_type,
+          params.publisher_platforms,
+          params.sort_data,
+          params.start_date,
+          params.end_date,
           useExistingParams ? endCursor : null,
         );
-
-        // 🔍 Execute search query
-        const results = await AdLibrarySearchPaginationQuery(variables);
 
         // ✅ For load more, append results; for new search, replace results
         if (useExistingParams && searchResults) {
@@ -134,7 +147,7 @@ export const AdBrowser = () => {
         isSearchInProgress.current = false;
       }
     },
-    [searchParams, searchResults, endCursor],
+    [getQueryParams, searchResults, endCursor],
   );
 
   const handleLoadMore = useCallback(() => {

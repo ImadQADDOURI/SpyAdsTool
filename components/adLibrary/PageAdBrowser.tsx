@@ -5,9 +5,8 @@ import { useSearchParams } from "next/navigation";
 import {
   AdLibraryMobileFocusedStateProviderRefetchQuery,
   AdLibrarySearchPaginationQuery,
-  getAdLibraryMobileVariables,
-  getAdSearchVariables,
-} from "@/actions/MetaGraphQLConstsAndFunctions";
+  extractQueryParams,
+} from "@/actions/Meta-GraphQL-Queries";
 import { Loader2 } from "lucide-react";
 
 import { AdData } from "@/types/ad";
@@ -63,6 +62,11 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
     }
   }, [isInitialLoad]);
 
+  // extract URL params
+  const getQueryParams = useCallback(() => {
+    return extractQueryParams(searchParams);
+  }, [searchParams]);
+
   const handleSearchAds = useCallback(
     async (useExistingParams = false) => {
       // 🛑 If this is a new search (not loading more), ensure we're not already searching
@@ -83,9 +87,9 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
         // 🔄 First load special case: fetch page info
         if (isInitialLoad) {
           // First search on page load
-          const variables = getAdLibraryMobileVariables(pageId);
+
           results =
-            await AdLibraryMobileFocusedStateProviderRefetchQuery(variables);
+            await AdLibraryMobileFocusedStateProviderRefetchQuery(pageId);
 
           // 🛑 Check if this is still the relevant request
           if (currentRequestId !== searchRequestIdRef.current) return;
@@ -102,12 +106,27 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
           initialLoadCompletedRef.current = true;
         } else {
           // Subsequent searches or pagination
-          const variables = getAdSearchVariables(
-            searchParams,
+
+          // 🔄 Get variables for the search query using the helper
+          const params = getQueryParams();
+
+          // 🔍 Execute search query
+          results = await AdLibrarySearchPaginationQuery(
+            params.q,
+            params.category_as_keyword,
+            params.search_type,
+            params.active_status,
+            params.ad_type,
+            params.content_languages,
+            params.countries,
+            params.media_type,
+            params.publisher_platforms,
+            params.sort_data,
+            params.start_date,
+            params.end_date,
             useExistingParams ? endCursor : null,
             pageId,
           );
-          results = await AdLibrarySearchPaginationQuery(variables);
 
           // 🛑 Check if this is still the relevant request
           if (currentRequestId !== searchRequestIdRef.current) return;
@@ -169,7 +188,7 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
         }
       }
     },
-    [searchParams, searchResults, endCursor, pageId, isInitialLoad],
+    [getQueryParams, searchResults, endCursor, pageId, isInitialLoad],
   );
 
   const handleLoadMore = useCallback(() => {

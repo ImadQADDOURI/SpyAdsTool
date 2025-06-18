@@ -8,10 +8,7 @@ import {
   getRandomActiveConfigId,
   refreshActiveConfigsCache,
 } from "@/actions/Meta-GraphQL-config-rotation";
-import {
-  apiNameToDocId,
-  DEFAULT_GRAPHQL_CONFIG,
-} from "@/actions/MetaGraphQLConstsAndFunctions";
+import { apiNameToDocId } from "@/actions/Meta-GraphQL-Queries";
 
 import { prisma } from "@/lib/db";
 

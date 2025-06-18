@@ -61,3 +61,10 @@ https://v0.dev/chat/lucid-react-ui-simplification-hiEUZVhGE9u
 
 < AnalyticsSection >
 https://v0.dev/chat/modern-analytics-section-b9Et3ggaBXo
+
+#
+
+new search + filter system 
+https://v0.dev/chat/next-js-app-optimization-Zs7G7eSOqfH
+
+#
