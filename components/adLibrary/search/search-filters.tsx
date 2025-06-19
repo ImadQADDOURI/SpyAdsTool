@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { addDays, format, isAfter } from "date-fns";
+import { useCallback, useEffect, useState } from "react";
+import { addDays, isAfter } from "date-fns";
 import {
   ChevronDown,
   ChevronUp,
@@ -17,147 +16,46 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-import {
-  filterConfig,
-  getNonSearchFilters,
-  getSearchFilter,
-} from "./filter-config";
+import { getNonSearchFilters, getSearchFilter } from "./filter-config";
+import { useSearchFilters } from "./search-filter-context";
 import { SearchFilterItem } from "./search-filter-item";
 
-// 📅 Constants for date validation
-const MIN_DATE = "2018-05-07";
-const TODAY = format(new Date(), "yyyy-MM-dd");
-
 interface SearchFiltersProps {
-  onSearch: () => void; // Callback to trigger search in parent component (*after* URL update)
-  isLoading: boolean; // Loading state from parent
+  onSearch: () => void;
+  isLoading: boolean;
 }
 
 export default function SearchFilters({
   onSearch,
   isLoading,
 }: SearchFiltersProps) {
-  // 🧭 Navigation hooks
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const { getValue, clearAllValues, subscribeToCount } = useSearchFilters();
 
-  // 🎛️ Component state
-  const [filters, setFilters] = useState<Record<string, any>>({});
-  const [filtersExpanded, setFiltersExpanded] = useState(true);
+  // Local UI state
+  const [areFiltersExpanded, setAreFiltersExpanded] = useState(true);
+  const [appliedFiltersCount, setAppliedFiltersCount] = useState(0);
 
-  // 🔄 Refs for URL update tracking
-  const urlUpdateComplete = useRef(false);
+  // Subscribe to filter count changes
+  useEffect(() => {
+    const unsubscribe = subscribeToCount(setAppliedFiltersCount);
+    return unsubscribe;
+  }, [subscribeToCount]);
 
-  // 🔄 State to track if we're currently updating the URL
-  const isUpdatingUrl = useRef(false);
-  const headerRef = useRef<HTMLDivElement>(null);
-
-  // Get search and non-search filters
+  // Get filter configurations (computed once)
   const searchFilter = getSearchFilter();
   const nonSearchFilters = getNonSearchFilters();
 
-  // 🧮 Count of applied filters (excluding search query)
-  const appliedFiltersCount = Object.entries(filters).filter(
-    ([key, value]) =>
-      key !== "q" &&
-      value !== null &&
-      (Array.isArray(value) ? value.length > 0 : value !== ""),
-  ).length;
+  const handleSearch = useCallback(() => {
+    const startDate = getValue("startDate");
+    const endDate = getValue("endDate");
 
-  // 📥 Initialize filters from URL
-  useEffect(() => {
-    // 🛑 Skip if we're currently updating the URL ourselves
-    if (isUpdatingUrl.current) return;
-
-    const newFilters: Record<string, any> = {};
-
-    // 🔄 Sync each filter with URL params
-    filterConfig.forEach((filter) => {
-      const paramValue = searchParams.get(filter.paramKey);
-
-      if (paramValue) {
-        if (filter.multiSelect) {
-          // 🔀 Handle multi-select values (comma-separated)
-          newFilters[filter.key] = paramValue.split(",");
-        } else {
-          // 🔤 Handle single-select values
-          newFilters[filter.key] = paramValue;
-        }
-      } else {
-        // 🚫 No value in URL, set to null
-        newFilters[filter.key] = null;
-      }
-    });
-
-    setFilters(newFilters);
-
-    // ✅ If URL update was triggered by us and is now complete, trigger search
-    if (urlUpdateComplete.current) {
-      urlUpdateComplete.current = false;
-      onSearch();
-    }
-  }, [searchParams, onSearch]);
-
-  // 🔄 Handle filter change
-  const handleFilterChange = useCallback((key: string, value: any) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  }, []);
-
-  // 🧹 Handle clearing a single filter
-  const handleClearFilter = useCallback((key: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: null,
-    }));
-  }, []);
-
-  // 🧹 Handle clearing all filters
-  const handleClearAllFilters = useCallback(() => {
-    // 🧹 Clear filter state
-    setFilters({});
-
-    // 🧭 Create new URLSearchParams with existing params
-    const newParams = new URLSearchParams(searchParams.toString());
-
-    // 🧹 Remove only our filter params
-    filterConfig.forEach((filter) => {
-      newParams.delete(filter.paramKey);
-    });
-
-    // 🚩 Set flag to indicate we're updating the URL
-    isUpdatingUrl.current = true;
-
-    // 🧭 Update URL preserving other params
-    const newUrl = newParams.toString()
-      ? `${pathname}?${newParams.toString()}`
-      : pathname;
-    router.push(newUrl);
-
-    // ⏱️ Reset updating flag after a short delay
-    setTimeout(() => {
-      isUpdatingUrl.current = false;
-    }, 100);
-
-    toast.success("All filters have been cleared");
-  }, [pathname, router, searchParams]);
-
-  // ✅ Handle applying filters
-  const handleApplyFilters = useCallback(() => {
-    // 📅 Validate dates if present
-    const startDate = filters.startDate ? new Date(filters.startDate) : null;
-    const endDate = filters.endDate ? new Date(filters.endDate) : null;
-
-    // 📅 Date validation
-    if (startDate && isAfter(startDate, new Date())) {
+    // Validate date inputs
+    if (startDate && isAfter(new Date(startDate), new Date())) {
       toast.warning("Start date cannot be in the future");
       return;
     }
 
-    if (endDate && isAfter(endDate, new Date())) {
+    if (endDate && isAfter(new Date(endDate), new Date())) {
       toast.warning("End date cannot be in the future");
       return;
     }
@@ -165,98 +63,53 @@ export default function SearchFilters({
     if (
       startDate &&
       endDate &&
-      isAfter(startDate, addDays(new Date(endDate), 0))
+      isAfter(new Date(startDate), addDays(new Date(endDate), 0))
     ) {
       toast.warning("Start date must be before end date");
       return;
     }
 
-    // 🔄 Create new URLSearchParams
-    const newParams = new URLSearchParams(searchParams.toString());
+    toast.success("Search executed successfully");
+    onSearch();
+  }, [getValue, onSearch]);
 
-    // 🧹 Remove existing filter params
-    filterConfig.forEach((filter) => {
-      newParams.delete(filter.paramKey);
-    });
+  const handleClearAllFilters = useCallback(() => {
+    clearAllValues();
+    toast.success("All filters cleared");
+  }, [clearAllValues]);
 
-    // 📝 Add filters with values
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value === null || (Array.isArray(value) && value.length === 0)) {
-        return;
-      }
-
-      // 🔍 Find the corresponding filter config
-      const filterDef = filterConfig.find((f) => f.key === key);
-      if (!filterDef) return;
-      // 🔀 Handle multi-select values
-      if (Array.isArray(value)) {
-        newParams.set(filterDef.paramKey, value.join(","));
-      } else {
-        // 🔤 Handle single values
-        newParams.set(filterDef.paramKey, value);
-      }
-    });
-
-    // 🧭 Update URL
-    const newUrl = newParams.toString()
-      ? `${pathname}?${newParams.toString()}`
-      : pathname;
-    const currentUrl = searchParams.toString()
-      ? `${pathname}?${searchParams.toString()}`
-      : pathname;
-
-    // If URL hasn't changed, trigger search directly; otherwise, update the URL
-    if (newUrl === currentUrl) {
-      toast("Search executed successfully");
-      onSearch();
-    } else {
-      // 🚩 Set flag to indicate we're updating the URL
-      isUpdatingUrl.current = true;
-      urlUpdateComplete.current = true;
-      router.push(newUrl);
-      toast("Search executed successfully");
-      setTimeout(() => {
-        isUpdatingUrl.current = false;
-      }, 100);
-    }
-  }, [filters, pathname, router, searchParams, onSearch]);
+  const toggleFiltersExpanded = useCallback(() => {
+    setAreFiltersExpanded((prev) => !prev);
+  }, []);
 
   return (
     <div className="mx-auto w-full max-w-7xl">
-      {/* 📌 Sticky Header */}
-      <div
-        ref={headerRef}
-        className={cn(
-          "z-40 w-full border-b border-purple-200/50 bg-white/95 backdrop-blur-sm transition-all duration-300 dark:border-purple-900/30 dark:bg-gray-900/95",
-        )}
-      >
+      {/* Header */}
+      <div className="z-40 w-full border-b border-purple-200/50 bg-white/95 backdrop-blur-sm dark:border-purple-900/30 dark:bg-gray-900/95">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-3">
-            {/* 🔍 Main Search Input */}
+            {/* Search Input */}
             <div className="min-w-0 flex-1">
               {searchFilter && (
                 <SearchFilterItem
-                  key={searchFilter.key}
                   filter={searchFilter}
-                  value={filters[searchFilter.key] || null}
-                  onChange={(value) =>
-                    handleFilterChange(searchFilter.key, value)
-                  }
-                  onClear={() => handleClearFilter(searchFilter.key)}
+                  onEnterPress={handleSearch}
                 />
               )}
             </div>
 
-            {/* 🎛️ Action Buttons */}
+            {/* Action Buttons */}
             <div className="flex flex-shrink-0 items-center gap-2">
               <Button
                 variant="outline"
-                onClick={() => setFiltersExpanded(!filtersExpanded)}
+                onClick={toggleFiltersExpanded}
                 className={cn(
                   "border-purple-200 hover:border-purple-300 hover:bg-purple-50 dark:border-purple-800 dark:hover:border-purple-700 dark:hover:bg-purple-900/30",
-                  filtersExpanded &&
+                  areFiltersExpanded &&
                     "border-purple-300 bg-purple-50 dark:border-purple-700 dark:bg-purple-900/30",
                 )}
+                aria-expanded={areFiltersExpanded}
+                aria-controls="advanced-filters"
               >
                 <Filter className="mr-2 h-4 w-4" />
                 Filters
@@ -265,7 +118,7 @@ export default function SearchFilters({
                     {appliedFiltersCount}
                   </span>
                 )}
-                {filtersExpanded ? (
+                {areFiltersExpanded ? (
                   <ChevronUp className="ml-2 h-4 w-4" />
                 ) : (
                   <ChevronDown className="ml-2 h-4 w-4" />
@@ -273,9 +126,9 @@ export default function SearchFilters({
               </Button>
 
               <Button
-                onClick={handleApplyFilters}
+                onClick={handleSearch}
                 disabled={isLoading}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 dark:from-purple-700 dark:to-pink-700"
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 disabled:opacity-50"
               >
                 <Search className="mr-2 h-4 w-4" />
                 Search
@@ -288,24 +141,27 @@ export default function SearchFilters({
         </div>
       </div>
 
-      {/* 🎛️ Collapsible Filters Grid */}
+      {/* Advanced Filters */}
       <div
+        id="advanced-filters"
         className={cn(
           "w-full overflow-hidden transition-all duration-300 ease-in-out",
-          filtersExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0",
+          areFiltersExpanded
+            ? "max-h-[2000px] opacity-100"
+            : "max-h-0 opacity-0",
         )}
       >
         <Card className="mt-4 w-full overflow-hidden rounded-xl border-purple-200/50 bg-white/90 backdrop-blur-sm dark:border-purple-900/30 dark:bg-gray-900/50">
           <CardContent className="p-5">
-            {/* 🎛️ Filter header */}
+            {/* Filter Header */}
             <div className="mb-5 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="rounded-full bg-purple-100 p-2 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300">
                   <SlidersHorizontal className="h-5 w-5 text-purple-500" />
                 </div>
-                <h3 className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-xl font-bold text-transparent">
+                <h2 className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-xl font-bold text-transparent">
                   Advanced Filters
-                </h3>
+                </h2>
                 {appliedFiltersCount > 0 && (
                   <span className="ml-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-2.5 py-0.5 text-xs font-medium text-white">
                     {appliedFiltersCount} active
@@ -327,16 +183,10 @@ export default function SearchFilters({
               </Button>
             </div>
 
-            {/* 🎛️ Filter grid */}
+            {/* Filter Grid */}
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5">
               {nonSearchFilters.map((filter) => (
-                <SearchFilterItem
-                  key={filter.key}
-                  filter={filter}
-                  value={filters[filter.key] || null}
-                  onChange={(value) => handleFilterChange(filter.key, value)}
-                  onClear={() => handleClearFilter(filter.key)}
-                />
+                <SearchFilterItem key={filter.key} filter={filter} />
               ))}
             </div>
           </CardContent>

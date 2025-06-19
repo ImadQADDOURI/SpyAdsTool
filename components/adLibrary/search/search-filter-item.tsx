@@ -1,12 +1,10 @@
 "use client";
 
 import type React from "react";
-import { memo, useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
-import { Check, CheckCircle2, ChevronDown, Search, X } from "lucide-react";
-import { Virtuoso } from "react-virtuoso";
-import useIsomorphicLayoutEffect from "use-isomorphic-layout-effect";
+import { Check, ChevronDown, Search, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -14,500 +12,166 @@ import { Calendar } from "@/components/ui/calendar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 
 import { CustomDateCaption } from "./CustomDateCaption";
 import type { FilterConfig } from "./filter-config";
+import { useSearchFilters } from "./search-filter-context";
 
 interface SearchFilterItemProps {
   filter: FilterConfig;
-  value: any;
-  onChange: (value: any) => void;
-  onClear: () => void;
+  onEnterPress?: () => void;
 }
 
-function SearchFilterItemComponent({
+export function SearchFilterItem({
   filter,
-  value,
-  onChange,
-  onClear,
+  onEnterPress,
 }: SearchFilterItemProps) {
-  // Main state
-  const [open, setOpen] = useState(false);
-  const [dateOpen, setDateOpen] = useState(false);
+  const { getValue, setValue, clearValue, subscribe } = useSearchFilters();
 
-  // Search state - completely isolated from dropdown state
-  const [search, setSearch] = useState("");
+  // Local state for UI interactions only
+  const [currentValue, setCurrentValue] = useState(() => getValue(filter.key));
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Store dropdown state to detect changes
-  const wasOpen = useRef(open);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Refs for DOM elements
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const dropdownContentRef = useRef<HTMLDivElement>(null);
-  const searchContainerRef = useRef<HTMLDivElement>(null);
+  // Subscribe to value changes for this specific filter
+  useEffect(() => {
+    const unsubscribe = subscribe(filter.key, setCurrentValue);
+    return unsubscribe;
+  }, [filter.key, subscribe]);
 
-  // Detect when dropdown opens and closes
-  useIsomorphicLayoutEffect(() => {
-    // When dropdown opens
-    if (
-      open &&
-      !wasOpen.current &&
-      filter.options &&
-      filter.options.length > 5
-    ) {
-      // Reset search when opening
-      setSearch("");
-
-      // Focus search input after rendering (using RAF for better perf)
-      requestAnimationFrame(() => {
-        if (searchInputRef.current) {
-          searchInputRef.current.focus();
-        }
-      });
-    }
-
-    // Update ref with current state
-    wasOpen.current = open;
-  }, [open, filter.options]);
-
-  // Prevent dropdown from closing when clicking inside search input
-  useIsomorphicLayoutEffect(() => {
-    const searchContainer = searchContainerRef.current;
-
-    if (!searchContainer) return;
-
-    const handleClick = (e: MouseEvent) => {
-      e.stopPropagation();
-    };
-
-    searchContainer.addEventListener("click", handleClick);
-    return () => {
-      searchContainer.removeEventListener("click", handleClick);
-    };
-  }, []);
-
-  // Memoize value checking to prevent unnecessary recalculations
+  // Computed values
   const hasValue = useMemo(
     () =>
-      value !== null &&
-      (Array.isArray(value) ? value.length > 0 : value !== ""),
-    [value],
+      currentValue !== null &&
+      (Array.isArray(currentValue)
+        ? currentValue.length > 0
+        : currentValue !== ""),
+    [currentValue],
   );
 
-  // Memoize filtered options to avoid recalculation on every render
-  const filteredOptions = useMemo(() => {
-    if (!filter.options) return [];
-
-    const searchLower = search.toLowerCase().trim();
-    if (!searchLower) return filter.options;
-
-    return filter.options.filter(
-      (option) =>
-        option.label.toLowerCase().includes(searchLower) ||
-        option.value.toLowerCase().includes(searchLower),
-    );
-  }, [filter.options, search]);
-
-  // Get selected options with their full details for displaying in trigger
-  const selectedOptions = useMemo(() => {
-    if (!filter.options || !hasValue) return [];
-
-    if (Array.isArray(value)) {
-      return value
-        .map((val) => filter.options?.find((opt) => opt.value === val))
-        .filter(Boolean);
-    } else {
-      const option = filter.options?.find((opt) => opt.value === value);
-      return option ? [option] : [];
-    }
-  }, [filter.options, value, hasValue]);
-
-  // Enhanced display value calculation with icon support
-  const displayValue = useMemo(() => {
-    if (!hasValue)
-      return <span className="text-muted-foreground">{filter.label}</span>;
+  const displayText = useMemo(() => {
+    if (!hasValue) return filter.label;
 
     if (filter.key === "startDate" || filter.key === "endDate") {
-      return (
-        <span className="flex items-center gap-2">
-          <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-            {filter.label}:
-          </span>
-          <span>{format(new Date(value), "MMM d, yyyy")}</span>
-        </span>
-      );
+      return `${filter.label}: ${format(new Date(currentValue), "MMM d, yyyy")}`;
     }
 
-    if (Array.isArray(value)) {
-      if (value.length === 1 && selectedOptions[0]) {
-        const option = selectedOptions[0];
-        return (
-          <span className="flex items-center gap-1">
-            <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-              {filter.label}:
-            </span>
-
-            {option.icon && typeof option.icon === "string" ? (
-              <Image
-                src={option.icon || "/placeholder.svg"}
-                alt={option.label}
-                width={16}
-                height={16}
-                className="flex-shrink-0"
-              />
-            ) : option.icon ? (
-              <option.icon className="mx-1 h-4 w-4 flex-shrink-0 text-muted-foreground" />
-            ) : null}
-
-            <span>{option.label}</span>
-          </span>
-        );
+    if (Array.isArray(currentValue)) {
+      if (currentValue.length === 1) {
+        const option = filter.options?.find((o) => o.value === currentValue[0]);
+        return `${filter.label}: ${option?.label || currentValue[0]}`;
       }
-
-      return (
-        <span className="flex items-center gap-1">
-          <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-            {filter.label}:
-          </span>
-
-          {/* Display first two option icons */}
-          <span className="flex items-center -space-x-1">
-            {selectedOptions.slice(0, 3).map(
-              (option, idx) =>
-                option && (
-                  <span
-                    key={idx}
-                    className="flex-shrink-0 rounded-full border bg-background p-0.5"
-                  >
-                    {option.icon && typeof option.icon === "string" ? (
-                      <Image
-                        src={option.icon || "/placeholder.svg"}
-                        alt={option.label}
-                        width={16}
-                        height={16}
-                        className="rounded-full"
-                      />
-                    ) : option.icon ? (
-                      <option.icon className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </span>
-                ),
-            )}
-
-            {value.length > 2 && (
-              <span className="ml-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-medium text-slate-800 dark:bg-slate-800 dark:text-slate-200">
-                +{value.length - 2}
-              </span>
-            )}
-          </span>
-        </span>
-      );
+      return `${filter.label}: ${currentValue.length} selected`;
     }
 
-    const option = selectedOptions[0];
-    if (option) {
-      return (
-        <span className="flex items-center gap-2">
-          <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-            {filter.label}:
-          </span>
+    const option = filter.options?.find((o) => o.value === currentValue);
+    return `${filter.label}: ${option?.label || currentValue}`;
+  }, [filter, currentValue, hasValue]);
 
-          {option.icon && typeof option.icon === "string" ? (
-            <Image
-              src={option.icon || "/placeholder.svg"}
-              alt={option.label}
-              width={16}
-              height={16}
-              className="flex-shrink-0"
-            />
-          ) : option.icon ? (
-            <option.icon className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-          ) : (
-            <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-          )}
+  const filteredOptions = useMemo(() => {
+    if (!filter.options || !searchQuery) return filter.options || [];
 
-          <span>{option.label}</span>
-        </span>
-      );
-    }
-
-    return (
-      <span className="flex items-center gap-2">
-        <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-          {filter.label}:
-        </span>
-        <span>{value}</span>
-      </span>
+    const query = searchQuery.toLowerCase();
+    return filter.options.filter(
+      (option) =>
+        option.label.toLowerCase().includes(query) ||
+        option.value.toLowerCase().includes(query),
     );
-  }, [filter.label, filter.key, value, hasValue, selectedOptions]);
+  }, [filter.options, searchQuery]);
 
-  // Handle search - completely separated from dropdown events
-  const handleSearchChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      e.stopPropagation();
-      setSearch(e.target.value);
+  // Event handlers
+  const handleValueChange = useCallback(
+    (value: any) => {
+      setValue(filter.key, value);
     },
-    [],
+    [filter.key, setValue],
   );
 
-  // Handle clearing search
-  const handleClearSearch = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    setSearch("");
-    requestAnimationFrame(() => {
-      if (searchInputRef.current) {
-        searchInputRef.current.focus();
-      }
-    });
-  }, []);
-
-  // Handle filter clear
-  const handleClear = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      onClear();
-    },
-    [onClear],
-  );
-
-  // Handle date selection
-  const handleDateSelect = useCallback(
-    (date: Date | undefined) => {
-      onChange(date ? format(date, "yyyy-MM-dd") : null);
-      setDateOpen(false);
-    },
-    [onChange],
-  );
-
-  // Handle single option selection
-  const handleSingleOptionSelect = useCallback(
-    (
-      optionValue: string,
-      isSelected: boolean,
-      e: React.MouseEvent | React.KeyboardEvent,
-    ) => {
-      e.preventDefault();
-      e.stopPropagation();
-      onChange(isSelected ? null : optionValue);
-      if (!filter.multiSelect) {
-        setOpen(false);
+  const handleClearValue = useCallback(
+    (e?: React.MouseEvent) => {
+      e?.stopPropagation();
+      clearValue(filter.key);
+      if (inputRef.current && filter.type === "search") {
+        inputRef.current.value = "";
       }
     },
-    [onChange, filter.multiSelect],
+    [filter.key, filter.type, clearValue],
   );
 
-  // Handle multi-option selection
-  const handleMultiOptionChange = useCallback(
-    (
-      optionValue: string,
-      isSelected: boolean,
-      e: React.MouseEvent | React.KeyboardEvent,
-    ) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (Array.isArray(value)) {
-        const newValue = isSelected
-          ? value.filter((v) => v !== optionValue)
-          : [...value, optionValue];
-        onChange(newValue.length ? newValue : null);
-      } else {
-        onChange(isSelected ? null : [optionValue]);
-      }
-
-      // Keep focus on search input after selection
-      requestAnimationFrame(() => {
-        if (searchInputRef.current) {
-          searchInputRef.current.focus();
-        }
-      });
-    },
-    [onChange, value],
-  );
-
-  // Memoized option render function for virtualization
-  const renderOption = useCallback(
-    (index: number) => {
-      const option = filteredOptions[index];
-      if (!option) return null;
-
-      const isSelected = Array.isArray(value)
-        ? value.includes(option.value)
-        : value === option.value;
-
-      // Common option content
-      const optionContent = (
-        <>
-          {/* Icon if available */}
-          {option.icon && typeof option.icon === "string" ? (
-            <Image
-              src={option.icon || "/placeholder.svg"}
-              alt={option.label}
-              width={16}
-              height={16}
-              className="mr-2 flex-shrink-0"
-            />
-          ) : option.icon ? (
-            <option.icon className="mr-2 h-4 w-4 flex-shrink-0 text-muted-foreground" />
-          ) : null}
-
-          <span className="flex-1 truncate">{option.label}</span>
-
-          {/* Checkmark for selected items */}
-          {isSelected && !filter.multiSelect && (
-            <Check className="ml-2 h-4 w-4 flex-shrink-0 text-emerald-500" />
-          )}
-        </>
-      );
-
+  const handleOptionSelect = useCallback(
+    (optionValue: string) => {
       if (filter.multiSelect) {
-        // We need to create a custom checkbox item that doesn't close the dropdown
-        return (
-          <div
-            key={option.value}
-            role="menuitem"
-            tabIndex={0}
-            className={cn(
-              "relative flex w-full cursor-default select-none items-center gap-2 truncate rounded-sm px-2 py-1.5 text-sm outline-none transition-colors",
-              "hover:bg-accent hover:text-accent-foreground",
-              "focus:bg-accent focus:text-accent-foreground",
-              isSelected && "bg-accent/40",
-            )}
-            onClick={(e) =>
-              handleMultiOptionChange(option.value, isSelected, e)
-            }
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                handleMultiOptionChange(option.value, isSelected, e);
-              }
-            }}
-          >
-            <div
-              className={cn(
-                "flex h-4 w-4 items-center justify-center rounded-sm border",
-                isSelected
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-primary",
-              )}
-            >
-              {isSelected && <Check className="h-4 w-4" />}
-            </div>
-            {optionContent}
-          </div>
-        );
+        const isSelected = Array.isArray(currentValue)
+          ? currentValue.includes(optionValue)
+          : false;
+        const newValue = Array.isArray(currentValue)
+          ? isSelected
+            ? currentValue.filter((v) => v !== optionValue)
+            : [...currentValue, optionValue]
+          : isSelected
+            ? []
+            : [optionValue];
+        handleValueChange(newValue.length ? newValue : null);
+      } else {
+        const isSelected = currentValue === optionValue;
+        handleValueChange(isSelected ? null : optionValue);
+        setIsDropdownOpen(false);
       }
-
-      return (
-        <div
-          key={option.value}
-          role="menuitem"
-          tabIndex={0}
-          className={cn(
-            "relative flex w-full cursor-default select-none items-center gap-2 truncate rounded-sm px-2 py-1.5 text-sm outline-none transition-colors",
-            "hover:bg-accent hover:text-accent-foreground",
-            "focus:bg-accent focus:text-accent-foreground",
-            isSelected && "bg-accent/40",
-          )}
-          onClick={(e) => handleSingleOptionSelect(option.value, isSelected, e)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              handleSingleOptionSelect(option.value, isSelected, e);
-            }
-          }}
-        >
-          {optionContent}
-        </div>
-      );
     },
-    [
-      filteredOptions,
-      value,
-      filter.multiSelect,
-      handleMultiOptionChange,
-      handleSingleOptionSelect,
-    ],
+    [filter.multiSelect, currentValue, handleValueChange],
   );
 
-  // Clear all selections (for multi-select)
-  const handleClearAll = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
-      onClear();
-      requestAnimationFrame(() => {
-        if (searchInputRef.current) {
-          searchInputRef.current.focus();
-        }
-      });
-    },
-    [onClear],
-  );
-
-  // Handle keyboard navigation
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "Escape") {
-      e.stopPropagation();
-      setOpen(false);
-    }
-  }, []);
-
-  // Render search input filter
+  // Search input type
   if (filter.type === "search") {
     return (
       <div className="relative w-full">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder={
-              filter.placeholder || `Search ${filter.label.toLowerCase()}...`
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          ref={inputRef}
+          type="text"
+          placeholder={
+            filter.placeholder || `Search ${filter.label.toLowerCase()}...`
+          }
+          defaultValue={currentValue || ""}
+          onChange={(e) => handleValueChange(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && onEnterPress) {
+              e.preventDefault();
+              onEnterPress();
             }
-            value={value || ""}
-            onChange={(e) => onChange(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                // Trigger search on Enter - this will be handled by parent component
-                const searchEvent = new CustomEvent("triggerSearch");
-                window.dispatchEvent(searchEvent);
-              }
-            }}
-            className={cn(
-              "h-11 w-full rounded-lg border pl-10 pr-10 transition-all duration-200",
-              hasValue
-                ? "border-purple-300 bg-purple-50/50 text-foreground dark:border-purple-700 dark:bg-purple-900/20"
-                : "border-slate-300 hover:border-slate-400 dark:border-slate-600 dark:hover:border-slate-500",
-              "focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20",
-            )}
-          />
-          {hasValue && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleClear}
-              className="absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700"
-            >
-              <X className="h-3 w-3" />
-              <span className="sr-only">Clear search</span>
-            </Button>
+          }}
+          className={cn(
+            "h-11 w-full rounded-lg border pl-10 pr-10 transition-colors",
+            hasValue
+              ? "border-purple-300 bg-purple-50/50 text-foreground dark:border-purple-700 dark:bg-purple-900/20"
+              : "border-slate-300 hover:border-slate-400 focus:border-purple-500",
           )}
-        </div>
+        />
+        {hasValue && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleClearValue}
+            className="absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700"
+            aria-label="Clear search"
+          >
+            <X className="h-3 w-3" />
+          </Button>
+        )}
       </div>
     );
   }
 
-  // Render date filter
+  // Date picker type
   if (filter.key === "startDate" || filter.key === "endDate") {
     return (
       <div className="relative">
-        <DropdownMenu open={dateOpen} onOpenChange={setDateOpen}>
+        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
@@ -516,40 +180,21 @@ function SearchFilterItemComponent({
                 hasValue
                   ? "border-purple-300 bg-purple-50/50 text-foreground dark:border-purple-700 dark:bg-purple-900/20"
                   : "text-muted-foreground",
-                "transition-all duration-200 hover:border-slate-400 dark:hover:border-slate-600",
               )}
+              aria-label={`Select ${filter.label}`}
             >
-              <div className="flex items-center gap-2 truncate">
-                {filter.icon && filter.icon.startsWith("/") ? (
-                  <Image
-                    src={filter.icon || "/placeholder.svg"}
-                    alt={filter.label}
-                    width={16}
-                    height={16}
-                    className={cn(hasValue ? "opacity-100" : "opacity-60")}
-                  />
-                ) : null}
-                <span className="truncate">
-                  {value ? (
-                    <span className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                        {filter.label}:
-                      </span>
-                      <span>{format(new Date(value), "MMM d, yyyy")}</span>
-                    </span>
-                  ) : (
-                    filter.label
-                  )}
-                </span>
-              </div>
+              <span className="truncate">{displayText}</span>
               <ChevronDown className="h-4 w-4 opacity-50" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-auto p-0" align="start">
             <Calendar
               mode="single"
-              selected={value ? new Date(value) : undefined}
-              onSelect={handleDateSelect}
+              selected={currentValue ? new Date(currentValue) : undefined}
+              onSelect={(date) => {
+                handleValueChange(date ? format(date, "yyyy-MM-dd") : null);
+                setIsDropdownOpen(false);
+              }}
               fromDate={new Date("2018-05-07")}
               toDate={new Date()}
               disabled={(date) => date > new Date()}
@@ -559,27 +204,25 @@ function SearchFilterItemComponent({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Clear button */}
         {hasValue && (
           <Button
             variant="ghost"
             size="icon"
-            onClick={handleClear}
-            className="absolute -right-3 -top-3 h-6 w-6 rounded-full border bg-white shadow-sm transition-colors hover:bg-slate-200 hover:text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+            onClick={handleClearValue}
+            className="absolute -right-3 -top-3 h-6 w-6 rounded-full border bg-white shadow-sm hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700"
+            aria-label={`Clear ${filter.label}`}
           >
             <X className="h-3 w-3" />
-            <span className="sr-only">Clear {filter.label}</span>
           </Button>
         )}
       </div>
     );
   }
 
-  // Render regular filter dropdown with custom content to fix search issues
+  // Regular dropdown type
   return (
     <div className="relative">
-      {/* We're using DropdownMenu for the button, but we'll handle the content ourselves */}
-      <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
@@ -588,168 +231,135 @@ function SearchFilterItemComponent({
               hasValue
                 ? "border-purple-300 bg-purple-50/50 text-foreground dark:border-purple-700 dark:bg-purple-900/20"
                 : "text-muted-foreground",
-              "transition-all duration-200 hover:border-slate-400 dark:hover:border-slate-600",
             )}
+            aria-label={`Select ${filter.label}`}
           >
-            <div className="flex items-center gap-1 truncate">
-              {/* Filter icon */}
-              {filter.icon && filter.icon.startsWith("/") ? (
+            <div className="flex items-center gap-2 truncate">
+              {filter.icon && filter.icon.startsWith("/") && (
                 <Image
                   src={filter.icon || "/placeholder.svg"}
-                  alt={filter.label}
-                  width={24}
-                  height={24}
-                  className={cn(hasValue ? "opacity-100" : "opacity-60")}
+                  alt=""
+                  width={20}
+                  height={20}
+                  className={cn(
+                    "flex-shrink-0",
+                    hasValue ? "opacity-100" : "opacity-60",
+                  )}
                 />
-              ) : null}
-
-              <span className="truncate">{displayValue}</span>
+              )}
+              <span className="truncate">{displayText}</span>
             </div>
             <ChevronDown className="h-4 w-4 opacity-50" />
           </Button>
         </DropdownMenuTrigger>
 
-        {/* Custom dropdown content to handle search properly */}
-        <DropdownMenuContent
-          ref={dropdownContentRef}
-          align="start"
-          className="w-[220px] p-2"
-          sideOffset={4}
-          onKeyDown={handleKeyDown}
-          onInteractOutside={() => setOpen(false)}
-        >
-          {/* Search input - isolated in its own container */}
+        <DropdownMenuContent align="start" className="w-[220px] p-2">
+          {/* Search input for large option lists */}
           {filter.options && filter.options.length > 5 && (
-            <>
-              <div
-                ref={searchContainerRef}
-                className="mb-2 flex items-center rounded-md border px-2"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Search className="mr-2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  ref={searchInputRef}
-                  placeholder={`Search ${filter.label.toLowerCase()}...`}
-                  value={search}
-                  onChange={handleSearchChange}
-                  className="h-8 border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  onKeyDown={(e) => {
-                    if (e.key === "Escape") {
-                      e.stopPropagation();
-                      setOpen(false);
-                    }
-                    // Prevent dropdown events on other keys
-                    e.stopPropagation();
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                />
-                {search && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleClearSearch}
-                    className="h-6 w-6 p-0"
-                    tabIndex={-1}
-                  >
-                    <X className="h-3 w-3" />
-                    <span className="sr-only">Clear search</span>
-                  </Button>
-                )}
-              </div>
-              <DropdownMenuSeparator />
-            </>
-          )}
-
-          {/* Options with virtualization for long lists */}
-          {filteredOptions.length === 0 ? (
-            <div className="py-6 text-center text-sm text-muted-foreground">
-              No results found
-              {search && (
-                <div className="mt-1">
-                  <Button
-                    variant="link"
-                    onClick={handleClearSearch}
-                    className="text-xs text-blue-500 hover:text-blue-700"
-                  >
-                    Clear search
-                  </Button>
-                </div>
-              )}
-            </div>
-          ) : filteredOptions.length > 10 ? (
-            <div style={{ height: Math.min(250, filteredOptions.length * 36) }}>
-              <Virtuoso
-                style={{ height: "100%" }}
-                totalCount={filteredOptions.length}
-                itemContent={(index) => renderOption(index)}
-                overscan={5}
-                tabIndex={0}
-                className="focus:outline-none"
-                increaseViewportBy={{ top: 80, bottom: 80 }}
-                initialTopMostItemIndex={
-                  // Find the first selected item's index to scroll to it
-                  Array.isArray(value) && value.length > 0
-                    ? Math.max(
-                        0,
-                        filteredOptions.findIndex((o) =>
-                          value.includes(o.value),
-                        ),
-                      )
-                    : value
-                      ? Math.max(
-                          0,
-                          filteredOptions.findIndex((o) => o.value === value),
-                        )
-                      : 0
-                }
+            <div className="mb-2 flex items-center rounded-md border px-2">
+              <Search className="mr-2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-8 border-0 p-0 focus-visible:ring-0"
               />
             </div>
-          ) : (
-            <div className="max-h-[250px] overflow-auto py-1">
-              {filteredOptions.map((_, index) => renderOption(index))}
-            </div>
           )}
 
-          {/* Show selection summary for multi-select with many items selected */}
-          {filter.multiSelect && Array.isArray(value) && value.length > 0 && (
-            <>
-              <DropdownMenuSeparator className="my-1" />
-              <div className="flex items-center justify-between px-2 py-1.5 text-xs text-muted-foreground">
-                <span>
-                  <span className="font-medium">{value.length}</span> item
-                  {value.length !== 1 ? "s" : ""} selected
-                </span>
-                <Button
-                  variant="link"
-                  className="h-auto p-0 text-xs text-blue-500 hover:text-blue-700"
-                  onClick={handleClearAll}
-                >
-                  Clear all
-                </Button>
+          {/* Options list */}
+          <div className="max-h-[200px] overflow-auto">
+            {filteredOptions.length === 0 ? (
+              <div className="py-4 text-center text-sm text-muted-foreground">
+                No results found
               </div>
-            </>
-          )}
+            ) : (
+              filteredOptions.map((option) => {
+                const isSelected = Array.isArray(currentValue)
+                  ? currentValue.includes(option.value)
+                  : currentValue === option.value;
+
+                return (
+                  <div
+                    key={option.value}
+                    className={cn(
+                      "flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent focus:bg-accent",
+                      isSelected && "bg-accent/40",
+                    )}
+                    onClick={() => handleOptionSelect(option.value)}
+                    role="option"
+                    aria-selected={isSelected}
+                  >
+                    {filter.multiSelect && (
+                      <div
+                        className={cn(
+                          "flex h-4 w-4 items-center justify-center rounded-sm border",
+                          isSelected
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-primary",
+                        )}
+                      >
+                        {isSelected && <Check className="h-3 w-3" />}
+                      </div>
+                    )}
+
+                    {option.icon && typeof option.icon === "string" ? (
+                      <Image
+                        src={option.icon || "/placeholder.svg"}
+                        alt=""
+                        width={16}
+                        height={16}
+                        className="flex-shrink-0"
+                      />
+                    ) : option.icon ? (
+                      <option.icon className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                    ) : null}
+
+                    <span className="flex-1 truncate">{option.label}</span>
+
+                    {isSelected && !filter.multiSelect && (
+                      <Check className="h-4 w-4 text-emerald-500" />
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Multi-select summary */}
+          {filter.multiSelect &&
+            Array.isArray(currentValue) &&
+            currentValue.length > 0 && (
+              <div className="mt-2 border-t pt-2">
+                <div className="flex items-center justify-between px-2 py-1 text-xs text-muted-foreground">
+                  <span>
+                    {currentValue.length} item
+                    {currentValue.length !== 1 ? "s" : ""} selected
+                  </span>
+                  <Button
+                    variant="link"
+                    className="h-auto p-0 text-xs text-blue-500 hover:text-blue-700"
+                    onClick={handleClearValue}
+                  >
+                    Clear all
+                  </Button>
+                </div>
+              </div>
+            )}
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Clear button */}
       {hasValue && (
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleClear}
-          className="absolute -right-3 -top-3 h-6 w-6 rounded-full border bg-white shadow-sm transition-colors hover:bg-slate-200 hover:text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+          onClick={handleClearValue}
+          className="absolute -right-3 -top-3 h-6 w-6 rounded-full border bg-white shadow-sm hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700"
+          aria-label={`Clear ${filter.label}`}
         >
           <X className="h-3 w-3" />
-          <span className="sr-only">Clear {filter.label}</span>
         </Button>
       )}
     </div>
   );
 }
-
-// Export memoized component with display name for better debugging
-const SearchFilterItem = memo(SearchFilterItemComponent);
-SearchFilterItem.displayName = "SearchFilterItem";
-
-export { SearchFilterItem };

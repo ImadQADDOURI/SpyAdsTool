@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import {
-  AdLibrarySearchPaginationQuery,
-  extractQueryParams,
-} from "@/actions/Meta-GraphQL-Queries";
+import { AdLibrarySearchPaginationQuery } from "@/actions/Meta-GraphQL-Queries";
 import { motion } from "framer-motion";
 import {
   BarChart,
@@ -19,56 +15,54 @@ import {
   Zap,
 } from "lucide-react";
 
-import { AdData } from "@/types/ad";
+import type { AdData } from "@/types/ad";
 
 import FirefliesWrapper from "./microComponents/FirefliesWrapper";
-import { ScrollButtons } from "./microComponents/ScrollButtons";
 import SearchResults from "./microComponents/SearchResults";
+import {
+  SearchFilterProvider,
+  useSearchFilters,
+} from "./search/search-filter-context";
 import SearchFilters from "./search/search-filters";
 
-export const AdBrowser = () => {
+/**
+ * Inner component that uses the search filter context
+ */
+const AdBrowserContent = () => {
+  const { getSearchParams } = useSearchFilters();
+
   // Add ref for the FirefliesWrapper section
   const titleSectionRef = useRef<HTMLDivElement>(null);
 
-  const searchParams = useSearchParams();
-
-  // 🔍 Search state
+  // Search state
   const [searchResults, setSearchResults] = useState<AdData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 📊 Pagination state
+  // Pagination state
   const [totalCount, setTotalCount] = useState<number | null>(null);
   const [remainingCount, setRemainingCount] = useState<number | null>(null);
   const [endCursor, setEndCursor] = useState<string | null>(null);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
 
-  // 🔒 Search lock mechanism to prevent multiple simultaneous searches
+  // Prevent concurrent searches
   const isSearchInProgress = useRef(false);
 
-  // 📜 Scroll to top on page load
+  // Scroll to top on component mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
-  // extract URL params
-  const getQueryParams = useCallback(() => {
-    return extractQueryParams(searchParams);
-  }, [searchParams]);
-
-  const handleSearchAds = useCallback(
-    async (useExistingParams = false) => {
-      // 🛑 If this is a new search (not loading more), ensure we're not already searching
-      if (!useExistingParams && isSearchInProgress.current) {
-        return;
-      }
+  const executeSearch = useCallback(
+    async (isLoadingMore = false) => {
+      if (!isLoadingMore && isSearchInProgress.current) return;
 
       isSearchInProgress.current = true;
       setIsLoading(true);
       setError(null);
 
-      // Scroll to the bottom of FirefliesWrapper section
-      if (!useExistingParams && titleSectionRef.current) {
+      // Scroll to the bottom of title Section on new searches (not pagination)
+      if (!isLoadingMore && titleSectionRef.current) {
         const sectionBottom =
           titleSectionRef.current.offsetTop +
           titleSectionRef.current.offsetHeight;
@@ -79,65 +73,51 @@ export const AdBrowser = () => {
       }
 
       try {
-        // 🔄 Get variables for the search query using the helper
-        const params = getQueryParams();
-        // 🔍 Execute search query
+        const searchParams = getSearchParams();
+
         const results = await AdLibrarySearchPaginationQuery(
-          params.q,
-          params.category_as_keyword,
-          params.search_type,
-          params.active_status,
-          params.ad_type,
-          params.content_languages,
-          params.countries,
-          params.media_type,
-          params.publisher_platforms,
-          params.sort_data,
-          params.start_date,
-          params.end_date,
-          useExistingParams ? endCursor : null,
+          searchParams.q,
+          searchParams.category_as_keyword,
+          searchParams.search_type,
+          searchParams.active_status,
+          searchParams.ad_type,
+          searchParams.content_languages,
+          searchParams.countries,
+          searchParams.media_type,
+          searchParams.publisher_platforms,
+          searchParams.sort_data,
+          searchParams.start_date,
+          searchParams.end_date,
+          isLoadingMore ? endCursor : null,
         );
 
-        // ✅ For load more, append results; for new search, replace results
-        if (useExistingParams && searchResults) {
-          setSearchResults((prevResults) => [...prevResults!, ...results.ads]);
+        // Update results
+        if (isLoadingMore && searchResults) {
+          setSearchResults((prevResults) => [
+            ...(prevResults ?? []),
+            ...results.ads,
+          ]);
         } else {
-          // 🧹 Clear previous results for new search
           setSearchResults(results.ads);
           setTotalCount(results.count);
-
-          // Scroll to the bottom of FirefliesWrapper section for all searches
-          if (titleSectionRef.current) {
-            const sectionBottom =
-              titleSectionRef.current.offsetTop +
-              titleSectionRef.current.offsetHeight;
-            window.scrollTo({
-              top: sectionBottom,
-              behavior: "smooth",
-            });
-          }
         }
 
-        // 📊 Update pagination state
+        // Update pagination state
         setEndCursor(results.end_cursor);
         setHasNextPage(results.has_next_page);
 
-        // 🧮 Calculate remaining items
+        // Calculate remaining items
+        const currentResultsLength = isLoadingMore ? searchResults!.length : 0;
         const newRemainingCount =
           results.count >= 50001
             ? results.count
-            : results.count -
-              (useExistingParams ? searchResults!.length : 0) -
-              results.ads.length;
+            : results.count - currentResultsLength - results.ads.length;
 
         setRemainingCount(newRemainingCount > 0 ? newRemainingCount : 0);
-      } catch (error) {
-        console.error("Error searching ads:", error);
-        setError(
-          "An error occurred while searching for ads. Please try again.",
-        );
-        // 🧹 Clear results on error for new searches
-        if (!useExistingParams) {
+      } catch (searchError) {
+        console.error("Search error:", searchError);
+        setError("An error occurred while searching. Please try again.");
+        if (!isLoadingMore) {
           setSearchResults(null);
         }
       } finally {
@@ -145,14 +125,14 @@ export const AdBrowser = () => {
         isSearchInProgress.current = false;
       }
     },
-    [getQueryParams, searchResults, endCursor],
+    [getSearchParams, searchResults, endCursor],
   );
 
   const handleLoadMore = useCallback(() => {
     if (hasNextPage && !isLoading && !isSearchInProgress.current) {
-      handleSearchAds(true);
+      executeSearch(true);
     }
-  }, [hasNextPage, handleSearchAds, isLoading]);
+  }, [hasNextPage, executeSearch, isLoading]);
 
   return (
     <div className="min-h-screen space-y-2 bg-gradient-to-b from-gray-50 to-gray-100 pb-16 dark:from-gray-900 dark:to-gray-800">
@@ -251,10 +231,7 @@ export const AdBrowser = () => {
         </FirefliesWrapper>
       </div>
 
-      {/* Sticky SearchBar */}
-      <SearchFilters onSearch={handleSearchAds} isLoading={isLoading} />
-
-      {/* Search Results */}
+      <SearchFilters onSearch={executeSearch} isLoading={isLoading} />
       <SearchResults
         isLoading={isLoading}
         error={error}
@@ -264,10 +241,18 @@ export const AdBrowser = () => {
         remainingCount={remainingCount}
         handleLoadMore={handleLoadMore}
       />
-
-      {/* Scroll buttons */}
-      <ScrollButtons />
     </div>
+  );
+};
+
+/**
+ * Main AdBrowser component with context provider
+ */
+export const AdBrowser = () => {
+  return (
+    <SearchFilterProvider>
+      <AdBrowserContent />
+    </SearchFilterProvider>
   );
 };
 

@@ -1,42 +1,43 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AdLibraryMobileFocusedStateProviderRefetchQuery,
   AdLibrarySearchPaginationQuery,
-  extractQueryParams,
 } from "@/actions/Meta-GraphQL-Queries";
 
-import { AdData } from "@/types/ad";
+import type { AdData } from "@/types/ad";
 
 import PageInfoSection from "./microComponents/PageInfoSection";
 import { ScrollButtons } from "./microComponents/ScrollButtons";
 import SearchResults from "./microComponents/SearchResults";
+import {
+  SearchFilterProvider,
+  useSearchFilters,
+} from "./search/search-filter-context";
 import SearchFilters from "./search/search-filters";
 
-interface PageAdBrowserProps {
-  pageId: string;
-}
+const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
+  const { getSearchParams } = useSearchFilters();
 
-export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
-  // Add ref for the Info Section
+  // Refs
   const infoSectionRef = useRef<HTMLDivElement>(null);
+  const isSearchInProgress = useRef(false);
+  const initialLoadCompletedRef = useRef(false);
+  const searchRequestIdRef = useRef(0);
 
-  const searchParams = useSearchParams();
-
-  // 🔍 Search state
+  // Search state
   const [searchResults, setSearchResults] = useState<AdData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 📊 Pagination state
+  // Pagination state
   const [totalCount, setTotalCount] = useState<number | null>(null);
   const [remainingCount, setRemainingCount] = useState<number | null>(null);
   const [endCursor, setEndCursor] = useState<string | null>(null);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
 
-  // 📄 Page info state
+  // Page info state
   const [pageInfo, setPageInfo] = useState<any | null>(null);
   const [page, setPage] = useState<any | null>(null);
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
@@ -45,32 +46,21 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
   const [pageTotalAds, setPageTotalAds] = useState<number | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // 🔒 Control references to handle race conditions
-  const isSearchInProgress = useRef(false);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const initialLoadCompletedRef = useRef(false);
-  const searchRequestIdRef = useRef(0); // For tracking the latest search request
-
-  // 📜 Scroll to top on page load
+  // Scroll to top on component mount (except initial load)
   useEffect(() => {
     if (!isInitialLoad) {
       window.scrollTo({ top: 0, behavior: "auto" });
     }
   }, [isInitialLoad]);
 
-  // extract URL params
-  const getQueryParams = useCallback(() => {
-    return extractQueryParams(searchParams);
-  }, [searchParams]);
-
-  const handleSearchAds = useCallback(
-    async (useExistingParams = false) => {
-      // 🛑 If this is a new search (not loading more), ensure we're not already searching
-      if (!useExistingParams && isSearchInProgress.current && !isInitialLoad) {
+  const executeSearch = useCallback(
+    async (isLoadingMore = false) => {
+      // Prevent concurrent searches for new searches
+      if (!isLoadingMore && isSearchInProgress.current && !isInitialLoad) {
         return;
       }
 
-      // 🔢 Generate a unique request ID to track this specific search
+      // Generate unique request ID to handle race conditions
       const currentRequestId = ++searchRequestIdRef.current;
 
       isSearchInProgress.current = true;
@@ -80,16 +70,15 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
       try {
         let results;
 
-        // 🔄 First load special case: fetch page info
         if (isInitialLoad) {
-          // First search on page load
-
+          // Initial load: fetch page info and initial ads
           results =
             await AdLibraryMobileFocusedStateProviderRefetchQuery(pageId);
 
-          // 🛑 Check if this is still the relevant request
+          // Check if this is still the relevant request
           if (currentRequestId !== searchRequestIdRef.current) return;
 
+          // Set page information
           setPageInfo(results.page_info);
           setPage(results.page);
           if (results.ads && results.ads.length > 0) {
@@ -101,36 +90,33 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
           setIsInitialLoad(false);
           initialLoadCompletedRef.current = true;
         } else {
-          // Subsequent searches or pagination
+          // Subsequent searches: use filter context
+          const searchParams = getSearchParams();
 
-          // 🔄 Get variables for the search query using the helper
-          const params = getQueryParams();
-
-          // 🔍 Execute search query
           results = await AdLibrarySearchPaginationQuery(
-            params.q,
-            params.category_as_keyword,
-            params.search_type,
-            params.active_status,
-            params.ad_type,
-            params.content_languages,
-            params.countries,
-            params.media_type,
-            params.publisher_platforms,
-            params.sort_data,
-            params.start_date,
-            params.end_date,
-            useExistingParams ? endCursor : null,
+            searchParams.q,
+            searchParams.category_as_keyword,
+            searchParams.search_type,
+            searchParams.active_status,
+            searchParams.ad_type,
+            searchParams.content_languages,
+            searchParams.countries,
+            searchParams.media_type,
+            searchParams.publisher_platforms,
+            searchParams.sort_data,
+            searchParams.start_date,
+            searchParams.end_date,
+            isLoadingMore ? endCursor : null,
             pageId,
           );
 
-          // 🛑 Check if this is still the relevant request
+          // Check if this is still the relevant request
           if (currentRequestId !== searchRequestIdRef.current) return;
 
-          // Only scroll on new searches (not during pagination)
-          if (!useExistingParams && infoSectionRef.current) {
+          // Scroll to the bottom of info Section on new searches (not pagination)
+
+          if (!isLoadingMore && infoSectionRef.current) {
             const sectionBottom = infoSectionRef.current.offsetTop;
-            // + infoSectionRef.current.offsetHeight;
             window.scrollTo({
               top: sectionBottom,
               behavior: "smooth",
@@ -138,81 +124,73 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
           }
         }
 
-        // Update total count on first search or when search params change
-        if (!useExistingParams) {
+        // Update total count for new searches
+        if (!isLoadingMore) {
           setTotalCount(results.count);
         }
 
-        // ✅ For load more, append results; for new search, replace results
-        if (useExistingParams && searchResults) {
+        // Update results
+        if (isLoadingMore && searchResults) {
           setSearchResults((prevResults) => [...prevResults!, ...results.ads]);
         } else {
           setSearchResults(results.ads);
         }
 
+        // Update pagination state
         setEndCursor(results.end_cursor);
         setHasNextPage(results.has_next_page);
 
-        // 🧮 Calculate remaining count
+        // Calculate remaining count
+        const currentResultsLength = isLoadingMore ? searchResults!.length : 0;
         const newRemainingCount =
           results.count >= 50001
             ? results.count
-            : results.count -
-              (useExistingParams ? searchResults!.length : 0) -
-              results.ads.length;
+            : results.count - currentResultsLength - results.ads.length;
 
         setRemainingCount(newRemainingCount > 0 ? newRemainingCount : 0);
-      } catch (error) {
-        console.error("Error searching ads:", error);
+      } catch (searchError) {
+        console.error("Error searching ads:", searchError);
 
-        // 🛑 Check if this is still the relevant request
+        // Check if this is still the relevant request
         if (currentRequestId !== searchRequestIdRef.current) return;
 
         setError(
           "An error occurred while searching for ads. Please try again.",
         );
 
-        // 🧹 Clear results on error for new searches
-        if (!useExistingParams && !isInitialLoad) {
+        // Clear results on error for new searches
+        if (!isLoadingMore && !isInitialLoad) {
           setSearchResults(null);
         }
       } finally {
-        // 🛑 Only update loading state if this is the most recent request
+        // Only update loading state if this is the most recent request
         if (currentRequestId === searchRequestIdRef.current) {
           setIsLoading(false);
           isSearchInProgress.current = false;
         }
       }
     },
-    [getQueryParams, searchResults, endCursor, pageId, isInitialLoad],
+    [getSearchParams, searchResults, endCursor, pageId, isInitialLoad],
   );
 
   const handleLoadMore = useCallback(() => {
     if (hasNextPage && !isLoading && !isSearchInProgress.current) {
-      handleSearchAds(true);
+      executeSearch(true);
     }
-  }, [hasNextPage, handleSearchAds, isLoading]);
+  }, [hasNextPage, executeSearch, isLoading]);
 
-  // 🚀 Initial load effect - safely handle the initial search
+  // Initial load effect
   useEffect(() => {
-    // Only execute once
     if (initialLoadCompletedRef.current) return;
 
-    const initializeSearch = async () => {
-      // Wait a tiny bit to ensure all component mounting is complete
+    const initializePageData = async () => {
+      // Small delay to ensure component mounting is complete
       await new Promise((resolve) => setTimeout(resolve, 10));
-      handleSearchAds();
+      executeSearch();
     };
 
-    initializeSearch();
-
-    // Clean up any pending searches on unmount
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, []);
+    initializePageData();
+  }, [executeSearch]);
 
   return (
     <div className="min-h-screen space-y-2 bg-gray-100 pb-8 dark:bg-gray-800">
@@ -228,8 +206,8 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
         )}
       </div>
 
-      {/* Sticky SearchBar Filters */}
-      <SearchFilters onSearch={handleSearchAds} isLoading={isLoading} />
+      {/* Search Filters */}
+      <SearchFilters onSearch={executeSearch} isLoading={isLoading} />
 
       {/* Search Results */}
       <SearchResults
@@ -242,9 +220,24 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
         handleLoadMore={handleLoadMore}
       />
 
-      {/* Scroll buttons */}
+      {/* Scroll Buttons */}
       <ScrollButtons />
     </div>
+  );
+};
+
+/**
+ * Main PageAdBrowser component with context provider
+ */
+export const PageAdBrowser = ({ pageId }: { pageId: string }) => {
+  return (
+    <SearchFilterProvider
+      defaultValues={{
+        status: "ALL",
+      }}
+    >
+      <PageAdBrowserContent pageId={pageId} />
+    </SearchFilterProvider>
   );
 };
 

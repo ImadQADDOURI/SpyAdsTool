@@ -41,6 +41,22 @@ export interface FilterConfig {
   type?: "search" | "select" | "date";
 }
 
+// 🗺️ SearchParams object
+export interface SearchParams {
+  q?: string;
+  category_as_keyword?: string;
+  search_type?: string;
+  active_status?: string;
+  ad_type?: string;
+  content_languages?: string[];
+  countries?: string[];
+  media_type?: string;
+  publisher_platforms?: string[];
+  sort_data?: string | null;
+  start_date?: string | null;
+  end_date?: string | null;
+}
+
 // 🔍 Search types
 const searchTypes: FilterOption[] = [
   { value: "KEYWORD_UNORDERED", label: "Keyword Unordered", icon: Dices },

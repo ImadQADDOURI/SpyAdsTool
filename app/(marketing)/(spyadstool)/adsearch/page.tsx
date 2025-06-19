@@ -1,7 +1,7 @@
 // /app/dashboard/adlibrary/page.tsx
 import { Suspense } from "react";
 
-import { AdBrowser } from "@/components/adLibrary/AdBrowser";
+import AdBrowser from "@/components/adLibrary/AdBrowser";
 import { Loading } from "@/components/adLibrary/microComponents/Loading";
 import { SubscriptionPageGuard } from "@/components/adLibrary/subscription/SubscriptionPageGuard";
 
