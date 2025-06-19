@@ -7,17 +7,13 @@ import {
   AdLibrarySearchPaginationQuery,
   extractQueryParams,
 } from "@/actions/Meta-GraphQL-Queries";
-import { Loader2 } from "lucide-react";
 
 import { AdData } from "@/types/ad";
 
-import { Button } from "../ui/button";
-import { AdCardGrid } from "./microComponents/AdCardGrid";
-import LoadingTrigger from "./microComponents/LoadingTrigger";
 import PageInfoSection from "./microComponents/PageInfoSection";
 import { ScrollButtons } from "./microComponents/ScrollButtons";
 import SearchResults from "./microComponents/SearchResults";
-import { SearchBar } from "./searchFilters/SearchBar";
+import SearchFilters from "./search/search-filters";
 
 interface PageAdBrowserProps {
   pageId: string;
@@ -232,8 +228,8 @@ export const PageAdBrowser = ({ pageId }: PageAdBrowserProps) => {
         )}
       </div>
 
-      {/* Sticky SearchBar Section */}
-      <SearchBar onSearch={handleSearchAds} isLoading={isLoading} />
+      {/* Sticky SearchBar Filters */}
+      <SearchFilters onSearch={handleSearchAds} isLoading={isLoading} />
 
       {/* Search Results */}
       <SearchResults

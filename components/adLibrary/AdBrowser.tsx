@@ -24,9 +24,7 @@ import { AdData } from "@/types/ad";
 import FirefliesWrapper from "./microComponents/FirefliesWrapper";
 import { ScrollButtons } from "./microComponents/ScrollButtons";
 import SearchResults from "./microComponents/SearchResults";
-import AdaptiveSearchFilters from "./searchFilters/adaptive-search-filters";
-import SearchFilters from "./searchFilters/search-filters";
-import { SearchBar } from "./searchFilters/SearchBar";
+import SearchFilters from "./search/search-filters";
 
 export const AdBrowser = () => {
   // Add ref for the FirefliesWrapper section
@@ -254,17 +252,8 @@ export const AdBrowser = () => {
       </div>
 
       {/* Sticky SearchBar */}
+      <SearchFilters onSearch={handleSearchAds} isLoading={isLoading} />
 
-      <SearchBar onSearch={handleSearchAds} isLoading={isLoading} />
-
-      {/* Filters */}
-      <div className="hidden md:block">
-        <AdaptiveSearchFilters
-          onSearch={handleSearchAds}
-          isLoading={isLoading}
-          displayMode="full"
-        />
-      </div>
       {/* Search Results */}
       <SearchResults
         isLoading={isLoading}
