@@ -67,4 +67,9 @@ https://v0.dev/chat/modern-analytics-section-b9Et3ggaBXo
 new search + filter system 
 https://v0.dev/chat/next-js-app-optimization-Zs7G7eSOqfH
 
+React Context for search filters
+https://v0.dev/chat/refactor-search-filters-6Ana8p4h8f1
+
+
+
 #

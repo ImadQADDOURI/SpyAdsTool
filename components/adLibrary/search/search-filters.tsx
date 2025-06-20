@@ -14,7 +14,6 @@ import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 
 import { getNonSearchFilters, getSearchFilter } from "./filter-config";
 import { useSearchFilters } from "./search-filter-context";
@@ -83,11 +82,12 @@ export default function SearchFilters({
   }, []);
 
   return (
-    <div className="mx-auto w-full max-w-7xl">
-      {/* Header */}
-      <div className="z-40 w-full border-b border-purple-200/50 bg-white/95 backdrop-blur-sm dark:border-purple-900/30 dark:bg-gray-900/95">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-3">
+    <div className="mx-auto w-full max-w-7xl px-4">
+      {/* Main Container */}
+      <div className="overflow-hidden rounded-2xl border border-blue-200/60 bg-white shadow-sm shadow-blue-100/50 dark:border-blue-800/40 dark:bg-gray-950 dark:shadow-blue-900/20">
+        {/* Top Section - Search Bar */}
+        <div className="px-2 py-2">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             {/* Search Input */}
             <div className="min-w-0 flex-1">
               {searchFilter && (
@@ -103,67 +103,77 @@ export default function SearchFilters({
               <Button
                 variant="outline"
                 onClick={toggleFiltersExpanded}
+                size="sm"
                 className={cn(
-                  "border-purple-200 hover:border-purple-300 hover:bg-purple-50 dark:border-purple-800 dark:hover:border-purple-700 dark:hover:bg-purple-900/30",
+                  "h-9 border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:border-blue-600 dark:hover:bg-blue-900/30",
                   areFiltersExpanded &&
-                    "border-purple-300 bg-purple-50 dark:border-purple-700 dark:bg-purple-900/30",
+                    "border-blue-300 bg-blue-50 dark:border-blue-600 dark:bg-blue-900/30",
                 )}
                 aria-expanded={areFiltersExpanded}
                 aria-controls="advanced-filters"
               >
-                <Filter className="mr-2 h-4 w-4" />
+                <Filter className="mr-1.5 h-4 w-4" />
                 Filters
                 {appliedFiltersCount > 0 && (
-                  <span className="ml-2 rounded-full bg-purple-500 px-2 py-0.5 text-xs font-medium text-white">
+                  <span className="ml-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-xs font-medium text-white">
                     {appliedFiltersCount}
                   </span>
                 )}
                 {areFiltersExpanded ? (
-                  <ChevronUp className="ml-2 h-4 w-4" />
+                  <ChevronUp className="ml-1.5 h-4 w-4" />
                 ) : (
-                  <ChevronDown className="ml-2 h-4 w-4" />
+                  <ChevronDown className="ml-1.5 h-4 w-4" />
                 )}
               </Button>
 
               <Button
                 onClick={handleSearch}
                 disabled={isLoading}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 disabled:opacity-50"
+                size="sm"
+                className="h-9 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 disabled:opacity-60"
               >
-                <Search className="mr-2 h-4 w-4" />
+                <Search className="mr-1.5 h-4 w-4" />
                 Search
                 {isLoading && (
-                  <span className="ml-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <div className="ml-1.5 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                 )}
               </Button>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Advanced Filters */}
-      <div
-        id="advanced-filters"
-        className={cn(
-          "w-full overflow-hidden transition-all duration-300 ease-in-out",
-          areFiltersExpanded
-            ? "max-h-[2000px] opacity-100"
-            : "max-h-0 opacity-0",
-        )}
-      >
-        <Card className="mt-4 w-full overflow-hidden rounded-xl border-purple-200/50 bg-white/90 backdrop-blur-sm dark:border-purple-900/30 dark:bg-gray-900/50">
-          <CardContent className="p-5">
+        {/* Separator Line */}
+        <div
+          className={cn(
+            "transition-opacity duration-300",
+            areFiltersExpanded ? "opacity-100" : "opacity-0",
+          )}
+        >
+          <div className="h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent dark:via-blue-700/50" />
+        </div>
+
+        {/* Bottom Section - Advanced Filters */}
+        <div
+          id="advanced-filters"
+          className={cn(
+            "overflow-hidden transition-all duration-300 ease-out",
+            areFiltersExpanded
+              ? "max-h-[1000px] opacity-100"
+              : "max-h-0 opacity-0",
+          )}
+        >
+          <div className="px-4 py-4">
             {/* Filter Header */}
-            <div className="mb-5 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="rounded-full bg-purple-100 p-2 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300">
-                  <SlidersHorizontal className="h-5 w-5 text-purple-500" />
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50">
+                  <SlidersHorizontal className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h2 className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-xl font-bold text-transparent">
+                <h2 className="bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-lg font-semibold text-transparent dark:from-blue-400 dark:to-purple-400">
                   Advanced Filters
                 </h2>
                 {appliedFiltersCount > 0 && (
-                  <span className="ml-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-2.5 py-0.5 text-xs font-medium text-white">
+                  <span className="rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-2 py-0.5 text-xs font-medium text-white">
                     {appliedFiltersCount} active
                   </span>
                 )}
@@ -173,12 +183,13 @@ export default function SearchFilters({
                 variant="outline"
                 onClick={handleClearAllFilters}
                 disabled={isLoading || appliedFiltersCount === 0}
+                size="sm"
                 className={cn(
-                  "border-purple-200 hover:border-purple-300 hover:bg-purple-50 dark:border-purple-800 dark:hover:border-purple-700 dark:hover:bg-purple-900/30",
-                  appliedFiltersCount === 0 && "opacity-50",
+                  "h-8 border-blue-200 text-blue-600 hover:border-blue-300 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-400 dark:hover:border-blue-600 dark:hover:bg-blue-900/30",
+                  appliedFiltersCount === 0 && "opacity-40",
                 )}
               >
-                <Trash2 className="mr-2 h-4 w-4" />
+                <Trash2 className="mr-1.5 h-4 w-4" />
                 Clear All
               </Button>
             </div>
@@ -189,8 +200,8 @@ export default function SearchFilters({
                 <SearchFilterItem key={filter.key} filter={filter} />
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
