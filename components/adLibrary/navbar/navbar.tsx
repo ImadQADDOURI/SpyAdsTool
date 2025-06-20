@@ -26,6 +26,7 @@ import { UserAvatar } from "@/components/shared/user-avatar";
 
 import { Deals, NavbarLinks } from "./navbar-links";
 import { NavbarMobileMenu } from "./navbar-mobile-menu";
+import { useNavbarVisibility } from "./navbar-visibility-context";
 
 export function Navbar() {
   const scrolled = useScroll(50);
@@ -36,28 +37,7 @@ export function Navbar() {
   const navbarRef = useRef<HTMLDivElement>(null);
 
   // Hide navbar on scroll down, show on scroll up
-  const [prevScrollPos, setPrevScrollPos] = useState(0);
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollPos = window.scrollY;
-      const isScrolledDown = prevScrollPos < currentScrollPos;
-      const isScrolledUp = prevScrollPos > currentScrollPos;
-      const isScrolledPastThreshold = currentScrollPos > 100;
-
-      if (isScrolledDown && isScrolledPastThreshold) {
-        setVisible(false);
-      } else if (isScrolledUp) {
-        setVisible(true);
-      }
-
-      setPrevScrollPos(currentScrollPos);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [prevScrollPos]);
+  const { visible } = useNavbarVisibility();
 
   // Close mobile menu when clicking outside
   useEffect(() => {

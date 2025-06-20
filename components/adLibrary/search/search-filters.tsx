@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
+import { useNavbarVisibility } from "../navbar/navbar-visibility-context";
 import { getNonSearchFilters, getSearchFilter } from "./filter-config";
 import { useSearchFilters } from "./search-filter-context";
 import { SearchFilterItem } from "./search-filter-item";
@@ -34,13 +35,16 @@ export default function SearchFilters({
   const [areFiltersExpanded, setAreFiltersExpanded] = useState(true);
   const [appliedFiltersCount, setAppliedFiltersCount] = useState(0);
 
+  // Navbar visibility from context
+  const { visible } = useNavbarVisibility();
+
   // Subscribe to filter count changes
   useEffect(() => {
     const unsubscribe = subscribeToCount(setAppliedFiltersCount);
     return unsubscribe;
   }, [subscribeToCount]);
 
-  // Get filter configurations (computed once)
+  // Get filter configurations
   const searchFilter = getSearchFilter();
   const nonSearchFilters = getNonSearchFilters();
 
@@ -69,6 +73,10 @@ export default function SearchFilters({
     }
 
     toast.success("Search executed successfully");
+
+    // collapse filters after search
+    setAreFiltersExpanded(false);
+
     onSearch();
   }, [getValue, onSearch]);
 
@@ -82,12 +90,18 @@ export default function SearchFilters({
   }, []);
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4">
+    <div
+      className={cn(
+        "mx-auto w-full max-w-7xl px-4",
+        "sticky z-40",
+        visible ? "top-[66px]" : "top-[2px]",
+      )}
+    >
       {/* Main Container */}
       <div className="overflow-hidden rounded-2xl border border-blue-200/60 bg-white shadow-sm shadow-blue-100/50 dark:border-blue-800/40 dark:bg-gray-950 dark:shadow-blue-900/20">
         {/* Top Section - Search Bar */}
         <div className="px-2 py-2">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="flex gap-3 sm:flex-row sm:items-center">
             {/* Search Input */}
             <div className="min-w-0 flex-1">
               {searchFilter && (
@@ -112,8 +126,8 @@ export default function SearchFilters({
                 aria-expanded={areFiltersExpanded}
                 aria-controls="advanced-filters"
               >
-                <Filter className="mr-1.5 h-4 w-4" />
-                Filters
+                <Filter className="h-4 w-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Filters</span>
                 {appliedFiltersCount > 0 && (
                   <span className="ml-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-xs font-medium text-white">
                     {appliedFiltersCount}
@@ -132,11 +146,12 @@ export default function SearchFilters({
                 size="sm"
                 className="h-9 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 disabled:opacity-60"
               >
-                <Search className="mr-1.5 h-4 w-4" />
-                Search
-                {isLoading && (
-                  <div className="ml-1.5 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                {isLoading ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white sm:mr-1.5" />
+                ) : (
+                  <Search className="h-4 w-4 sm:mr-1.5" />
                 )}
+                <span className="hidden sm:inline">Search</span>
               </Button>
             </div>
           </div>
