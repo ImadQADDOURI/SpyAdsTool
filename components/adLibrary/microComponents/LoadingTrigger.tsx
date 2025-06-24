@@ -1,51 +1,84 @@
-// components/adsLibrary/LoadingTrigger.tsx
-import React, { useEffect, useRef } from "react";
+"use client";
+
+import { memo, useCallback, useEffect, useRef } from "react";
 
 interface LoadingTriggerProps {
   onIntersect: () => void;
   isLoading: boolean;
-  // How far from the viewport to trigger loading (0 to 1)
-  // Default 0.5 means trigger when element is halfway to entering viewport
   triggerMargin?: number;
 }
 
-const LoadingTrigger: React.FC<LoadingTriggerProps> = ({
-  onIntersect,
-  isLoading,
-  triggerMargin = 0.5,
-}) => {
-  const triggerRef = useRef<HTMLDivElement>(null);
+// 🚀 Optimized LoadingTrigger with better performance
+const LoadingTrigger = memo(
+  ({ onIntersect, isLoading, triggerMargin = 0.5 }: LoadingTriggerProps) => {
+    const triggerRef = useRef<HTMLDivElement>(null);
+    const observerRef = useRef<IntersectionObserver | null>(null);
 
-  useEffect(() => {
-    // Create an observer with a rootMargin to detect the element before it's visible
-    // This creates a larger detection area around the viewport
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isLoading) {
+    // 🎯 Memoized callback to prevent observer recreation
+    const handleIntersect = useCallback(
+      (entries: IntersectionObserverEntry[]) => {
+        if (entries[0]?.isIntersecting && !isLoading) {
           onIntersect();
         }
       },
-      {
-        // rootMargin increases the effective size of the viewport
-        // A positive value like "200px" will trigger when element is 200px away
-        rootMargin: `${triggerMargin * 100}% 0px`,
-        // Lower threshold so it triggers earlier in the intersection process
-        threshold: 0.1,
-      },
+      [onIntersect, isLoading],
     );
 
-    if (triggerRef.current) {
-      observer.observe(triggerRef.current);
-    }
-
-    return () => {
-      if (triggerRef.current) {
-        observer.unobserve(triggerRef.current);
+    useEffect(() => {
+      // 🚀 Create observer only once and reuse
+      if (!observerRef.current) {
+        observerRef.current = new IntersectionObserver(handleIntersect, {
+          rootMargin: `${triggerMargin * 100}% 0px`,
+          threshold: 0.1,
+        });
       }
-    };
-  }, [onIntersect, isLoading, triggerMargin]);
 
-  return <div ref={triggerRef} className="h-10" />;
-};
+      const currentElement = triggerRef.current;
+      const currentObserver = observerRef.current;
+
+      if (currentElement && currentObserver) {
+        currentObserver.observe(currentElement);
+      }
+
+      return () => {
+        if (currentElement && currentObserver) {
+          currentObserver.unobserve(currentElement);
+        }
+      };
+    }, [handleIntersect, triggerMargin]);
+
+    // 🧹 Cleanup observer on unmount
+    useEffect(() => {
+      return () => {
+        if (observerRef.current) {
+          observerRef.current.disconnect();
+          observerRef.current = null;
+        }
+      };
+    }, []);
+
+    return (
+      <div className="loading-trigger">
+        <div ref={triggerRef} className="loading-trigger__element" />
+
+        <style jsx>{`
+          .loading-trigger {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+          }
+
+          .loading-trigger__element {
+            height: 2.5rem;
+            width: 100%;
+            pointer-events: none;
+          }
+        `}</style>
+      </div>
+    );
+  },
+);
+
+LoadingTrigger.displayName = "LoadingTrigger";
 
 export default LoadingTrigger;

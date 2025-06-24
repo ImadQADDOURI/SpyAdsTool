@@ -49,6 +49,9 @@ export default function SearchFilters({
   const nonSearchFilters = getNonSearchFilters();
 
   const handleSearch = useCallback(() => {
+    // collapse filters after search
+    setAreFiltersExpanded(false);
+
     const startDate = getValue("startDate");
     const endDate = getValue("endDate");
 
@@ -74,10 +77,12 @@ export default function SearchFilters({
 
     toast.success("Search executed successfully");
 
-    // collapse filters after search
-    setAreFiltersExpanded(false);
-
     onSearch();
+
+    // Scroll to top after search
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
   }, [getValue, onSearch]);
 
   const handleClearAllFilters = useCallback(() => {

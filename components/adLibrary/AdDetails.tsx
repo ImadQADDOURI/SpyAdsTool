@@ -39,7 +39,6 @@ import AdCreativeGenerator from "@/components/adLibrary/aiComponents/AdCreativeG
 import KeywordAnalysisTable from "@/components/adLibrary/aiComponents/KeywordAnalysisTable";
 
 import { AdCard } from "./AdCard";
-import AdCardGrid from "./microComponents/AdCardGrid";
 import AdOptionsCard from "./microComponents/AdOptionsCard";
 
 const Analytics = dynamic(
@@ -202,7 +201,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
             <div className="w-full lg:w-3/12 lg:pr-2">
               <div className="space-y-2">
                 <AdCreativeGenerator ad={ad} />
-                <AdCardGrid ads={ad} />
+                <AdCard ad={ad} />
                 <AdOptionsCard ad={ad} />
               </div>
             </div>
