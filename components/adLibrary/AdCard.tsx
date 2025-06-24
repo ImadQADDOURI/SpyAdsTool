@@ -66,10 +66,6 @@ YESTERDAY.setDate(YESTERDAY.getDate() - 1);
 
 const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
   // 🛡️ Early return with minimal JSX for better performance
-  if (!ad) {
-    return null;
-  }
-
   const {
     start_date,
     end_date,
