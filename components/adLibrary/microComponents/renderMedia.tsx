@@ -22,7 +22,7 @@ import DownloadMedia from "./DownloadMedia";
 import ExpandableText from "./expandableText";
 
 interface RenderMediaProps {
-  snapshot: AdData["snapshot"];
+  snapshot: any;
 }
 
 // 🎬 Video Player Component - Lazy loaded for performance
