@@ -679,43 +679,44 @@ export const SearchResults = memo(
                   containIntrinsicSize: "auto 1000px",
                 }}
               />
-            </div>
-
-            {/* Load More Section */}
-            <div className="load-more-section">
-              {hasNextPage ? (
-                <div className="load-more-status">
-                  {isLoading && (
-                    <div className="loading-indicator">
-                      <Loading size="large" />
-                      <span className="loading-text">Loading more ads...</span>
-                    </div>
-                  )}
-
-                  {!isLoading &&
-                    remainingCount !== null &&
-                    remainingCount > 0 && (
-                      <div className="status-info">
-                        <p className="remaining-count" aria-live="polite">
-                          {formattedRemainingCount} more ads available
-                        </p>
-                        <div className="scroll-hint">
-                          <span className="scroll-hint__text">
-                            Keep scrolling for more
-                          </span>
-                          <div className="scroll-hint__arrow">↓</div>
-                        </div>
+              {/* Load More Section */}
+              <div className="load-more-section">
+                {hasNextPage ? (
+                  <div className="load-more-status">
+                    {isLoading && (
+                      <div className="loading-indicator">
+                        <Loading size="large" />
+                        <span className="loading-text">
+                          Loading more ads...
+                        </span>
                       </div>
                     )}
-                </div>
-              ) : (
-                <div className="mx-auto mt-4 flex w-full max-w-xs items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2">
-                  <CheckCircle className="mr-2 h-6 w-6 text-white" />
-                  <span className="text-sm font-semibold text-white">
-                    You&apos;ve reached the end!
-                  </span>
-                </div>
-              )}
+
+                    {!isLoading &&
+                      remainingCount !== null &&
+                      remainingCount > 0 && (
+                        <div className="status-info">
+                          <p className="remaining-count" aria-live="polite">
+                            {formattedRemainingCount} more ads available
+                          </p>
+                          <div className="scroll-hint">
+                            <span className="scroll-hint__text">
+                              Keep scrolling for more
+                            </span>
+                            <div className="scroll-hint__arrow">↓</div>
+                          </div>
+                        </div>
+                      )}
+                  </div>
+                ) : (
+                  <div className="mx-auto mt-4 flex w-full max-w-xs items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2">
+                    <CheckCircle className="mr-2 h-6 w-6 text-white" />
+                    <span className="text-sm font-semibold text-white">
+                      You&apos;ve reached the end!
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </>
         )}
