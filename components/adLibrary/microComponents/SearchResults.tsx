@@ -712,7 +712,7 @@ export const SearchResults = memo(
                 <div className="mx-auto mt-4 flex w-full max-w-xs items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2">
                   <CheckCircle className="mr-2 h-6 w-6 text-white" />
                   <span className="text-sm font-semibold text-white">
-                    You've reached the end!
+                    You&apos;ve reached the end!
                   </span>
                 </div>
               )}
