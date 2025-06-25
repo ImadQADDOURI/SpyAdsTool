@@ -1,12 +1,13 @@
 "use client";
 
 import type React from "react";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { VirtuosoMasonry } from "@virtuoso.dev/masonry";
 import {
   BarChart,
   CheckCircle,
+  ChevronDown,
   Download,
   Filter,
   Globe,
@@ -31,7 +32,7 @@ interface SearchResultsProps {
   handleLoadMore: () => void;
 }
 
-// 🚀 Enhanced window width hook with SSR safety and performance optimizations
+// 🚀 Enhanced window width hook with SSR safety
 const useWindowWidth = () => {
   const [width, setWidth] = useState(() => {
     if (typeof window === "undefined") return 1024; // SSR fallback
@@ -42,26 +43,19 @@ const useWindowWidth = () => {
     if (typeof window === "undefined") return;
 
     let timeoutId: NodeJS.Timeout;
-    let rafId: number;
 
     const handleResize = () => {
       // Cancel previous calls
       clearTimeout(timeoutId);
-      if (rafId) cancelAnimationFrame(rafId);
-
       // Debounce resize events for performance
       timeoutId = setTimeout(() => {
-        rafId = requestAnimationFrame(() => {
-          const newWidth = window.innerWidth;
-          setWidth((prevWidth) => {
-            // Only update if width actually changed significantly (avoid micro-updates)
-            return Math.abs(newWidth - prevWidth) > 10 ? newWidth : prevWidth;
-          });
+        const newWidth = window.innerWidth;
+        setWidth((prevWidth) => {
+          return Math.abs(newWidth - prevWidth) > 10 ? newWidth : prevWidth;
         });
       }, 100); // Reduced debounce time for better responsiveness
     };
 
-    // Initial width check
     const initialWidth = window.innerWidth;
     if (Math.abs(initialWidth - width) > 10) {
       setWidth(initialWidth);
@@ -72,88 +66,10 @@ const useWindowWidth = () => {
     return () => {
       window.removeEventListener("resize", handleResize);
       clearTimeout(timeoutId);
-      if (rafId) cancelAnimationFrame(rafId);
     };
   }, [width]);
 
   return width;
-};
-
-// 🚀 Enhanced scroll-based load more with intelligent prefetching
-const useScrollLoadMore = (
-  handleLoadMore: () => void,
-  hasNextPage: boolean,
-  isLoading: boolean,
-) => {
-  const loadMoreRef = useRef<boolean>(false);
-  const lastTriggerRef = useRef<number>(0);
-
-  useEffect(() => {
-    if (!hasNextPage || isLoading) return;
-
-    const handleScroll = () => {
-      const now = Date.now();
-      const scrollTop =
-        window.pageYOffset || document.documentElement.scrollTop;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-
-      // Calculate scroll progress (0-1)
-      const scrollProgress = scrollTop / (documentHeight - windowHeight);
-
-      // Intelligent trigger points based on content and viewport
-      const viewportTrigger = windowHeight * 1.5; // 1.5 viewports ahead
-      const progressTrigger = 0.75; // 75% scrolled
-      const distanceFromBottom = documentHeight - (scrollTop + windowHeight);
-
-      // Multiple trigger conditions for optimal UX
-      const shouldTrigger =
-        distanceFromBottom <= viewportTrigger || // Distance-based
-        scrollProgress >= progressTrigger || // Progress-based
-        distanceFromBottom <= 400; // Fallback distance
-
-      // Prevent multiple rapid triggers (debounce 300ms)
-      if (
-        shouldTrigger &&
-        !loadMoreRef.current &&
-        now - lastTriggerRef.current > 300
-      ) {
-        loadMoreRef.current = true;
-        lastTriggerRef.current = now;
-        handleLoadMore();
-
-        // Reset after a delay to allow for multiple loads
-        setTimeout(() => {
-          loadMoreRef.current = false;
-        }, 1000);
-      }
-    };
-
-    // High-performance scroll handler with RAF
-    let rafId: number;
-    const optimizedScrollHandler = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        handleScroll();
-        rafId = 0;
-      });
-    };
-
-    window.addEventListener("scroll", optimizedScrollHandler, {
-      passive: true,
-    });
-    return () => {
-      window.removeEventListener("scroll", optimizedScrollHandler);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, [handleLoadMore, hasNextPage, isLoading]);
-
-  // Reset trigger when loading state changes
-  useEffect(() => {
-    if (!isLoading) {
-      loadMoreRef.current = false;
-    }
-  }, [isLoading]);
 };
 
 // 🎯 Highly optimized FeaturePill component
@@ -202,7 +118,7 @@ const FeaturePill = memo(
 
 FeaturePill.displayName = "FeaturePill";
 
-// 🎯 Optimized InitialState component with lazy loading
+// 🎯 Optimized InitialState component
 const InitialState = memo(() => (
   <div className="initial-state">
     <div className="initial-state__content">
@@ -567,10 +483,7 @@ export const SearchResults = memo(
   }: SearchResultsProps) => {
     const windowWidth = useWindowWidth();
 
-    // 🚀 Implement scroll-based load more
-    useScrollLoadMore(handleLoadMore, hasNextPage, isLoading);
-
-    // 🎯 Memoized computed values with shallow comparison
+    // 🎯 Memoized computed values
     const showInitialState = useMemo(
       () => !isLoading && searchResults === null,
       [isLoading, searchResults],
@@ -595,7 +508,7 @@ export const SearchResults = memo(
       return 5;
     }, [windowWidth]);
 
-    // 🚀 Ref for VirtuosoMasonry to trigger recalculations
+    // 🚀 Ref for VirtuosoMasonry
     const virtuosoRef = useRef<any>(null);
     const [recalcKey, setRecalcKey] = useState(0);
 
@@ -614,11 +527,11 @@ export const SearchResults = memo(
       return searchResults || [];
     }, [searchResults?.length]);
 
-    // 🎯 Reset filters callback
-    const handleResetFilters = useCallback(() => {
+    // 🎯 Reset filters callback (placeholder)
+    const handleResetFilters = () => {
       // You can implement this based on your filter state management
       console.log("Reset filters clicked");
-    }, []);
+    };
 
     useEffect(() => {
       if (searchResults?.length) {
@@ -660,68 +573,52 @@ export const SearchResults = memo(
           </div>
         )}
 
-        {/* 🚀 Production-optimized VirtuosoMasonry with enhanced performance */}
+        {/* 🚀 Results Grid */}
         {showResults && (
-          <>
-            {/* Results Grid */}
-            <div className="results-container">
-              <VirtuosoMasonry
-                ref={virtuosoRef}
-                key={`stable-${recalcKey}`}
-                data={masonryData}
-                columnCount={columnCount}
-                useWindowScroll={true}
-                initialItemCount={Math.min(columnCount * 4, masonryData.length)} // 🔥 Don't exceed data length
-                ItemContent={ItemContent}
-                className="virtuoso-masonry"
-                style={{
-                  minHeight: "50vh",
-                  containIntrinsicSize: "auto 1000px",
-                }}
-              />
-              {/* Load More Section */}
-              <div className="load-more-section">
-                {hasNextPage ? (
-                  <div className="load-more-status">
-                    {isLoading && (
-                      <div className="loading-indicator">
-                        <Loading size="large" />
-                        <span className="loading-text">
-                          Loading more ads...
-                        </span>
-                      </div>
-                    )}
+          <div className="results-container">
+            <VirtuosoMasonry
+              ref={virtuosoRef}
+              key={`stable-${recalcKey}`}
+              data={masonryData}
+              columnCount={columnCount}
+              useWindowScroll={true}
+              initialItemCount={Math.min(columnCount * 4, masonryData.length)}
+              ItemContent={ItemContent}
+              className="virtuoso-masonry"
+              style={{
+                minHeight: "50vh",
+                containIntrinsicSize: "auto 1000px",
+              }}
+            />
 
-                    {!isLoading &&
-                      remainingCount !== null &&
-                      remainingCount > 0 && (
-                        <div className="status-info">
-                          <p className="remaining-count" aria-live="polite">
-                            {formattedRemainingCount} more ads available
-                          </p>
-                          <div className="scroll-hint">
-                            <span className="scroll-hint__text">
-                              Keep scrolling for more
-                            </span>
-                            <div className="scroll-hint__arrow">↓</div>
-                          </div>
-                        </div>
-                      )}
-                  </div>
+            {/* 🎯 Load More Section */}
+            <div className="load-more-section mt-8 flex justify-center p-8">
+              {hasNextPage ? (
+                isLoading ? (
+                  <>
+                    <Loading size="small" />
+                  </>
                 ) : (
-                  <div className="mx-auto mt-4 flex w-full max-w-xs items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2">
-                    <CheckCircle className="mr-2 h-6 w-6 text-white" />
-                    <span className="text-sm font-semibold text-white">
-                      You&apos;ve reached the end!
-                    </span>
-                  </div>
-                )}
-              </div>
+                  <button
+                    onClick={handleLoadMore}
+                    disabled={isLoading}
+                    className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-200 to-pink-200 px-6 py-3 font-bold text-purple-800 shadow-md hover:from-purple-300 hover:to-pink-300 disabled:opacity-50"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                    Load More +{formattedRemainingCount} left
+                  </button>
+                )
+              ) : (
+                <div className="flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 font-semibold text-white shadow-md">
+                  <CheckCircle className="mr-2 h-6 w-6" />
+                  <span>End of Results</span>
+                </div>
+              )}
             </div>
-          </>
+          </div>
         )}
 
-        {/* 🎨 Optimized styles with hardware acceleration */}
+        {/* 🎨 Optimized styles */}
         <style jsx>{`
           .search-results {
             margin: 0 auto;
@@ -785,106 +682,36 @@ export const SearchResults = memo(
           }
 
           .load-more-section {
+            display: flex;
+            justify-content: center;
+            padding: 3rem 1rem;
             margin-top: 2rem;
-            padding: 2rem 1rem 3rem;
-            position: relative;
-            z-index: 20; /* Higher than virtuoso */
-            background: inherit; /* Match parent background */
           }
 
-          .load-more-status {
+          .load-more-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1.5rem;
+            text-align: center;
             padding: 2rem 1rem 3rem;
             margin-top: 2rem;
             min-height: 120px; /* Prevent layout shift */
           }
 
-          .loading-indicator {
+          .end-message {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 1rem;
-            animation: pulse 2s ease-in-out infinite;
-          }
-
-          .loading-text {
-            font-size: clamp(0.875rem, 2vw, 1rem);
-            color: rgb(107 114 128);
-            font-weight: 500;
-          }
-
-          :global(.dark) .loading-text {
-            color: rgb(156 163 175);
-          }
-
-          .status-info {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            text-align: center;
-          }
-
-          .remaining-count {
-            padding: 0.75rem 1.5rem;
+            justify-content: center;
+            padding: 1rem 2rem;
             border-radius: 9999px;
-            background: linear-gradient(
-              135deg,
-              rgb(243 232 255),
-              rgb(252 231 243)
-            );
-            font-size: clamp(1rem, 2.5vw, 1.125rem);
+            background: linear-gradient(135deg, #9333ea, #7c3aed);
+            color: white;
             font-weight: 600;
-            color: rgb(147 51 234);
-            box-shadow: 0 4px 12px -2px rgba(147, 51, 234, 0.2);
-            transform: translateZ(0);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px 0 rgba(147, 51, 234, 0.3);
           }
 
-          .remaining-count:hover {
-            transform: translateY(-2px) translateZ(0);
-            box-shadow: 0 8px 20px -4px rgba(147, 51, 234, 0.3);
-          }
-
-          :global(.dark) .remaining-count {
-            background: linear-gradient(135deg, rgb(88 28 135), rgb(157 23 77));
-            color: rgb(196 181 253);
-            box-shadow: 0 4px 12px -2px rgba(196, 181, 253, 0.2);
-          }
-
-          .scroll-hint {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            opacity: 0.7;
-            animation: bounce 2s ease-in-out infinite;
-          }
-
-          .scroll-hint__text {
-            font-size: 0.875rem;
-            color: rgb(107 114 128);
-            font-weight: 500;
-          }
-
-          :global(.dark) .scroll-hint__text {
-            color: rgb(156 163 175);
-          }
-
-          .scroll-hint__arrow {
-            font-size: 1.25rem;
-            color: rgb(147 51 234);
-            font-weight: bold;
-          }
-
-          :global(.dark) .scroll-hint__arrow {
-            color: rgb(196 181 253);
-          }
-
-          /* 🚀 Production-grade hardware-accelerated animations */
+          /* 🚀 Hardware-accelerated animations */
           @keyframes slideIn {
             from {
               opacity: 0;
@@ -916,54 +743,18 @@ export const SearchResults = memo(
             }
           }
 
-          @keyframes pulse {
-            0%,
-            100% {
-              opacity: 1;
-              transform: scale(1);
-            }
-            50% {
-              opacity: 0.8;
-              transform: scale(1.02);
-            }
-          }
-
-          @keyframes bounce {
-            0%,
-            20%,
-            50%,
-            80%,
-            100% {
-              transform: translateY(0) translateZ(0);
-            }
-            40% {
-              transform: translateY(-8px) translateZ(0);
-            }
-            60% {
-              transform: translateY(-4px) translateZ(0);
-            }
-          }
-
-          /* 🎯 Enhanced performance optimizations with CSS containment */
+          /* 🎯 Performance optimizations */
           .results-container,
           .results-count,
           .error-state,
-          .load-more-status {
+          .load-more-section {
             will-change: transform;
             transform: translateZ(0);
             contain: layout style;
           }
 
-          /* 🚀 Reduced motion for accessibility */
+          /* 🚀 Accessibility - Reduced motion */
           @media (prefers-reduced-motion: reduce) {
-            .scroll-hint,
-            .loading-indicator,
-            .feature-pill:hover,
-            .remaining-count:hover {
-              animation: none;
-              transform: none;
-            }
-
             * {
               transition-duration: 0.01ms !important;
               animation-duration: 0.01ms !important;
@@ -973,24 +764,19 @@ export const SearchResults = memo(
           /* 🎯 High contrast mode support */
           @media (prefers-contrast: high) {
             .results-count__badge,
-            .remaining-count,
             .end-message {
               border: 2px solid currentColor;
             }
           }
 
-          /* 📱 Enhanced mobile optimizations */
+          /* 📱 Mobile optimizations */
           @media (max-width: 640px) {
-            .load-more-status {
-              padding: 1.5rem 0.5rem 2rem;
-            }
-
-            .scroll-hint {
-              display: none; /* Hide on mobile to reduce clutter */
+            .load-more-section {
+              padding: 2rem 0.5rem;
             }
           }
 
-          /* 🖥️ Enhanced desktop optimizations */
+          /* 🖥️ Desktop optimizations */
           @media (min-width: 1024px) {
             .results-container {
               contain: layout style paint;
