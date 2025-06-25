@@ -27,7 +27,7 @@ import RenderMedia from "./microComponents/renderMedia";
 import SubscriptionAccessGuard from "./subscription/SubscriptionAccessGuard";
 
 interface AdCardProps {
-  ad: AdData;
+  ad: AdData | undefined; // 🎯 Explicitly handle undefined
   compact?: boolean;
 }
 
@@ -65,7 +65,7 @@ const YESTERDAY = new Date(TODAY);
 YESTERDAY.setDate(YESTERDAY.getDate() - 1);
 
 const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
-  // 🛡️ Early return with minimal JSX for better performance
+  // 🎯 Safe destructuring with fallback values - hooks must be called first!
   const {
     start_date,
     end_date,
@@ -74,7 +74,7 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
     snapshot,
     collation_count,
     is_aaa_eligible,
-  } = ad;
+  } = ad || {};
 
   // 🎨 Memoized platform icons rendering
   const platformIcons = useMemo(() => {
@@ -126,6 +126,11 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
     () => collation_count && collation_count >= 5,
     [collation_count],
   );
+
+  // 🛡️ Conditional rendering after all hooks are called
+  if (!ad) {
+    return;
+  }
 
   return (
     <Card className="relative flex h-full w-full max-w-2xl flex-col overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl">

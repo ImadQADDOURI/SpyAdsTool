@@ -6,6 +6,7 @@ import Image from "next/image";
 import { VirtuosoMasonry } from "@virtuoso.dev/masonry";
 import {
   BarChart,
+  CheckCircle,
   Download,
   Filter,
   Globe,
@@ -541,10 +542,14 @@ const ItemContent = memo<{ data: AdData; index: number; context?: any }>(
           padding: 0.5rem;
           transform: translateZ(0);
           will-change: transform;
+          contain: layout;
+          min-height: 200px;
+          max-height: 800px;
         }
       `}</style>
     </div>
   ),
+  // 🔥 No second parameter = use default React memo comparison
 );
 
 ItemContent.displayName = "ItemContent";
@@ -583,12 +588,16 @@ export const SearchResults = memo(
 
     // 🚀 Dynamic column count based on container width
     const columnCount = useMemo(() => {
-      if (windowWidth < 640) return 1; // sm: 1 column
-      if (windowWidth < 768) return 2; // md: 2 columns
-      if (windowWidth < 1024) return 3; // lg: 3 columns
-      if (windowWidth < 1280) return 4; // xl: 4 columns
-      return 5; // 2xl+: 5 columns
+      if (windowWidth < 600) return 1;
+      if (windowWidth < 900) return 2;
+      if (windowWidth < 1200) return 3;
+      if (windowWidth < 1600) return 4;
+      return 5;
     }, [windowWidth]);
+
+    // 🚀 Ref for VirtuosoMasonry to trigger recalculations
+    const virtuosoRef = useRef<any>(null);
+    const [recalcKey, setRecalcKey] = useState(0);
 
     // 🎯 Memoized formatted values
     const formattedTotalCount = useMemo(() => {
@@ -601,13 +610,24 @@ export const SearchResults = memo(
     }, [remainingCount]);
 
     // 🚀 Memoized data for VirtuosoMasonry
-    const masonryData = useMemo(() => searchResults || [], [searchResults]);
+    const masonryData = useMemo(() => {
+      return searchResults || [];
+    }, [searchResults?.length]);
 
     // 🎯 Reset filters callback
     const handleResetFilters = useCallback(() => {
       // You can implement this based on your filter state management
       console.log("Reset filters clicked");
     }, []);
+
+    useEffect(() => {
+      if (searchResults?.length) {
+        const timer = setTimeout(() => {
+          setRecalcKey((prev) => prev + 1);
+        }, 150);
+        return () => clearTimeout(timer);
+      }
+    }, [searchResults?.length]);
 
     return (
       <div className="search-results">
@@ -630,64 +650,74 @@ export const SearchResults = memo(
         {/* 📊 Results Count */}
         {showResults && formattedTotalCount && (
           <div className="results-count">
-            <span className="results-count__badge" aria-live="polite">
-              {formattedTotalCount} ads found
-            </span>
+            {isLoading ? (
+              <Loading size="medium" />
+            ) : (
+              <span className="results-count__badge" aria-live="polite">
+                {formattedTotalCount} ads found
+              </span>
+            )}
           </div>
         )}
 
         {/* 🚀 Production-optimized VirtuosoMasonry with enhanced performance */}
         {showResults && (
-          <div className="results-container">
-            <VirtuosoMasonry
-              data={masonryData}
-              columnCount={columnCount}
-              useWindowScroll={true}
-              initialItemCount={0}
-              ItemContent={ItemContent}
-              className="virtuoso-masonry"
-              style={{
-                minHeight: "50vh", // Prevent layout shift
-                containIntrinsicSize: "auto 1000px", // CSS containment for better performance
-              }}
-            />
+          <>
+            {/* Results Grid */}
+            <div className="results-container">
+              <VirtuosoMasonry
+                ref={virtuosoRef}
+                key={`stable-${recalcKey}`}
+                data={masonryData}
+                columnCount={columnCount}
+                useWindowScroll={true}
+                initialItemCount={Math.min(columnCount * 4, masonryData.length)} // 🔥 Don't exceed data length
+                ItemContent={ItemContent}
+                className="virtuoso-masonry"
+                style={{
+                  minHeight: "50vh",
+                  containIntrinsicSize: "auto 1000px",
+                }}
+              />
+            </div>
 
-            {/* 🎯 Enhanced load more status with smooth transitions */}
-            {hasNextPage && (
-              <div className="load-more-status">
-                {isLoading && (
-                  <div className="loading-indicator">
-                    <Loading size="large" />
-                    <span className="loading-text">Loading more ads...</span>
-                  </div>
-                )}
-
-                {!isLoading &&
-                  remainingCount !== null &&
-                  remainingCount > 0 && (
-                    <div className="status-info">
-                      <p className="remaining-count" aria-live="polite">
-                        {formattedRemainingCount} more ads available
-                      </p>
-                      <div className="scroll-hint">
-                        <span className="scroll-hint__text">
-                          Keep scrolling for more
-                        </span>
-                        <div className="scroll-hint__arrow">↓</div>
-                      </div>
+            {/* Load More Section */}
+            <div className="load-more-section">
+              {hasNextPage ? (
+                <div className="load-more-status">
+                  {isLoading && (
+                    <div className="loading-indicator">
+                      <Loading size="large" />
+                      <span className="loading-text">Loading more ads...</span>
                     </div>
                   )}
 
-                {!isLoading && remainingCount === 0 && (
-                  <div className="end-message">
-                    <span className="end-message__text">
-                      🎉 You&apos;ve reached the end!
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+                  {!isLoading &&
+                    remainingCount !== null &&
+                    remainingCount > 0 && (
+                      <div className="status-info">
+                        <p className="remaining-count" aria-live="polite">
+                          {formattedRemainingCount} more ads available
+                        </p>
+                        <div className="scroll-hint">
+                          <span className="scroll-hint__text">
+                            Keep scrolling for more
+                          </span>
+                          <div className="scroll-hint__arrow">↓</div>
+                        </div>
+                      </div>
+                    )}
+                </div>
+              ) : (
+                <div className="mx-auto mt-4 flex w-full max-w-xs items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2">
+                  <CheckCircle className="mr-2 h-6 w-6 text-white" />
+                  <span className="text-sm font-semibold text-white">
+                    You've reached the end!
+                  </span>
+                </div>
+              )}
+            </div>
+          </>
         )}
 
         {/* 🎨 Optimized styles with hardware acceleration */}
@@ -744,12 +774,21 @@ export const SearchResults = memo(
             position: relative;
             animation: fadeIn 0.3s ease-out;
             transform: translateZ(0);
-            contain: layout style paint; /* CSS containment for better performance */
+            contain: layout style paint;
+            min-height: 50vh;
           }
 
           :global(.virtuoso-masonry) {
             padding: 0 clamp(0.5rem, 2vw, 1rem);
             will-change: scroll-position;
+          }
+
+          .load-more-section {
+            margin-top: 2rem;
+            padding: 2rem 1rem 3rem;
+            position: relative;
+            z-index: 20; /* Higher than virtuoso */
+            background: inherit; /* Match parent background */
           }
 
           .load-more-status {
@@ -841,32 +880,6 @@ export const SearchResults = memo(
           }
 
           :global(.dark) .scroll-hint__arrow {
-            color: rgb(196 181 253);
-          }
-
-          .end-message {
-            padding: 1.5rem 2rem;
-            border-radius: 1rem;
-            background: linear-gradient(
-              135deg,
-              rgb(236 254 255),
-              rgb(243 232 255)
-            );
-            border: 2px solid rgb(147 51 234);
-          }
-
-          :global(.dark) .end-message {
-            background: linear-gradient(135deg, rgb(55 65 81), rgb(88 28 135));
-            border-color: rgb(196 181 253);
-          }
-
-          .end-message__text {
-            font-size: clamp(1rem, 2.5vw, 1.125rem);
-            font-weight: 600;
-            color: rgb(147 51 234);
-          }
-
-          :global(.dark) .end-message__text {
             color: rgb(196 181 253);
           }
 

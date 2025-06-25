@@ -3,12 +3,12 @@ import Image from "next/image";
 import { ExternalLink, Eye, Globe, ThumbsUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
 import { LinkPreview } from "@/components/ui/link-preview";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface PageNameWithPopoverProps {
@@ -56,8 +56,8 @@ const PageNameWithPopover: React.FC<PageNameWithPopoverProps> = memo(
     }
 
     return (
-      <HoverCard openDelay={300} closeDelay={200}>
-        <HoverCardTrigger asChild>
+      <Popover>
+        <PopoverTrigger asChild>
           <button className="group flex min-w-0 items-center space-x-2 rounded-full pr-2 transition-all duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500">
             {page_profile_picture_url ? (
               <Image
@@ -74,9 +74,9 @@ const PageNameWithPopover: React.FC<PageNameWithPopoverProps> = memo(
               {page_name || "Unknown Page"}
             </span>
           </button>
-        </HoverCardTrigger>
+        </PopoverTrigger>
 
-        <HoverCardContent className="w-80 rounded-lg border border-gray-200 bg-white/85 p-4 shadow-lg backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/85">
+        <PopoverContent className="w-80 rounded-lg border border-gray-200 bg-white/85 p-4 shadow-lg backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/85">
           <div className="flex items-start space-x-4">
             {page_profile_picture_url ? (
               <Image
@@ -160,8 +160,8 @@ const PageNameWithPopover: React.FC<PageNameWithPopoverProps> = memo(
               </a>
             </div>
           )}
-        </HoverCardContent>
-      </HoverCard>
+        </PopoverContent>
+      </Popover>
     );
   },
 );
