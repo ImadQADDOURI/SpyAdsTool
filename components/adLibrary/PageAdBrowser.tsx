@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useEffect, useReducer, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AdLibraryMobileFocusedStateProviderRefetchQuery,
   AdLibrarySearchPaginationQuery,
@@ -17,226 +17,82 @@ import {
 } from "./search/search-filter-context";
 import SearchFilters from "./search/search-filters";
 
-// 🚀 Consolidated state interface
-interface PageSearchState {
-  // Search results
-  results: AdData[] | null;
-  isLoading: boolean;
-  error: string | null;
-  totalCount: number | null;
-  remainingCount: number | null;
-  endCursor: string | null;
-  hasNextPage: boolean;
-
-  // Page info
-  pageInfo: any | null;
-  page: any | null;
-  profilePictureUrl: string | null;
-  pageTotalAds: number | null;
-  isInitialLoad: boolean;
-}
-
-type PageSearchAction =
-  | { type: "SEARCH_START" }
-  | {
-      type: "INITIAL_LOAD_SUCCESS";
-      payload: {
-        pageInfo: any;
-        page: any;
-        results: AdData[];
-        totalCount: number;
-        endCursor: string | null;
-        hasNextPage: boolean;
-        profilePictureUrl?: string;
-      };
-    }
-  | {
-      type: "SEARCH_SUCCESS";
-      payload: {
-        results: AdData[];
-        totalCount: number;
-        endCursor: string | null;
-        hasNextPage: boolean;
-        isLoadingMore: boolean;
-      };
-    }
-  | { type: "SEARCH_ERROR"; payload: string }
-  | {
-      type: "LOAD_MORE_SUCCESS";
-      payload: {
-        results: AdData[];
-        endCursor: string | null;
-        hasNextPage: boolean;
-      };
-    };
-
-// 🔄 Optimized reducer
-const pageSearchReducer = (
-  state: PageSearchState,
-  action: PageSearchAction,
-): PageSearchState => {
-  switch (action.type) {
-    case "SEARCH_START":
-      return { ...state, isLoading: true, error: null };
-
-    case "INITIAL_LOAD_SUCCESS":
-      const {
-        pageInfo,
-        page,
-        results,
-        totalCount,
-        endCursor,
-        hasNextPage,
-        profilePictureUrl,
-      } = action.payload;
-      const remainingCount =
-        totalCount >= 50001
-          ? totalCount
-          : Math.max(0, totalCount - results.length);
-
-      return {
-        ...state,
-        pageInfo,
-        page,
-        results,
-        totalCount,
-        endCursor,
-        hasNextPage,
-        profilePictureUrl: profilePictureUrl || null,
-        pageTotalAds: totalCount,
-        remainingCount,
-        isLoading: false,
-        error: null,
-        isInitialLoad: false,
-      };
-
-    case "SEARCH_SUCCESS":
-      const {
-        results: searchResults,
-        totalCount: searchTotal,
-        endCursor: searchCursor,
-        hasNextPage: searchHasNext,
-        isLoadingMore,
-      } = action.payload;
-      const newResults = isLoadingMore
-        ? [...(state.results ?? []), ...searchResults]
-        : searchResults;
-      const currentLength = isLoadingMore ? (state.results?.length ?? 0) : 0;
-      const newRemainingCount =
-        searchTotal >= 50001
-          ? searchTotal
-          : Math.max(0, searchTotal - currentLength - searchResults.length);
-
-      return {
-        ...state,
-        results: newResults,
-        totalCount: isLoadingMore ? state.totalCount : searchTotal,
-        endCursor: searchCursor,
-        hasNextPage: searchHasNext,
-        remainingCount: newRemainingCount,
-        isLoading: false,
-        error: null,
-      };
-
-    case "SEARCH_ERROR":
-      return { ...state, isLoading: false, error: action.payload };
-
-    case "LOAD_MORE_SUCCESS":
-      return {
-        ...state,
-        results: [...(state.results ?? []), ...action.payload.results],
-        endCursor: action.payload.endCursor,
-        hasNextPage: action.payload.hasNextPage,
-        isLoading: false,
-      };
-
-    default:
-      return state;
-  }
-};
-
-// 🎯 Optimized main component
-const PageAdBrowserContent = memo(({ pageId }: { pageId: string }) => {
+const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
   const { getSearchParams } = useSearchFilters();
 
-  // 📦 Consolidated state
-  const [state, dispatch] = useReducer(pageSearchReducer, {
-    results: null,
-    isLoading: false,
-    error: null,
-    totalCount: null,
-    remainingCount: null,
-    endCursor: null,
-    hasNextPage: false,
-    pageInfo: null,
-    page: null,
-    profilePictureUrl: null,
-    pageTotalAds: null,
-    isInitialLoad: true,
-  });
+  // Refs
+  const infoSectionRef = useRef<HTMLDivElement>(null);
+  const isSearchInProgress = useRef(false);
+  const initialLoadCompletedRef = useRef(false);
+  const searchRequestIdRef = useRef(0);
 
-  // 🔄 Single control ref
-  const controlRef = useRef({
-    infoSectionRef: null as HTMLDivElement | null,
-    isSearchInProgress: false,
-    initialLoadCompleted: false,
-    requestId: 0,
-  });
+  // Search state
+  const [searchResults, setSearchResults] = useState<AdData[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // 🚀 Optimized scroll effect
+  // Pagination state
+  const [totalCount, setTotalCount] = useState<number | null>(null);
+  const [remainingCount, setRemainingCount] = useState<number | null>(null);
+  const [endCursor, setEndCursor] = useState<string | null>(null);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(false);
+
+  // Page info state
+  const [pageInfo, setPageInfo] = useState<any | null>(null);
+  const [page, setPage] = useState<any | null>(null);
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
+    null,
+  );
+  const [pageTotalAds, setPageTotalAds] = useState<number | null>(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  // Scroll to top on component mount (except initial load)
   useEffect(() => {
-    if (!state.isInitialLoad) {
+    if (!isInitialLoad) {
       window.scrollTo({ top: 0, behavior: "auto" });
     }
-  }, [state.isInitialLoad]);
+  }, [isInitialLoad]);
 
-  // 🔍 Optimized search function
   const executeSearch = useCallback(
     async (isLoadingMore = false) => {
-      // Prevent concurrent searches
-      if (
-        !isLoadingMore &&
-        controlRef.current.isSearchInProgress &&
-        !state.isInitialLoad
-      ) {
+      // Prevent concurrent searches for new searches
+      if (!isLoadingMore && isSearchInProgress.current && !isInitialLoad) {
         return;
       }
 
-      // Race condition protection
-      const currentRequestId = ++controlRef.current.requestId;
-      controlRef.current.isSearchInProgress = true;
-      dispatch({ type: "SEARCH_START" });
+      // Generate unique request ID to handle race conditions
+      const currentRequestId = ++searchRequestIdRef.current;
+
+      isSearchInProgress.current = true;
+      setIsLoading(true);
+      setError(null);
 
       try {
         let results;
 
-        if (state.isInitialLoad) {
-          // 🚀 Initial load optimization
+        if (isInitialLoad) {
+          // Initial load: fetch page info and initial ads
           results =
             await AdLibraryMobileFocusedStateProviderRefetchQuery(pageId);
 
-          if (currentRequestId !== controlRef.current.requestId) return;
+          // Check if this is still the relevant request
+          if (currentRequestId !== searchRequestIdRef.current) return;
 
-          const profilePictureUrl =
-            results.ads?.[0]?.snapshot?.page_profile_picture_url;
-
-          dispatch({
-            type: "INITIAL_LOAD_SUCCESS",
-            payload: {
-              pageInfo: results.page_info,
-              page: results.page,
-              results: results.ads,
-              totalCount: results.count,
-              endCursor: results.end_cursor,
-              hasNextPage: results.has_next_page,
-              profilePictureUrl,
-            },
-          });
-
-          controlRef.current.initialLoadCompleted = true;
+          // Set page information
+          setPageInfo(results.page_info);
+          setPage(results.page);
+          if (results.ads && results.ads.length > 0) {
+            setProfilePictureUrl(
+              results.ads[0].snapshot.page_profile_picture_url,
+            );
+          }
+          setPageTotalAds(results.total_count);
+          setIsInitialLoad(false);
+          initialLoadCompletedRef.current = true;
         } else {
-          // 🔍 Subsequent searches
+          // Subsequent searches: use filter context
           const searchParams = getSearchParams();
+
           results = await AdLibrarySearchPaginationQuery(
             searchParams.q,
             searchParams.category_as_keyword,
@@ -250,76 +106,74 @@ const PageAdBrowserContent = memo(({ pageId }: { pageId: string }) => {
             searchParams.sort_data,
             searchParams.start_date,
             searchParams.end_date,
-            isLoadingMore ? state.endCursor : null,
+            isLoadingMore ? endCursor : null,
             pageId,
           );
 
-          if (currentRequestId !== controlRef.current.requestId) return;
-
-          // 📜 Smart scrolling
-          // if (!isLoadingMore && controlRef.current.infoSectionRef) {
-          //   const sectionTop = controlRef.current.infoSectionRef.offsetTop;
-          //   window.scrollTo({ top: sectionTop, behavior: "smooth" });
-          // }
-
-          if (isLoadingMore) {
-            dispatch({
-              type: "LOAD_MORE_SUCCESS",
-              payload: {
-                results: results.ads,
-                endCursor: results.end_cursor,
-                hasNextPage: results.has_next_page,
-              },
-            });
-          } else {
-            dispatch({
-              type: "SEARCH_SUCCESS",
-              payload: {
-                results: results.ads,
-                totalCount: results.count,
-                endCursor: results.end_cursor,
-                hasNextPage: results.has_next_page,
-                isLoadingMore: false,
-              },
-            });
-          }
+          // Check if this is still the relevant request
+          if (currentRequestId !== searchRequestIdRef.current) return;
         }
-      } catch (error) {
-        console.error("Error searching ads:", error);
 
-        if (currentRequestId !== controlRef.current.requestId) return;
+        // Update total count for new searches
+        if (!isLoadingMore) {
+          setTotalCount(results.total_count);
+        }
 
-        dispatch({
-          type: "SEARCH_ERROR",
-          payload:
-            "An error occurred while searching for ads. Please try again.",
-        });
+        // Update results
+        if (isLoadingMore && searchResults) {
+          setSearchResults((prevResults) => [...prevResults!, ...results.ads]);
+        } else {
+          setSearchResults(results.ads);
+        }
+
+        // Update pagination state
+        setEndCursor(results.end_cursor);
+        setHasNextPage(results.has_next_page);
+
+        // Calculate remaining items
+        const newRemainingCount =
+          results.total_count >= 50001
+            ? results.total_count
+            : (remainingCount ?? results.total_count) - results.search_count;
+
+        setRemainingCount(newRemainingCount > 0 ? newRemainingCount : 0);
+      } catch (searchError) {
+        console.error("Error searching ads:", searchError);
+
+        // Check if this is still the relevant request
+        if (currentRequestId !== searchRequestIdRef.current) return;
+
+        setError(
+          "An error occurred while searching for ads. Please try again.",
+        );
+
+        // Clear results on error for new searches
+        if (!isLoadingMore && !isInitialLoad) {
+          setSearchResults(null);
+        }
       } finally {
-        if (currentRequestId === controlRef.current.requestId) {
-          controlRef.current.isSearchInProgress = false;
+        // Only update loading state if this is the most recent request
+        if (currentRequestId === searchRequestIdRef.current) {
+          setIsLoading(false);
+          isSearchInProgress.current = false;
         }
       }
     },
-    [getSearchParams, state.endCursor, state.isInitialLoad, pageId],
+    [getSearchParams, searchResults, endCursor, pageId, isInitialLoad],
   );
 
-  // 📄 Optimized load more
   const handleLoadMore = useCallback(() => {
-    if (
-      state.hasNextPage &&
-      !state.isLoading &&
-      !controlRef.current.isSearchInProgress
-    ) {
+    if (hasNextPage && !isLoading && !isSearchInProgress.current) {
       executeSearch(true);
     }
-  }, [state.hasNextPage, state.isLoading, executeSearch]);
+  }, [hasNextPage, executeSearch, isLoading]);
 
-  // 🚀 Initial load effect
+  // Initial load effect
   useEffect(() => {
-    if (controlRef.current.initialLoadCompleted) return;
+    if (initialLoadCompletedRef.current) return;
 
     const initializePageData = async () => {
-      // Micro delay for mounting completion
+      // Small delay to ensure component mounting is complete
       await new Promise((resolve) => setTimeout(resolve, 10));
       executeSearch();
     };
@@ -328,72 +182,43 @@ const PageAdBrowserContent = memo(({ pageId }: { pageId: string }) => {
   }, [executeSearch]);
 
   return (
-    <div className="page-browser-container">
-      {/* 📄 Page Info Section */}
-      <div
-        ref={(el) => {
-          controlRef.current.infoSectionRef = el;
-        }}
-      >
-        {state.pageInfo && (
+    <div className="min-h-screen space-y-2 bg-gray-100 pb-8 dark:bg-gray-800">
+      {/* Page Info Section */}
+      <div ref={infoSectionRef}>
+        {pageInfo && (
           <PageInfoSection
-            page={state.page}
-            pageInfo={state.pageInfo}
-            profilePictureUrl={state.profilePictureUrl}
-            totalAds={state.pageTotalAds || 0}
+            page={page}
+            pageInfo={pageInfo}
+            profilePictureUrl={profilePictureUrl}
+            totalAds={pageTotalAds || 0}
           />
         )}
       </div>
 
-      {/* 🔍 Search Filters */}
-      <SearchFilters onSearch={executeSearch} isLoading={state.isLoading} />
+      {/* Search Filters */}
+      <SearchFilters onSearch={executeSearch} isLoading={isLoading} />
 
-      {/* 📊 Search Results */}
+      {/* Search Results */}
       <SearchResults
-        isLoading={state.isLoading}
-        error={state.error}
-        totalCount={state.totalCount}
-        searchResults={state.results}
-        hasNextPage={state.hasNextPage}
-        remainingCount={state.remainingCount}
+        isLoading={isLoading}
+        error={error}
+        totalCount={totalCount}
+        searchResults={searchResults}
+        hasNextPage={hasNextPage}
+        remainingCount={remainingCount}
         handleLoadMore={handleLoadMore}
       />
 
-      {/* 📜 Scroll Buttons */}
+      {/* Scroll Buttons */}
       <ScrollButtons />
-
-      {/* 🎨 Optimized styles */}
-      <style jsx>{`
-        .page-browser-container {
-          min-height: 100vh;
-          gap: 0.5rem;
-          display: flex;
-          flex-direction: column;
-          background-color: rgb(243 244 246);
-          padding-bottom: 2rem;
-          will-change: transform;
-          transform: translateZ(0);
-        }
-
-        :global(.dark) .page-browser-container {
-          background-color: rgb(31 41 55);
-        }
-
-        /* 🚀 Performance optimizations */
-        .page-browser-container > * {
-          will-change: auto;
-        }
-      `}</style>
     </div>
   );
-});
-
-PageAdBrowserContent.displayName = "PageAdBrowserContent";
+};
 
 /**
- * 🎯 Main PageAdBrowser component with context provider
+ * Main PageAdBrowser component with context provider
  */
-export const PageAdBrowser = memo(({ pageId }: { pageId: string }) => {
+export const PageAdBrowser = ({ pageId }: { pageId: string }) => {
   return (
     <SearchFilterProvider
       defaultValues={{
@@ -403,8 +228,6 @@ export const PageAdBrowser = memo(({ pageId }: { pageId: string }) => {
       <PageAdBrowserContent pageId={pageId} />
     </SearchFilterProvider>
   );
-});
-
-PageAdBrowser.displayName = "PageAdBrowser";
+};
 
 export default PageAdBrowser;

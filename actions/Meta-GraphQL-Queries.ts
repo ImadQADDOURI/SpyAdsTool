@@ -32,14 +32,16 @@ interface AdLibraryAdDetailsV2QueryResult {
 }
 
 interface AdLibrarySearchPaginationQueryResult {
-  count: number;
+  total_count: number;
+  search_count: number;
   ads: AdData[];
   end_cursor: string | null;
   has_next_page: boolean;
 }
 
 interface AdLibraryMobileFocusedStateProviderRefetchQueryResult {
-  count: number;
+  total_count: number;
+  search_count: number;
   ads: AdData[];
   end_cursor: string | null;
   has_next_page: boolean;
@@ -296,16 +298,29 @@ export async function AdLibrarySearchPaginationQuery(
       throw new Error("Unexpected response structure");
     }
 
-    const count = searchResultsConnection.count;
+    const total_count = searchResultsConnection.count;
     const pageInfo = searchResultsConnection.page_info;
     const edges = searchResultsConnection.edges;
+    // Calculate the number of ads returned in the search results
+    const search_count = edges.reduce(
+      (sum, edge) =>
+        sum +
+        (edge.node.collated_results ? edge.node.collated_results.length : 0),
+      0,
+    );
 
     const ads = extractCollatedAds(edges);
 
-    console.log("🚀🚀🚀🚀 - AdLibrarySearchPaginationQuery ");
+    console.log(
+      "🚀🚀🚀🚀 - AdLibrarySearchPaginationQuery - total_count: " +
+        total_count +
+        " search_count: " +
+        search_count,
+    );
 
     return {
-      count,
+      total_count,
+      search_count,
       ads,
       end_cursor: pageInfo.end_cursor,
       has_next_page: pageInfo.has_next_page,
@@ -371,13 +386,26 @@ export async function AdLibraryMobileFocusedStateProviderRefetchQuery(
       data.ad_library_main.search_results_connection;
     const pageInfo = searchResultsConnection.page_info;
     const edges = searchResultsConnection.edges;
+    // Calculate the number of ads returned in the search results
+    const search_count = edges.reduce(
+      (sum, edge) =>
+        sum +
+        (edge.node.collated_results ? edge.node.collated_results.length : 0),
+      0,
+    );
 
     const ads = extractCollatedAds(edges);
 
-    console.log("🚀🚀🚀🚀 - AdLibraryMobileFocusedStateProviderRefetchQuery ");
+    console.log(
+      "🚀🚀🚀🚀 - AdLibraryMobileFocusedStateProviderRefetchQuery - total_count: " +
+        searchResultsConnection.count +
+        " search_count: " +
+        search_count,
+    );
 
     return {
-      count: searchResultsConnection.count,
+      total_count: searchResultsConnection.count,
+      search_count,
       ads,
       end_cursor: pageInfo.end_cursor,
       has_next_page: pageInfo.has_next_page,
