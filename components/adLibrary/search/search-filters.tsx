@@ -113,6 +113,7 @@ export default function SearchFilters({
                 <SearchFilterItem
                   filter={searchFilter}
                   onEnterPress={handleSearch}
+                  disabled={isLoading} // disabled when isLoading is true
                 />
               )}
             </div>

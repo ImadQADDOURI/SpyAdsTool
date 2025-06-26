@@ -23,11 +23,13 @@ import { useSearchFilters } from "./search-filter-context";
 interface SearchFilterItemProps {
   filter: FilterConfig;
   onEnterPress?: () => void;
+  disabled?: boolean; // disabled prop
 }
 
 export function SearchFilterItem({
   filter,
   onEnterPress,
+  disabled,
 }: SearchFilterItemProps) {
   const { getValue, setValue, clearValue, subscribe } = useSearchFilters();
 
@@ -145,6 +147,7 @@ export function SearchFilterItem({
               onEnterPress();
             }
           }}
+          disabled={disabled} // disable when isLoading is true
           className={cn(
             "h-11 w-full rounded-lg border pl-10 pr-10 transition-colors",
             hasValue
@@ -157,6 +160,7 @@ export function SearchFilterItem({
             variant="ghost"
             size="icon"
             onClick={handleClearValue}
+            disabled={disabled} // disable clear button if disabled
             className="absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700"
             aria-label="Clear search"
           >
