@@ -190,6 +190,18 @@ async function executeGraphQLRequest(
         `❌ Empty response - No valid JSON objects found${configInfo}`,
       );
     }
+
+    // if ad or page search, log the total count
+    console.log(
+      `\n📦 Total ADs Count: ${
+        parsedData.length > 1
+          ? parsedData[1].data?.ad_library_main?.search_results_connection
+              ?.count
+          : parsedData[0].data?.ad_library_main?.search_results_connection
+              ?.count
+      }\n`,
+    );
+
     return parsedData.length === 1 ? parsedData[0] : parsedData;
     // --- End of existing JSON parsing logic ---
   } catch (error) {
