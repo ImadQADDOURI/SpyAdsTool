@@ -195,7 +195,8 @@ export default function SearchFilters({
                 </h2>
                 {appliedFiltersCount > 0 && (
                   <span className="rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-2 py-0.5 text-xs font-medium text-white">
-                    {appliedFiltersCount} active
+                    {appliedFiltersCount}{" "}
+                    <span className="hidden sm:inline">active</span>
                   </span>
                 )}
               </div>
