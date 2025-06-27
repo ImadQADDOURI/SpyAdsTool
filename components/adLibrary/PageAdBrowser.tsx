@@ -37,6 +37,9 @@ const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
   const [endCursor, setEndCursor] = useState<string | null>(null);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
 
+  // 🎯 Track actual loaded ads count using search_count
+  const [totalLoadedAds, setTotalLoadedAds] = useState<number>(0);
+
   // Page info state
   const [pageInfo, setPageInfo] = useState<any | null>(null);
   const [page, setPage] = useState<any | null>(null);
@@ -46,12 +49,21 @@ const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
   const [pageTotalAds, setPageTotalAds] = useState<number | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+  // 🎯 Current search params state for synchronization
+  const [currentSearchParams, setCurrentSearchParams] = useState<any>(null);
+
   // Scroll to top on component mount (except initial load)
   useEffect(() => {
     if (!isInitialLoad) {
       window.scrollTo({ top: 0, behavior: "auto" });
     }
   }, [isInitialLoad]);
+
+  // 🎯 Handle sync issues
+  const handleSyncIssue = useCallback((issue: string) => {
+    console.warn("🔄 Page Sync Issue:", issue);
+    // You can add toast notifications or other UI feedback here
+  }, []);
 
   const executeSearch = useCallback(
     async (isLoadingMore = false) => {
@@ -93,6 +105,11 @@ const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
           // Subsequent searches: use filter context
           const searchParams = getSearchParams();
 
+          // 🎯 Store current search params for synchronization
+          if (!isLoadingMore) {
+            setCurrentSearchParams({ ...searchParams, pageId });
+          }
+
           results = await AdLibrarySearchPaginationQuery(
             searchParams.q,
             searchParams.category_as_keyword,
@@ -126,17 +143,40 @@ const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
           setSearchResults(results.ads);
         }
 
+        // 🎯 Update loaded ads count using search_count
+        if (isLoadingMore) {
+          // Add the new search_count to existing total
+          setTotalLoadedAds(
+            (prevTotal) => prevTotal + (results.search_count || 0),
+          );
+        } else {
+          // Reset for new search
+          setTotalLoadedAds(results.search_count || 0);
+        }
+
         // Update pagination state
         setEndCursor(results.end_cursor);
         setHasNextPage(results.has_next_page);
 
-        // Calculate remaining items
-        const newRemainingCount =
-          results.total_count >= 50001
-            ? results.total_count
-            : (remainingCount ?? results.total_count) - results.search_count;
+        // 🎯 Calculate remaining count correctly
+        const newTotalLoadedAds = isLoadingMore
+          ? totalLoadedAds + (results.search_count || 0)
+          : results.search_count || 0;
 
-        setRemainingCount(newRemainingCount > 0 ? newRemainingCount : 0);
+        const newRemainingCount = Math.max(
+          0,
+          (results.total_count || 0) - newTotalLoadedAds,
+        );
+        setRemainingCount(newRemainingCount);
+
+        console.log("📊 Page Load Stats:", {
+          total_count: results.total_count,
+          search_count: results.search_count,
+          total_loaded: newTotalLoadedAds,
+          remaining: newRemainingCount,
+          has_next_page: results.has_next_page,
+          pageId,
+        });
       } catch (searchError) {
         console.error("Error searching ads:", searchError);
 
@@ -150,6 +190,7 @@ const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
         // Clear results on error for new searches
         if (!isLoadingMore && !isInitialLoad) {
           setSearchResults(null);
+          setTotalLoadedAds(0); // Reset on error
         }
       } finally {
         // Only update loading state if this is the most recent request
@@ -159,7 +200,14 @@ const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
         }
       }
     },
-    [getSearchParams, searchResults, endCursor, pageId, isInitialLoad],
+    [
+      getSearchParams,
+      searchResults,
+      endCursor,
+      pageId,
+      isInitialLoad,
+      totalLoadedAds,
+    ], // Added totalLoadedAds to dependencies
   );
 
   const handleLoadMore = useCallback(() => {
@@ -198,7 +246,7 @@ const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
       {/* Search Filters */}
       <SearchFilters onSearch={executeSearch} isLoading={isLoading} />
 
-      {/* Search Results */}
+      {/* 🎯  Pass search params to SearchResults for synchronization */}
       <SearchResults
         isLoading={isLoading}
         error={error}
@@ -207,6 +255,8 @@ const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
         hasNextPage={hasNextPage}
         remainingCount={remainingCount}
         handleLoadMore={handleLoadMore}
+        searchParams={currentSearchParams}
+        onSyncIssue={handleSyncIssue}
       />
 
       {/* Scroll Buttons */}

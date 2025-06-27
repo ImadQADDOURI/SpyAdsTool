@@ -8,7 +8,6 @@ import {
   BarChart,
   BrainCircuit,
   Download,
-  Facebook,
   Filter,
   PieChart,
   TrendingUp,
@@ -46,12 +45,24 @@ const AdBrowserContent = () => {
   const [endCursor, setEndCursor] = useState<string | null>(null);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
 
+  // 🎯  Track actual loaded ads count using search_count
+  const [totalLoadedAds, setTotalLoadedAds] = useState<number>(0);
+
+  // 🎯  Current search params state for synchronization
+  const [currentSearchParams, setCurrentSearchParams] = useState<any>(null);
+
   // Prevent concurrent searches
   const isSearchInProgress = useRef(false);
 
   // Scroll to top on component mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
+  // 🎯  Handle sync issues
+  const handleSyncIssue = useCallback((issue: string) => {
+    console.warn("🔄 Sync Issue:", issue);
+    // You can add toast notifications or other UI feedback here
   }, []);
 
   const executeSearch = useCallback(
@@ -64,6 +75,11 @@ const AdBrowserContent = () => {
 
       try {
         const searchParams = getSearchParams();
+
+        // 🎯  Store current search params for synchronization
+        if (!isLoadingMore) {
+          setCurrentSearchParams(searchParams);
+        }
 
         const results = await AdLibrarySearchPaginationQuery(
           searchParams.q,
@@ -92,29 +108,52 @@ const AdBrowserContent = () => {
           setTotalCount(results.total_count);
         }
 
+        // 🎯  Update loaded ads count using search_count
+        if (isLoadingMore) {
+          // Add the new search_count to existing total
+          setTotalLoadedAds(
+            (prevTotal) => prevTotal + (results.search_count || 0),
+          );
+        } else {
+          // Reset for new search
+          setTotalLoadedAds(results.search_count || 0);
+        }
+
         // Update pagination state
         setEndCursor(results.end_cursor);
         setHasNextPage(results.has_next_page);
 
-        // Calculate remaining items
-        const newRemainingCount =
-          results.total_count >= 50001
-            ? results.total_count
-            : (remainingCount ?? results.total_count) - results.search_count;
+        // 🎯  Calculate remaining count correctly
+        const newTotalLoadedAds = isLoadingMore
+          ? totalLoadedAds + (results.search_count || 0)
+          : results.search_count || 0;
 
-        setRemainingCount(newRemainingCount > 0 ? newRemainingCount : 0);
+        const newRemainingCount = Math.max(
+          0,
+          (results.total_count || 0) - newTotalLoadedAds,
+        );
+        setRemainingCount(newRemainingCount);
+
+        console.log("📊 Load Stats:", {
+          total_count: results.total_count,
+          search_count: results.search_count,
+          total_loaded: newTotalLoadedAds,
+          remaining: newRemainingCount,
+          has_next_page: results.has_next_page,
+        });
       } catch (searchError) {
         console.error("Search error:", searchError);
         setError("An error occurred while searching. Please try again.");
         if (!isLoadingMore) {
           setSearchResults(null);
+          setTotalLoadedAds(0); // Reset on error
         }
       } finally {
         setIsLoading(false);
         isSearchInProgress.current = false;
       }
     },
-    [getSearchParams, searchResults, endCursor],
+    [getSearchParams, searchResults, endCursor, totalLoadedAds], // Added totalLoadedAds to dependencies
   );
 
   const handleLoadMore = useCallback(() => {
@@ -149,8 +188,8 @@ const AdBrowserContent = () => {
                       src="/facebook.svg"
                       alt="Facebook Icon"
                       className="-mt-4 mr-2 inline-block size-24"
-                      width={100} // adjust width as needed
-                      height={100} // adjust height as needed
+                      width={100}
+                      height={100}
                     />
                     <svg width="0" height="0" className="absolute">
                       <defs>
@@ -221,6 +260,8 @@ const AdBrowserContent = () => {
       </div>
 
       <SearchFilters onSearch={executeSearch} isLoading={isLoading} />
+
+      {/* 🎯  Pass search params to SearchResults for synchronization */}
       <SearchResults
         isLoading={isLoading}
         error={error}
@@ -229,6 +270,8 @@ const AdBrowserContent = () => {
         hasNextPage={hasNextPage}
         remainingCount={remainingCount}
         handleLoadMore={handleLoadMore}
+        searchParams={currentSearchParams}
+        onSyncIssue={handleSyncIssue}
       />
 
       {/* Scroll Buttons */}

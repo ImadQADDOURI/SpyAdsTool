@@ -3,6 +3,7 @@
 import { metaGraphQLApi } from "@/actions/Meta-GraphQL-Api";
 
 import { AdData } from "@/types/ad";
+import { SearchParams } from "@/components/adLibrary/search/filter-config";
 
 // API name to doc_id mapping
 export const apiNameToDocId = {
@@ -78,22 +79,6 @@ export const extractCollatedAds = (edges: Edge[]): AdData[] =>
       const [firstAd] = group;
       return { ...firstAd, collation_count };
     });
-
-// 🗺️ Define the shape of the SearchParams object
-export interface SearchParams {
-  q?: string;
-  category_as_keyword?: string;
-  search_type?: string;
-  active_status?: string;
-  ad_type?: string;
-  content_languages?: string[];
-  countries?: string[];
-  media_type?: string;
-  publisher_platforms?: string[];
-  sort_data?: string | null;
-  start_date?: string | null;
-  end_date?: string | null;
-}
 
 // Function to extract query parameters from URLSearchParams
 export const extractQueryParams = (

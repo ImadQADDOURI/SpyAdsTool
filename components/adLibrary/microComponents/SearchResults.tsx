@@ -20,6 +20,7 @@ import type { AdData } from "@/types/ad";
 import { Button } from "@/components/ui/button";
 
 import { AdCard } from "../AdCard";
+import { SearchParams } from "../search/filter-config";
 import { Loading } from "./Loading";
 
 interface SearchResultsProps {
@@ -30,12 +31,16 @@ interface SearchResultsProps {
   hasNextPage: boolean;
   remainingCount: number | null;
   handleLoadMore: () => void;
+  // 🎯  Search params for synchronization
+  searchParams?: SearchParams;
+  // 🎯  Callback when sync issues detected
+  onSyncIssue?: (issue: string) => void;
 }
 
 // 🚀 Enhanced window width hook with SSR safety
 const useWindowWidth = () => {
   const [width, setWidth] = useState(() => {
-    if (typeof window === "undefined") return 1024; // SSR fallback
+    if (typeof window === "undefined") return 1024;
     return window.innerWidth;
   });
 
@@ -45,15 +50,13 @@ const useWindowWidth = () => {
     let timeoutId: NodeJS.Timeout;
 
     const handleResize = () => {
-      // Cancel previous calls
       clearTimeout(timeoutId);
-      // Debounce resize events for performance
       timeoutId = setTimeout(() => {
         const newWidth = window.innerWidth;
         setWidth((prevWidth) => {
           return Math.abs(newWidth - prevWidth) > 10 ? newWidth : prevWidth;
         });
-      }, 100); // Reduced debounce time for better responsiveness
+      }, 100);
     };
 
     const initialWidth = window.innerWidth;
@@ -70,6 +73,51 @@ const useWindowWidth = () => {
   }, [width]);
 
   return width;
+};
+
+// 🎯 Search params synchronization hook - SILENT MODE
+const useSearchSync = (
+  searchParams?: SearchParams,
+  searchResults?: AdData[] | null,
+  onSyncIssue?: (issue: string) => void,
+) => {
+  const [syncStatus, setSyncStatus] = useState<
+    "synced" | "out-of-sync" | "unknown"
+  >("unknown");
+  const lastSearchParamsRef = useRef<SearchParams | undefined>();
+  const hasInitializedRef = useRef(false);
+
+  useEffect(() => {
+    if (!searchParams || !searchResults) {
+      setSyncStatus("unknown");
+      return;
+    }
+
+    if (!hasInitializedRef.current) {
+      hasInitializedRef.current = true;
+      lastSearchParamsRef.current = searchParams;
+      setSyncStatus("synced");
+      return;
+    }
+
+    const paramsChanged =
+      JSON.stringify(lastSearchParamsRef.current) !==
+      JSON.stringify(searchParams);
+
+    if (paramsChanged && searchResults.length > 0) {
+      setSyncStatus("out-of-sync");
+      // 🎯  Only log for debugging, no UI warning
+      console.debug(
+        "🔄 Filter-Data sync: Parameters changed, results updating...",
+      );
+    } else {
+      setSyncStatus("synced");
+    }
+
+    lastSearchParamsRef.current = searchParams;
+  }, [searchParams, searchResults, onSyncIssue]);
+
+  return syncStatus;
 };
 
 // 🎯 Highly optimized FeaturePill component
@@ -117,6 +165,22 @@ const FeaturePill = memo(
 );
 
 FeaturePill.displayName = "FeaturePill";
+
+// 🎯  Sync status indicator component - SIMPLIFIED (no UI warning)
+const SyncStatusIndicator = memo(
+  ({
+    syncStatus,
+    searchParams,
+  }: {
+    syncStatus: "synced" | "out-of-sync" | "unknown";
+    searchParams?: SearchParams;
+  }) => {
+    // 🎯  No UI warning - sync runs silently for logging only
+    return null;
+  },
+);
+
+SyncStatusIndicator.displayName = "SyncStatusIndicator";
 
 // 🎯 Optimized InitialState component
 const InitialState = memo(() => (
@@ -339,7 +403,7 @@ const EmptyState = memo(
           {onResetFilters && (
             <Button
               variant="outline"
-              className="empty-state__button"
+              className="empty-state__button bg-transparent"
               onClick={onResetFilters}
             >
               <Filter className="mr-2 h-4 w-4" />
@@ -465,7 +529,6 @@ const ItemContent = memo<{ data: AdData; index: number; context?: any }>(
       `}</style>
     </div>
   ),
-  // 🔥 No second parameter = use default React memo comparison
 );
 
 ItemContent.displayName = "ItemContent";
@@ -480,8 +543,13 @@ export const SearchResults = memo(
     hasNextPage,
     remainingCount,
     handleLoadMore,
+    searchParams, // 🎯  Search params for sync
+    onSyncIssue, // 🎯  Sync issue callback
   }: SearchResultsProps) => {
     const windowWidth = useWindowWidth();
+
+    // 🎯 NEW: Use search synchronization hook
+    const syncStatus = useSearchSync(searchParams, searchResults, onSyncIssue);
 
     // 🎯 Memoized computed values
     const showInitialState = useMemo(
@@ -491,12 +559,12 @@ export const SearchResults = memo(
 
     const showEmptyState = useMemo(
       () => !isLoading && searchResults?.length === 0,
-      [isLoading, searchResults?.length],
+      [isLoading, searchResults],
     );
 
     const showResults = useMemo(
       () => Boolean(searchResults?.length),
-      [searchResults?.length],
+      [searchResults],
     );
 
     // 🚀 Dynamic column count based on container width
@@ -525,11 +593,10 @@ export const SearchResults = memo(
     // 🚀 Memoized data for VirtuosoMasonry
     const masonryData = useMemo(() => {
       return searchResults || [];
-    }, [searchResults?.length]);
+    }, [searchResults]);
 
     // 🎯 Reset filters callback (placeholder)
     const handleResetFilters = () => {
-      // You can implement this based on your filter state management
       console.log("Reset filters clicked");
     };
 
@@ -540,14 +607,17 @@ export const SearchResults = memo(
         }, 150);
         return () => clearTimeout(timer);
       }
-    }, [searchResults?.length]);
+    }, [searchResults]);
 
     return (
       <div className="search-results">
+        {/* 🎯  Sync status indicator - no longer displayed */}
+        {/* <SyncStatusIndicator syncStatus={syncStatus} searchParams={searchParams} /> */}
+
         {/* 🔄 Initial Loading */}
         {isLoading && !showResults && <Loading size="large" />}
 
-        {/* ❌ Error State */}
+        {/* ❌ Error State - ONLY for real errors */}
         {error && (
           <div className="error-state" role="alert">
             {error}
@@ -688,29 +758,6 @@ export const SearchResults = memo(
             margin-top: 2rem;
           }
 
-          .load-more-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            text-align: center;
-            padding: 2rem 1rem 3rem;
-            margin-top: 2rem;
-            min-height: 120px; /* Prevent layout shift */
-          }
-
-          .end-message {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem 2rem;
-            border-radius: 9999px;
-            background: linear-gradient(135deg, #9333ea, #7c3aed);
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 4px 14px 0 rgba(147, 51, 234, 0.3);
-          }
-
           /* 🚀 Hardware-accelerated animations */
           @keyframes slideIn {
             from {
@@ -763,8 +810,7 @@ export const SearchResults = memo(
 
           /* 🎯 High contrast mode support */
           @media (prefers-contrast: high) {
-            .results-count__badge,
-            .end-message {
+            .results-count__badge {
               border: 2px solid currentColor;
             }
           }
