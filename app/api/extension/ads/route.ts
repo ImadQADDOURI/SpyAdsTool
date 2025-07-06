@@ -1,9 +1,15 @@
 // @/app/api/extension/ads/route.ts
 
 import { NextResponse, type NextRequest } from "next/server";
-import { removeAdFromBoard, saveAdToBoard } from "@/actions/savedAds"; // Import your server actions
+import {
+  getUserSavedAdIds,
+  removeAdFromBoard,
+  saveAdToBoard,
+} from "@/actions/savedAds";
 
 import { AdData } from "@/types/ad";
+// Import your server actions
+import { getCurrentUser } from "@/lib/session";
 
 // --- Configuration ---
 // Define a specific board name for ads saved/unsaved via the extension
@@ -51,6 +57,39 @@ const handleActionResult = (
 };
 
 // --- API Handlers ---
+
+/**
+ * ❤️ GET Handler: Fetches the list of saved ad IDs for the authenticated user.
+ */
+export async function GET() {
+  console.log(`📬 [API /extension/ads] Received GET request for saved ad IDs.`);
+  try {
+    // 🕵️‍♂️ Step 1: Authenticate the user
+    const user = await getCurrentUser();
+    if (!user || !user.id) {
+      console.log("🚫 [API /extension/ads] Unauthorized: No session found.");
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    // ❤️ Step 2: Fetch the saved ad IDs
+    const savedAdIds = await getUserSavedAdIds(user.id);
+    console.log(
+      `✅ [API /extension/ads] Found ${savedAdIds.length} saved ads for ${user.email}.`,
+    );
+
+    // 📦 Step 3: Return the data
+    return NextResponse.json({ savedAdIds: savedAdIds }, { status: 200 });
+  } catch (error) {
+    console.error(
+      "🚨 [API /extension/ads] Unexpected error fetching saved ad IDs:",
+      error,
+    );
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
 
 /**
  * 💾 POST Handler: Saves an ad sent from the Chrome Extension.
