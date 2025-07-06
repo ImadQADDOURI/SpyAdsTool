@@ -832,3 +832,52 @@ export const getUserSavedAdIds = async (userId: string): Promise<string[]> => {
     return [];
   }
 };
+
+/**
+ * 🎣 Fetches saved ads from the "Extension Saves" board for a specific user.
+ *
+ * This function retrieves the ad archive ID and the associated image URL.
+ *
+ * @param userId - The ID of the user whose saved ads are to be fetched.
+ * @returns {Promise<{ad_archive_id: string; imageUrl: string | null;}[]>} A promise that resolves to an array of objects,
+ * each containing the ad's ID and image URL. Returns an empty array on error or if no ads are found.
+ */
+export const getExtensionSavedAds = async (
+  userId: string,
+): Promise<{ ad_archive_id: string; imageUrl: string | null }[]> => {
+  // 🛡️ Basic validation for userId
+  if (!userId) {
+    console.warn("⚠️ [getExtensionSavedAds] No userId provided.");
+    return [];
+  }
+
+  try {
+    // 🔍 Query the database for SavedAd records matching the userId AND the board name
+    const savedAds = await prisma.savedAd.findMany({
+      where: {
+        userId: userId,
+        // 👇 Filter by board name.
+        board: "Extension Saves",
+      },
+      // 👉 Select the ad_archive_id and the imageUrl for the response
+      select: {
+        ad_archive_id: true,
+        imageUrl: true, // Fetches the imageUrl field from the SavedAd record
+      },
+    });
+
+    console.log(
+      `📊 [getExtensionSavedAds] Found ${savedAds.length} ads in 'Extension Saves' for user ${userId}.`,
+    );
+    // ✨ Return the array of objects directly
+    return savedAds;
+  } catch (error) {
+    // 🚨 Handle potential database errors
+    console.error(
+      `🚨 [getExtensionSavedAds] Error fetching saved ads for user ${userId}:`,
+      error,
+    );
+    // Return an empty array to prevent API errors
+    return [];
+  }
+};

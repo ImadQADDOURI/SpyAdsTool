@@ -2,6 +2,7 @@
 
 import { NextResponse, type NextRequest } from "next/server";
 import {
+  getExtensionSavedAds,
   getUserSavedAdIds,
   removeAdFromBoard,
   saveAdToBoard,
@@ -59,10 +60,11 @@ const handleActionResult = (
 // --- API Handlers ---
 
 /**
- * ❤️ GET Handler: Fetches the list of saved ad IDs for the authenticated user.
+ * ❤️ GET Handler: Fetches the list of saved ads (ID and imageUrl) for the authenticated user
+ * from their "Extension Saves" board.
  */
 export async function GET() {
-  console.log(`📬 [API /extension/ads] Received GET request for saved ad IDs.`);
+  console.log(`📬 [API /extension/ads] Received GET request for saved ads.`);
   try {
     // 🕵️‍♂️ Step 1: Authenticate the user
     const user = await getCurrentUser();
@@ -71,17 +73,17 @@ export async function GET() {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    // ❤️ Step 2: Fetch the saved ad IDs
-    const savedAdIds = await getUserSavedAdIds(user.id);
+    // ❤️ Step 2: Fetch the saved ad data using the new helper
+    const savedAds = await getExtensionSavedAds(user.id);
     console.log(
-      `✅ [API /extension/ads] Found ${savedAdIds.length} saved ads for ${user.email}.`,
+      `✅ [API /extension/ads] Found ${savedAds.length} saved ads in 'Extension Saves' for ${user.email}.`,
     );
 
-    // 📦 Step 3: Return the data
-    return NextResponse.json({ savedAdIds: savedAdIds }, { status: 200 });
+    // 📦 Step 3: Return the array of ad objects
+    return NextResponse.json({ savedAds: savedAds }, { status: 200 });
   } catch (error) {
     console.error(
-      "🚨 [API /extension/ads] Unexpected error fetching saved ad IDs:",
+      "🚨 [API /extension/ads] Unexpected error fetching saved ads:",
       error,
     );
     return NextResponse.json(
@@ -90,7 +92,6 @@ export async function GET() {
     );
   }
 }
-
 /**
  * 💾 POST Handler: Saves an ad sent from the Chrome Extension.
  * Expects JSON body: { ad_archive_id: string, adData: AdData }
