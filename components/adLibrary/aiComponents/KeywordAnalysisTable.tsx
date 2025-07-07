@@ -26,6 +26,10 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
   isLoading,
   error,
 }) => {
+  const [expanded, setExpanded] = useState(false);
+  const [copyingTop, setCopyingTop] = useState(false);
+  const [copyingLong, setCopyingLong] = useState(false);
+
   if (isLoading) {
     return <Loading message="Loading Keyword Analysis Table..." size="small" />;
   }
@@ -38,10 +42,6 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
       </div>
     );
   }
-
-  const [expanded, setExpanded] = useState(false);
-  const [copyingTop, setCopyingTop] = useState(false);
-  const [copyingLong, setCopyingLong] = useState(false);
 
   const handleCopyKeywords = async (type: "top" | "long") => {
     const keywords =
@@ -77,12 +77,10 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
     <div className="w-full space-y-2">
       {/* Keywords Table - Container with responsive design */}
       <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
-        {/* 👇 Use a responsive container with horizontal scroll for small screens */}
         <div className="w-full overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                {/* 🎯 Header cells with minimum width and flexible growth */}
                 <TableHead className="w-1/2 bg-gray-50 py-2 dark:bg-gray-800">
                   <div className="flex items-center gap-2">
                     <span className="truncate text-xs font-medium">
@@ -129,11 +127,9 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
                   key={index}
                   className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50"
                 >
-                  {/* ✨ Cell styling for responsive content */}
                   <TableCell className="w-1/2 py-1.5">
                     {data.topKeywords[index] && (
                       <div className="flex items-center justify-between gap-2">
-                        {/* 📏 Ensure text has minimum width of 0 to enable proper truncation */}
                         <div className="min-w-0 flex-1">
                           <ExpandableText
                             text={data.topKeywords[index].word}
@@ -169,8 +165,6 @@ const KeywordAnalysisTable: React.FC<KeywordAnalysisTableProps> = ({
           </Table>
         </div>
       </div>
-
-      {/* 🔽 Show More/Less button - full width with proper spacing */}
       {Math.max(data.topKeywords.length, data.longTailKeywords.length) > 5 && (
         <Button
           onClick={() => setExpanded(!expanded)}
