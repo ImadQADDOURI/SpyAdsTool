@@ -168,7 +168,6 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
     setOpen(isOpen);
     if (isOpen && detailedAds.length === 0) {
       fetchAdDetails();
-      fetchKeywordAnalysis(); // Fetch keywords initially for worldwide tab
     }
   };
 
