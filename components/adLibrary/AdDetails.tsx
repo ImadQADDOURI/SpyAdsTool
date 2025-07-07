@@ -1,9 +1,9 @@
 /**
  * AdDetails Component
  *
- * A dialog component that displays detailed information about an advertisement,
- * including analytics, EU statistics, and keyword analysis. Data is lazy-loaded
- * when the dialog is opened.
+ * 🚀 This enhanced dialog component displays detailed ad information using a clean, tab-based layout.
+ * It's designed for a modern, minimalist aesthetic with a focus on performance and user experience.
+ * Data for each tab is lazy-loaded on demand to reduce initial API calls and improve efficiency.
  *
  * @package components/adLibrary
  */
@@ -18,31 +18,49 @@ import {
   BarChart3,
   CheckCircle,
   ChevronRight,
-  Info,
-  RefreshCw,
-  X,
+  Euro,
+  Globe,
+  Lightbulb,
+  Palette,
+  Search,
 } from "lucide-react";
 
 import { AdData } from "@/types/ad";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { EuAdStatistic } from "@/components/adLibrary/adInsights/EuAdStatistic";
-import AdCreativeGenerator from "@/components/adLibrary/aiComponents/AdCreativeGenerator";
-import KeywordAnalysisTable from "@/components/adLibrary/aiComponents/KeywordAnalysisTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { AdCard } from "./AdCard";
 import AdOptionsCard from "./microComponents/AdOptionsCard";
 
+// 🧩 Dynamic Imports for Lazy Loading Components
 const Analytics = dynamic(
   () => import("@/components/adLibrary/adInsights/Analytics"),
+  { ssr: false },
+);
+
+const AdCreativeGenerator = dynamic(
+  () => import("@/components/adLibrary/aiComponents/AdCreativeGenerator"),
+  { ssr: false },
+);
+const KeywordAnalysisTable = dynamic(
+  () => import("@/components/adLibrary/aiComponents/KeywordAnalysisTable"),
+  { ssr: false },
+);
+const WorldwideAdStatistics = dynamic(
+  () => import("./aiComponents/WorldwideAdStatistics"),
+  { ssr: false },
+);
+
+const EuAdStatistic = dynamic(
+  () => import("./adInsights/EuAdStatistic").then((mod) => mod.EuAdStatistic),
   { ssr: false },
 );
 
@@ -55,6 +73,9 @@ interface AdDetailsProps {
 
 export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
   const [open, setOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("analytics");
+
+  // 📦 State Management for different data sections
   const [detailedAds, setDetailedAds] = useState<AdData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,21 +83,20 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
   const [isComplete, setIsComplete] = useState(false);
   const [totalCount, setTotalCount] = useState<number | null>(null);
   const [remainingCount, setRemainingCount] = useState<number | null>(null);
-  // EU ADs
+
   const [adDetails, setAdDetails] = useState<any>(null);
   const [isLoadingEuStats, setIsLoadingEuStats] = useState(false);
   const [euStatsError, setEuStatsError] = useState<string | null>(null);
 
-  // Keyword Analysis
   const [keywordAnalysis, setKeywordAnalysis] = useState<any>(null);
   const [isLoadingKeywords, setIsLoadingKeywords] = useState(false);
   const [keywordError, setKeywordError] = useState<string | null>(null);
 
+  // 🔄 Fetching collation details (ad versions)
   const fetchAdDetails = useCallback(async () => {
     if (isComplete || isLoading) return;
     setIsLoading(true);
     setError(null);
-
     try {
       if (!ad.collation_id || !ad.collation_count) {
         setDetailedAds([ad]);
@@ -85,33 +105,32 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
         setRemainingCount(0);
         return;
       }
-
       const results = await AdLibraryAdCollationDetailsQuery(
         ad.collation_id,
         forwardCursor,
       );
-
       setDetailedAds((prev) => [...prev, ...results.ads]);
       setForwardCursor(results.forward_cursor);
       setIsComplete(results.is_complete);
       setTotalCount((prev) => prev || results.total_count);
-      setRemainingCount((prev) => {
-        const newCount = (prev || results.total_count) - results.ads.length;
-        return newCount > 0 ? newCount : 0;
-      });
-    } catch (error) {
-      console.error("Error fetching ad details:", error);
-      setError(
-        "An error occurred while fetching ad details. Please try again.",
+      setRemainingCount((prev) =>
+        (prev || results.total_count) - results.ads.length > 0
+          ? (prev || results.total_count) - results.ads.length
+          : 0,
       );
+    } catch (error) {
+      console.error("❌ Error fetching ad details:", error);
+      setError("An error occurred while fetching ad details.");
     } finally {
       setIsLoading(false);
     }
   }, [ad, forwardCursor, isComplete, isLoading]);
 
-  // Function to get EU ad stats
+  // 🇪🇺 Fetching EU-specific ad statistics
   const fetchEuAdStats = useCallback(async () => {
+    if (adDetails) return; // Already fetched
     setIsLoadingEuStats(true);
+    setEuStatsError(null);
     try {
       const result = await AdLibraryAdDetailsV2Query(
         ad.ad_archive_id,
@@ -120,52 +139,66 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
       );
       setAdDetails(result);
     } catch (err) {
-      setEuStatsError("Failed to fetch EU ad statistics");
+      console.error("❌ Error fetching EU ad stats:", err);
+      setEuStatsError("Failed to fetch EU ad statistics.");
     } finally {
       setIsLoadingEuStats(false);
     }
-  }, [ad.ad_archive_id, ad.page_id, ad.is_aaa_eligible]);
+  }, [ad.ad_archive_id, ad.page_id, ad.is_aaa_eligible, adDetails]);
 
-  // Function to fetch keyword analysis
+  // 🔍 Fetching keyword analysis from AI service
   const fetchKeywordAnalysis = useCallback(async () => {
+    if (keywordAnalysis) return; // Already fetched
     setIsLoadingKeywords(true);
+    setKeywordError(null);
     try {
       const result = await analyzeKeywords(ad);
       setKeywordAnalysis(result);
     } catch (error) {
-      setKeywordError("Failed to fetch analytics");
-      // Initialize with a fallback value so EuAdStatistic can still render
-      setKeywordAnalysis((prev) => ({
-        ...prev,
-        cpmEurope: 0, // Fallback value
-      }));
+      console.error("❌ Error fetching keyword analysis:", error);
+      setKeywordError("Failed to fetch keyword analysis.");
+      setKeywordAnalysis((prev: any) => ({ ...prev, cpmEurope: 0 })); // Fallback
     } finally {
       setIsLoadingKeywords(false);
     }
-  }, [ad]);
+  }, [ad, keywordAnalysis]);
 
-  const handleDialogOpen = async (open: boolean) => {
-    setOpen(open);
-    if (open && detailedAds.length === 0) {
-      await Promise.all([
-        fetchAdDetails(),
-        fetchEuAdStats(),
-        fetchKeywordAnalysis(),
-      ]);
-    }
-  };
-
-  // Safe access to cpmEurope with fallback
-  const getCpmEurope = () => {
-    if (!keywordAnalysis) return 0;
-    return keywordAnalysis.cpmEurope ?? 0;
-  };
-
-  const handleLoadMore = () => {
-    if (!isComplete && !isLoading) {
+  // 🚪 Handles opening the dialog and fetching initial data
+  const handleDialogOpen = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen && detailedAds.length === 0) {
       fetchAdDetails();
+      fetchKeywordAnalysis(); // Fetch keywords initially for worldwide tab
     }
   };
+
+  // 👆 Handles tab changes and triggers data fetching
+  const handleTabChange = async (value: string) => {
+    setActiveTab(value);
+    switch (value) {
+      case "eu-stats":
+        // 🇪🇺 EU stats tab: ensure keyword analysis is done first
+        if (!keywordAnalysis) {
+          await fetchKeywordAnalysis();
+        }
+        await fetchEuAdStats();
+        break;
+      case "keywords":
+      case "worldwide":
+        // 🌍 Keywords or Worldwide tab: requires keyword analysis data
+        if (!keywordAnalysis) {
+          await fetchKeywordAnalysis();
+        }
+        break;
+      // 🤖 AI and Analytics tabs don't require extra data loading on tab change
+      case "ai-creative":
+      case "analytics":
+      default:
+        break;
+    }
+  };
+
+  const getCpmEurope = () => keywordAnalysis?.cpmEurope ?? 0;
 
   return (
     <Dialog open={open} onOpenChange={handleDialogOpen}>
@@ -173,115 +206,176 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
         {trigger || (
           <Button
             variant="outline"
-            className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-md border-0 bg-gradient-to-r from-purple-600 to-pink-500 px-5 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:from-purple-500 hover:to-pink-400 hover:shadow-xl hover:shadow-pink-500/20 focus:border-0 focus:bg-gradient-to-r focus:from-purple-600 focus:to-pink-500 focus:outline-none focus:ring-2 focus:ring-purple-600/50 dark:text-white dark:shadow-purple-600/20"
+            className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-md border-0 bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:from-blue-600 hover:to-purple-700 hover:shadow-xl hover:shadow-purple-500/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
           >
             <div className="absolute inset-0 bg-white opacity-0 mix-blend-overlay transition-opacity duration-300 group-hover:opacity-10" />
             <BarChart3 className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
             <span className="relative font-semibold tracking-wide">
-              View Analytics
+              View Details
             </span>
             <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Button>
         )}
       </DialogTrigger>
 
-      {/* 📌 Updated DialogContent with fixed header and custom close button */}
-      <DialogContent className="flex h-[95svh] max-h-[95svh] w-full max-w-[95vw] flex-col bg-gray-100/20 p-0 dark:bg-gray-800/20">
-        {/* 🧠 Fixed header with custom close button */}
-        <DialogHeader className="rounded-t-lg bg-gradient-to-r from-[#6566F1]/25 to-[#B977F8]/25 p-2 dark:bg-[#6566F1]/10">
-          <DialogTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-xl font-bold text-transparent">
-            Ad Analytics
+      <DialogContent className="flex h-[95svh] max-h-[95svh] w-full max-w-[95vw] flex-col bg-gray-50/95 p-0 backdrop-blur-sm dark:bg-gray-900/95">
+        <DialogHeader className="flex-shrink-0 border-b border-gray-200 p-4 dark:border-gray-800">
+          <DialogTitle className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
+            Ad Details & Analytics
           </DialogTitle>
         </DialogHeader>
 
-        {/* 📦 Main Container using ScrollArea for controlled scrolling */}
-        <ScrollArea className="w-full flex-1 overscroll-contain">
-          <div className="flex h-full flex-col gap-1 p-3 lg:flex-row">
-            {/* 📱 Left Panel */}
-            <div className="w-full lg:w-3/12 lg:pr-2">
-              <div className="space-y-2">
-                <AdCreativeGenerator ad={ad} />
-                <AdCard ad={ad} />
+        <Tabs
+          value={activeTab}
+          onValueChange={handleTabChange}
+          className="flex w-full flex-grow flex-col overflow-hidden"
+        >
+          <div className="flex-shrink-0 border-b border-gray-200 px-2 py-0 dark:border-gray-800">
+            <TabsList className="flex h-auto w-full justify-evenly gap-2">
+              <TabsTrigger
+                value="analytics"
+                className="h-14 flex-1 rounded-md border border-gray-300 bg-gray-100 transition-all duration-300 hover:bg-gray-200 data-[state=active]:border-blue-500 data-[state=active]:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:data-[state=active]:border-blue-300 dark:data-[state=active]:bg-blue-900/30"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <BarChart3 className="h-5 w-5 text-blue-500" />
+                  <span className="hidden font-medium text-blue-600 sm:inline">
+                    Analytics
+                  </span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger
+                value="worldwide"
+                className="h-14 flex-1 rounded-md border border-gray-300 bg-gray-100 transition-all duration-300 hover:bg-gray-200 data-[state=active]:border-purple-500 data-[state=active]:bg-purple-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:data-[state=active]:border-purple-300 dark:data-[state=active]:bg-purple-900/30"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <Globe className="h-5 w-5 text-purple-500" />
+                  <span className="hidden font-medium text-purple-600 sm:inline">
+                    Worldwide
+                  </span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger
+                value="eu-stats"
+                className="h-14 flex-1 rounded-md border border-gray-300 bg-gray-100 transition-all duration-300 hover:bg-gray-200 data-[state=active]:border-indigo-500 data-[state=active]:bg-indigo-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:data-[state=active]:border-indigo-300 dark:data-[state=active]:bg-indigo-900/30"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <Euro className="h-5 w-5 text-indigo-500" />
+                  <span className="hidden font-medium text-indigo-600 sm:inline">
+                    EU Stats
+                  </span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger
+                value="ai-creative"
+                className="h-14 flex-1 rounded-md border border-gray-300 bg-gray-100 transition-all duration-300 hover:bg-gray-200 data-[state=active]:border-pink-500 data-[state=active]:bg-pink-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:data-[state=active]:border-pink-300 dark:data-[state=active]:bg-pink-900/30"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <Palette className="h-5 w-5 text-pink-500" />
+                  <span className="hidden font-medium text-pink-600 sm:inline">
+                    AI Creative
+                  </span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger
+                value="keywords"
+                className="h-14 flex-1 rounded-md border border-gray-300 bg-gray-100 transition-all duration-300 hover:bg-gray-200 data-[state=active]:border-green-500 data-[state=active]:bg-green-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:data-[state=active]:border-green-300 dark:data-[state=active]:bg-green-900/30"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <Search className="h-5 w-5 text-green-500" />
+                  <span className="hidden font-medium text-green-600 sm:inline">
+                    Keywords
+                  </span>
+                </div>
+              </TabsTrigger>
+            </TabsList>
+          </div>
+          <TabsContent
+            value="analytics"
+            className="flex-grow overflow-y-auto p-4"
+          >
+            <div className="flex flex-col gap-4 lg:flex-row">
+              {/* 👈 Left Column: Ad Card & Options */}
+              <div className="w-full space-y-4 lg:w-3/12">
+                <AdCard ad={ad} compact />
                 <AdOptionsCard ad={ad} />
               </div>
-            </div>
-
-            {/* 📊 Right Panel */}
-            <div className="mt-2 w-full lg:mt-0 lg:w-9/12">
-              <div className="space-y-2">
-                {/* Analytics Section with Controls */}
-                <div className="rounded-lg border border-gray-200/30 dark:border-gray-700/30">
-                  {/* Analytics Header */}
-                  <div className="rounded-t-lg border bg-white p-3 shadow-sm dark:border-gray-700/30 dark:bg-gray-900">
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      {/* Load More Controls */}
-                      {!isComplete ? (
-                        <Button
-                          onClick={handleLoadMore}
-                          disabled={isLoading}
-                          className="flex h-9 items-center gap-2 bg-gradient-to-r from-[#34D399] to-[#10B981] text-sm font-medium text-white transition-all hover:from-[#2EBC89] hover:to-[#0EA572] focus:ring-2 focus:ring-green-500/30"
-                        >
-                          {isLoading ? (
-                            <RefreshCw className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4" />
-                          )}
-                          <span>
-                            {isLoading ? "Loading..." : "Load More Ad versions"}
-                          </span>
-                        </Button>
-                      ) : (
-                        <div className="flex items-center gap-2 bg-gradient-to-r from-[#34D399] to-[#10B981] bg-clip-text text-transparent">
-                          <CheckCircle className="h-5 w-5 text-green-500" />
-                          <span className="text-sm font-medium">
-                            All Ad Versions loaded
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Total Count */}
-                      {totalCount !== null && (
-                        <div className="flex items-center rounded-full bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-                          <span className="flex items-center gap-2">
-                            <BarChart3 className="h-4 w-4" />
-                            {remainingCount !== null && remainingCount > 0 ? (
-                              <span>{`${remainingCount} of ${totalCount} ads remaining`}</span>
-                            ) : (
-                              <span>{`${totalCount} total ads`}</span>
-                            )}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+              {/* 👉 Right Column: Analytics & Versions */}
+              <div className="w-full space-y-4 lg:w-9/12">
+                <div className="rounded-lg border border-gray-200/80 bg-white shadow-sm dark:border-gray-700/60 dark:bg-gray-900/50">
+                  <div className="flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:justify-between">
+                    {!isComplete ? (
+                      <Button
+                        onClick={fetchAdDetails}
+                        disabled={isLoading}
+                        size="sm"
+                      >
+                        {isLoading ? "Loading..." : "Load More Versions"}
+                      </Button>
+                    ) : (
+                      <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                        <CheckCircle className="h-5 w-5" />
+                        <span className="text-sm font-medium">
+                          All versions loaded
+                        </span>
+                      </div>
+                    )}
+                    {totalCount !== null && (
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        {remainingCount !== null && remainingCount > 0
+                          ? `${remainingCount} of ${totalCount} ads remaining`
+                          : `${totalCount} total ads`}
+                      </div>
+                    )}
                   </div>
-
-                  {/* Analytics Content */}
-                  <div className="min-h-[250px]">
+                  <div className="min-h-[250px] p-2">
                     <Analytics ads={detailedAds} isComplete={isComplete} />
                   </div>
                 </div>
-
-                {/* Bottom Stats Grid */}
-                <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                  <KeywordAnalysisTable
-                    data={keywordAnalysis}
-                    isLoading={isLoadingKeywords}
-                    error={keywordError}
-                  />
-                  <EuAdStatistic
-                    data={adDetails}
-                    isLoading={
-                      isLoadingEuStats ||
-                      (isLoadingKeywords && !keywordAnalysis)
-                    }
-                    error={euStatsError}
-                    cpmEurope={getCpmEurope()}
-                  />
-                </div>
               </div>
             </div>
-          </div>
-        </ScrollArea>
+          </TabsContent>
+
+          <TabsContent
+            value="worldwide"
+            className="flex-grow overflow-y-auto p-4"
+          >
+            <WorldwideAdStatistics
+              data={keywordAnalysis}
+              isLoading={isLoadingKeywords}
+              error={keywordError}
+            />
+          </TabsContent>
+
+          <TabsContent
+            value="eu-stats"
+            className="flex-grow overflow-y-auto p-4"
+          >
+            <EuAdStatistic
+              data={adDetails}
+              isLoading={isLoadingEuStats || isLoadingKeywords}
+              error={euStatsError}
+              cpmEurope={getCpmEurope()}
+            />
+          </TabsContent>
+
+          <TabsContent
+            value="ai-creative"
+            className="flex-grow overflow-y-auto p-4"
+          >
+            <AdCreativeGenerator ad={ad} />
+          </TabsContent>
+
+          <TabsContent
+            value="keywords"
+            className="flex-grow overflow-y-auto p-4"
+          >
+            <KeywordAnalysisTable
+              data={keywordAnalysis}
+              isLoading={isLoadingKeywords}
+              error={keywordError}
+            />
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );

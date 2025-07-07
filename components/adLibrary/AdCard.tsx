@@ -133,73 +133,86 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
   }
 
   return (
-    <Card className="relative flex h-full w-full max-w-2xl flex-col overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl">
-      {/* 📊 Collation count badge - optimized positioning */}
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="absolute left-0 top-0 flex items-center rounded-br-2xl bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-4 py-1.5 text-white transition-all duration-300 hover:from-[#5455E0] hover:to-[#A866E7]">
-              <span className="font-semibold">{collation_count || 0}</span>
-              <span className="ml-1 text-sm">ADS</span>
-              {isHotAd && (
-                <span
-                  className="ml-2 animate-pulse"
-                  role="img"
-                  aria-label="hot"
-                >
-                  🔥
-                </span>
-              )}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{collation_count} ads use this creative and text</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+    <Card
+      className={`relative flex h-fit w-full max-w-2xl flex-col overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl`}
+    >
+      {/* 📊 Collation count badge - hidden in compact mode */}
+      {!compact && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="absolute left-0 top-0 flex items-center rounded-br-2xl bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-4 py-1.5 text-white transition-all duration-300 hover:from-[#5455E0] hover:to-[#A866E7]">
+                <span className="font-semibold">{collation_count || 0}</span>
+                <span className="ml-1 text-sm">ADS</span>
+                {isHotAd && (
+                  <span
+                    className="ml-2 animate-pulse"
+                    role="img"
+                    aria-label="hot"
+                  >
+                    🔥
+                  </span>
+                )}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{collation_count} ads use this creative and text</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
 
-      {/* 💾 Save button - optimized positioning */}
-      <div className="absolute -top-1 right-12 pt-1.5">
-        <SubscriptionAccessGuard minimalUI>
-          <SaveAdButton ad={ad} />
-        </SubscriptionAccessGuard>
-      </div>
+      {/* 💾 Save button - */}
+      {
+        <div className="absolute -top-1 right-12 pt-1.5">
+          <SubscriptionAccessGuard minimalUI>
+            <SaveAdButton ad={ad} />
+          </SubscriptionAccessGuard>
+        </div>
+      }
 
-      {/* ⚙️ Options button */}
-      <AdOptions ad={ad} />
+      {/* ⚙️ Options button - hidden in compact mode */}
+      {<AdOptions ad={ad} />}
 
-      <CardContent className="mt-10 flex flex-grow flex-col justify-between px-0.5 py-0">
+      <CardContent
+        className={`flex flex-grow flex-col justify-between px-0.5 py-0 ${
+          compact ? "mt-2" : "mt-10"
+        }`}
+      >
         <div className="flex flex-grow flex-col justify-between">
           <div className="space-y-2.5">
-            {/* 📅 Date and EU transparency row */}
-            <div className="flex items-center justify-between px-2 pt-1">
-              <div className="text-sm text-gray-600 dark:text-gray-400">
-                <span>{dateDisplay}</span>
+            {/* 📅 Date and EU transparency row - hidden in compact mode */}
+            {!compact && (
+              <div className="flex items-center justify-between px-2 pt-1">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <span>{dateDisplay}</span>
+                </div>
+
+                {/* 🇪🇺 EU transparency indicator */}
+                {is_aaa_eligible && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-100 p-1 dark:bg-blue-800">
+                          <Image
+                            src="/flags/european_union.svg"
+                            alt="EU"
+                            width={20}
+                            height={20}
+                          />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>EU Transparency</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
+            )}
 
-              {/* 🇪🇺 EU transparency indicator */}
-              {is_aaa_eligible && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-100 p-1 dark:bg-blue-800">
-                        <Image
-                          src="/flags/european_union.svg"
-                          alt="EU"
-                          width={20}
-                          height={20}
-                        />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>EU Transparency</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-            </div>
+            {/* ⚡ Status and Platform row - Platforms hidden in compact mode */}
 
-            {/* ⚡ Status and Platform row */}
             <div className="flex items-center justify-between px-2">
               {/* Status indicator */}
               <div className="flex items-center gap-1">
@@ -210,7 +223,9 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
               </div>
 
               {/* Platform icons */}
-              <div className="flex items-center">{platformIcons}</div>
+              {!compact && (
+                <div className="flex items-center">{platformIcons}</div>
+              )}
             </div>
 
             {/* 📄 Page name */}
@@ -219,31 +234,37 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
             </div>
 
             {/* 🖼️ Media carousel */}
-            <RenderMedia snapshot={snapshot} />
+            <RenderMedia snapshot={snapshot} compact={compact} />
           </div>
 
-          <div>
-            {/* Divider */}
-            <hr className="m-0.5 border-t border-gray-200 dark:border-gray-700" />
+          {/* Analytics section - hidden in compact mode */}
+          {!compact && (
+            <div>
+              {/* Divider */}
+              <hr className="m-0.5 border-t border-gray-200 dark:border-gray-700" />
 
-            {/* Pixel, Platform, Payment info */}
-            {/* <SubscriptionAccessGuard>
-              <DisplayPixelPlatformPayment
-                url={snapshot?.link_url || undefined}
-                usePuppeteer={true}
-                keepBrowserOpen={true}
-                useCache={true}
-                dynamicTimeout={1000}
-                autoDetect={false}
-              />
-            </SubscriptionAccessGuard> */}
-          </div>
+              {/* Pixel, Platform, Payment info */}
+              {/* <SubscriptionAccessGuard>
+                <DisplayPixelPlatformPayment
+                  url={snapshot?.link_url || undefined}
+                  usePuppeteer={true}
+                  keepBrowserOpen={true}
+                  useCache={true}
+                  dynamicTimeout={1000}
+                  autoDetect={false}
+                />
+              </SubscriptionAccessGuard> */}
+            </div>
+          )}
         </div>
       </CardContent>
 
-      <CardFooter className="m-0 p-1">
-        <AdDetails ad={ad} />
-      </CardFooter>
+      {/* Footer - hidden in compact mode */}
+      {!compact && (
+        <CardFooter className="m-0 p-1">
+          <AdDetails ad={ad} />
+        </CardFooter>
+      )}
     </Card>
   );
 });
