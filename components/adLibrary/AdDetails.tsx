@@ -210,65 +210,52 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
           onValueChange={handleTabChange}
           className="flex w-full flex-grow flex-col overflow-hidden"
         >
-          <div className="flex-shrink-0 border-b border-gray-200 px-2 py-0 dark:border-gray-800">
-            <TabsList className="flex h-auto w-full justify-evenly gap-2">
-              <TabsTrigger
-                value="analytics"
-                className="h-14 flex-1 rounded-md border border-gray-300 bg-gray-100 transition-all duration-300 hover:bg-gray-200 data-[state=active]:border-blue-500 data-[state=active]:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:data-[state=active]:border-blue-300 dark:data-[state=active]:bg-blue-900/30"
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <BarChart3 className="h-5 w-5 text-blue-500" />
-                  <span className="hidden font-medium text-blue-600 sm:inline">
-                    Analytics
-                  </span>
-                </div>
-              </TabsTrigger>
-              <TabsTrigger
-                value="worldwide"
-                className="h-14 flex-1 rounded-md border border-gray-300 bg-gray-100 transition-all duration-300 hover:bg-gray-200 data-[state=active]:border-purple-500 data-[state=active]:bg-purple-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:data-[state=active]:border-purple-300 dark:data-[state=active]:bg-purple-900/30"
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <Globe className="h-5 w-5 text-purple-500" />
-                  <span className="hidden font-medium text-purple-600 sm:inline">
-                    Worldwide
-                  </span>
-                </div>
-              </TabsTrigger>
-              <TabsTrigger
-                value="eu-stats"
-                className="h-14 flex-1 rounded-md border border-gray-300 bg-gray-100 transition-all duration-300 hover:bg-gray-200 data-[state=active]:border-indigo-500 data-[state=active]:bg-indigo-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:data-[state=active]:border-indigo-300 dark:data-[state=active]:bg-indigo-900/30"
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <Euro className="h-5 w-5 text-indigo-500" />
-                  <span className="hidden font-medium text-indigo-600 sm:inline">
-                    EU Stats
-                  </span>
-                </div>
-              </TabsTrigger>
-              <TabsTrigger
-                value="ai-creative"
-                className="h-14 flex-1 rounded-md border border-gray-300 bg-gray-100 transition-all duration-300 hover:bg-gray-200 data-[state=active]:border-pink-500 data-[state=active]:bg-pink-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:data-[state=active]:border-pink-300 dark:data-[state=active]:bg-pink-900/30"
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <Palette className="h-5 w-5 text-pink-500" />
-                  <span className="hidden font-medium text-pink-600 sm:inline">
-                    AI Creative
-                  </span>
-                </div>
-              </TabsTrigger>
-              <TabsTrigger
-                value="keywords"
-                className="h-14 flex-1 rounded-md border border-gray-300 bg-gray-100 transition-all duration-300 hover:bg-gray-200 data-[state=active]:border-green-500 data-[state=active]:bg-green-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:data-[state=active]:border-green-300 dark:data-[state=active]:bg-green-900/30"
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <Search className="h-5 w-5 text-green-500" />
-                  <span className="hidden font-medium text-green-600 sm:inline">
-                    Keywords
-                  </span>
-                </div>
-              </TabsTrigger>
-            </TabsList>
+          <div className="border-b border-gray-200 bg-transparent px-4 py-1 dark:border-gray-800">
+            <div className="mx-auto flex max-w-screen-md justify-center gap-2">
+              <TabsList className="flex gap-2 bg-transparent">
+                <TabsTrigger
+                  value="analytics"
+                  className="group flex items-center gap-2 rounded-md border border-blue-100 bg-white px-3 py-2 text-sm font-medium text-blue-600 shadow-sm transition-all hover:bg-blue-50 data-[state=active]:bg-white data-[state=active]:ring-2 data-[state=active]:ring-blue-400/40 data-[state=active]:ring-offset-2 dark:border-blue-900/30 dark:bg-blue-950/30 dark:text-blue-300 dark:hover:bg-blue-900/40 dark:data-[state=active]:bg-blue-950/50"
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  <span className="hidden sm:inline">Analytics</span>
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="worldwide"
+                  className="group flex items-center gap-2 rounded-md border border-purple-100 bg-white px-3 py-2 text-sm font-medium text-purple-600 shadow-sm transition-all hover:bg-purple-50 data-[state=active]:bg-white data-[state=active]:ring-2 data-[state=active]:ring-purple-400/40 data-[state=active]:ring-offset-2 dark:border-purple-900/30 dark:bg-purple-950/30 dark:text-purple-300 dark:hover:bg-purple-900/40 dark:data-[state=active]:bg-purple-950/50"
+                >
+                  <Globe className="h-4 w-4" />
+                  <span className="hidden sm:inline">Worldwide</span>
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="eu-stats"
+                  className="group flex items-center gap-2 rounded-md border border-indigo-100 bg-white px-3 py-2 text-sm font-medium text-indigo-600 shadow-sm transition-all hover:bg-indigo-50 data-[state=active]:bg-white data-[state=active]:ring-2 data-[state=active]:ring-indigo-400/40 data-[state=active]:ring-offset-2 dark:border-indigo-900/30 dark:bg-indigo-950/30 dark:text-indigo-300 dark:hover:bg-indigo-900/40 dark:data-[state=active]:bg-indigo-950/50"
+                >
+                  <Euro className="h-4 w-4" />
+                  <span className="hidden sm:inline">EU Stats</span>
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="ai-creative"
+                  className="group flex items-center gap-2 rounded-md border border-pink-100 bg-white px-3 py-2 text-sm font-medium text-pink-600 shadow-sm transition-all hover:bg-pink-50 data-[state=active]:bg-white data-[state=active]:ring-2 data-[state=active]:ring-pink-400/40 data-[state=active]:ring-offset-2 dark:border-pink-900/30 dark:bg-pink-950/30 dark:text-pink-300 dark:hover:bg-pink-900/40 dark:data-[state=active]:bg-pink-950/50"
+                >
+                  <Palette className="h-4 w-4" />
+                  <span className="hidden sm:inline">AI Creative</span>
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="keywords"
+                  className="group flex items-center gap-2 rounded-md border border-green-100 bg-white px-3 py-2 text-sm font-medium text-green-600 shadow-sm transition-all hover:bg-green-50 data-[state=active]:bg-white data-[state=active]:ring-2 data-[state=active]:ring-green-400/40 data-[state=active]:ring-offset-2 dark:border-green-900/30 dark:bg-green-950/30 dark:text-green-300 dark:hover:bg-green-900/40 dark:data-[state=active]:bg-green-950/50"
+                >
+                  <Search className="h-4 w-4" />
+                  <span className="hidden sm:inline">Keywords</span>
+                </TabsTrigger>
+              </TabsList>
+            </div>
           </div>
+
           <TabsContent
             value="analytics"
             className="flex-grow overflow-y-auto p-4"
