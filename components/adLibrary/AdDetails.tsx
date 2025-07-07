@@ -38,31 +38,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { AdCard } from "./AdCard";
+import Analytics from "./adInsights/Analytics";
+import { EuAdStatistic } from "./adInsights/EuAdStatistic";
+import AdCreativeGenerator from "./aiComponents/AdCreativeGenerator";
+import KeywordAnalysisTable from "./aiComponents/KeywordAnalysisTable";
+import WorldwideAdStatistics from "./aiComponents/WorldwideAdStatistics";
 import AdOptionsCard from "./microComponents/AdOptionsCard";
-
-// 🧩 Dynamic Imports for Lazy Loading Components
-const Analytics = dynamic(
-  () => import("@/components/adLibrary/adInsights/Analytics"),
-  { ssr: false },
-);
-
-const AdCreativeGenerator = dynamic(
-  () => import("@/components/adLibrary/aiComponents/AdCreativeGenerator"),
-  { ssr: false },
-);
-const KeywordAnalysisTable = dynamic(
-  () => import("@/components/adLibrary/aiComponents/KeywordAnalysisTable"),
-  { ssr: false },
-);
-const WorldwideAdStatistics = dynamic(
-  () => import("./aiComponents/WorldwideAdStatistics"),
-  { ssr: false },
-);
-
-const EuAdStatistic = dynamic(
-  () => import("./adInsights/EuAdStatistic").then((mod) => mod.EuAdStatistic),
-  { ssr: false },
-);
 
 interface AdDetailsProps {
   /** The advertisement data to display */
