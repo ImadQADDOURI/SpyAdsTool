@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import {
   BarChart,
@@ -14,7 +14,6 @@ import {
   Search,
   Zap,
 } from "lucide-react";
-import { Virtuoso } from "react-virtuoso";
 
 import type { AdData } from "@/types/ad";
 import { Button } from "@/components/ui/button";
@@ -37,43 +36,51 @@ interface SearchResultsProps {
   onSyncIssue?: (issue: string) => void;
 }
 
-// Helper hook to determine the number of columns based on screen width.
-// This makes the grid responsive.
-const useResponsiveColumns = () => {
-  const [columns, setColumns] = useState(4); // Default to 4 columns
+// 🎯 Search params synchronization hook - SILENT MODE
+const useSearchSync = (
+  searchParams?: SearchParams,
+  searchResults?: AdData[] | null,
+  onSyncIssue?: (issue: string) => void,
+) => {
+  const [syncStatus, setSyncStatus] = useState<
+    "synced" | "out-of-sync" | "unknown"
+  >("unknown");
+  const lastSearchParamsRef = useRef<SearchParams | undefined>();
+  const hasInitializedRef = useRef(false);
 
   useEffect(() => {
-    const getColumns = (width: number) => {
-      if (width < 640) return 1; // sm
-      if (width < 768) return 2; // md
-      if (width < 1024) return 3; // lg
-      if (width < 1280) return 4; // xl
-      return 5; // 2xl
-    };
-
-    const handleResize = () => {
-      setColumns(getColumns(window.innerWidth));
-    };
-
-    // Check if window is defined (for server-side rendering)
-    if (typeof window !== "undefined") {
-      handleResize(); // Set initial column count
-      window.addEventListener("resize", handleResize);
+    if (!searchParams || !searchResults) {
+      setSyncStatus("unknown");
+      return;
     }
 
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", handleResize);
-      }
-    };
-  }, []);
+    if (!hasInitializedRef.current) {
+      hasInitializedRef.current = true;
+      lastSearchParamsRef.current = searchParams;
+      setSyncStatus("synced");
+      return;
+    }
 
-  return columns;
+    const paramsChanged =
+      JSON.stringify(lastSearchParamsRef.current) !==
+      JSON.stringify(searchParams);
+
+    if (paramsChanged && searchResults.length > 0) {
+      setSyncStatus("out-of-sync");
+      console.debug(
+        "🔄 Filter-Data sync: Parameters changed, results updating...",
+      );
+    } else {
+      setSyncStatus("synced");
+    }
+
+    lastSearchParamsRef.current = searchParams;
+  }, [searchParams, searchResults, onSyncIssue]);
+
+  return syncStatus;
 };
 
-// All the static components like InitialState, EmptyState, and FeaturePill remain the same.
-// They are memoized to prevent unnecessary re-renders.
-
+// 🎯 Highly optimized FeaturePill component
 const FeaturePill = memo(
   ({ icon: Icon, text }: { icon: React.ElementType; text: string }) => (
     <div className="flex transform items-center gap-2 rounded-full bg-white px-4 py-2 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md dark:bg-gray-700">
@@ -82,8 +89,10 @@ const FeaturePill = memo(
     </div>
   ),
 );
+
 FeaturePill.displayName = "FeaturePill";
 
+// 🎯 Optimized InitialState component
 const InitialState = memo(() => (
   <div className="mx-auto max-w-7xl animate-fade-in rounded-2xl bg-white p-8 shadow-xl dark:bg-gray-800">
     <div className="flex flex-col items-center gap-8 md:flex-row">
@@ -140,8 +149,10 @@ const InitialState = memo(() => (
     </div>
   </div>
 ));
+
 InitialState.displayName = "InitialState";
 
+// 🎯 Optimized EmptyState component
 const EmptyState = memo(
   ({ onResetFilters }: { onResetFilters?: () => void }) => (
     <div className="mx-auto max-w-7xl animate-fade-in rounded-2xl bg-white p-8 shadow-xl dark:bg-gray-800">
@@ -186,9 +197,10 @@ const EmptyState = memo(
     </div>
   ),
 );
+
 EmptyState.displayName = "EmptyState";
 
-// Main SearchResults Component
+// 🚀 Main simplified SearchResults component
 export const SearchResults = memo(
   ({
     isLoading,
@@ -198,110 +210,68 @@ export const SearchResults = memo(
     hasNextPage,
     remainingCount,
     handleLoadMore,
-    // searchParams and onSyncIssue are kept for potential future use or other logic
     searchParams,
     onSyncIssue,
   }: SearchResultsProps) => {
-    const columns = useResponsiveColumns();
+    // 🎯 Use search synchronization hook
+    useSearchSync(searchParams, searchResults, onSyncIssue);
 
-    // Memoize the chunking of search results into rows for Virtuoso.
-    // This is the core logic for creating the grid structure.
-    const rows = useMemo(() => {
-      if (!searchResults) return [];
-      // ✅ FIX: Explicitly type newRows as an array of AdData arrays.
-      const newRows: AdData[][] = [];
-      for (let i = 0; i < searchResults.length; i += columns) {
-        newRows.push(searchResults.slice(i, i + columns));
-      }
-      return newRows;
-    }, [searchResults, columns]);
+    // 🎯 Memoized computed values
+    const showInitialState = useMemo(
+      () => !isLoading && searchResults === null,
+      [isLoading, searchResults],
+    );
 
-    const showInitialState = !isLoading && searchResults === null;
-    const showEmptyState = !isLoading && searchResults?.length === 0;
-    const showResults = Boolean(searchResults?.length);
+    const showEmptyState = useMemo(
+      () => !isLoading && searchResults?.length === 0,
+      [isLoading, searchResults],
+    );
 
+    const showResults = useMemo(
+      () => Boolean(searchResults?.length),
+      [searchResults],
+    );
+
+    // 🎯 Memoized formatted values
     const formattedTotalCount = useMemo(() => {
       if (totalCount === null) return null;
       return totalCount > 50000 ? "50,000+" : totalCount.toLocaleString();
     }, [totalCount]);
 
-    // 💡 Memoize the callback to prevent EmptyState from re-rendering unnecessarily.
-    const handleResetFilters = useCallback(() => {
+    const formattedRemainingCount = useMemo(() => {
+      return remainingCount?.toLocaleString() || "0";
+    }, [remainingCount]);
+
+    // 🎯 Reset filters callback (placeholder)
+    const handleResetFilters = () => {
       console.log("Reset filters clicked");
-    }, []);
-
-    // The Footer component for Virtuoso, which contains the "Load More" button.
-    const Footer = useCallback(() => {
-      return (
-        <div className="mt-2 flex justify-center">
-          {hasNextPage ? (
-            isLoading ? (
-              <Loading size="small" />
-            ) : (
-              <button
-                onClick={handleLoadMore}
-                disabled={isLoading}
-                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-200 to-pink-200 px-6 py-3 font-bold text-purple-800 shadow-md transition-all duration-200 hover:scale-105 hover:from-purple-300 hover:to-pink-300 disabled:opacity-50"
-              >
-                <ChevronDown className="h-5 w-5" />
-                Load More +{remainingCount?.toLocaleString() || "0"} left
-              </button>
-            )
-          ) : (
-            <div className="flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 font-semibold text-white shadow-md">
-              <CheckCircle className="mr-2 h-6 w-6" />
-              <span>End of Results</span>
-            </div>
-          )}
-        </div>
-      );
-    }, [hasNextPage, isLoading, handleLoadMore, remainingCount, showResults]);
-
-    // This function renders each row in the Virtuoso list.
-    const renderRow = useCallback(
-      (index: number, row: AdData[]) => {
-        return (
-          <div className="flex justify-center gap-4 px-4 pb-4" key={index}>
-            {row.map((ad) => (
-              <div key={ad.ad_archive_id} className="min-w-0 flex-1">
-                <AdCard ad={ad} />
-              </div>
-            ))}
-            {/* Add placeholder divs to ensure the last row items align correctly */}
-            {Array.from({ length: columns - row.length }).map((_, i) => (
-              <div key={`placeholder-${i}`} className="min-w-0 flex-1" />
-            ))}
-          </div>
-        );
-      },
-      [columns],
-    );
+      // Here you would typically call a function passed via props to reset filter state
+    };
 
     return (
-      <div className="mx-auto w-full">
-        {/* ✅ global style for smooth scrolling */}
-        <style jsx global>{`
-          html {
-            scroll-behavior: smooth;
-          }
-        `}</style>
-
+      <div className="mx-auto min-h-[50vh] w-full">
+        {/* 🔄 Initial Loading */}
         {isLoading && !showResults && <Loading size="large" />}
 
+        {/* ❌ Error State */}
         {error && (
           <div
-            className="mb-6 rounded-lg bg-red-50 p-4 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+            className="animate-slide-in mb-6 rounded-lg bg-red-50 p-4 text-red-700 dark:bg-red-900/30 dark:text-red-300"
             role="alert"
           >
             {error}
           </div>
         )}
 
+        {/* 🎯 Initial State */}
         {showInitialState && <InitialState />}
+
+        {/* 📭 Empty State */}
         {showEmptyState && <EmptyState onResetFilters={handleResetFilters} />}
 
+        {/* 📊 Results Count */}
         {showResults && formattedTotalCount && (
-          <div className="mb-4 text-center">
+          <div className="animate-slide-down mb-4 text-center">
             {isLoading ? (
               <Loading size="medium" />
             ) : (
@@ -315,16 +285,100 @@ export const SearchResults = memo(
           </div>
         )}
 
-        {/* ✅ React Virtuoso Implementation */}
+        {/* ✅ Results Grid - */}
         {showResults && (
-          <Virtuoso
-            useWindowScroll
-            data={rows}
-            itemContent={renderRow}
-            components={{ Footer }}
-            overscan={200}
-          />
+          <div className="relative min-h-[50vh] animate-fade-in">
+            <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {searchResults?.map((ad) => (
+                <AdCard key={ad.ad_archive_id} ad={ad} />
+              ))}
+            </div>
+
+            {/* 🎯 Load More Section */}
+            <div className="mt-8 flex justify-center p-8">
+              {hasNextPage ? (
+                isLoading ? (
+                  <Loading size="small" />
+                ) : (
+                  <button
+                    onClick={handleLoadMore}
+                    disabled={isLoading}
+                    className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-200 to-pink-200 px-6 py-3 font-bold text-purple-800 shadow-md transition-all duration-200 hover:scale-105 hover:from-purple-300 hover:to-pink-300 disabled:opacity-50"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                    Load More +{formattedRemainingCount} left
+                  </button>
+                )
+              ) : (
+                <div className="flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 font-semibold text-white shadow-md">
+                  <CheckCircle className="mr-2 h-6 w-6" />
+                  <span>End of Results</span>
+                </div>
+              )}
+            </div>
+          </div>
         )}
+
+        {/* Only keep JSX styles for custom animations not available in Tailwind */}
+        <style jsx>{`
+          @keyframes slide-in {
+            from {
+              opacity: 0;
+              transform: translate3d(-20px, 0, 0);
+            }
+            to {
+              opacity: 1;
+              transform: translate3d(0, 0, 0);
+            }
+          }
+
+          @keyframes slide-down {
+            from {
+              opacity: 0;
+              transform: translate3d(0, -20px, 0);
+            }
+            to {
+              opacity: 1;
+              transform: translate3d(0, 0, 0);
+            }
+          }
+
+          @keyframes fade-in {
+            from {
+              opacity: 0;
+              transform: translate3d(0, 20px, 0);
+            }
+            to {
+              opacity: 1;
+              transform: translate3d(0, 0, 0);
+            }
+          }
+
+          .animate-slide-in {
+            animation: slide-in 0.3s ease-out;
+          }
+
+          .animate-slide-down {
+            animation: slide-down 0.3s ease-out;
+          }
+
+          .animate-fade-in {
+            animation: fade-in 0.4s ease-out;
+          }
+
+          /* Accessibility - Reduced motion */
+          @media (prefers-reduced-motion: reduce) {
+            .animate-slide-in,
+            .animate-slide-down,
+            .animate-fade-in {
+              animation: none;
+            }
+
+            * {
+              transition-duration: 0.01ms !important;
+            }
+          }
+        `}</style>
       </div>
     );
   },

@@ -88,4 +88,8 @@ https://v0.dev/chat/next-js-app-optimization-bGfKKXiDa3m
 💡 React-Virtuoso with manual multi-column layout
 https://g.co/gemini/share/52acbc0d7e2a
 
+✅ One Virtuoso list, where each item is a row of 2–4 ads (i.e. a horizontal flex or grid)
+https://g.co/gemini/share/e60bbd138415
+
+
 #
