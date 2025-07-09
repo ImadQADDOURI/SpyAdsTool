@@ -288,7 +288,7 @@ export const SearchResults = memo(
     // ✅ Memoized 'Load More' section
     const loadMoreSection = useMemo(() => {
       return (
-        <div className="mt-2 flex justify-center p-8">
+        <div className="flex justify-center">
           {hasNextPage ? (
             isLoading ? (
               <Loading size="small" />
