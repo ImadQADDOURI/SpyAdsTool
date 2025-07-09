@@ -188,14 +188,14 @@ EmptyState.displayName = "EmptyState";
 
 // 🧠 Hook to determine column count based on responsive breakpoints
 const useResponsiveColumnCount = () => {
-  const getColumnCount = () => {
+  const getColumnCount = useCallback(() => {
     if (typeof window === "undefined") return 4; // Default for SSR
-    if (window.innerWidth >= 1280) return 5; // xl
+    if (window.innerWidth >= 1280) return 5; // xl from original CSS
     if (window.innerWidth >= 1024) return 4; // lg
     if (window.innerWidth >= 768) return 3; // md
     if (window.innerWidth >= 640) return 2; // sm
     return 1;
-  };
+  }, []);
 
   const [columnCount, setColumnCount] = useState(getColumnCount());
 
@@ -203,7 +203,7 @@ const useResponsiveColumnCount = () => {
     const handleResize = () => setColumnCount(getColumnCount());
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [getColumnCount]);
 
   return columnCount;
 };
@@ -213,7 +213,7 @@ const VirtuosoResultsGrid = memo(
   ({ searchResults }: { searchResults: AdData[] }) => {
     const columnCount = useResponsiveColumnCount();
 
-    // Partition data into columns for the virtualized grid
+    // Partition data into columns to ensure unique ads per column
     const columnsData = useMemo(() => {
       const columns: AdData[][] = Array.from({ length: columnCount }, () => []);
       searchResults.forEach((ad, index) => {
@@ -227,11 +227,11 @@ const VirtuosoResultsGrid = memo(
         {columnsData.map((ads, colIndex) => (
           <div key={colIndex} style={{ flex: 1, minWidth: 0 }}>
             <Virtuoso
-              useWindowScroll // Use the main window scrollbar for a seamless experience
+              useWindowScroll // Use the main window scrollbar for a seamless UX
               data={ads}
               itemContent={(_index, ad) => (
+                // Add padding for vertical spacing between cards
                 <div className="pb-4">
-                  {/* Add padding between items in a column */}
                   <AdCard ad={ad} />
                 </div>
               )}
@@ -288,7 +288,7 @@ export const SearchResults = memo(
     // ✅ Memoized 'Load More' section
     const loadMoreSection = useMemo(() => {
       return (
-        <div className="mt-8 flex justify-center p-8">
+        <div className="mt-2 flex justify-center p-8">
           {hasNextPage ? (
             isLoading ? (
               <Loading size="small" />
@@ -345,11 +345,13 @@ export const SearchResults = memo(
 
         {/* ✅ Results section uses VirtuosoResultsGrid */}
         {showResults && searchResults && (
-          <div className="relative min-h-[50vh] animate-fade-in">
-            <VirtuosoResultsGrid searchResults={searchResults} />
+          <>
+            <div className="relative min-h-[50vh] animate-fade-in">
+              <VirtuosoResultsGrid searchResults={searchResults} />
+            </div>
             {/* 🎯 Load More Section */}
             {loadMoreSection}
-          </div>
+          </>
         )}
 
         <style jsx>{`
@@ -407,7 +409,6 @@ export const SearchResults = memo(
     );
   },
 );
-
 SearchResults.displayName = "SearchResults";
 
 export default SearchResults;
