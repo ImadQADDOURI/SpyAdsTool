@@ -98,11 +98,8 @@ export function SearchFilterItem({
     (e?: React.MouseEvent) => {
       e?.stopPropagation();
       clearValue(filter.key);
-      if (inputRef.current && filter.type === "search") {
-        inputRef.current.value = "";
-      }
     },
-    [filter.key, filter.type, clearValue],
+    [filter.key, clearValue],
   );
 
   const handleOptionSelect = useCallback(
@@ -139,7 +136,7 @@ export function SearchFilterItem({
           placeholder={
             filter.placeholder || `Search ${filter.label.toLowerCase()}...`
           }
-          defaultValue={currentValue || ""}
+          value={currentValue || ""}
           onChange={(e) => handleValueChange(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && onEnterPress) {
