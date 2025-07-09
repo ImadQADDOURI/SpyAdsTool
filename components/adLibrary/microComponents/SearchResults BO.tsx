@@ -14,7 +14,6 @@ import {
   Search,
   Zap,
 } from "lucide-react";
-import { Virtuoso } from "react-virtuoso";
 
 import type { AdData } from "@/types/ad";
 import { Button } from "@/components/ui/button";
@@ -89,6 +88,7 @@ const FeaturePill = memo(
     </div>
   ),
 );
+
 FeaturePill.displayName = "FeaturePill";
 
 const InitialState = memo(() => (
@@ -104,19 +104,23 @@ const InitialState = memo(() => (
           loading="eager"
         />
       </div>
+
       <div className="flex flex-1 flex-col gap-6">
         <h2 className="text-3xl font-bold text-gray-800 dark:text-white md:text-4xl">
           Discover High-Performing Ads
         </h2>
+
         <p className="text-lg leading-relaxed text-gray-600 dark:text-gray-300">
           Search across millions of ads with our powerful filters to find
           winning creatives, analyze performance, and get inspiration.
         </p>
+
         <div className="flex flex-col gap-4">
           <h3 className="flex items-center gap-2 text-lg font-semibold text-purple-600 dark:text-purple-400">
             <Zap className="h-5 w-5" />
             Quick Start Tips
           </h3>
+
           <ul className="space-y-2 text-gray-700 dark:text-gray-300">
             <li className="flex items-start gap-2">
               <span className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-purple-500" />
@@ -132,6 +136,7 @@ const InitialState = memo(() => (
             </li>
           </ul>
         </div>
+
         <div className="flex flex-wrap gap-3">
           <FeaturePill icon={Filter} text="10+ Filter Types" />
           <FeaturePill icon={BarChart} text="Performance Analytics" />
@@ -142,6 +147,7 @@ const InitialState = memo(() => (
     </div>
   </div>
 ));
+
 InitialState.displayName = "InitialState";
 
 const EmptyState = memo(
@@ -155,20 +161,24 @@ const EmptyState = memo(
           height={200}
           loading="lazy"
         />
+
         <div className="flex flex-col items-center gap-4">
           <h2 className="text-3xl font-bold text-gray-800 dark:text-white md:text-4xl">
             No Ads Found
           </h2>
+
           <p className="max-w-2xl text-lg leading-relaxed text-gray-600 dark:text-gray-300">
             Your search didn&apos;t match any ads. Try adjusting your filters or
             searching with different criteria.
           </p>
+
           <div className="flex flex-wrap justify-center gap-3">
             <FeaturePill icon={Filter} text="Try fewer filters" />
             <FeaturePill icon={Search} text="Broader search terms" />
             <FeaturePill icon={Globe} text="Different countries" />
             <FeaturePill icon={Languages} text="Other languages" />
           </div>
+
           {onResetFilters && (
             <Button
               variant="outline"
@@ -184,67 +194,9 @@ const EmptyState = memo(
     </div>
   ),
 );
+
 EmptyState.displayName = "EmptyState";
 
-// 🧠 Hook to determine column count based on responsive breakpoints
-const useResponsiveColumnCount = () => {
-  const getColumnCount = () => {
-    if (typeof window === "undefined") return 4; // Default for SSR
-    if (window.innerWidth >= 1280) return 5; // xl
-    if (window.innerWidth >= 1024) return 4; // lg
-    if (window.innerWidth >= 768) return 3; // md
-    if (window.innerWidth >= 640) return 2; // sm
-    return 1;
-  };
-
-  const [columnCount, setColumnCount] = useState(getColumnCount());
-
-  useEffect(() => {
-    const handleResize = () => setColumnCount(getColumnCount());
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  return columnCount;
-};
-
-// 🧠 NEW: Virtualized grid component using React Virtuoso
-const VirtuosoResultsGrid = memo(
-  ({ searchResults }: { searchResults: AdData[] }) => {
-    const columnCount = useResponsiveColumnCount();
-
-    // Partition data into columns for the virtualized grid
-    const columnsData = useMemo(() => {
-      const columns: AdData[][] = Array.from({ length: columnCount }, () => []);
-      searchResults.forEach((ad, index) => {
-        columns[index % columnCount].push(ad);
-      });
-      return columns;
-    }, [searchResults, columnCount]);
-
-    return (
-      <div className="flex gap-4 p-4">
-        {columnsData.map((ads, colIndex) => (
-          <div key={colIndex} style={{ flex: 1, minWidth: 0 }}>
-            <Virtuoso
-              useWindowScroll // Use the main window scrollbar for a seamless experience
-              data={ads}
-              itemContent={(_index, ad) => (
-                <div className="pb-4">
-                  {/* Add padding between items in a column */}
-                  <AdCard ad={ad} />
-                </div>
-              )}
-            />
-          </div>
-        ))}
-      </div>
-    );
-  },
-);
-VirtuosoResultsGrid.displayName = "VirtuosoResultsGrid";
-
-// 🚀 Main SearchResults component (VirtuosoResultsGrid)
 export const SearchResults = memo(
   ({
     isLoading,
@@ -285,10 +237,10 @@ export const SearchResults = memo(
       // This function now has a stable reference across renders.
     }, []);
 
-    // ✅ Memoized 'Load More' section
+    // 💡 Memoize the 'Load More' section to prevent re-rendering when search results change.
     const loadMoreSection = useMemo(() => {
       return (
-        <div className="mt-8 flex justify-center p-8">
+        <div className="mt-2 flex justify-center">
           {hasNextPage ? (
             isLoading ? (
               <Loading size="small" />
@@ -326,6 +278,7 @@ export const SearchResults = memo(
         )}
 
         {showInitialState && <InitialState />}
+
         {showEmptyState && <EmptyState onResetFilters={handleResetFilters} />}
 
         {showResults && formattedTotalCount && (
@@ -343,10 +296,14 @@ export const SearchResults = memo(
           </div>
         )}
 
-        {/* ✅ Results section uses VirtuosoResultsGrid */}
-        {showResults && searchResults && (
+        {/* ✅ Results Grid - */}
+        {showResults && (
           <div className="relative min-h-[50vh] animate-fade-in">
-            <VirtuosoResultsGrid searchResults={searchResults} />
+            <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {searchResults?.map((ad) => (
+                <AdCard key={ad.ad_archive_id} ad={ad} />
+              ))}
+            </div>
             {/* 🎯 Load More Section */}
             {loadMoreSection}
           </div>
@@ -363,6 +320,7 @@ export const SearchResults = memo(
               transform: translate3d(0, 0, 0);
             }
           }
+
           @keyframes slide-down {
             from {
               opacity: 0;
@@ -373,6 +331,7 @@ export const SearchResults = memo(
               transform: translate3d(0, 0, 0);
             }
           }
+
           @keyframes fade-in {
             from {
               opacity: 0;
@@ -383,21 +342,26 @@ export const SearchResults = memo(
               transform: translate3d(0, 0, 0);
             }
           }
+
           .animate-slide-in {
             animation: slide-in 0.3s ease-out;
           }
+
           .animate-slide-down {
             animation: slide-down 0.3s ease-out;
           }
+
           .animate-fade-in {
             animation: fade-in 0.4s ease-out;
           }
+
           @media (prefers-reduced-motion: reduce) {
             .animate-slide-in,
             .animate-slide-down,
             .animate-fade-in {
               animation: none;
             }
+
             * {
               transition-duration: 0.01ms !important;
             }

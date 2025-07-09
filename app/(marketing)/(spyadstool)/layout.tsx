@@ -23,7 +23,7 @@ export default async function ProtectedLayout({
     // 🧠 SubscriptionProvider will now fetch its own data on the client
     <SubscriptionProvider>
       <SavedAdsProvider>
-        <main className="flex min-h-screen flex-col">
+        <main className="relative flex min-h-screen flex-col">
           {/* 🎈 Render the protected route content */}
           {children}
         </main>

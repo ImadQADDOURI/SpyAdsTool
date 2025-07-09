@@ -163,7 +163,7 @@ const AdBrowserContent = () => {
   }, [hasNextPage, executeSearch, isLoading]);
 
   return (
-    <div className="min-h-screen space-y-2 bg-gradient-to-b from-gray-50 to-gray-100 pb-16 dark:from-gray-900 dark:to-gray-800">
+    <div className="relative min-h-screen space-y-2 bg-gradient-to-b from-gray-50 to-gray-100 pb-16 dark:from-gray-900 dark:to-gray-800">
       <div ref={titleSectionRef}>
         <FirefliesWrapper intensity="high">
           {/* Premium Header Section */}

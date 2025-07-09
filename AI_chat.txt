@@ -81,3 +81,11 @@ OPTIMAZATIONS :
 ​ https://claude.ai/public/artifacts/8e483e83-06f9-4775-a5ec-a17fcf6390e7
 
 https://v0.dev/chat/next-js-app-optimization-bGfKKXiDa3m
+
+
+#
+
+💡 React-Virtuoso with manual multi-column layout
+https://g.co/gemini/share/52acbc0d7e2a
+
+#
