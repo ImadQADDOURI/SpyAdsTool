@@ -7,7 +7,7 @@
  *
  * @package components/adLibrary
  */
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { analyzeKeywords } from "@/actions/geminiAiService";
 import {
@@ -73,11 +73,19 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
   const [isLoadingKeywords, setIsLoadingKeywords] = useState(false);
   const [keywordError, setKeywordError] = useState<string | null>(null);
 
+  // 🔒 Simple flags to prevent duplicate API calls
+  const keywordAnalysisInProgress = useRef(false);
+  const euStatsInProgress = useRef(false);
+  const adDetailsInProgress = useRef(false);
+
   // 🔄 Fetching collation details (ad versions)
   const fetchAdDetails = useCallback(async () => {
-    if (isComplete || isLoading) return;
+    if (isComplete || isLoading || adDetailsInProgress.current) return;
+
+    adDetailsInProgress.current = true;
     setIsLoading(true);
     setError(null);
+
     try {
       if (!ad.collation_id || !ad.collation_count) {
         setDetailedAds([ad]);
@@ -86,10 +94,12 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
         setRemainingCount(0);
         return;
       }
+
       const results = await AdLibraryAdCollationDetailsQuery(
         ad.collation_id,
         forwardCursor,
       );
+
       setDetailedAds((prev) => [...prev, ...results.ads]);
       setForwardCursor(results.forward_cursor);
       setIsComplete(results.is_complete);
@@ -104,14 +114,18 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
       setError("An error occurred while fetching ad details.");
     } finally {
       setIsLoading(false);
+      adDetailsInProgress.current = false;
     }
   }, [ad, forwardCursor, isComplete, isLoading]);
 
   // 🇪🇺 Fetching EU-specific ad statistics
   const fetchEuAdStats = useCallback(async () => {
-    if (adDetails) return; // Already fetched
+    if (adDetails || isLoadingEuStats || euStatsInProgress.current) return;
+
+    euStatsInProgress.current = true;
     setIsLoadingEuStats(true);
     setEuStatsError(null);
+
     try {
       const result = await AdLibraryAdDetailsV2Query(
         ad.ad_archive_id,
@@ -124,14 +138,29 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
       setEuStatsError("Failed to fetch EU ad statistics.");
     } finally {
       setIsLoadingEuStats(false);
+      euStatsInProgress.current = false;
     }
-  }, [ad.ad_archive_id, ad.page_id, ad.is_aaa_eligible, adDetails]);
+  }, [
+    ad.ad_archive_id,
+    ad.page_id,
+    ad.is_aaa_eligible,
+    adDetails,
+    isLoadingEuStats,
+  ]);
 
   // 🔍 Fetching keyword analysis from AI service
   const fetchKeywordAnalysis = useCallback(async () => {
-    if (keywordAnalysis) return; // Already fetched
+    if (
+      keywordAnalysis ||
+      isLoadingKeywords ||
+      keywordAnalysisInProgress.current
+    )
+      return;
+
+    keywordAnalysisInProgress.current = true;
     setIsLoadingKeywords(true);
     setKeywordError(null);
+
     try {
       const result = await analyzeKeywords(ad);
       setKeywordAnalysis(result);
@@ -141,8 +170,9 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
       setKeywordAnalysis((prev: any) => ({ ...prev, cpmEurope: 0 })); // Fallback
     } finally {
       setIsLoadingKeywords(false);
+      keywordAnalysisInProgress.current = false;
     }
-  }, [ad, keywordAnalysis]);
+  }, [ad, keywordAnalysis, isLoadingKeywords]);
 
   // 🚪 Handles opening the dialog and fetching initial data
   const handleDialogOpen = (isOpen: boolean) => {
@@ -155,28 +185,38 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
   // 👆 Handles tab changes and triggers data fetching
   const handleTabChange = async (value: string) => {
     setActiveTab(value);
-    switch (value) {
-      case "eu-stats":
-        // 🇪🇺 EU stats tab: ensure keyword analysis is done first
-        if (!keywordAnalysis) {
+
+    try {
+      switch (value) {
+        case "eu-stats":
+          // 🇪🇺 EU stats tab: ensure keyword analysis is done first
           await fetchKeywordAnalysis();
-        }
-        await fetchEuAdStats();
-        break;
-      case "keywords":
-      case "worldwide":
-        // 🌍 Keywords or Worldwide tab: requires keyword analysis data
-        if (!keywordAnalysis) {
+          await fetchEuAdStats();
+          break;
+        case "keywords":
+        case "worldwide":
+          // 🌍 Keywords or Worldwide tab: requires keyword analysis data
           await fetchKeywordAnalysis();
-        }
-        break;
-      // 🤖 AI and Analytics tabs don't require extra data loading on tab change
-      case "ai-creative":
-      case "analytics":
-      default:
-        break;
+          break;
+        // 🤖 AI and Analytics tabs don't require extra data loading on tab change
+        case "ai-creative":
+        case "analytics":
+        default:
+          break;
+      }
+    } catch (error) {
+      console.error("❌ Error in tab change:", error);
     }
   };
+
+  // 🧹 Cleanup function to reset flags when component unmounts
+  React.useEffect(() => {
+    return () => {
+      keywordAnalysisInProgress.current = false;
+      euStatsInProgress.current = false;
+      adDetailsInProgress.current = false;
+    };
+  }, []);
 
   const getCpmEurope = () => keywordAnalysis?.cpmEurope ?? 0;
 

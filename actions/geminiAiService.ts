@@ -73,7 +73,9 @@ function robustJSONParse(text: string): any {
 
 function parseResponse(responseText: string): AdAnalysis {
   const parsedResponse = robustJSONParse(responseText);
-
+  console.log(
+    "cpm: " + parsedResponse.cpm + "|  cpmEurope: " + parsedResponse.cpm_europe,
+  );
   return {
     topKeywords: (parsedResponse.top || []).map(
       ({ w, c }: { w: string; c: number }) => ({ word: w, count: c }),
@@ -108,37 +110,38 @@ export async function analyzeKeywords(ad: AdData): Promise<AdAnalysis> {
   });
 
   const prompt = `
-Analyze Facebook ad text. Return JSON:
-{
-  "top": [{"w": "word", "c": count}],
-  "long": [{"p": "phrase", "c": count}],
-  "gender_target": ["Men"|"Women"|"All"],
-  "age_target": ["min-max"],
-  "ad_categories": ["category keyword"],
-  "target_audience": ["audience keyword"],
-  "estimated_budget": "Low"|"Medium"|"High",
-  "marketing_strategies": ["Problem-Solving"|"Prestige"|"Emotional"|"Trends"|"Holidays"],
-  "season_target": ["Spring"|"Summer"|"Autumn"|"Winter"],
-  "competition": 0-100,
-  "cpm": estimated USD,
-  "cpm_europe": estimated EUR
-}
-
-Context: Facebook Ads platform (not Google Ads)
-- Consider industry competitiveness for CPM estimation
-- Factor in targeting specificity and ad format
-- European markets typically cost more than US
-
-Rules:
-- top/long: 15 most relevant, exclude common words
-- Infer demographics from content and tone
-- competition: Facebook marketplace competitiveness
-- cpm: realistic Facebook CPM in USD
-- cpm_europe: EU market rates in EUR
-- Base on Facebook advertising costs
-
-Ad: "${parsedText}"
-`;
+  Analyze Facebook ad text. Return JSON:
+  {
+    "top": [{"w": "word", "c": count}],
+    "long": [{"p": "phrase", "c": count}],
+    "gender_target": ["Men"|"Women"|"All"],
+    "age_target": ["min-max"],
+    "ad_categories": ["category keyword"],
+    "target_audience": ["audience keyword"],
+    "estimated_budget": "Low"|"Medium"|"High",
+    "marketing_strategies": ["Problem-Solving"|"Prestige"|"Emotional"|"Trends"|"Holidays"],
+    "season_target": ["Spring"|"Summer"|"Autumn"|"Winter"],
+    "competition": 0-100,
+    "cpm": estimated USD,
+    "cpm_europe": estimated EUR
+  }
+  
+  Context: Facebook Ads platform (not Google Ads)
+  - Consider industry competitiveness for CPM estimation
+  - Factor in targeting specificity and ad format
+  - European markets typically cost more than US
+  
+  Rules:
+  - top/long: 15 most relevant, exclude common words
+  - Infer demographics from content and tone
+  - competition: Facebook marketplace competitiveness (0-100)
+  - cpm: realistic Facebook CPM in USD
+  - cpm_europe: EU market rates in EUR
+  - Base estimates on Facebook advertising costs
+  - Return valid JSON only
+  
+  Ad: "${parsedText}"
+  `;
   {
     /*
   "ad_objective": ["primary objective"],
