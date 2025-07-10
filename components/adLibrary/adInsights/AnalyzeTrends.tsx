@@ -44,42 +44,42 @@ const AnalyzeTrends: React.FC<AnalyzeTrendsProps> = ({
   }, [chartData, periods]);
 
   return (
-    <div className="flex w-[85px] flex-col justify-end gap-1">
+    <div className="flex justify-center gap-2">
       {trendAnalyses.map(({ period, analysis }) => (
         <TooltipProvider key={period}>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
-              <div className="group flex cursor-default flex-col items-center rounded-lg bg-gradient-to-r from-[#6566F1]/5 to-[#B977F8]/5 p-2 transition-colors hover:from-[#6566F1]/10 hover:to-[#B977F8]/10">
-                {/* Period */}
-                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              <div className="flex w-fit flex-row items-center justify-center overflow-hidden whitespace-nowrap rounded-lg bg-gradient-to-r from-[#6566F1]/5 to-[#B977F8]/5 px-3 py-2 transition-colors hover:from-[#6566F1]/10 hover:to-[#B977F8]/10">
+                <span className="truncate text-xs font-medium text-gray-500 dark:text-gray-400">
                   {period}
                 </span>
-
-                {/* Trend Icon */}
-                <div className="">
+                <div className="mx-2 h-4 w-px bg-gray-300 dark:bg-gray-600" />
+                <div className="flex items-center gap-1">
                   <TrendIcon
                     trend={analysis.trend}
                     className={getTrendColor(analysis.trend)}
-                    size={20}
+                    size={16}
                   />
+                  <span
+                    className={`text-xs font-semibold ${getTrendColor(
+                      analysis.trend,
+                    )} hidden truncate sm:inline`}
+                  >
+                    {getTrendFullName(analysis.trend)}
+                  </span>
                 </div>
-
-                {/* Trend Full Name instead of Change Percentage */}
-                <span
-                  className={`text-xs font-semibold ${getTrendColor(analysis.trend)} truncate`}
-                >
-                  {getTrendFullName(analysis.trend)}
-                </span>
               </div>
             </TooltipTrigger>
-            <TooltipContent side="left" className="flex flex-col gap-1.5 p-3">
+            <TooltipContent side="top" className="flex flex-col gap-1.5 p-3">
               <div className="text-sm font-medium">
                 {period === "All" ? "All Time" : `Last ${period} Days`}
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm">Change:</span>
                 <span
-                  className={`text-sm font-semibold ${getTrendColor(analysis.trend)}`}
+                  className={`text-sm font-semibold ${getTrendColor(
+                    analysis.trend,
+                  )}`}
                 >
                   {analysis.changePercentage > 0 ? "+" : ""}
                   {analysis.changePercentage.toFixed(1)}%

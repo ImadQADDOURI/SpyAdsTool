@@ -87,7 +87,7 @@ const WorldwideAdStatistics: React.FC<WorldwideAdStatisticsProps> = ({
         </TooltipProvider>
       </div>
       {/* Insights Grid Container */}
-      <div className="grid grid-cols-3 gap-1">
+      <div className="grid grid-cols-3 gap-1 md:grid-cols-6">
         {/* Demographics Insights */}
         <InsightItem
           label="Gender"
@@ -107,37 +107,38 @@ const WorldwideAdStatistics: React.FC<WorldwideAdStatisticsProps> = ({
           description="Optimal seasonal timing"
           icon={Snowflake}
         />
+        {/* Additional Insights */}
+
+        <InsightItem
+          label="Target"
+          value={data.targetAudience}
+          description="Target audience characteristics and preferences"
+          icon={UserRound}
+        />
+
+        <InsightItem
+          label="Category"
+          value={data.adCategories}
+          description="Primary advertising categories"
+          icon={Tags}
+        />
+
+        <InsightItem
+          label="Marketing"
+          value={data.marketingStrategies}
+          description="Recommended marketing approaches"
+          icon={Megaphone}
+        />
 
         {/* Performance Metrics */}
-
-        <CompetitionRadialChart competition={data.competition} />
-        <CPMDisplay value={data.cpm} />
-        <BudgetIndicator budget={data.estimatedBudget} />
-
-        {/* Additional Insights */}
-        <div className="col-span-3">
-          <InsightItem
-            label="Target"
-            value={data.targetAudience}
-            description="Target audience characteristics and preferences"
-            icon={UserRound}
-          />
+        <div className="col-span-3 md:col-span-2">
+          <CompetitionRadialChart competition={data.competition} />
         </div>
-        <div className="col-span-3">
-          <InsightItem
-            label="Category"
-            value={data.adCategories}
-            description="Primary advertising categories"
-            icon={Tags}
-          />
+        <div className="col-span-3 md:col-span-2">
+          <CPMDisplay value={data.cpm} />
         </div>
-        <div className="col-span-3">
-          <InsightItem
-            label="Marketing"
-            value={data.marketingStrategies}
-            description="Recommended marketing approaches"
-            icon={Megaphone}
-          />
+        <div className="col-span-3 md:col-span-2">
+          <BudgetIndicator budget={data.estimatedBudget} />
         </div>
       </div>
     </div>

@@ -176,10 +176,10 @@ const Analytics: React.FC<AnalyticsProps> = ({ ads, isComplete }) => {
 
       <CardContent>
         {/* Main Content Container */}
-        <div className="flex flex-row items-center gap-4">
+        <div className="flex flex-col gap-4">
           {/* Chart Section */}
           <div className="flex-1">
-            <ResponsiveContainer width="100%" height={220}>
+            <ResponsiveContainer width="100%" height={300}>
               <AreaChart
                 data={chartData}
                 margin={{ top: 10, right: 10, left: 0, bottom: 0 }}

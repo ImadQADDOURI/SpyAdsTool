@@ -36,7 +36,7 @@ const CPMDisplay: React.FC<CPMDisplayProps> = ({ value, className }) => {
           <div
             className={cn(
               // 📐 Intrinsic Web Design - fill available space
-              "group flex w-full cursor-default flex-col rounded-lg bg-gradient-to-br from-white to-gray-100/80 p-3 transition-all duration-200",
+              "group flex h-full w-full cursor-default flex-col rounded-lg bg-gradient-to-br from-white to-gray-100/80 p-3 transition-all duration-200",
               "hover:shadow-md dark:from-gray-800/70 dark:to-gray-900/50 dark:hover:shadow-gray-900/20",
               "border border-transparent hover:border-gray-200 dark:hover:border-gray-700",
               className,

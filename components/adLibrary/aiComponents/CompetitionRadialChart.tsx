@@ -58,7 +58,7 @@ const CompetitionRadialChart: React.FC<CompetitionRadialChartProps> = ({
           <div
             className={cn(
               // 📐 Intrinsic Web Design - fill available space
-              "flex w-full cursor-default flex-col rounded-lg bg-gradient-to-br from-white to-gray-100/80 p-3 transition-all duration-200",
+              "flex h-full w-full cursor-default flex-col rounded-lg bg-gradient-to-br from-white to-gray-100/80 p-3 transition-all duration-200",
               "hover:shadow-md dark:from-gray-800/70 dark:to-gray-900/50 dark:hover:shadow-gray-900/20",
               "border border-transparent hover:border-gray-200 dark:hover:border-gray-700",
               className,
@@ -67,7 +67,7 @@ const CompetitionRadialChart: React.FC<CompetitionRadialChartProps> = ({
             {/* Enhanced Header with Gradient Title and Interactive Icon */}
             <div className="flex flex-row items-center justify-between">
               <span className="text-md font-semibold text-gray-600 dark:text-gray-300">
-                Compet
+                Competition
               </span>
 
               <Gauge
@@ -77,13 +77,13 @@ const CompetitionRadialChart: React.FC<CompetitionRadialChartProps> = ({
               />
             </div>
             {/* Chart Container with responsive design */}
-            <div className="w-full">
+            <div className="h-full w-full">
               <ChartContainer
                 config={{
                   // Set up chart configuration here
                   tooltip: {},
                 }}
-                className="mx-auto min-h-[120px] w-full lg:min-h-[140px]"
+                className="mx-auto w-full"
               >
                 <RadialBarChart
                   innerRadius="70%" // Use percentages instead of fixed pixels

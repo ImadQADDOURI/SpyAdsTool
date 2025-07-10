@@ -23,7 +23,7 @@ import {
 import InsightItem from "../aiComponents/InsightItem";
 import { Loading } from "../microComponents/Loading";
 import { countryCodesAlpha2Flag } from "../searchFilters/filter-config";
-import AmountSpend from "./AmountSpend";
+import SpendDisplay from "./SpendDisplay";
 
 const GenderPieChart = dynamic(
   () => import("@/components/adLibrary/adInsights/GenderPieChart"),
@@ -198,52 +198,40 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
         </TooltipProvider>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-3 gap-1 p-2">
-        <InsightItem
-          label="Gender"
-          value={gender_audience || "Not specified"}
-          description=""
-          icon={VenusAndMars}
-        />
-        <InsightItem
-          label="Age"
-          value={
-            age_audience
-              ? `${age_audience.min}-${age_audience.max}`
-              : "Not specified"
-          }
-          description=""
-          icon={Baby}
-        />
-        <InsightItem
-          label="Reach"
-          value={eu_total_reach.toLocaleString()}
-          description=""
-          icon={ChartPie}
-        />
-        {/* <InsightItem
-          label="Spend"
-          value={
-            cpmEurope
-              ? `${((cpmEurope * eu_total_reach) / 1000).toLocaleString(
-                  undefined,
-                  {
-                    maximumFractionDigits: 2,
-                    minimumFractionDigits: 2,
-                  },
-                )} €`
-              : "Not specified"
-          }
-          description=""
-          icon={Euro}
-        /> */}
+      {/* First Row: Stats */}
+      <div className="flex flex-col gap-2 p-2 lg:flex-row">
+        <div className="grid flex-1 grid-cols-3 gap-1 sm:grid-cols-5">
+          <InsightItem
+            label="Gender"
+            value={gender_audience || "Not specified"}
+            description=""
+            icon={VenusAndMars}
+          />
+          <InsightItem
+            label="Age"
+            value={
+              age_audience
+                ? `${age_audience.min}-${age_audience.max}`
+                : "Not specified"
+            }
+            description=""
+            icon={Baby}
+          />
+          <InsightItem
+            label="Reach"
+            value={eu_total_reach.toLocaleString()}
+            description=""
+            icon={ChartPie}
+          />
+          <div className="col-span-3 sm:col-span-2">
+            <SpendDisplay cpm={cpmEurope} totalReach={eu_total_reach} />
+          </div>
+        </div>
       </div>
-      <AmountSpend cpm={cpmEurope} totalReach={eu_total_reach} />
 
-      {/* Charts Section */}
-      <div className="space-y-2 p-2">
-        <div className="overflow-hidden rounded-md border border-gray-100/50 bg-gray-50/50 dark:border-gray-700/50 dark:bg-gray-700/50">
+      {/* Second Row: Charts */}
+      <div className="flex flex-col gap-2 p-2 lg:flex-row">
+        <div className="flex-1 overflow-hidden rounded-md border border-gray-100/50 bg-gray-50/50 dark:border-gray-700/50 dark:bg-gray-700/50">
           <GenderPieChart
             men={totalMale}
             women={totalFemale}
@@ -251,11 +239,11 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
           />
         </div>
 
-        <div className="overflow-hidden rounded-md border border-gray-100/50 bg-gray-50/50 dark:border-gray-700/50 dark:bg-gray-700/50">
+        <div className="flex-1 overflow-hidden rounded-md border border-gray-100/50 bg-gray-50/50 dark:border-gray-700/50 dark:bg-gray-700/50">
           <AgeBarChart data={ageBarChartData} />
         </div>
 
-        <div className="overflow-hidden rounded-md border border-gray-100/50 bg-gray-50/50 dark:border-gray-700/50 dark:bg-gray-700/50">
+        <div className="flex-1 overflow-hidden rounded-md border border-gray-100/50 bg-gray-50/50 dark:border-gray-700/50 dark:bg-gray-700/50">
           <CountryBarChart data={countryBarChartData} />
         </div>
       </div>

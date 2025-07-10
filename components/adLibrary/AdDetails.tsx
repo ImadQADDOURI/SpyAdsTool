@@ -215,7 +215,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
               <TabsList className="flex gap-2 bg-transparent">
                 <TabsTrigger
                   value="analytics"
-                  className="group flex items-center gap-2 rounded-md border border-blue-100 bg-white px-3 py-2 text-sm font-medium text-blue-600 shadow-sm transition-all hover:bg-blue-50 data-[state=active]:bg-white data-[state=active]:ring-2 data-[state=active]:ring-blue-400/40 data-[state=active]:ring-offset-2 dark:border-blue-900/30 dark:bg-blue-950/30 dark:text-blue-300 dark:hover:bg-blue-900/40 dark:data-[state=active]:bg-blue-950/50"
+                  className="group flex items-center gap-2 rounded-md bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 shadow-md transition-all hover:bg-blue-100 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/30 dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
                 >
                   <BarChart3 className="h-4 w-4" />
                   <span className="hidden sm:inline">Analytics</span>
@@ -223,15 +223,15 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
 
                 <TabsTrigger
                   value="worldwide"
-                  className="group flex items-center gap-2 rounded-md border border-purple-100 bg-white px-3 py-2 text-sm font-medium text-purple-600 shadow-sm transition-all hover:bg-purple-50 data-[state=active]:bg-white data-[state=active]:ring-2 data-[state=active]:ring-purple-400/40 data-[state=active]:ring-offset-2 dark:border-purple-900/30 dark:bg-purple-950/30 dark:text-purple-300 dark:hover:bg-purple-900/40 dark:data-[state=active]:bg-purple-950/50"
+                  className="group flex items-center gap-2 rounded-md bg-purple-50 px-3 py-2 text-sm font-medium text-purple-600 shadow-md transition-all hover:bg-purple-100 data-[state=active]:bg-purple-500 data-[state=active]:text-white dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30 dark:data-[state=active]:bg-purple-600 dark:data-[state=active]:text-white"
                 >
                   <Globe className="h-4 w-4" />
-                  <span className="hidden sm:inline">Worldwide</span>
+                  <span className="hidden sm:inline">World Stats</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="eu-stats"
-                  className="group flex items-center gap-2 rounded-md border border-indigo-100 bg-white px-3 py-2 text-sm font-medium text-indigo-600 shadow-sm transition-all hover:bg-indigo-50 data-[state=active]:bg-white data-[state=active]:ring-2 data-[state=active]:ring-indigo-400/40 data-[state=active]:ring-offset-2 dark:border-indigo-900/30 dark:bg-indigo-950/30 dark:text-indigo-300 dark:hover:bg-indigo-900/40 dark:data-[state=active]:bg-indigo-950/50"
+                  className="group flex items-center gap-2 rounded-md bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-600 shadow-md transition-all hover:bg-indigo-100 data-[state=active]:bg-indigo-500 data-[state=active]:text-white dark:bg-indigo-900/20 dark:text-indigo-300 dark:hover:bg-indigo-900/30 dark:data-[state=active]:bg-indigo-600 dark:data-[state=active]:text-white"
                 >
                   <Euro className="h-4 w-4" />
                   <span className="hidden sm:inline">EU Stats</span>
@@ -239,7 +239,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
 
                 <TabsTrigger
                   value="ai-creative"
-                  className="group flex items-center gap-2 rounded-md border border-pink-100 bg-white px-3 py-2 text-sm font-medium text-pink-600 shadow-sm transition-all hover:bg-pink-50 data-[state=active]:bg-white data-[state=active]:ring-2 data-[state=active]:ring-pink-400/40 data-[state=active]:ring-offset-2 dark:border-pink-900/30 dark:bg-pink-950/30 dark:text-pink-300 dark:hover:bg-pink-900/40 dark:data-[state=active]:bg-pink-950/50"
+                  className="group flex items-center gap-2 rounded-md bg-pink-50 px-3 py-2 text-sm font-medium text-pink-600 shadow-md transition-all hover:bg-pink-100 data-[state=active]:bg-pink-500 data-[state=active]:text-white dark:bg-pink-900/20 dark:text-pink-300 dark:hover:bg-pink-900/30 dark:data-[state=active]:bg-pink-600 dark:data-[state=active]:text-white"
                 >
                   <Palette className="h-4 w-4" />
                   <span className="hidden sm:inline">AI Creative</span>
@@ -247,7 +247,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
 
                 <TabsTrigger
                   value="keywords"
-                  className="group flex items-center gap-2 rounded-md border border-green-100 bg-white px-3 py-2 text-sm font-medium text-green-600 shadow-sm transition-all hover:bg-green-50 data-[state=active]:bg-white data-[state=active]:ring-2 data-[state=active]:ring-green-400/40 data-[state=active]:ring-offset-2 dark:border-green-900/30 dark:bg-green-950/30 dark:text-green-300 dark:hover:bg-green-900/40 dark:data-[state=active]:bg-green-950/50"
+                  className="group flex items-center gap-2 rounded-md bg-green-50 px-3 py-2 text-sm font-medium text-green-600 shadow-md transition-all hover:bg-green-100 data-[state=active]:bg-green-500 data-[state=active]:text-white dark:bg-green-900/20 dark:text-green-300 dark:hover:bg-green-900/30 dark:data-[state=active]:bg-green-600 dark:data-[state=active]:text-white"
                 >
                   <Search className="h-4 w-4" />
                   <span className="hidden sm:inline">Keywords</span>

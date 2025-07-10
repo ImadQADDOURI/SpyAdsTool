@@ -136,7 +136,7 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
 
   return (
     <Card
-      className={`relative flex h-fit w-full max-w-2xl flex-col overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl`}
+      className={`relative flex hidden h-fit w-full max-w-2xl flex-col overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl sm:block`}
     >
       {!compact && (
         <TooltipProvider>
