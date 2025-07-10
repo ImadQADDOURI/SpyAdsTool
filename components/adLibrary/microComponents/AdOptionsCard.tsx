@@ -172,7 +172,7 @@ export function AdOptionsCard({ ad }: { ad: AdData }) {
         initial={{ opacity: 0, y: 20 }}
         animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="hidden md:block"
+        className=""
       >
         <Card className="overflow-hidden border border-purple-100/50 bg-background/95 shadow-md backdrop-blur-sm dark:border-purple-900/30 dark:bg-background/95">
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-400 to-indigo-600" />

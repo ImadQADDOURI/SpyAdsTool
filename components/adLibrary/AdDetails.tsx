@@ -263,8 +263,10 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
             <div className="flex flex-col gap-4 lg:flex-row">
               {/* 👈 Left Column: Ad Card & Options */}
               <div className="w-full space-y-4 lg:w-3/12">
-                <AdCard ad={ad} compact />
-                <AdOptionsCard ad={ad} />
+                <div className="hidden sm:block">
+                  <AdCard ad={ad} compact />
+                  <AdOptionsCard ad={ad} />
+                </div>
               </div>
               {/* 👉 Right Column: Analytics & Versions */}
               <div className="w-full space-y-4 lg:w-9/12">

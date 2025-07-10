@@ -42,7 +42,7 @@ const SpendDisplay: React.FC<SpendDisplayProps> = ({
         // Purple border styling
         "border-2 border-[#9C5FF5] hover:border-[#B977F8] dark:border-[#B977F8] dark:hover:border-[#C88AFA]",
         "backdrop-blur-sm hover:scale-[1.02] active:scale-[0.98]",
-        "hover:shadow-[0_0_20px_rgba(156,95,245,0.15)]",
+
         className,
       )}
     >
