@@ -103,7 +103,7 @@ export default function SearchFilters({
       )}
     >
       {/* Main Container */}
-      <div className="overflow-hidden rounded-2xl border border-blue-200/60 bg-white shadow-sm shadow-blue-100/50 dark:border-blue-800/40 dark:bg-gray-950 dark:shadow-blue-900/20">
+      <div className="overflow-hidden rounded-2xl border border-blue-200/60 bg-white/90 shadow-sm shadow-blue-100/50 dark:border-blue-800/40 dark:bg-gray-950/90 dark:shadow-blue-900/20">
         {/* Top Section - Search Bar */}
         <div className="px-2 py-2">
           <div className="flex gap-3 sm:flex-row sm:items-center">

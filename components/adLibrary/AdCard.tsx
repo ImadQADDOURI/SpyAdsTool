@@ -1,10 +1,12 @@
 // @/components/adLibrary/AdCard.tsx
 import React, { memo, useMemo } from "react";
 import Image from "next/image";
+import clsx from "clsx";
 import {
   CircleCheck,
   CircleX,
   Facebook,
+  Flame,
   Instagram,
   MessageCircle,
 } from "lucide-react";
@@ -136,22 +138,32 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
     <Card
       className={`relative flex h-fit w-full max-w-2xl flex-col overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl`}
     >
-      {/* 📊 Collation count badge - hidden in compact mode */}
       {!compact && (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="absolute left-0 top-0 flex items-center rounded-br-2xl bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-4 py-1.5 text-white transition-all duration-300 hover:from-[#5455E0] hover:to-[#A866E7]">
-                <span className="font-semibold">{collation_count || 0}</span>
-                <span className="ml-1 text-sm">ADS</span>
+              <div className="absolute left-0 top-0 flex items-center gap-1 rounded-br-3xl rounded-tr-lg border border-[#BCA8FF] bg-[#F4EEFF]/60 px-3 py-1.5 text-[#5D4BD3] shadow-md ring-1 ring-inset ring-white/30 backdrop-blur-lg transition-all duration-300 hover:border-[#A592FF] hover:bg-[#ECE3FF]/70 dark:border-[#7D6BFF] dark:bg-[#2E2455]/70 dark:ring-[#4B3C88]/50">
+                <span
+                  className={clsx(
+                    "text-sm font-semibold tracking-tight",
+                    isHotAd
+                      ? "text-[#FF5252] dark:text-red-400"
+                      : "text-[#5D4BD3] dark:text-[#CABEFF]",
+                  )}
+                >
+                  {collation_count || 0}
+                </span>
+
+                <span className="text-xs font-medium text-[#7D6BFF] dark:text-[#AFA2FF]">
+                  ADS
+                </span>
+
                 {isHotAd && (
-                  <span
-                    className="ml-2 animate-pulse"
-                    role="img"
+                  <Flame
+                    size={16}
+                    className="scale-110 animate-pulse text-[#FF5252] drop-shadow-[0_0_4px_rgba(255,82,82,0.5)]"
                     aria-label="hot"
-                  >
-                    🔥
-                  </span>
+                  />
                 )}
               </div>
             </TooltipTrigger>
