@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { ActivitySquare } from "lucide-react";
+import { ActivitySquare, CheckCircle, Loader2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
   Area,
@@ -15,6 +15,7 @@ import {
 } from "recharts";
 
 import { AdData } from "@/types/ad";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -28,9 +29,20 @@ import AnalyzeTrends from "./AnalyzeTrends";
 interface AnalyticsProps {
   ads: AdData[];
   isComplete?: boolean;
+  isLoading?: boolean;
+  totalCount?: number | null;
+  remainingCount?: number | null;
+  onLoadMore?: () => void;
 }
 
-const Analytics: React.FC<AnalyticsProps> = ({ ads, isComplete }) => {
+const Analytics: React.FC<AnalyticsProps> = ({
+  ads,
+  isComplete = false,
+  isLoading = false,
+  totalCount = null,
+  remainingCount = null,
+  onLoadMore,
+}) => {
   const { theme } = useTheme();
 
   const { chartData, activeAdsCount } = useMemo(() => {
@@ -150,30 +162,127 @@ const Analytics: React.FC<AnalyticsProps> = ({ ads, isComplete }) => {
 
   return (
     <Card className="w-full bg-white dark:bg-gray-900">
-      <CardHeader className="flex-row items-center justify-between space-y-0 pb-4">
-        <div className="space-y-1.5">
-          <CardTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-xl font-bold text-transparent">
-            Ad Scale
-          </CardTitle>
-          <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
-            Number of active ad versions over time
-          </CardDescription>
-        </div>
-        <div className="flex items-center rounded-full bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 px-4 py-2">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-2 w-2 rounded-full bg-[#6566F1]">
-              <div className="h-2 w-2 animate-ping rounded-full bg-[#6566F1]" />
+      <CardHeader className="pb-4">
+        {/* Responsive Layout: Single row on large screens, two rows on small screens */}
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+          {/* First Row/Section: Title and Description */}
+          <div className="min-w-0 flex-shrink space-y-1.5">
+            <CardTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-lg font-bold text-transparent sm:text-xl">
+              Ad Scale
+            </CardTitle>
+            <CardDescription className="text-xs text-gray-500 dark:text-gray-400 sm:text-sm">
+              Number of active ad versions over time
+            </CardDescription>
+          </div>
+
+          {/* Second Row/Section: Button and Active Count */}
+          <div className="flex items-center justify-between gap-3 lg:justify-end lg:gap-4">
+            {/* Load More Button or Complete Status */}
+            <div className="flex flex-shrink-0 items-center">
+              {!isComplete ? (
+                <Button
+                  onClick={onLoadMore}
+                  disabled={isLoading || !onLoadMore}
+                  className="group relative h-auto min-w-[120px] transform flex-col gap-1.5 overflow-hidden rounded-xl border-0 bg-gradient-to-r from-[#6566F1] via-[#7C6AE8] to-[#B977F8] px-3 py-2.5 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-[#5855E8] hover:via-[#6B5AE5] hover:to-[#A866E5] hover:shadow-2xl active:scale-95 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-70 sm:min-w-[160px] sm:px-4 sm:py-3 lg:min-w-[180px]"
+                >
+                  {/* Shimmer effect overlay */}
+                  <div className="absolute inset-0 -translate-x-full -skew-x-12 transform bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+
+                  {/* Button Text */}
+                  <div className="relative z-10 flex w-full items-center justify-center">
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-3 w-3 animate-spin sm:h-4 sm:w-4" />
+                        <span className="text-xs font-semibold tracking-wide sm:text-sm">
+                          Loading...
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-xs font-semibold tracking-wide sm:text-sm">
+                          <span className="hidden sm:inline">
+                            Load More Versions
+                          </span>
+                          <span className="sm:hidden">Load More</span>
+                        </span>
+                        {totalCount !== null &&
+                          remainingCount !== null &&
+                          remainingCount > 0 && (
+                            <span className="ml-1.5 rounded-full bg-white/20 px-1.5 py-0.5 text-xs opacity-90 sm:ml-2">
+                              {totalCount - remainingCount}/{totalCount}
+                            </span>
+                          )}
+                      </>
+                    )}
+                  </div>
+
+                  {/* Enhanced Progress Bar Inside Button */}
+                  {totalCount !== null &&
+                    remainingCount !== null &&
+                    totalCount > 0 && (
+                      <div className="relative h-1 w-full overflow-hidden rounded-full bg-white/20 shadow-inner sm:h-1.5">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-white/80 to-white/60 shadow-sm transition-all duration-700 ease-out"
+                          style={{
+                            width: `${Math.max(0, Math.min(100, ((totalCount - remainingCount) / totalCount) * 100))}%`,
+                          }}
+                        />
+                        {/* Progress glow effect */}
+                        <div
+                          className="absolute top-0 h-full rounded-full bg-white/40 blur-sm transition-all duration-700 ease-out"
+                          style={{
+                            width: `${Math.max(0, Math.min(100, ((totalCount - remainingCount) / totalCount) * 100))}%`,
+                          }}
+                        />
+                      </div>
+                    )}
+                </Button>
+              ) : (
+                <div className="group relative flex h-auto min-w-[120px] flex-col gap-1.5 overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 px-3 py-2.5 text-white shadow-lg transition-all duration-300 hover:shadow-xl sm:min-w-[160px] sm:px-4 sm:py-3 lg:min-w-[180px]">
+                  {/* Success shimmer effect */}
+                  <div className="absolute inset-0 -skew-x-12 transform animate-pulse bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+                  {/* Completed Text */}
+                  <div className="relative z-10 flex w-full items-center justify-center">
+                    <CheckCircle className="mr-2 h-3 w-3 animate-bounce sm:h-4 sm:w-4" />
+                    <span className="text-xs font-semibold tracking-wide sm:text-sm">
+                      <span className="hidden sm:inline">All Loaded</span>
+                      <span className="sm:hidden">Complete</span>
+                    </span>
+                    {totalCount !== null && (
+                      <span className="ml-1.5 rounded-full bg-white/20 px-1.5 py-0.5 text-xs opacity-90 sm:ml-2">
+                        {totalCount}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Completed Progress Bar with celebration effect */}
+                  <div className="relative h-1 w-full overflow-hidden rounded-full bg-white/20 shadow-inner sm:h-1.5">
+                    <div className="h-full w-full rounded-full bg-gradient-to-r from-white/80 to-white/60 shadow-sm" />
+                    <div className="absolute top-0 h-full w-full animate-pulse rounded-full bg-white/40 blur-sm" />
+                  </div>
+                </div>
+              )}
             </div>
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Active Versions
-            </span>
-            <span className="text-lg font-bold text-[#6566F1] dark:text-[#B977F8]">
-              {activeAdsCount}
-            </span>
+
+            {/* Active Versions Count */}
+            <div className="flex flex-shrink-0 items-center rounded-full bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 px-2 py-1.5 sm:px-4 sm:py-2">
+              <div className="flex items-center gap-1.5 sm:gap-2.5">
+                <div className="flex h-1.5 w-1.5 rounded-full bg-[#6566F1] sm:h-2 sm:w-2">
+                  <div className="h-1.5 w-1.5 animate-ping rounded-full bg-[#6566F1] sm:h-2 sm:w-2" />
+                </div>
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 sm:text-sm">
+                  <span className="hidden sm:inline">Active Versions</span>
+                  <span className="sm:hidden">Active</span>
+                </span>
+                <span className="text-sm font-bold text-[#6566F1] dark:text-[#B977F8] sm:text-lg">
+                  {activeAdsCount}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </CardHeader>
-
       <CardContent>
         {/* Main Content Container */}
         <div className="flex flex-col gap-4">

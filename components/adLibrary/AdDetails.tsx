@@ -310,35 +310,15 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
               </div>
               {/* 👉 Right Column: Analytics & Versions */}
               <div className="w-full space-y-4 lg:w-9/12">
-                <div className="rounded-lg border border-gray-200/80 bg-white shadow-sm dark:border-gray-700/60 dark:bg-gray-900/50">
-                  <div className="flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:justify-between">
-                    {!isComplete ? (
-                      <Button
-                        onClick={fetchAdDetails}
-                        disabled={isLoading}
-                        size="sm"
-                      >
-                        {isLoading ? "Loading..." : "Load More Versions"}
-                      </Button>
-                    ) : (
-                      <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                        <CheckCircle className="h-5 w-5" />
-                        <span className="text-sm font-medium">
-                          All versions loaded
-                        </span>
-                      </div>
-                    )}
-                    {totalCount !== null && (
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
-                        {remainingCount !== null && remainingCount > 0
-                          ? `${remainingCount} of ${totalCount} ads remaining`
-                          : `${totalCount} total ads`}
-                      </div>
-                    )}
-                  </div>
-                  <div className="min-h-[250px] p-2">
-                    <Analytics ads={detailedAds} isComplete={isComplete} />
-                  </div>
+                <div className="min-h-[400px]">
+                  <Analytics
+                    ads={detailedAds}
+                    isComplete={isComplete}
+                    isLoading={isLoading}
+                    totalCount={totalCount}
+                    remainingCount={remainingCount}
+                    onLoadMore={fetchAdDetails}
+                  />
                 </div>
               </div>
             </div>
