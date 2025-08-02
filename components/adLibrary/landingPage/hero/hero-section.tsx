@@ -258,7 +258,7 @@ const HeroSection = () => {
   return (
     <div className="relative min-h-[75vh] overflow-hidden">
       {/* 🌌 Animated Background */}
-      <AnimatedBackground
+      {/* <AnimatedBackground
         className="absolute inset-0"
         horizontalPosition={20}
         verticalPosition={30}
@@ -266,16 +266,16 @@ const HeroSection = () => {
         enableMouseInteraction={true}
         mouseInfluence={CONFIG.background.mouseInfluence}
         colors={CONFIG.background.colors}
-      />
+      /> */}
 
       {/* ✨ Particles Layer */}
-      <ParticlesLayer
+      {/* <ParticlesLayer
         quantity={CONFIG.particles.quantity}
         preset={CONFIG.particles.preset}
         size={CONFIG.particles.size}
         speed={CONFIG.particles.speed}
         className=""
-      />
+      /> */}
 
       {/* 🎯 Main Hero Content */}
       <div className="relative z-10">

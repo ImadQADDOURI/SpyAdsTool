@@ -17,7 +17,7 @@ export default function HomePage() {
       <section className={`relative w-full py-12 sm:py-16 lg:py-20`}>
         {/* Animated Background */}
         <div className="absolute inset-0 -z-10">
-          <AnimatedBackground />
+          {/* <AnimatedBackground /> */}
         </div>
 
         {/* Explore Section Content */}
