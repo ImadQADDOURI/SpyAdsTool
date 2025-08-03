@@ -261,7 +261,7 @@ const HeroSection = () => {
         {/* 🎯 Main Hero Content */}
         <div className="relative z-10">
           {/* Main Grid Container */}
-          <div className="container mx-auto px-6 lg:px-8">
+          <div className="container mx-auto mb-4 px-6 lg:px-8">
             <div className="grid min-h-[70vh] grid-cols-1 items-center gap-12 pt-16 lg:grid-cols-2 lg:gap-16">
               {/* 📝 Left Column - Content */}
               <div className="animate-fade-in-up space-y-8">
