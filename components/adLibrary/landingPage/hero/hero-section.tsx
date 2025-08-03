@@ -362,7 +362,7 @@ const HeroSection = () => {
               </div>
 
               {/* 🖼️ Right Column - Floating Images with Feature Pills */}
-              <div className="animate-fade-in-scale relative flex h-[450px] items-center justify-center lg:h-[500px]">
+              <div className="animate-fade-in-scale relative flex h-[250px] items-center justify-center lg:h-[500px]">
                 {/* 🖼️ Render Floating Images from Configuration */}
                 {CONFIG.heroImages.map((image) => (
                   <div key={image.id} className={image.position.className}>
