@@ -336,7 +336,7 @@ const HeroSection = () => {
                     size="md"
                     icon={Search}
                   >
-                    Start <span className="hidden md:inline">Now</span>
+                    Start Now
                   </CTAButton>
 
                   <CTAButton
@@ -345,7 +345,7 @@ const HeroSection = () => {
                     size="md"
                     icon={Chrome}
                   >
-                    <span className="hidden md:inline">Install</span> Extension
+                    Install Extension
                   </CTAButton>
                 </div>
 
