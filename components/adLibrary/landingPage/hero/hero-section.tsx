@@ -267,7 +267,7 @@ const HeroSection = () => {
               <div className="animate-fade-in-up space-y-8">
                 {/* 🎨 Main Headline with Aurora Text and Flip Words */}
                 <div className="space-y-4">
-                  <div className="text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-6xl">
+                  <div className="text-3xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-5xl">
                     <div className="mb-2">
                       <AuroraText
                         colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
