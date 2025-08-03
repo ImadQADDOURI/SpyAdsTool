@@ -34,7 +34,7 @@ export default function TrustedBySection() {
   return (
     <div className="relative py-8">
       {/* 📝 Section title */}
-      <div className="mb-8 animate-fade-in text-center">
+      <div className="mb-4 animate-fade-in text-center">
         <div className="mb-2 flex items-center justify-center gap-2">
           <Building2 className="h-4 w-4 text-gray-400" />
           <p className="text-sm font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">

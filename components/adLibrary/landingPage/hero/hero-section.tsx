@@ -13,15 +13,13 @@ import {
 } from "lucide-react";
 
 import { CTAButton } from "../exploreSection/CTAButton";
-// Import the provided components
-import AnimatedBackground from "./animated-background";
 import { AuroraText } from "./AuroraText";
 import AvatarTrustedby from "./AvatarTrustedby";
 import { FlipWords } from "./flip-words";
 import FloatingGlassImage from "./FloatingGlassImage";
 import FloatingGlassTextIcon from "./FloatingGlassTextIcon";
 import GlassVideo from "./GlassVideo";
-import ParticlesLayer from "./particles-layer";
+import GradientBackground from "./gradient-background";
 import TrustedBySection from "./TrustedBySection";
 
 // 🎛️ Centralized Configuration - Easy to customize everything in one place
@@ -91,6 +89,7 @@ const CONFIG = {
       settings: {
         glass: true,
         lens: true,
+        priority: true,
       },
     },
     {
@@ -112,7 +111,7 @@ const CONFIG = {
     },
     {
       id: "bottom-left",
-      src: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
       alt: "Hero banner 4",
       position: {
         className: "absolute bottom-8 left-8 z-10",
@@ -129,7 +128,7 @@ const CONFIG = {
     },
     {
       id: "bottom-right",
-      src: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
       alt: "Hero banner 5",
       position: {
         className: "absolute bottom-0 right-8 z-10",
@@ -182,23 +181,23 @@ const CONFIG = {
         iconClass: "w-4 h-4 text-purple-600 dark:text-purple-400",
       },
     },
-    {
-      id: "visual-analytics",
-      text: "Analytics",
-      icon: BarChart3,
-      position: {
-        className: "absolute -left-12 top-1/2 z-30 hidden lg:block",
-      },
-      animation: {
-        floatAmplitude: 6,
-        floatSpeed: 8,
-        delay: 1.6,
-      },
-      styling: {
-        textClass: "text-pink-700 dark:text-pink-300 font-semibold text-sm",
-        iconClass: "w-4 h-4 text-pink-600 dark:text-pink-400",
-      },
-    },
+    // {
+    //   id: "visual-analytics",
+    //   text: "Analytics",
+    //   icon: BarChart3,
+    //   position: {
+    //     className: "absolute -left-12 top-1/2 z-30 hidden lg:block",
+    //   },
+    //   animation: {
+    //     floatAmplitude: 6,
+    //     floatSpeed: 8,
+    //     delay: 1.6,
+    //   },
+    //   styling: {
+    //     textClass: "text-pink-700 dark:text-pink-300 font-semibold text-sm",
+    //     iconClass: "w-4 h-4 text-pink-600 dark:text-pink-400",
+    //   },
+    // },
     {
       id: "download-media",
       text: "Media",
@@ -257,174 +256,152 @@ const CONFIG = {
 const HeroSection = () => {
   return (
     <div className="relative min-h-[75vh] overflow-hidden">
-      {/* 🌌 Animated Background */}
-      {/* <AnimatedBackground
-        className="absolute inset-0"
-        horizontalPosition={20}
-        verticalPosition={30}
-        opacity={CONFIG.background.opacity}
-        enableMouseInteraction={true}
-        mouseInfluence={CONFIG.background.mouseInfluence}
-        colors={CONFIG.background.colors}
-      /> */}
+      {/* 🎨 Animated background */}
+      <GradientBackground intensity={"vibrant"}>
+        {/* 🎯 Main Hero Content */}
+        <div className="relative z-10">
+          {/* Main Grid Container */}
+          <div className="container mx-auto px-6 lg:px-8">
+            <div className="grid min-h-[70vh] grid-cols-1 items-center gap-12 pt-16 lg:grid-cols-2 lg:gap-16">
+              {/* 📝 Left Column - Content */}
+              <div className="animate-fade-in-up space-y-8">
+                {/* 🎨 Main Headline with Aurora Text and Flip Words */}
+                <div className="space-y-4">
+                  <div className="text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-6xl">
+                    <div className="mb-2">
+                      <AuroraText
+                        colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+                        className="inline-block"
+                      >
+                        Dominate
+                      </AuroraText>{" "}
+                      <FlipWords
+                        words={CONFIG.flipWords}
+                        duration={CONFIG.animations.flipWordsDuration}
+                        className="text-4xl md:text-6xl"
+                      />
+                    </div>
 
-      {/* ✨ Particles Layer */}
-      {/* <ParticlesLayer
-        quantity={CONFIG.particles.quantity}
-        preset={CONFIG.particles.preset}
-        size={CONFIG.particles.size}
-        speed={CONFIG.particles.speed}
-        className=""
-      /> */}
+                    <div>
+                      With{" "}
+                      <AuroraText
+                        colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+                        className="inline-block"
+                      >
+                        Filters
+                      </AuroraText>{" "}
+                      +{" "}
+                      <AuroraText
+                        colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+                        className="inline-block"
+                      >
+                        AI
+                      </AuroraText>{" "}
+                      Slice &amp; Dice Instantly.
+                    </div>
+                  </div>
+                </div>
 
-      {/* 🎯 Main Hero Content */}
-      <div className="relative z-10">
-        {/* Main Grid Container */}
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="grid min-h-[70vh] grid-cols-1 items-center gap-12 pt-16 lg:grid-cols-2 lg:gap-16">
-            {/* 📝 Left Column - Content */}
-            <div className="animate-fade-in-up space-y-8">
-              {/* 🎨 Main Headline with Aurora Text and Flip Words */}
-              <div className="space-y-4">
-                <div className="text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl">
-                  <div className="mb-2">
-                    <AuroraText
-                      colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
-                      className="inline-block"
-                    >
-                      Dominate
-                    </AuroraText>{" "}
-                    <FlipWords
-                      words={CONFIG.flipWords}
-                      duration={CONFIG.animations.flipWordsDuration}
+                {/* 📄 Supporting Subtitle */}
+                <p className="max-w-2xl text-xl leading-relaxed text-gray-600 dark:text-gray-300">
+                  Tap into{" "}
+                  <AuroraText
+                    colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+                    className="inline"
+                  >
+                    millions of ads
+                  </AuroraText>
+                  , unleash{" "}
+                  <AuroraText
+                    colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+                    className="inline"
+                  >
+                    10+ advanced filters
+                  </AuroraText>
+                  , and leverage{" "}
+                  <AuroraText
+                    colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+                    className="inline"
+                  >
+                    AI-powered insights
+                  </AuroraText>{" "}
+                  to skyrocket your eCom profits.
+                </p>
+
+                {/* 🚀 CTA Buttons */}
+                <div className="flex flex-row gap-4">
+                  <CTAButton
+                    href="/explore"
+                    forceMode="dark"
+                    size="md"
+                    icon={Search}
+                  >
+                    Start <span className="hidden md:inline">Now</span>
+                  </CTAButton>
+
+                  <CTAButton
+                    href="/extension"
+                    variant="outline"
+                    size="md"
+                    icon={Chrome}
+                  >
+                    <span className="hidden md:inline">Install</span> Extension
+                  </CTAButton>
+                </div>
+
+                {/* 👥 Trusted By Avatars */}
+                <div className="flex items-center gap-6">
+                  <AvatarTrustedby />
+                </div>
+
+                {/* 💳 No Credit Card Required */}
+                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                  <CreditCard className="h-4 w-4" />
+                  <span>No credit card required</span>
+                </div>
+              </div>
+
+              {/* 🖼️ Right Column - Floating Images with Feature Pills */}
+              <div className="animate-fade-in-scale relative flex h-[450px] items-center justify-center lg:h-[500px]">
+                {/* 🖼️ Render Floating Images from Configuration */}
+                {CONFIG.heroImages.map((image) => (
+                  <div key={image.id} className={image.position.className}>
+                    <FloatingGlassImage
+                      src={image.src}
+                      alt={image.alt}
+                      floatAmplitude={image.animation.floatAmplitude}
+                      floatSpeed={image.animation.floatSpeed}
+                      delay={image.animation.delay}
+                      glass={image.settings.glass}
+                      priority={image.settings.priority}
                     />
                   </div>
+                ))}
 
-                  <div>
-                    Slice &amp; Dice with{" "}
-                    <AuroraText
-                      colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
-                      className="inline-block"
-                    >
-                      Filters
-                    </AuroraText>{" "}
-                    +{" "}
-                    <AuroraText
-                      colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
-                      className="inline-block"
-                    >
-                      AI
-                    </AuroraText>
-                    , Instantly.
+                {/* 🏷️ Render Feature Pills from Configuration */}
+                {CONFIG.featurePills.map((pill) => (
+                  <div key={pill.id} className={pill.position.className}>
+                    <FloatingGlassTextIcon
+                      text={pill.text}
+                      Icon={pill.icon}
+                      floatAmplitude={pill.animation.floatAmplitude}
+                      floatSpeed={pill.animation.floatSpeed}
+                      delay={pill.animation.delay}
+                      textClass={pill.styling.textClass}
+                      iconClass={pill.styling.iconClass}
+                    />
                   </div>
-                </div>
+                ))}
               </div>
-
-              {/* 📄 Supporting Subtitle */}
-              <p className="max-w-2xl text-xl leading-relaxed text-gray-600 dark:text-gray-300">
-                Tap into{" "}
-                <AuroraText
-                  colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
-                  className="inline"
-                >
-                  millions of ads
-                </AuroraText>
-                , unleash{" "}
-                <AuroraText
-                  colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
-                  className="inline"
-                >
-                  10+ advanced filters
-                </AuroraText>
-                , and leverage{" "}
-                <AuroraText
-                  colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
-                  className="inline"
-                >
-                  AI-powered insights
-                </AuroraText>{" "}
-                to skyrocket your eCom profits.
-              </p>
-
-              {/* 🚀 CTA Buttons */}
-              <div className="flex flex-row gap-4">
-                <CTAButton
-                  href="/explore"
-                  forceMode="dark"
-                  size="md"
-                  icon={Search}
-                >
-                  Start Spying Now
-                </CTAButton>
-
-                <CTAButton
-                  href="/extension"
-                  variant="outline"
-                  size="md"
-                  icon={Chrome}
-                >
-                  Install Extension
-                </CTAButton>
-              </div>
-
-              {/* 👥 Trusted By Avatars */}
-              <div className="flex items-center gap-6">
-                <AvatarTrustedby />
-              </div>
-
-              {/* 💳 No Credit Card Required */}
-              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <CreditCard className="h-4 w-4" />
-                <span>No credit card required</span>
-              </div>
-            </div>
-
-            {/* 🖼️ Right Column - Floating Images with Feature Pills */}
-            <div className="animate-fade-in-scale relative flex h-[450px] items-center justify-center lg:h-[500px]">
-              {/* 🖼️ Render Floating Images from Configuration */}
-              {CONFIG.heroImages.map((image) => (
-                <div key={image.id} className={image.position.className}>
-                  <FloatingGlassImage
-                    src={image.src}
-                    alt={image.alt}
-                    floatAmplitude={image.animation.floatAmplitude}
-                    floatSpeed={image.animation.floatSpeed}
-                    delay={image.animation.delay}
-                    glass={image.settings.glass}
-                    priority={image.settings.priority}
-                  />
-                </div>
-              ))}
-
-              {/* 🏷️ Render Feature Pills from Configuration */}
-              {CONFIG.featurePills.map((pill) => (
-                <div key={pill.id} className={pill.position.className}>
-                  <FloatingGlassTextIcon
-                    text={pill.text}
-                    Icon={pill.icon}
-                    floatAmplitude={pill.animation.floatAmplitude}
-                    floatSpeed={pill.animation.floatSpeed}
-                    delay={pill.animation.delay}
-                    textClass={pill.styling.textClass}
-                    iconClass={pill.styling.iconClass}
-                  />
-                </div>
-              ))}
             </div>
           </div>
+
+          {/* 🏢 Trusted By Section */}
+          <div className="animate-fade-in-up-delayed-2 relative z-10">
+            <TrustedBySection />
+          </div>
         </div>
-
-        {/* 🎬 Hero Video Section */}
-        {/* <div className="animate-fade-in-up-delayed relative z-10 flex justify-center px-6 pb-12 pt-4">
-          <GlassVideo src={CONFIG.videoUrl} glass={true} />
-        </div> */}
-
-        {/* 🏢 Trusted By Section */}
-        <div className="animate-fade-in-up-delayed-2 relative z-10 pb-16">
-          <TrustedBySection />
-        </div>
-      </div>
-
+      </GradientBackground>
       {/* 🎨 Custom Styles */}
       <style jsx>{`
         .container {
