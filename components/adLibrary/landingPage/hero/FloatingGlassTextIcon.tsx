@@ -1,85 +1,109 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { LucideIcon } from "lucide-react";
 
 interface FloatingGlassTextIconProps {
-  /** Text to display */
+  /** 📝 Text content */
   text: string;
-  /** Icon component from lucide-react */
+  /** 🎨 Lucide icon component */
   Icon: LucideIcon;
-  /** animation vertical amplitude in px */
+  /** 🌊 Float amplitude (px) */
   floatAmplitude?: number;
-  /** animation duration in seconds */
+  /** ⏰ Float speed (seconds) */
   floatSpeed?: number;
-  /** animation delay in seconds */
+  /** ⏳ Animation delay (seconds) */
   delay?: number;
-  /** text class to set color and style in dark / white themes */
+  /** 🔮 Glassmorphism effect */
+  glass?: boolean;
+  /** 📦 Glass padding (px) */
+  glassPadding?: number;
+  /** 📝 Text styling */
   textClass?: string;
-  /** icon class to set color and style in dark / white themes */
+  /** 🎯 Icon styling */
   iconClass?: string;
+  /** 🎨 Additional CSS classes */
+  className?: string;
 }
 
 const FloatingGlassTextIcon: React.FC<FloatingGlassTextIconProps> = ({
   text,
   Icon,
-  floatAmplitude = 5,
+  floatAmplitude = 6,
   floatSpeed = 5,
   delay = 0,
+  glass = true,
+  glassPadding = 8,
   textClass = "text-gray-800 dark:text-gray-100 font-medium",
-  iconClass = "w-5 h-5 text-gray-800 dark:text-gray-100",
+  iconClass = "w-5 h-5 text-gray-600 dark:text-gray-300",
+  className = "",
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  // 👁️ Visibility detection for performance
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.1 },
+    );
+
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <span
-      className="group relative inline-block"
+    <div
+      ref={containerRef}
+      className={`group relative inline-block ${className}`}
       style={{
-        animation: `float ${floatSpeed}s ease-in-out ${delay}s infinite`,
+        animation: isVisible
+          ? `float-${floatSpeed}-${floatAmplitude} ${floatSpeed}s ease-in-out ${delay}s infinite`
+          : "none",
       }}
     >
-      {/* wrapper that sizes to content */}
-      <span className="relative inline-block p-2">
-        {/* 🔮 Glassmorphism overlay */}
-        <span
-          className="absolute inset-0 rounded-2xl bg-clip-padding backdrop-filter transition-shadow duration-300 group-hover:shadow-2xl"
-          style={{
-            backgroundColor: "rgba(255, 255, 255, 0.25)",
-            border: "1px solid rgba(255, 255, 255, 0.18)",
-            boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
-          }}
-        />
+      {/* 🔮 Glass container */}
+      <div className="relative" style={{ padding: glass ? glassPadding : 0 }}>
+        {/* Glass overlay */}
+        {glass && (
+          <div
+            className="absolute inset-0 rounded-2xl backdrop-blur-sm transition-all duration-300 group-hover:shadow-2xl"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+            }}
+          />
+        )}
 
-        {/* 📄 Text + Icon container */}
-        <span className="relative z-10 flex items-center space-x-2">
+        {/* 📄 Content container */}
+        <div className="relative z-10 flex items-center gap-2 transition-transform duration-300 group-hover:scale-[1.02]">
           <Icon className={iconClass} />
           <span className={textClass}>{text}</span>
-        </span>
+        </div>
 
-        {/* ✨ Gradient glow on hover */}
-        <span className="via-purple-500/8 pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-t from-blue-500/10 to-pink-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        {/* ✨ Hover effects */}
+        <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-t from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div className="pointer-events-none absolute inset-0 rounded-2xl ring-0 ring-blue-400/30 transition-all duration-300 group-hover:ring-1" />
+      </div>
 
-        {/* 🌟 Hover ring effect */}
-        <span className="pointer-events-none absolute inset-0 rounded-2xl ring-0 ring-blue-300/40 transition-all duration-300 group-hover:ring-2" />
-      </span>
-
-      {/* Keyframes + backdrop blur shim */}
-      <style jsx>{`
-        @keyframes float {
-          0% {
-            transform: translateY(0px);
+      {/* 🎭 Animation keyframes */}
+      {isVisible && (
+        <style jsx>{`
+          @keyframes float-${floatSpeed}-${floatAmplitude} {
+            0%,
+            100% {
+              transform: translateY(0px);
+            }
+            50% {
+              transform: translateY(-${floatAmplitude}px);
+            }
           }
-          50% {
-            transform: translateY(-${floatAmplitude}px);
-          }
-          100% {
-            transform: translateY(0px);
-          }
-        }
-        .backdrop-filter {
-          backdrop-filter: blur(4px);
-          -webkit-backdrop-filter: blur(4px);
-        }
-      `}</style>
-    </span>
+        `}</style>
+      )}
+    </div>
   );
 };
 

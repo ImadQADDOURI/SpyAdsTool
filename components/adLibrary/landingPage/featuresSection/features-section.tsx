@@ -256,9 +256,6 @@ function FeatureCard({ feature, index }: FeatureCardProps) {
                   floatAmplitude={10}
                   floatSpeed={6}
                   glass
-                  lens
-                  zoomFactor={1.4}
-                  lensSize={140}
                 />
               </div>
             </div>

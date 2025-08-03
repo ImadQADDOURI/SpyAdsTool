@@ -391,8 +391,6 @@ const HeroSection = () => {
                     floatSpeed={image.animation.floatSpeed}
                     delay={image.animation.delay}
                     glass={image.settings.glass}
-                    lens={image.settings.lens}
-                    zoomFactor={image.settings.zoomFactor}
                     priority={image.settings.priority}
                   />
                 </div>
@@ -417,9 +415,9 @@ const HeroSection = () => {
         </div>
 
         {/* 🎬 Hero Video Section */}
-        <div className="animate-fade-in-up-delayed relative z-10 flex justify-center px-6 pb-12 pt-4">
+        {/* <div className="animate-fade-in-up-delayed relative z-10 flex justify-center px-6 pb-12 pt-4">
           <GlassVideo src={CONFIG.videoUrl} glass={true} />
-        </div>
+        </div> */}
 
         {/* 🏢 Trusted By Section */}
         <div className="animate-fade-in-up-delayed-2 relative z-10 pb-16">
