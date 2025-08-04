@@ -77,24 +77,32 @@ export default function ExtensionSection({
     setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
+  const goToSlide = (index: number) => {
+    setAutoPlay(false);
+    setCurrentIndex(index);
+  };
+
   return (
     <section className={`relative w-full ${className}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl">
-          {/* 🌟 Radial gradient “soft halo” */}
-          <div className="pointer-events-none absolute left-1/2 top-0 z-0 h-full w-full -translate-x-1/2 -translate-y-1/4 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(236,72,153,0.35),transparent)] opacity-65 blur-3xl" />
+          {/* 🌟 Enhanced radial gradient with better positioning */}
+          <div className="pointer-events-none absolute inset-0 z-0">
+            <div className="absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(236,72,153,0.4),rgba(139,92,246,0.2),transparent)] opacity-70 blur-3xl" />
+            <div className="absolute right-1/4 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.3),transparent)] opacity-50 blur-2xl" />
+          </div>
 
-          <div className="relative z-10 px-6 py-12 sm:px-8 lg:px-12">
-            {/* 📝 Header Content */}
-            <div className="relative mx-auto mb-12 max-w-4xl text-center">
-              <div className="mb-4 flex items-center justify-center gap-2">
-                <Chrome className="h-8 w-8 text-pink-500" />
-                <span className="rounded-full bg-pink-500/20 px-4 py-1.5 text-sm font-medium uppercase tracking-wider text-pink-400">
+          <div className="relative z-10 px-6 py-10 sm:px-8 lg:px-12">
+            {/* 📝 Compact Header Content */}
+            <div className="relative mx-auto mb-8 max-w-5xl text-center">
+              <div className="mb-3 flex items-center justify-center gap-2">
+                <Chrome className="h-6 w-6 animate-pulse text-pink-500" />
+                <span className="rounded-full bg-pink-500/20 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-pink-400 backdrop-blur-sm">
                   Browser Extension
                 </span>
               </div>
 
-              <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
+              <h1 className="mb-4 text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
                 {EXTENSION_CONFIG.headline.prefix}{" "}
                 <AuroraText
                   colors={EXTENSION_CONFIG.gradientColors}
@@ -103,19 +111,22 @@ export default function ExtensionSection({
                   {EXTENSION_CONFIG.headline.highlight}
                 </AuroraText>
                 <br className="hidden sm:block" />
-                {EXTENSION_CONFIG.headline.suffix}
+                <span className="text-white/90">
+                  {EXTENSION_CONFIG.headline.suffix}
+                </span>
               </h1>
 
-              <p className="mx-auto mb-8 max-w-3xl text-lg leading-relaxed text-white/80 sm:text-xl">
+              <p className="mx-auto mb-6 max-w-3xl text-base leading-relaxed text-white/75 sm:text-lg">
                 {EXTENSION_CONFIG.subtitle}
               </p>
 
               <CTAButton
-                href="/explore"
+                href={EXTENSION_CONFIG.ctaLink}
                 forceMode="dark"
                 icon={Download}
                 iconPosition="right"
-                size="lg"
+                size="md"
+                onClick={onCtaClick}
               >
                 {EXTENSION_CONFIG.ctaText}
               </CTAButton>
@@ -123,25 +134,8 @@ export default function ExtensionSection({
 
             {/* 🖼️ Screenshots Carousel */}
             <div className="relative">
-              <div className="relative h-[400px] overflow-hidden rounded-xl">
-                {/* Navigation Buttons */}
-                <button
-                  onClick={goToPrev}
-                  className="absolute left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all hover:bg-black/80"
-                  aria-label="Previous screenshot"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-
-                <button
-                  onClick={goToNext}
-                  className="absolute right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all hover:bg-black/80"
-                  aria-label="Next screenshot"
-                >
-                  <ChevronRight size={20} />
-                </button>
-
-                {/* Screenshots */}
+              {/* Main carousel container */}
+              <div className="relative mx-auto h-64 max-w-6xl overflow-visible rounded-xl sm:h-80 lg:h-96">
                 <div className="flex h-full items-center justify-center">
                   {screenshots.map((screenshot, index) => {
                     const isActive = index === currentIndex;
@@ -152,23 +146,28 @@ export default function ExtensionSection({
                     return (
                       <div
                         key={screenshot.id}
-                        className={`absolute h-[350px] w-[600px] transition-all duration-500 ease-out ${
+                        className={`absolute transition-all duration-500 ease-out ${
                           isActive
-                            ? "z-10 scale-100 opacity-100"
+                            ? "z-10 h-full w-full scale-100 opacity-100 sm:w-4/5 lg:w-3/5"
                             : isPrev
-                              ? "z-5 -translate-x-[60%] scale-75 opacity-40"
+                              ? "z-5 h-3/4 w-3/4 -translate-x-[45%] scale-90 opacity-60 sm:h-4/5 sm:w-3/5 sm:-translate-x-[55%] sm:scale-75 lg:-translate-x-[65%]"
                               : isNext
-                                ? "z-5 translate-x-[60%] scale-75 opacity-40"
+                                ? "z-5 h-3/4 w-3/4 translate-x-[45%] scale-90 opacity-60 sm:h-4/5 sm:w-3/5 sm:translate-x-[55%] sm:scale-75 lg:translate-x-[65%]"
                                 : "scale-50 opacity-0"
                         }`}
                       >
-                        <div className="h-full w-full overflow-hidden rounded-lg border border-white/10 bg-black/20">
-                          <img
-                            src={screenshot.image || "/placeholder.svg"}
-                            alt={screenshot.alt}
-                            className="h-full w-full object-contain p-4"
-                            loading="lazy"
-                          />
+                        <div className="h-full w-full overflow-hidden rounded-lg border border-white/10 bg-gradient-to-br from-white/10 to-white/5 shadow-lg shadow-black/20 backdrop-blur-sm">
+                          <div className="flex h-full w-full items-center justify-center p-2 sm:p-4">
+                            <img
+                              src={
+                                screenshot.image ||
+                                "/placeholder.svg?height=400&width=600"
+                              }
+                              alt={screenshot.alt}
+                              className="max-h-full max-w-full rounded-md object-contain"
+                              loading="lazy"
+                            />
+                          </div>
                         </div>
                       </div>
                     );
@@ -176,23 +175,41 @@ export default function ExtensionSection({
                 </div>
               </div>
 
-              {/* 🔘 Slide Indicators */}
-              <div className="mt-6 flex justify-center gap-2">
-                {screenshots.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      setCurrentIndex(index);
-                      setAutoPlay(false);
-                    }}
-                    className={`h-2 rounded-full transition-all ${
-                      currentIndex === index
-                        ? "w-8 bg-white"
-                        : "w-2 bg-white/30 hover:bg-white/50"
-                    }`}
-                    aria-label={`Go to screenshot ${index + 1}`}
-                  />
-                ))}
+              {/* 🎮 Navigation Controls - Positioned below carousel */}
+              <div className="mt-6 flex items-center justify-center gap-4">
+                {/* Previous Button */}
+                <button
+                  onClick={goToPrev}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-all hover:scale-110 hover:bg-white/20 active:scale-95"
+                  aria-label="Previous screenshot"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+
+                {/* 🔘 Slide Indicators */}
+                <div className="flex gap-2">
+                  {screenshots.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToSlide(index)}
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        currentIndex === index
+                          ? "w-8 bg-gradient-to-r from-pink-400 to-purple-400"
+                          : "w-2 bg-white/30 hover:scale-125 hover:bg-white/50"
+                      }`}
+                      aria-label={`Go to screenshot ${index + 1}`}
+                    />
+                  ))}
+                </div>
+
+                {/* Next Button */}
+                <button
+                  onClick={goToNext}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-all hover:scale-110 hover:bg-white/20 active:scale-95"
+                  aria-label="Next screenshot"
+                >
+                  <ChevronRight size={18} />
+                </button>
               </div>
             </div>
           </div>
