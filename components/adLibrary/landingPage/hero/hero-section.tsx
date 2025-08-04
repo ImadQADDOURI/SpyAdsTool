@@ -49,7 +49,7 @@ const CONFIG = {
   },
 
   // Content
-  flipWords: ["Ads", "Products", "Stores", "Trends", "Analytics"],
+  flipWords: ["Ads", "Products", "Stores", "Trends"],
   videoUrl:
     "https://assets-static.invideo.io/files/Invideo_Demo_HP_18_10_2024_V001_1921f1aee3.mp4",
 
@@ -267,7 +267,7 @@ const HeroSection = () => {
               <div className="animate-fade-in-up space-y-8">
                 {/* 🎨 Main Headline with Aurora Text and Flip Words */}
                 <div className="space-y-4">
-                  <div className="text-3xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-5xl">
+                  <div className="text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white sm:text-5xl">
                     <div className="mb-2">
                       <AuroraText
                         colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
@@ -278,7 +278,7 @@ const HeroSection = () => {
                       <FlipWords
                         words={CONFIG.flipWords}
                         duration={CONFIG.animations.flipWordsDuration}
-                        className="text-4xl md:text-6xl"
+                        className="text-4xl sm:text-5xl"
                       />
                     </div>
 

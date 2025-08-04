@@ -182,12 +182,12 @@ function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
 
               {/* 🎯 Title & Highlight */}
               <div>
-                <h2 className="text-2xl font-bold leading-tight tracking-tight text-white sm:text-3xl">
+                <h2 className="text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl">
                   {feature.title}
                 </h2>
                 <div className="mt-1">
                   <AuroraText
-                    className="text-2xl font-bold leading-tight tracking-tight sm:text-3xl"
+                    className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl"
                     colors={[
                       feature.accentColor,
                       "#ffffff",
