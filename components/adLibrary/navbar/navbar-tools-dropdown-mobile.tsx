@@ -52,6 +52,12 @@ export function NavbarToolsDropdownMobile({
           >
             Tools
           </span>
+          <Badge
+            variant="outline"
+            className="border-green-500 text-green-600 dark:text-green-400"
+          >
+            Free
+          </Badge>
         </div>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}

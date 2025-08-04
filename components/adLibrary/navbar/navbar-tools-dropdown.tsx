@@ -55,6 +55,12 @@ export function NavbarToolsDropdown({ pathname }: NavbarToolsDropdownProps) {
             )}
           />
           <span>Tools</span>
+          <Badge
+            variant="outline"
+            className="border-green-500 text-green-600 dark:text-green-400"
+          >
+            Free
+          </Badge>
           <motion.div
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.2 }}
