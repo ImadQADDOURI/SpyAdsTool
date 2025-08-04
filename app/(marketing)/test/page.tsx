@@ -5,11 +5,12 @@ import { useEffect, useState } from "react";
 import { AnalyticsSection } from "@/components/adLibrary/landingPage/analyticsSection/AnalyticsSection";
 import { CTASection } from "@/components/adLibrary/landingPage/CTASection";
 import ExtensionSection from "@/components/adLibrary/landingPage/exploreSection/ExtensionSection";
-import TopProductsStoresSection from "@/components/adLibrary/landingPage/exploreSection/TopProductsStoresSection";
-import TrendSection from "@/components/adLibrary/landingPage/exploreSection/TrendSection";
+// import TopProductsStoresSection from "@/components/adLibrary/landingPage/exploreSection/TopProductsStoresSection";
+import TrendingSection from "@/components/adLibrary/landingPage/exploreSection/TrendingSection";
+// import TrendSection from "@/components/adLibrary/landingPage/exploreSection/TrendSection";
 import FeaturesSection from "@/components/adLibrary/landingPage/featuresSection/features-section";
-import { FooterSection } from "@/components/adLibrary/landingPage/FooterSection";
-import AnimatedBackground from "@/components/adLibrary/landingPage/hero/animated-background";
+// import { FooterSection } from "@/components/adLibrary/landingPage/FooterSection";
+// import AnimatedBackground from "@/components/adLibrary/landingPage/hero/animated-background";
 import HeroSection from "@/components/adLibrary/landingPage/hero/hero-section";
 import { ReviewSection } from "@/components/adLibrary/landingPage/reviewSection/ReviewSection";
 import { Loading } from "@/components/adLibrary/microComponents/Loading";
@@ -44,11 +45,13 @@ export default function HomePage() {
 
         {/* Explore Section Content */}
         <div className="space-y-8 sm:space-y-12 lg:space-y-16">
+          <TrendingSection />
+
           {/* Trend Section Card */}
-          <TrendSection />
+          {/* <TrendSection /> */}
 
           {/* Top Products & Stores Section Card */}
-          <TopProductsStoresSection />
+          {/* <TopProductsStoresSection /> */}
 
           {/* Extension Section Card */}
           <ExtensionSection />
