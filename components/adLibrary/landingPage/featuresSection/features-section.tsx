@@ -230,7 +230,7 @@ function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
                 <CTAButton
                   href="/explore"
                   variant="outline"
-                  size="md"
+                  size="sm"
                   iconPosition="right"
                   icon={ArrowRight}
                   forceMode="dark"
