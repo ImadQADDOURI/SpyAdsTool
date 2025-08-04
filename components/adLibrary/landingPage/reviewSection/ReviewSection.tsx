@@ -1,36 +1,44 @@
 "use client";
 
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { Shuffle } from "lucide-react";
 
 import { DotPattern } from "./dot-pattern";
-import { Testimonial, TestimonialCard } from "./TestimonialCard";
+import { TestimonialCard, type Testimonial } from "./TestimonialCard";
 
+// 🌟 Enhanced testimonials with star ratings
 const SAMPLE_TESTIMONIALS: Testimonial[] = [
   {
     id: 1,
     text: "This tool transformed our ad strategy overnight—finding winning products is now effortless. We saw a 3× ROI in just two weeks!",
-    author: "Alex P. – Founder @ TrendyShop",
+    author: "Alex P. – TrendyShop",
+    rating: 5,
   },
   {
     id: 2,
     text: "The advanced filters let me slice through millions of ads from 2018 to today in seconds. My campaigns are sharper than ever.",
-    author: "Maria L. – eCommerce Manager @ FashionHub",
+    author: "Maria L. – FashionHub",
+    rating: 5,
   },
   {
     id: 3,
     text: "Visual analytics & performance charts are a game-changer. We doubled our average order value in under a month!",
-    author: "Jordan K. – Head of Growth @ SmartGadgets",
+    author: "Jordan K. – SmartGadgets",
+    rating: 5,
   },
   {
     id: 4,
-    text: "Built-in AI tools and profit calculators save us hours of manual work. It’s like having a marketing team in your pocket.",
-    author: "Samantha R. – Director @ TechPulse",
+    text: "Built-in AI tools and profit calculators save us hours of manual work. It's like having a marketing team in your pocket.",
+    author: "Samantha R. – TechPulse",
+    rating: 4,
   },
   {
     id: 5,
     text: "Downloading ad media and organizing custom boards has never been smoother. Finally, an all-in-one solution for scaling eCom profits.",
-    author: "Darien C. – CMO @ PeakPerformance",
+    author: "Darien C. – PeakPerformance",
+    rating: 5,
   },
 ];
 
@@ -51,43 +59,46 @@ export const ReviewSection: React.FC = () => {
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-bl from-gray-900 to-gray-800 px-4 py-24 sm:px-6 lg:px-8">
-      {/* 
-        • Fade radius enlarged to 500px. 
-        • Dot circle radius (cr) set to 2 for larger dots. 
-      */}
+    <section className="relative overflow-hidden bg-gradient-to-bl from-gray-900 to-gray-800 px-4 py-16 sm:px-6 lg:px-8">
+      {" "}
+      {/* 📏 Reduced padding from py-24 to py-16 */}
+      {/* 🎨 Beautiful dot pattern background */}
       <DotPattern
         width={16}
         height={16}
         cx={1}
         cy={1}
-        cr={1} //Closer: try width={12} height={12}.  Farther: try width={20} height={20}.
-        className="absolute inset-0 fill-[#B977F8]/60 [mask-image:radial-gradient(500px_circle_at_center,white,transparent)]"
+        cr={1}
+        className="absolute inset-0 fill-[#B977F8]/60 [mask-image:radial-gradient(400px_circle_at_center,white,transparent)]" // 📏 Reduced mask radius
       />
-
-      <div className="relative z-10 mx-auto mb-12 max-w-7xl text-center">
+      {/* 📝 Compact header */}
+      <div className="relative z-10 mx-auto mb-8 max-w-4xl text-center">
+        {" "}
+        {/* 📏 Reduced margin from mb-12 to mb-8 */}
         <motion.h2
-          className="mb-4 text-3xl font-extrabold text-gray-100 sm:text-4xl"
-          initial={{ opacity: 0, y: 30 }}
+          className="mb-3 text-2xl font-extrabold text-gray-100 sm:text-3xl" // 📏 Reduced text size and margin
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
         >
           What Our Users Are Saying
         </motion.h2>
         <motion.p
-          className="text-base tracking-wide text-gray-300 sm:text-lg"
+          className="text-sm tracking-wide text-gray-300 sm:text-base" // 📏 Reduced text size
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 1, delay: 0.2 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
         >
-          Real feedback from our community—see how they’re using our all-in-one
-          ad & eCom growth platform to scale faster.
+          Real feedback from our community—see how they're scaling faster with
+          our platform.
         </motion.p>
       </div>
-
-      <div className="relative z-10 mx-auto h-[380px] w-full max-w-[320px] sm:h-[420px] sm:max-w-[400px]">
+      {/* 🎴 Compact testimonial cards container */}
+      <div className="relative z-10 mx-auto h-[280px] w-full max-w-[260px] sm:h-[300px] sm:max-w-[280px]">
+        {" "}
+        {/* 📏 Reduced container size */}
         {SAMPLE_TESTIMONIALS.map((t, idx) => (
           <TestimonialCard
             key={t.id}
@@ -97,27 +108,16 @@ export const ReviewSection: React.FC = () => {
           />
         ))}
       </div>
-
-      <div className="relative z-10 mt-8 flex justify-center">
+      {/* 🔄 Compact shuffle button */}
+      <div className="relative z-10 mt-6 flex justify-center">
+        {" "}
+        {/* 📏 Reduced margin from mt-8 to mt-6 */}
         <button
           onClick={shufflePositions}
-          className="inline-flex items-center space-x-2 rounded-full bg-indigo-500 px-5 py-2 font-medium text-white shadow-lg transition-all duration-200 hover:bg-indigo-600"
+          className="inline-flex items-center gap-2 rounded-full bg-indigo-500/90 px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-indigo-600/90" // 📏 Reduced padding and enhanced styling
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 4v6h6M20 20v-6h-6M4 20l5.5-5.5M19.5 4.5L14 10"
-            />
-          </svg>
-          <span className="text-sm sm:text-base">Shuffle Reviews</span>
+          <Shuffle size={16} />
+          <span>Shuffle Reviews</span>
         </button>
       </div>
     </section>
