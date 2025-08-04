@@ -1,15 +1,17 @@
 "use client";
 
-import { useRef } from "react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 import {
   ArrowRight,
   BarChart,
+  ChevronLeft,
+  ChevronRight,
   Cpu,
   Filter,
   Folder,
   Search,
-  TrendingUp,
   type LucideIcon,
 } from "lucide-react";
 
@@ -39,17 +41,17 @@ const features: Feature[] = [
   {
     id: "discover",
     title: "Discover",
-    highlightText: "Winning Products & Ads",
+    highlightText: "Winning Products",
     description:
-      "Instantly find profitable products and high-performing ads with our AI-powered discovery engine. Access millions of active campaigns across Meta's entire advertising ecosystem with real-time data analysis.",
+      "Find profitable products with AI-powered discovery. Access millions of active campaigns.",
     image: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
     background:
       "linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 30%, #16213e 70%, #0f1419 100%)",
     accentColor: "#3b82f6",
     stats: [
       { label: "Active Ads", value: "10M+" },
-      { label: "Success Rate", value: "94%" },
-      { label: "Daily Updates", value: "24/7" },
+      { label: "Success", value: "94%" },
+      { label: "Updates", value: "24/7" },
     ],
     Icon: Search,
   },
@@ -58,24 +60,24 @@ const features: Feature[] = [
     title: "Advanced",
     highlightText: "Search & Filters",
     description:
-      "Search through our comprehensive database with 10+ powerful filter types. Find exactly what you need with precision targeting, advanced analytics, and intelligent recommendations powered by machine learning.",
+      "Search with 15+ filter types. Find exactly what you need with precision targeting.",
     image: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
     background:
       "linear-gradient(135deg, #0f0a0f 0%, #1a0f1a 30%, #2d1b3d 70%, #1a0f1a 100%)",
     accentColor: "#8b5cf6",
     stats: [
-      { label: "Filter Types", value: "15+" },
-      { label: "Database Size", value: "50M+" },
-      { label: "Search Speed", value: "<0.1s" },
+      { label: "Filters", value: "15+" },
+      { label: "Database", value: "50M+" },
+      { label: "Speed", value: "<0.1s" },
     ],
     Icon: Filter,
   },
   {
     id: "analytics",
     title: "Visual",
-    highlightText: "Analytics & Charts",
+    highlightText: "Analytics",
     description:
-      "Get deep insights with our visual analytics dashboard. Track performance, identify trends, and make data-driven decisions with comprehensive charts, heatmaps, and predictive analytics that reveal hidden opportunities.",
+      "Get insights with visual dashboard. Track performance and identify trends.",
     image: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
     background:
       "linear-gradient(135deg, #0a0f0a 0%, #1a1a0f 30%, #2d2d1b 70%, #1a1a0f 100%)",
@@ -90,9 +92,9 @@ const features: Feature[] = [
   {
     id: "ai-tools",
     title: "Built-in",
-    highlightText: "AI Tools & Calculators",
+    highlightText: "AI Tools",
     description:
-      "Leverage our AI-powered tools and profit calculators to optimize your campaigns. Get instant recommendations, profit projections, and automated insights that help you scale faster and smarter.",
+      "Leverage AI-powered tools and calculators. Get instant recommendations.",
     image: "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
     background:
       "linear-gradient(135deg, #0f0a0f 0%, #1a0f1a 30%, #3d1b2d 70%, #1a0f1a 100%)",
@@ -107,9 +109,9 @@ const features: Feature[] = [
   {
     id: "organize",
     title: "Save &",
-    highlightText: "Organize Everything",
+    highlightText: "Organize",
     description:
-      "Download ad media easily and organize your findings into custom boards. Keep track of winning strategies, collaborate with your team, and build your competitive advantage with unlimited cloud storage.",
+      "Download media and organize findings. Keep track of strategies with cloud storage.",
     image: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
     background:
       "linear-gradient(135deg, #0f0f0f 0%, #0f1a1a 30%, #1b2d3d 70%, #0f1a1a 100%)",
@@ -123,26 +125,24 @@ const features: Feature[] = [
   },
 ];
 
-interface FeatureCardProps {
+interface FeatureSlideProps {
   feature: Feature;
   index: number;
+  isActive: boolean;
 }
 
-function FeatureCard({ feature, index }: FeatureCardProps) {
+function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, {
-    once: false,
-    margin: "-40% 0px -40% 0px",
-  });
+  const isInView = useInView(ref, { once: false, margin: "-20%" });
 
   return (
     <div
       ref={ref}
-      className="relative flex w-full flex-col overflow-hidden"
+      className="w-full flex-shrink-0 overflow-hidden"
       style={{ background: feature.background }}
     >
-      <div className="relative h-screen">
-        {/* 🌟 Subtle background effects */}
+      <div className="relative py-16 sm:py-20 lg:py-24">
+        {/* 🌟 Background effects */}
         <div className="absolute inset-0 overflow-hidden">
           <div
             className="absolute inset-0 opacity-5"
@@ -156,41 +156,38 @@ function FeatureCard({ feature, index }: FeatureCardProps) {
           </div>
         </div>
 
-        <div className="container relative z-10 mx-auto flex h-full items-center px-6 sm:px-8 lg:px-12">
-          <div className="grid w-full grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-20">
+        <div className="container relative z-10 mx-auto px-6 sm:px-8 lg:px-20">
+          <div className="flex flex-col items-center gap-8 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12">
             {/* 📝 Text Column */}
             <div
-              className={`space-y-8 transition-all duration-700 ${index % 2 === 0 ? "lg:order-1" : "lg:order-2"} ${
-                isInView
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-8 opacity-0"
-              }`}
+              className={`w-full space-y-6 text-center transition-all duration-700 lg:text-left ${
+                index % 2 === 0 ? "lg:order-1" : "lg:order-2"
+              } ${isActive && isInView ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
             >
               {/* 🏷️ Feature Badge */}
-              <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-5 py-3 backdrop-blur-xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-xl">
                 <div
-                  className="flex h-8 w-8 items-center justify-center rounded-full"
+                  className="flex h-6 w-6 items-center justify-center rounded-full"
                   style={{ backgroundColor: `${feature.accentColor}20` }}
                 >
                   <feature.Icon
-                    size={16}
+                    size={14}
                     style={{ color: feature.accentColor }}
                   />
                 </div>
-                <span className="text-sm font-semibold tracking-wide text-white/80">
-                  Feature {String(index + 1).padStart(1, "0")}
+                <span className="text-xs font-semibold tracking-wide text-white/80">
+                  Feature {String(index + 1).padStart(2, "0")}
                 </span>
-                {/* <TrendingUp size={14} className="text-white/60" /> */}
               </div>
 
               {/* 🎯 Title & Highlight */}
               <div>
-                <h2 className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+                <h2 className="text-2xl font-bold leading-tight tracking-tight text-white sm:text-3xl">
                   {feature.title}
                 </h2>
-                <div className="mt-2">
+                <div className="mt-1">
                   <AuroraText
-                    className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
+                    className="text-2xl font-bold leading-tight tracking-tight sm:text-3xl"
                     colors={[
                       feature.accentColor,
                       "#ffffff",
@@ -205,22 +202,22 @@ function FeatureCard({ feature, index }: FeatureCardProps) {
               </div>
 
               {/* 📄 Description */}
-              <p className="max-w-xl text-lg font-light leading-relaxed text-white/70 sm:text-xl">
+              <p className="mx-auto max-w-lg text-base leading-relaxed text-white/70 lg:mx-0">
                 {feature.description}
               </p>
 
               {/* 📊 Stats Grid */}
               {feature.stats && (
-                <div className="grid grid-cols-3 gap-6">
+                <div className="grid grid-cols-3 gap-4">
                   {feature.stats.map((stat, statIndex) => (
-                    <div key={statIndex} className="group text-center">
+                    <div key={statIndex} className="text-center">
                       <div
-                        className="mb-1 text-2xl font-bold transition-colors duration-300 sm:text-3xl"
+                        className="mb-1 text-lg font-bold sm:text-xl"
                         style={{ color: feature.accentColor }}
                       >
                         {stat.value}
                       </div>
-                      <div className="text-xs font-medium uppercase tracking-wider text-white/50 sm:text-sm">
+                      <div className="text-xs font-medium uppercase tracking-wider text-white/50">
                         {stat.label}
                       </div>
                     </div>
@@ -229,31 +226,33 @@ function FeatureCard({ feature, index }: FeatureCardProps) {
               )}
 
               {/* 🚀 CTA Button */}
-              <CTAButton
-                href={`/explore`}
-                variant="outline"
-                size="lg"
-                iconPosition="right"
-                icon={ArrowRight}
-                forceMode="dark"
-              >
-                Explore This Feature
-              </CTAButton>
+              <div className="pt-2">
+                <CTAButton
+                  href="/explore"
+                  variant="outline"
+                  size="md"
+                  iconPosition="right"
+                  icon={ArrowRight}
+                  forceMode="dark"
+                >
+                  Explore Feature
+                </CTAButton>
+              </div>
             </div>
 
             {/* 🖼️ Image Column */}
             <div
-              className={`flex justify-center transition-all duration-700 ${
+              className={`flex w-full justify-center transition-all duration-700 ${
                 index % 2 === 0 ? "lg:order-2" : "lg:order-1"
-              } ${isInView ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
+              } ${isActive && isInView ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
             >
-              <div className="relative">
+              <div className="relative max-w-sm lg:max-w-none">
                 <FloatingGlassImage
                   src={feature.image}
                   darkSrc={feature.darkImage}
                   alt={`${feature.title} – ${feature.highlightText}`}
                   delay={0.6}
-                  floatAmplitude={10}
+                  floatAmplitude={8}
                   floatSpeed={6}
                   glass
                 />
@@ -267,43 +266,170 @@ function FeatureCard({ feature, index }: FeatureCardProps) {
 }
 
 export default function FeaturesSection() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // 📱 Touch/Swipe state
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  // 🎯 Smooth slide transition
+  const goToSlide = (index: number) => {
+    if (isTransitioning || index === currentSlide) return;
+
+    setIsTransitioning(true);
+    setCurrentSlide(index);
+
+    setTimeout(() => setIsTransitioning(false), 500);
+  };
+
+  const nextSlide = () => {
+    goToSlide((currentSlide + 1) % features.length);
+  };
+
+  const prevSlide = () => {
+    goToSlide(currentSlide === 0 ? features.length - 1 : currentSlide - 1);
+  };
+
+  // 📱 Touch/Swipe handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      nextSlide();
+    } else if (isRightSwipe) {
+      prevSlide();
+    }
+
+    // Reset touch state
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
+
+  // 🎮 Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") prevSlide();
+      if (e.key === "ArrowRight") nextSlide();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentSlide]);
+
   return (
-    <section
-      id="features"
-      className="relative bg-[#0a0a0f]"
-      style={{ height: `${features.length * 100}vh` }}
-    >
-      {features.map((feature, index) => (
+    <section id="features" className="relative bg-[#0a0a0f]">
+      {/* 🎠 Slideshow Container */}
+      <div
+        className="relative overflow-hidden"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         <div
-          key={feature.id}
-          id={feature.id}
-          className="sticky top-0 h-screen"
-          style={{ zIndex: index }}
+          ref={containerRef}
+          className="flex transition-transform duration-500 ease-out"
+          style={{
+            transform: `translateX(-${currentSlide * 100}%)`,
+          }}
         >
-          <FeatureCard feature={feature} index={index} />
+          {features.map((feature, index) => (
+            <FeatureSlide
+              key={feature.id}
+              feature={feature}
+              index={index}
+              isActive={index === currentSlide}
+            />
+          ))}
         </div>
-      ))}
+      </div>
+
+      {/* 🎮 Navigation Controls */}
+      <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-4">
+        {/* ⬅️ Previous Button */}
+        <button
+          onClick={prevSlide}
+          disabled={isTransitioning}
+          className="group flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 disabled:opacity-50"
+          aria-label="Previous feature"
+        >
+          <ChevronLeft
+            size={18}
+            className="text-white/80 transition-colors group-hover:text-white"
+          />
+        </button>
+
+        {/* 🔘 Slide Indicators */}
+        <div className="flex items-center gap-2">
+          {features.map((feature, index) => (
+            <button
+              key={feature.id}
+              onClick={() => goToSlide(index)}
+              disabled={isTransitioning}
+              className="group relative h-2 w-8 rounded-full transition-all duration-300 active:scale-95 disabled:opacity-50"
+              style={{
+                backgroundColor:
+                  index === currentSlide
+                    ? feature.accentColor
+                    : "rgba(255,255,255,0.2)",
+              }}
+              aria-label={`Go to ${feature.title} feature`}
+            >
+              <div
+                className="absolute inset-0 rounded-full opacity-0 transition-opacity group-hover:opacity-30"
+                style={{ backgroundColor: feature.accentColor }}
+              />
+            </button>
+          ))}
+        </div>
+
+        {/* ➡️ Next Button */}
+        <button
+          onClick={nextSlide}
+          disabled={isTransitioning}
+          className="group flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 disabled:opacity-50"
+          aria-label="Next feature"
+        >
+          <ChevronRight
+            size={18}
+            className="text-white/80 transition-colors group-hover:text-white"
+          />
+        </button>
+      </div>
 
       <style jsx>{`
         .container {
-          max-width: 1400px;
+          max-width: 1200px;
         }
 
         /* 🎨 Enhanced scrolling experience */
         :global(html) {
-          scrollbar-width: none;
-          -ms-overflow-style: none;
           scroll-behavior: smooth;
-        }
-
-        :global(html::-webkit-scrollbar) {
-          display: none;
         }
 
         /* 🔍 Enhanced backdrop blur support */
         .backdrop-blur-xl {
           backdrop-filter: blur(24px);
           -webkit-backdrop-filter: blur(24px);
+        }
+
+        .backdrop-blur-sm {
+          backdrop-filter: blur(4px);
+          -webkit-backdrop-filter: blur(4px);
         }
 
         /* ✨ Custom selection colors */
@@ -318,18 +444,29 @@ export default function FeaturesSection() {
           -moz-osx-font-smoothing: grayscale;
         }
 
-        /* 📱 Responsive improvements */
-        @media (max-width: 768px) {
-          .container {
-            padding-left: 1rem;
-            padding-right: 1rem;
-          }
+        /* 📱 Touch improvements */
+        .overflow-hidden {
+          touch-action: pan-y pinch-zoom;
         }
 
         /* ♿ Accessibility improvements */
         @media (prefers-reduced-motion: reduce) {
-          .transition-all {
+          .transition-all,
+          .transition-transform {
             transition: none !important;
+          }
+        }
+
+        /* 🎮 Focus styles for navigation */
+        button:focus-visible {
+          outline: 2px solid #3b82f6;
+          outline-offset: 2px;
+        }
+
+        /* 📱 Mobile touch feedback */
+        @media (hover: none) and (pointer: coarse) {
+          button:active {
+            transform: scale(0.95);
           }
         }
       `}</style>
