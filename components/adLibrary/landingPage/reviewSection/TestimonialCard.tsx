@@ -100,7 +100,7 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
 
       {/* 💬 Review text */}
       <p className="mt-3 flex-1 text-center text-xs italic leading-relaxed tracking-wide text-gray-200 sm:text-sm">
-        "{testimonial.text}"
+        &quot;{testimonial.text}&quot;
       </p>
 
       {/* 🎨 Subtle glow effect */}

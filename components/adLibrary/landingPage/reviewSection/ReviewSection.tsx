@@ -91,8 +91,8 @@ export const ReviewSection: React.FC = () => {
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.8, delay: 0.1 }}
         >
-          Real feedback from our community—see how they're scaling faster with
-          our platform.
+          Real feedback from our community—see how they&apos;re scaling faster
+          with our platform.
         </motion.p>
       </div>
       {/* 🎴 Compact testimonial cards container */}
