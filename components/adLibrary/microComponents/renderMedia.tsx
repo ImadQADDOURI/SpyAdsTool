@@ -32,19 +32,31 @@ const VideoPlayer: React.FC<{
   index: number;
   onPlay: () => void;
   isPlaying: boolean;
-}> = memo(({ item, index, onPlay, isPlaying }) => {
+  compact?: boolean;
+}> = memo(({ item, index, onPlay, isPlaying, compact = false }) => {
   if (!item.video_preview_image_url) return null;
 
   return (
-    <div className="relative aspect-square w-full bg-gray-100 dark:bg-gray-900">
+    <div
+      className={`relative bg-gray-100 dark:bg-gray-900 ${compact ? "w-full" : "aspect-square w-full"}`}
+    >
       {!isPlaying ? (
         // 🖼️ Preview image with play button
         <>
           <Image
             src={item.video_preview_image_url}
             alt={`Video preview ${index + 1}`}
-            fill
-            style={{ objectFit: "contain" }}
+            {...(compact
+              ? {
+                  width: 0,
+                  height: 0,
+                  sizes: "100vw",
+                  style: { width: "100%", height: "auto" },
+                }
+              : {
+                  fill: true,
+                  style: { objectFit: "contain" },
+                })}
             unoptimized
             priority={false}
           />
@@ -68,7 +80,7 @@ const VideoPlayer: React.FC<{
           controls
           autoPlay
           muted
-          className="h-full w-full object-contain"
+          className={compact ? "h-auto w-full" : "h-full w-full object-contain"}
           onError={() =>
             console.warn(`Video failed to load: ${item.video_sd_url}`)
           }
@@ -119,20 +131,32 @@ export const RenderMedia: React.FC<RenderMediaProps> = memo(
                 key={`${index}-${item.resized_image_url || item.video_preview_image_url}`}
               >
                 {/* 🖼️ Media Content */}
-                <div className="relative aspect-square w-full bg-gray-100 dark:bg-gray-900">
+                <div
+                  className={`relative bg-gray-100 dark:bg-gray-900 ${compact ? "w-full" : "aspect-square w-full"}`}
+                >
                   {item.video_preview_image_url ? (
                     <VideoPlayer
                       item={item}
                       index={index}
                       onPlay={() => handleVideoPlay(index)}
                       isPlaying={playingVideos.has(index)}
+                      compact={compact}
                     />
                   ) : item.resized_image_url ? (
                     <Image
                       src={item.resized_image_url}
                       alt={item.title || `Ad image ${index + 1}`}
-                      fill
-                      style={{ objectFit: "contain" }}
+                      {...(compact
+                        ? {
+                            width: 0,
+                            height: 0,
+                            sizes: "100vw",
+                            style: { width: "100%", height: "auto" },
+                          }
+                        : {
+                            fill: true,
+                            style: { objectFit: "contain" },
+                          })}
                       unoptimized
                       priority={index === 0} // Only prioritize first image
                     />
