@@ -11,6 +11,8 @@ import {
   Cpu,
   Filter,
   Folder,
+  Pause,
+  Play,
   Search,
   type LucideIcon,
 } from "lucide-react";
@@ -268,6 +270,7 @@ function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
 export default function FeaturesSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // 📱 Touch/Swipe state
@@ -291,6 +294,22 @@ export default function FeaturesSection() {
   const prevSlide = () => {
     goToSlide(currentSlide === 0 ? features.length - 1 : currentSlide - 1);
   };
+
+  // ⏯️ Toggle auto-play
+  const toggleAutoPlay = () => {
+    setIsAutoPlaying(!isAutoPlaying);
+  };
+
+  // 🎠 Auto-slide functionality - runs every 2 seconds when playing
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+
+    const autoSlideInterval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % features.length);
+    }, 2000);
+
+    return () => clearInterval(autoSlideInterval);
+  }, [isAutoPlaying]);
 
   // 📱 Touch/Swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -325,6 +344,10 @@ export default function FeaturesSection() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") prevSlide();
       if (e.key === "ArrowRight") nextSlide();
+      if (e.key === " ") {
+        e.preventDefault();
+        toggleAutoPlay();
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -360,6 +383,25 @@ export default function FeaturesSection() {
 
       {/* 🎮 Navigation Controls */}
       <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-4">
+        {/* ⏯️ Play/Pause Button */}
+        <button
+          onClick={toggleAutoPlay}
+          className="group flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95"
+          aria-label={isAutoPlaying ? "Pause slideshow" : "Play slideshow"}
+        >
+          {isAutoPlaying ? (
+            <Pause
+              size={16}
+              className="text-white/80 transition-colors group-hover:text-white"
+            />
+          ) : (
+            <Play
+              size={16}
+              className="ml-0.5 text-white/80 transition-colors group-hover:text-white"
+            />
+          )}
+        </button>
+
         {/* ⬅️ Previous Button */}
         <button
           onClick={prevSlide}
