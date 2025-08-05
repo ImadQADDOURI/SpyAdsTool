@@ -1,20 +1,15 @@
-import { useEffect, useState } from "react";
+"use client";
+
+import type React from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Check, Clock, Copy, ExternalLink, Eye, Star } from "lucide-react";
 
-import { AdData } from "@/types/ad";
+import type { AdData } from "@/types/ad";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
@@ -22,27 +17,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-interface MediaItem {
-  link_url?: string;
-}
-
 export function AdOptionsCard({ ad }: { ad: AdData }) {
   const { ad_archive_id, snapshot } = ad;
   const [copied, setCopied] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
 
-  // ✨ Animate card in on mount
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
-  // 🔍 Extract domain from URL - important for analytics links
+  // 🔍 Extract domain for analytics
   const getDomain = (): string | null => {
     try {
       const url = snapshot.link_url || snapshot.cards?.[0]?.link_url;
       if (!url) return null;
-      const urlObj = new URL(url);
-      return urlObj.hostname.replace(/^www\./, "").toLowerCase();
+      return new URL(url).hostname.replace(/^www\./, "").toLowerCase();
     } catch {
       return null;
     }
@@ -50,87 +34,64 @@ export function AdOptionsCard({ ad }: { ad: AdData }) {
 
   const domain = getDomain();
 
-  // 📋 Handle copy ID to clipboard
+  // 📋 Copy handler with feedback
   const handleCopy = async () => {
     await navigator.clipboard.writeText(ad_archive_id);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), 1500);
   };
 
-  // 🔗 Link option item component with enhanced hover effects
+  // 🔗 Clean option item component
   const OptionItem = ({
     icon,
     urlIcon,
     label,
     href,
     disabled,
-    highlight = false,
+    primary = false,
   }: {
     icon: string;
     urlIcon?: string;
     label: string;
     href?: string;
     disabled?: boolean;
-    highlight?: boolean;
+    primary?: boolean;
   }) => {
-    const className = `
-      group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm
-      transition-all duration-200
-      ${highlight ? "bg-gradient-to-r from-purple-50/30 to-transparent dark:from-purple-900/10 dark:to-transparent" : ""}
-      ${
-        disabled
-          ? "opacity-50 cursor-not-allowed"
-          : "hover:bg-accent/60 hover:translate-x-0.5 cursor-pointer active:bg-accent/80"
-      }
-    `;
-
     const content = (
       <>
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-purple-100 to-white shadow-sm dark:from-purple-900/40 dark:to-transparent">
+        <div className="relative h-5 w-5 flex-shrink-0 overflow-hidden rounded-full">
           {urlIcon ? (
-            <div className="relative h-full w-full overflow-hidden rounded-full border border-purple-600 dark:border-purple-100">
-              <Image
-                src={urlIcon}
-                alt=""
-                fill
-                className={`object-cover ${
-                  disabled
-                    ? "opacity-50"
-                    : "transition-transform duration-200 group-hover:scale-110"
-                }`}
-              />
-            </div>
+            <Image
+              src={urlIcon || "/placeholder.svg"}
+              alt=""
+              fill
+              className="object-cover transition-transform duration-200 group-hover:scale-110"
+            />
           ) : (
             <Image
               src={`/icons/${icon}`}
               alt=""
-              width={24}
-              height={24}
-              className={
-                disabled
-                  ? "opacity-50"
-                  : "transition-transform duration-200 group-hover:scale-110"
-              }
+              width={20}
+              height={20}
+              className="transition-transform duration-200 group-hover:scale-105"
             />
           )}
         </div>
         <span
-          className={`flex-grow font-medium ${highlight ? "text-purple-700 dark:text-purple-300" : ""}`}
+          className={`flex-1 truncate text-sm ${primary ? "font-medium" : "font-normal"}`}
         >
           {label}
         </span>
-        <ExternalLink
-          className={`h-4 w-4 transition-all duration-200 ${
-            disabled
-              ? "text-muted-foreground/30"
-              : "text-muted-foreground/50 group-hover:scale-110 group-hover:text-purple-500"
-          } `}
-        />
+        <ExternalLink className="h-3.5 w-3.5 flex-shrink-0 opacity-0 transition-all duration-200 group-hover:opacity-60" />
       </>
     );
 
     if (disabled || !href) {
-      return <div className={className}>{content}</div>;
+      return (
+        <div className="flex cursor-not-allowed items-center gap-2.5 px-2.5 py-2 opacity-40">
+          {content}
+        </div>
+      );
     }
 
     return (
@@ -138,54 +99,50 @@ export function AdOptionsCard({ ad }: { ad: AdData }) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className={className}
+        className={`group flex items-center gap-2.5 rounded-lg px-2.5 py-2 transition-all duration-200 ease-out hover:scale-[1.01] hover:bg-accent/50 active:scale-[0.99] ${primary ? "bg-purple-50/50 dark:bg-purple-950/30" : ""} `}
       >
         {content}
       </Link>
     );
   };
 
-  // 🎯 Card section component with enhanced styling
-  const CardSection = ({
+  // 🎯 Section component
+  const Section = ({
     title,
     icon,
     children,
   }: {
     title: string;
-    icon?: React.ReactNode;
+    icon: React.ReactNode;
     children: React.ReactNode;
   }) => (
-    <div className="space-y-1.5">
-      <div className="flex items-center gap-2 px-3 py-1">
+    <div className="min-w-0 flex-1">
+      <div className="mb-3 flex items-center gap-2 px-1">
         {icon}
-        <h3 className="text-xs font-semibold text-purple-700 dark:text-purple-300">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
           {title}
         </h3>
       </div>
-      <div className="space-y-0.5 rounded-md bg-accent/20 py-1">{children}</div>
+      <div className="space-y-1 rounded-xl bg-muted/30 p-2">{children}</div>
     </div>
   );
 
   return (
     <TooltipProvider>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-        className=""
-      >
-        <Card className="overflow-hidden border border-purple-100/50 bg-background/95 shadow-md backdrop-blur-sm dark:border-purple-900/30 dark:bg-background/95">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-400 to-indigo-600" />
-
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Badge
-                variant="outline"
-                className="bg-purple-50 px-1.5 py-0 text-xs font-normal text-purple-700 dark:bg-purple-900/20 dark:text-purple-300"
-              >
-                Library ID
-              </Badge>
-              <code className="rounded bg-muted px-2 py-1 font-mono text-xs text-muted-foreground/70">
+      <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-background to-muted/20 shadow-sm ring-1 ring-border/50 transition-all duration-300 hover:shadow-md hover:ring-border">
+        {/* ✨ Accent gradient */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-500/60 to-transparent" />
+        <CardContent className="p-4">
+          {/* 🏷️ Enhanced Header */}
+          <div className="mb-4 flex items-center gap-3">
+            <Badge
+              variant="secondary"
+              className="border-purple-200/50 bg-gradient-to-r from-purple-100 to-purple-50 px-2.5 py-1 text-xs font-medium text-purple-700 dark:border-purple-800/30 dark:from-purple-950/50 dark:to-purple-900/30 dark:text-purple-300"
+            >
+              Library ID
+            </Badge>
+            <div className="flex items-center gap-1.5 rounded-lg border border-border/50 bg-muted/50 px-2.5 py-0.5">
+              <code className="font-mono text-xs text-muted-foreground">
                 {ad_archive_id}
               </code>
               <Tooltip>
@@ -193,105 +150,101 @@ export function AdOptionsCard({ ad }: { ad: AdData }) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="ml-auto h-7 w-7 rounded-full p-0 transition-all duration-150 hover:bg-purple-100 hover:text-purple-700 dark:hover:bg-purple-900/30 dark:hover:text-purple-300"
                     onClick={handleCopy}
+                    className="h-6 w-6 rounded-md p-0 transition-colors duration-200 hover:bg-purple-100 dark:hover:bg-purple-950/50"
                   >
                     {copied ? (
-                      <Check className="h-4 w-4 text-green-500" />
+                      <Check className="h-3 w-3 text-emerald-600" />
                     ) : (
-                      <Copy className="h-4 w-4" />
+                      <Copy className="h-3 w-3 text-muted-foreground/70 hover:text-purple-600" />
                     )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="left">
-                  <p>{copied ? "Copied!" : "Copy ID"}</p>
+                <TooltipContent>
+                  {copied ? "Copied!" : "Copy ID"}
                 </TooltipContent>
               </Tooltip>
-            </CardTitle>
-          </CardHeader>
+            </div>
+          </div>
 
-          <CardContent className="space-y-4 p-3 pt-0">
-            {/* Meta Section */}
-            <CardSection
+          {/* 📱 Responsive sections */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {/* Meta */}
+            <Section
               title="Meta"
-              icon={<Star className="h-3.5 w-3.5 text-purple-500" />}
+              icon={<Star className="h-3.5 w-3.5 text-blue-500" />}
             >
               <OptionItem
                 icon="meta.svg"
-                label="View on Meta Ad Library"
+                label="Ad Library"
                 href={`https://www.facebook.com/ads/library/?id=${ad_archive_id}`}
               />
               <OptionItem
                 icon="meta.svg"
                 urlIcon={snapshot.page_profile_picture_url || ""}
-                label="View All Page Ads"
+                label="All Page Ads"
                 href={
                   snapshot.page_id
                     ? `/adsearch/${snapshot.page_id}?page_id=${snapshot.page_id}&active_status=ALL`
                     : undefined
                 }
                 disabled={!snapshot.page_id}
-                highlight={true}
+                primary={true}
               />
               <OptionItem
                 icon="facebook.svg"
-                label="Go to Facebook Page"
+                label="Facebook Page"
                 href={snapshot.page_profile_uri}
                 disabled={!snapshot.page_profile_uri}
               />
-            </CardSection>
+            </Section>
 
             {domain && (
               <>
-                <Separator className="my-2 bg-purple-100/50 dark:bg-purple-900/20" />
-
-                {/* Analytics Section */}
-                <CardSection
+                {/* Analytics */}
+                <Section
                   title="Analytics"
-                  icon={<Eye className="h-3.5 w-3.5 text-purple-500" />}
+                  icon={<Eye className="h-3.5 w-3.5 text-emerald-500" />}
                 >
                   <OptionItem
                     icon="smwb.svg"
-                    label="SimilarWeb Analytics"
+                    label="SimilarWeb"
                     href={`https://www.similarweb.com/website/${domain}`}
                   />
                   <OptionItem
                     icon="semrush2.svg"
-                    label="Semrush Analytics"
+                    label="Semrush"
                     href={`https://www.semrush.com/analytics/overview/?q=${domain}`}
                   />
                   <OptionItem
                     icon="google-trends.svg"
                     label="Google Trends"
                     href={`https://trends.google.com/trends/explore?q=${domain}`}
-                    highlight={true}
+                    primary={true}
                   />
-                </CardSection>
+                </Section>
 
-                <Separator className="my-2 bg-purple-100/50 dark:bg-purple-900/20" />
-
-                {/* Store Section */}
-                <CardSection
+                {/* Store */}
+                <Section
                   title="Store"
-                  icon={<Clock className="h-3.5 w-3.5 text-purple-500" />}
+                  icon={<Clock className="h-3.5 w-3.5 text-amber-500" />}
                 >
                   <OptionItem
                     icon="shopify.svg"
-                    label="Best Selling Products"
+                    label="Best Sellers"
                     href={`https://${domain}/collections/all?sort_by=best-selling`}
                   />
-                </CardSection>
+                </Section>
               </>
             )}
-          </CardContent>
-
-          <CardFooter className="flex items-center justify-center p-2 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <span className="text-purple-500">•</span> Ad Options
-            </div>
-          </CardFooter>
-        </Card>
-      </motion.div>
+          </div>
+        </CardContent>
+        <CardFooter className="flex items-center justify-center py-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <span className="text-purple-500">•</span> Ad Options
+          </div>
+        </CardFooter>
+      </Card>
     </TooltipProvider>
   );
 }

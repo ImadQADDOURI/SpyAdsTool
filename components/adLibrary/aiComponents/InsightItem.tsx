@@ -55,7 +55,7 @@ const InsightItem: React.FC<InsightItemProps> = ({
             // Modern card design with subtle shadows and borders - responsive
             "group relative flex w-full cursor-pointer flex-col rounded-xl bg-white/80",
             "p-3 sm:p-4 md:p-5", // Responsive padding
-            "transition-all duration-300 ease-out hover:bg-white hover:shadow-lg hover:shadow-gray-200/50",
+            "shadow-md transition-all duration-300 ease-out hover:bg-white hover:shadow-gray-200/50",
             "dark:bg-gray-900/60 dark:hover:bg-gray-900/80 dark:hover:shadow-gray-900/20",
             "border border-gray-200/40 hover:border-gray-300/60 dark:border-gray-700/40 dark:hover:border-gray-600/60",
             "backdrop-blur-sm hover:scale-[1.02] active:scale-[0.98]",

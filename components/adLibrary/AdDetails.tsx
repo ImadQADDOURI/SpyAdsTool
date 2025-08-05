@@ -231,7 +231,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
             <div className="absolute inset-0 bg-white opacity-0 mix-blend-overlay transition-opacity duration-300 group-hover:opacity-10" />
             <BarChart3 className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
             <span className="relative font-semibold tracking-wide">
-              View Details
+              View Analytics
             </span>
             <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Button>
@@ -305,11 +305,10 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
               <div className="w-full space-y-4 lg:w-3/12">
                 <div className="hidden sm:block">
                   <AdCard ad={ad} compact />
-                  <AdOptionsCard ad={ad} />
                 </div>
               </div>
               {/* 👉 Right Column: Analytics & Versions */}
-              <div className="w-full space-y-4 lg:w-9/12">
+              <div className="w-full space-y-3 lg:w-9/12">
                 <div className="min-h-[400px]">
                   <Analytics
                     ads={detailedAds}
@@ -320,6 +319,7 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
                     onLoadMore={fetchAdDetails}
                   />
                 </div>
+                <AdOptionsCard ad={ad} />
               </div>
             </div>
           </TabsContent>

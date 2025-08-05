@@ -9,6 +9,7 @@ import ExtensionSection from "@/components/adLibrary/landingPage/exploreSection/
 import TrendingSection from "@/components/adLibrary/landingPage/exploreSection/TrendingSection";
 // import TrendSection from "@/components/adLibrary/landingPage/exploreSection/TrendSection";
 import FeaturesSection from "@/components/adLibrary/landingPage/featuresSection/features-section";
+import GradientBackground from "@/components/adLibrary/landingPage/hero/gradient-background";
 // import { FooterSection } from "@/components/adLibrary/landingPage/FooterSection";
 // import AnimatedBackground from "@/components/adLibrary/landingPage/hero/animated-background";
 import HeroSection from "@/components/adLibrary/landingPage/hero/hero-section";
@@ -37,33 +38,13 @@ export default function HomePage() {
     <div>
       <HeroSection />
       <FeaturesSection />
-      <section className={`relative w-full py-12 sm:py-16 lg:py-20`}>
-        {/* Animated Background */}
-        <div className="absolute inset-0 -z-10">
-          {/* <AnimatedBackground /> */}
-        </div>
-
-        {/* Explore Section Content */}
-        <div className="space-y-8 sm:space-y-12 lg:space-y-16">
-          <TrendingSection />
-
-          {/* Trend Section Card */}
-          {/* <TrendSection /> */}
-
-          {/* Top Products & Stores Section Card */}
-          {/* <TopProductsStoresSection /> */}
-
-          {/* Extension Section Card */}
-          <ExtensionSection />
-
-          <AnalyticsSection />
-        </div>
-      </section>
-
+      {/* <GradientBackground intensity={"vibrant"}> */}
+      <TrendingSection className="pt-8 sm:pt-12" />
+      <ExtensionSection className="pt-8 sm:pt-12" />
+      <AnalyticsSection />
+      {/* </GradientBackground> */}
       <ReviewSection />
-      {/* CTA Section */}
       <CTASection />
-
       {/* Footer Section in layout */}
     </div>
   );

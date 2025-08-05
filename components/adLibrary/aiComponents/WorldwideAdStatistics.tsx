@@ -87,7 +87,7 @@ const WorldwideAdStatistics: React.FC<WorldwideAdStatisticsProps> = ({
         </TooltipProvider>
       </div>
       {/* Insights Grid Container */}
-      <div className="grid grid-cols-3 gap-1 md:grid-cols-6">
+      <div className="grid grid-cols-3 gap-0.5 sm:gap-1 md:grid-cols-6">
         {/* Demographics Insights */}
         <InsightItem
           label="Gender"
@@ -131,13 +131,13 @@ const WorldwideAdStatistics: React.FC<WorldwideAdStatisticsProps> = ({
         />
 
         {/* Performance Metrics */}
-        <div className="col-span-3 md:col-span-2">
+        <div className="col-span-3 shadow-lg md:col-span-2">
           <CompetitionRadialChart competition={data.competition} />
         </div>
-        <div className="col-span-3 md:col-span-2">
+        <div className="col-span-3 shadow-lg md:col-span-2">
           <CPMDisplay value={data.cpm} />
         </div>
-        <div className="col-span-3 md:col-span-2">
+        <div className="col-span-3 shadow-lg md:col-span-2">
           <BudgetIndicator budget={data.estimatedBudget} />
         </div>
       </div>
