@@ -14,6 +14,7 @@ import {
   Pause,
   Play,
   Search,
+  TypeIcon as type,
   type LucideIcon,
 } from "lucide-react";
 
@@ -272,6 +273,10 @@ export default function FeaturesSection() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  // 👁️ Check if section is in view
+  const isInView = useInView(sectionRef, { margin: "-20%" });
 
   // 📱 Touch/Swipe state
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -300,16 +305,16 @@ export default function FeaturesSection() {
     setIsAutoPlaying(!isAutoPlaying);
   };
 
-  // 🎠 Auto-slide functionality - runs every 2 seconds when playing
+  // 🎠 Auto-slide functionality - only when in view and playing
   useEffect(() => {
-    if (!isAutoPlaying) return;
+    if (!isAutoPlaying || !isInView) return;
 
     const autoSlideInterval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % features.length);
     }, 2000);
 
     return () => clearInterval(autoSlideInterval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, isInView]);
 
   // 📱 Touch/Swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -355,7 +360,7 @@ export default function FeaturesSection() {
   }, [currentSlide]);
 
   return (
-    <section id="features" className="relative bg-[#0a0a0f]">
+    <section ref={sectionRef} id="features" className="relative bg-[#0a0a0f]">
       {/* 🎠 Slideshow Container */}
       <div
         className="relative overflow-hidden"
@@ -382,21 +387,21 @@ export default function FeaturesSection() {
       </div>
 
       {/* 🎮 Navigation Controls */}
-      <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-4">
+      <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 px-4">
         {/* ⏯️ Play/Pause Button */}
         <button
           onClick={toggleAutoPlay}
-          className="group flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95"
+          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95"
           aria-label={isAutoPlaying ? "Pause slideshow" : "Play slideshow"}
         >
           {isAutoPlaying ? (
             <Pause
-              size={16}
+              size={14}
               className="text-white/80 transition-colors group-hover:text-white"
             />
           ) : (
             <Play
-              size={16}
+              size={14}
               className="ml-0.5 text-white/80 transition-colors group-hover:text-white"
             />
           )}
@@ -406,23 +411,23 @@ export default function FeaturesSection() {
         <button
           onClick={prevSlide}
           disabled={isTransitioning}
-          className="group flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 disabled:opacity-50"
+          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 disabled:opacity-50"
           aria-label="Previous feature"
         >
           <ChevronLeft
-            size={18}
+            size={16}
             className="text-white/80 transition-colors group-hover:text-white"
           />
         </button>
 
         {/* 🔘 Slide Indicators */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 overflow-hidden">
           {features.map((feature, index) => (
             <button
               key={feature.id}
               onClick={() => goToSlide(index)}
               disabled={isTransitioning}
-              className="group relative h-2 w-8 rounded-full transition-all duration-300 active:scale-95 disabled:opacity-50"
+              className="group relative h-2 w-6 flex-shrink-0 rounded-full transition-all duration-300 active:scale-95 disabled:opacity-50"
               style={{
                 backgroundColor:
                   index === currentSlide
@@ -443,11 +448,11 @@ export default function FeaturesSection() {
         <button
           onClick={nextSlide}
           disabled={isTransitioning}
-          className="group flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 disabled:opacity-50"
+          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 disabled:opacity-50"
           aria-label="Next feature"
         >
           <ChevronRight
-            size={18}
+            size={16}
             className="text-white/80 transition-colors group-hover:text-white"
           />
         </button>
