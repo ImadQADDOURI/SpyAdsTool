@@ -181,7 +181,7 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
       {/* 💾 Save button - */}
       {
         <div className="absolute -top-1 right-12 pt-1.5">
-          <SubscriptionAccessGuard minimalUI>
+          <SubscriptionAccessGuard>
             <SaveAdButton ad={ad} />
           </SubscriptionAccessGuard>
         </div>

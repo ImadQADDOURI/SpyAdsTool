@@ -25,12 +25,20 @@ Usage Examples
   <YourPremiumFeature />
 </SubscriptionAccessGuard>
 
-
-# Using Minimal UI for Small Elements
-<SubscriptionAccessGuard minimalUI>
-  <SmallPremiumWidget />
+# With content hiding enabled
+<SubscriptionAccessGuard hideContent>
+  <YourSensitivePremiumFeature />
 </SubscriptionAccessGuard>
 
+# With lock icon overlay
+<SubscriptionAccessGuard showIcon>
+  <YourPremiumFeature />
+</SubscriptionAccessGuard>
+
+# Combined: blur + icon
+<SubscriptionAccessGuard hideContent showIcon>
+  <YourSensitivePremiumFeature />
+</SubscriptionAccessGuard>
 
 # Checking Subscription Status in Components
 const { hasAccess, subscription, isLoading } = useSubscription();
@@ -44,13 +52,15 @@ if (hasAccess) {
 
 type SubscriptionAccessGuardProps = {
   children: React.ReactNode;
-  minimalUI?: boolean; // 🔄 Toggle for simpler UI on smaller elements
+  hideContent?: boolean; // 🔒 Toggle for strong blur to hide content from non-subscribers
+  showIcon?: boolean; // 🔓 Show lock/unlock icon to indicate premium feature
   className?: string;
 };
 
 export default function SubscriptionAccessGuard({
   children,
-  minimalUI = false,
+  hideContent = false,
+  showIcon = false,
   className,
 }: SubscriptionAccessGuardProps) {
   const { hasAccess, isLoading } = useSubscription();
@@ -81,29 +91,36 @@ export default function SubscriptionAccessGuard({
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
-        {/* 🌫️ Original content with lighter blur effect */}
-        <div className="pointer-events-none">{children}</div>
+        <div className={cn("pointer-events-none", hideContent && "blur-md")}>
+          {children}
+        </div>
 
-        {/* 🔮 Premium overlay with transparent to purple gradient */}
-        {/* <div
-          className={cn(
-            "absolute inset-0 flex items-center justify-center",
-            "bg-gradient-to-br from-transparent to-[#B977F8]/70",
-            "transition-all duration-300",
-          )}
-        >
-          <div className="flex flex-col items-center gap-2">
-            {!minimalUI && (
-              <LockIcon
-                className={cn(
-                  "text-white/90 drop-shadow-lg transition-all",
-                  isHovering ? "scale-110" : "scale-100",
-                  minimalUI ? "h-5 w-5" : "h-6 w-6",
-                )}
-              />
+        {/* Light purple overlay when hideContent is enabled */}
+        {hideContent && (
+          <div
+            className={cn(
+              "absolute inset-0 bg-purple-200/30 backdrop-blur-sm transition-opacity duration-200",
+              isHovering ? "opacity-60" : "opacity-40",
             )}
+          />
+        )}
+
+        {/* Lock icon overlay when showIcon is enabled */}
+        {showIcon && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div
+              className={cn(
+                "rounded-full bg-white/70 p-2 shadow-lg transition-all duration-200 dark:bg-gray-900/70",
+                "h-[min(20%,4rem)] min-h-8 w-[min(20%,4rem)] min-w-8",
+                isHovering
+                  ? "scale-110 bg-white/95 dark:bg-gray-900/95"
+                  : "scale-100",
+              )}
+            >
+              <LockIcon className="h-full w-full text-[#6566F1] opacity-80" />
+            </div>
           </div>
-        </div> */}
+        )}
       </div>
 
       {/* ✨ Upgrade dialog */}
