@@ -136,7 +136,11 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
 
   return (
     <Card
-      className={`relative flex h-fit w-full max-w-2xl flex-col overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl`}
+      className={`relative flex h-fit w-full max-w-2xl flex-col overflow-hidden transition-shadow duration-300 ${
+        isHotAd
+          ? "shadow-[0_0_10px_2px_rgba(148,0,211,0.5)] dark:shadow-[0_0_10px_2px_rgba(148,0,211,0.85)]"
+          : "shadow-lg hover:shadow-xl"
+      }`}
     >
       {!compact && (
         <TooltipProvider>
