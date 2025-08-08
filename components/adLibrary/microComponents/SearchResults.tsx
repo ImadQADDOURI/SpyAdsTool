@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 
 import { AdCard } from "../AdCard";
 import { SearchParams } from "../search/filter-config";
+import SubscriptionAccessGuard from "../subscription/SubscriptionAccessGuard";
 import { Loading } from "./Loading";
 
 interface SearchResultsProps {
@@ -234,25 +235,27 @@ export const SearchResults = memo(
     const Footer = useCallback(() => {
       return (
         <div className="mt-2 flex justify-center">
-          {hasNextPage ? (
-            isLoading ? (
-              <Loading size="small" />
+          <SubscriptionAccessGuard showIcon>
+            {hasNextPage ? (
+              isLoading ? (
+                <Loading size="small" />
+              ) : (
+                <button
+                  onClick={handleLoadMore}
+                  disabled={isLoading}
+                  className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-200 to-pink-200 px-6 py-3 font-bold text-purple-800 shadow-md transition-all duration-200 hover:scale-105 hover:from-purple-300 hover:to-pink-300 disabled:opacity-50"
+                >
+                  <ChevronDown className="h-5 w-5" />
+                  Load More +{remainingCount?.toLocaleString() || "0"} left
+                </button>
+              )
             ) : (
-              <button
-                onClick={handleLoadMore}
-                disabled={isLoading}
-                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-200 to-pink-200 px-6 py-3 font-bold text-purple-800 shadow-md transition-all duration-200 hover:scale-105 hover:from-purple-300 hover:to-pink-300 disabled:opacity-50"
-              >
-                <ChevronDown className="h-5 w-5" />
-                Load More +{remainingCount?.toLocaleString() || "0"} left
-              </button>
-            )
-          ) : (
-            <div className="flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 font-semibold text-white shadow-md">
-              <CheckCircle className="mr-2 h-6 w-6" />
-              <span>End of Results</span>
-            </div>
-          )}
+              <div className="flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 font-semibold text-white shadow-md">
+                <CheckCircle className="mr-2 h-6 w-6" />
+                <span>End of Results</span>
+              </div>
+            )}
+          </SubscriptionAccessGuard>
         </div>
       );
     }, [hasNextPage, isLoading, handleLoadMore, remainingCount, showResults]);
@@ -262,11 +265,24 @@ export const SearchResults = memo(
       (index: number, row: AdData[]) => {
         return (
           <div className="flex justify-center gap-4 px-4 pb-4" key={index}>
-            {row.map((ad) => (
-              <div key={ad.ad_archive_id} className="min-w-0 flex-1">
-                <AdCard ad={ad} />
-              </div>
-            ))}
+            {row.map((ad, adIndex) => {
+              // Calculate global index across all ads (not just in current row)
+              const globalIndex = index * columns + adIndex;
+              // Show first ad normally, protect every second ad (even indices after 0)
+              const shouldProtect = globalIndex > 0 && globalIndex % 2 === 1;
+
+              return (
+                <div key={ad.ad_archive_id} className="min-w-0 flex-1">
+                  {shouldProtect ? (
+                    <SubscriptionAccessGuard hideContent showIcon>
+                      <AdCard ad={ad} />
+                    </SubscriptionAccessGuard>
+                  ) : (
+                    <AdCard ad={ad} />
+                  )}
+                </div>
+              );
+            })}
             {/* Add placeholder divs to ensure the last row items align correctly */}
             {Array.from({ length: columns - row.length }).map((_, i) => (
               <div key={`placeholder-${i}`} className="min-w-0 flex-1" />
