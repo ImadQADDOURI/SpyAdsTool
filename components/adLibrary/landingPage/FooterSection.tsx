@@ -23,8 +23,9 @@ const FOOTER_CONFIG = {
       { name: "About", href: "/about" },
     ],
     legalLinks: [
-      { name: "Privacy Policy", href: "/privacy" },
-      { name: "Terms of Service", href: "/terms" },
+      { name: "Privacy Policy", href: "/privacy-policy" },
+      { name: "Terms of Service", href: "/terms-of-service" },
+      { name: "Return Policy", href: "/return-policy" },
     ],
   },
   contact: {
