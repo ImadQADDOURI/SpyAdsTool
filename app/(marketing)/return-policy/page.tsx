@@ -124,7 +124,7 @@ export default function ReturnPolicyPage() {
                     As a Software-as-a-Service (SaaS) platform, our services are
                     delivered digitally and consumed upon access. This policy
                     complies with applicable consumer protection laws and
-                    Stripe's payment processing requirements.
+                    Stripe&apos;s payment processing requirements.
                   </p>
                 </div>
               </CardContent>
@@ -190,8 +190,8 @@ export default function ReturnPolicyPage() {
                     </h3>
                     <ol className="space-y-2 text-slate-700 dark:text-slate-300">
                       <li>1. Log into your account dashboard</li>
-                      <li>2. Navigate to "Billing & Subscription"</li>
-                      <li>3. Click "Cancel Subscription"</li>
+                      <li>2. Navigate to &quot;Billing & Subscription&quot;</li>
+                      <li>3. Click &quot;Cancel Subscription&quot;</li>
                       <li>4. Follow the confirmation steps</li>
                       <li>5. Receive email confirmation</li>
                     </ol>
@@ -399,8 +399,8 @@ export default function ReturnPolicyPage() {
                 <div className="prose prose-slate max-w-none space-y-6 dark:prose-invert">
                   <p className="text-slate-700 dark:text-slate-300">
                     If you notice an unexpected charge or billing error, please
-                    contact us immediately. We're committed to resolving billing
-                    issues quickly and fairly.
+                    contact us immediately. We&apos;re committed to resolving
+                    billing issues quickly and fairly.
                   </p>
 
                   <div>
@@ -414,7 +414,7 @@ export default function ReturnPolicyPage() {
                       </li>
                       <li>
                         <strong>Incorrect Amount:</strong> Charged amount
-                        doesn't match your plan
+                        doesn&apos;t match your plan
                       </li>
                       <li>
                         <strong>Cancelled Subscription:</strong> Charged after
@@ -422,11 +422,11 @@ export default function ReturnPolicyPage() {
                       </li>
                       <li>
                         <strong>Unauthorized Charges:</strong> Charges you
-                        didn't authorize
+                        didn&apos;t authorize
                       </li>
                       <li>
                         <strong>Failed Cancellation:</strong> Subscription
-                        didn't cancel as expected
+                        didn&apos;t cancel as expected
                       </li>
                     </ul>
                   </div>
@@ -460,8 +460,8 @@ export default function ReturnPolicyPage() {
                     <AlertDescription>
                       <strong>Important:</strong> Disputing charges with your
                       bank before contacting us may delay resolution and could
-                      result in service suspension. We're here to help resolve
-                      issues quickly!
+                      result in service suspension. We&apos;re here to help
+                      resolve issues quickly!
                     </AlertDescription>
                   </Alert>
                 </div>

@@ -123,7 +123,7 @@ export default function TermsOfServicePage() {
                 <div className="prose prose-slate max-w-none dark:prose-invert">
                   <p className="text-lg leading-relaxed text-slate-700 dark:text-slate-300">
                     Welcome to our ad search and management platform. These
-                    Terms of Service ("Terms") govern your use of our
+                    Terms of Service (&quot;Terms&quot;) govern your use of our
                     software-as-a-service platform and related services provided
                     by our company.
                   </p>
@@ -161,8 +161,8 @@ export default function TermsOfServicePage() {
                       agreement
                     </li>
                     <li>
-                      If you're using the service on behalf of a company, you
-                      must have authority to bind that entity
+                      If you&apos;re using the service on behalf of a company,
+                      you must have authority to bind that entity
                     </li>
                     <li>
                       You agree to comply with all applicable local, state,
@@ -361,7 +361,7 @@ export default function TermsOfServicePage() {
                         fees
                       </li>
                       <li>Failed payments may result in service suspension</li>
-                      <li>You're responsible for all taxes and fees</li>
+                      <li>You&apos;re responsible for all taxes and fees</li>
                       <li>
                         Currency conversion fees may apply for international
                         payments
@@ -462,8 +462,8 @@ export default function TermsOfServicePage() {
                     </h3>
                     <ul className="space-y-2 text-slate-700 dark:text-slate-300">
                       <li>
-                        Our service is provided "as is" without warranties of
-                        any kind
+                        Our service is provided &quot;as is&quot; without
+                        warranties of any kind
                       </li>
                       <li>
                         We do not guarantee the accuracy or completeness of data

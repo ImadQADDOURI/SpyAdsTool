@@ -108,9 +108,9 @@ export default function PrivacyPolicyPage() {
                 <div className="prose prose-slate max-w-none dark:prose-invert">
                   <p className="text-lg leading-relaxed text-slate-700 dark:text-slate-300">
                     This Privacy Policy describes how our ad search and
-                    management platform ("we," "our," or "us") collects, uses,
-                    and protects your personal information when you use our
-                    services.
+                    management platform (&quot;we,&quot; &quot;our,&quot; or
+                    &quot;us&quot;) collects, uses, and protects your personal
+                    information when you use our services.
                   </p>
                   <p className="text-slate-600 dark:text-slate-400">
                     We are committed to protecting your privacy and ensuring
