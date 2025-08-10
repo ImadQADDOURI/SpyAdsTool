@@ -531,12 +531,17 @@ export default function TopProductsDisplay() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                  Total Sales
+                  Avg. Sales
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {products
-                    .reduce((sum, p) => sum + (p.totalSales || 0), 0)
-                    .toLocaleString()}
+                  {products.length > 0
+                    ? (
+                        products.reduce(
+                          (sum, p) => sum + (p.totalSales || 0),
+                          0,
+                        ) / products.length
+                      ).toFixed(2)
+                    : "0.00"}
                 </p>
               </div>
               <div className="rounded-full bg-emerald-500/10 p-3 dark:bg-emerald-500/20">
