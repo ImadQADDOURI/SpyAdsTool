@@ -4,7 +4,15 @@ import { useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { CloudLightning, Lock, LogOut, Menu, X, Zap } from "lucide-react";
+import {
+  CloudLightning,
+  Lock,
+  LogOut,
+  Menu,
+  Settings,
+  X,
+  Zap,
+} from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
 import { cn } from "@/lib/utils";
@@ -24,7 +32,8 @@ import { ModalContext } from "@/components/modals/providers";
 import { Icons } from "@/components/shared/icons";
 import { UserAvatar } from "@/components/shared/user-avatar";
 
-import { Deals, NavbarLinks } from "./navbar-links";
+import { CollapsibleDropdownMobile } from "./collapsible-dropdown-mobile";
+import { AdminLinks, Deals, NavbarLinks } from "./navbar-links";
 import { NavbarMobileMenu } from "./navbar-mobile-menu";
 import { useNavbarVisibility } from "./navbar-visibility-context";
 
@@ -159,7 +168,7 @@ export function Navbar() {
                   />
                 </motion.div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[240px] p-2">
+              <DropdownMenuContent align="end" className="w-fit p-2">
                 <div className="flex items-center justify-start gap-3 p-2">
                   <UserAvatar
                     user={{
@@ -183,33 +192,13 @@ export function Navbar() {
 
                 {session.user.role === "ADMIN" ? (
                   <>
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/meta-graphql-configs"
-                        className="flex items-center space-x-2.5"
-                      >
-                        <Lock className="size-4" />
-                        <p className="text-sm">meta-graphql-configs</p>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/top-products-config"
-                        className="flex items-center space-x-2.5"
-                      >
-                        <Lock className="size-4" />
-                        <p className="text-sm">top-products-config</p>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/top-stores-config"
-                        className="flex items-center space-x-2.5"
-                      >
-                        <Lock className="size-4" />
-                        <p className="text-sm">top-stores-config</p>
-                      </Link>
-                    </DropdownMenuItem>
+                    <CollapsibleDropdownMobile
+                      pathname={pathname}
+                      title="Admin"
+                      icon={Settings}
+                      showFreeBadge={false}
+                      links={AdminLinks}
+                    />
                   </>
                 ) : null}
 

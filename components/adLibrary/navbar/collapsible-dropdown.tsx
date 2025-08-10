@@ -3,14 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Calculator,
-  ChevronDown,
-  DollarSign,
-  LineChart,
-  PocketKnife,
-  ShoppingBag,
-} from "lucide-react";
+import { ChevronDown, type LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -20,18 +13,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Icons } from "@/components/shared/icons";
 
-import { Tools } from "./navbar-links";
+import { CollapsibleDropdownProps } from "./navbar-links";
 
-interface NavbarToolsDropdownProps {
-  pathname: string;
-}
-
-export function NavbarToolsDropdown({ pathname }: NavbarToolsDropdownProps) {
+export function CollapsibleDropdown({
+  pathname,
+  title,
+  icon: Icon,
+  showFreeBadge = false,
+  links,
+}: CollapsibleDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const isToolActive = Tools.some((tool) => pathname === tool.href);
+  const isActive = links.some((link) => pathname === link.href);
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -39,28 +33,30 @@ export function NavbarToolsDropdown({ pathname }: NavbarToolsDropdownProps) {
         <motion.div
           className={cn(
             "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium transition-all",
-            isToolActive
+            isActive
               ? "bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 text-primary"
               : "text-muted-foreground hover:text-foreground",
           )}
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
         >
-          <PocketKnife
+          <Icon
             className={cn(
               "size-4",
-              isToolActive
+              isActive
                 ? "text-primary"
                 : "text-muted-foreground group-hover:text-foreground",
             )}
           />
-          <span>Tools</span>
-          <Badge
-            variant="outline"
-            className="border-green-500 text-green-600 dark:text-green-400"
-          >
-            Free
-          </Badge>
+          <span>{title}</span>
+          {showFreeBadge && (
+            <Badge
+              variant="outline"
+              className="border-green-500 text-green-600 dark:text-green-400"
+            >
+              Free
+            </Badge>
+          )}
           <motion.div
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.2 }}
@@ -68,7 +64,7 @@ export function NavbarToolsDropdown({ pathname }: NavbarToolsDropdownProps) {
             <ChevronDown className="size-4" />
           </motion.div>
         </motion.div>
-        {isToolActive && (
+        {isActive && (
           <motion.span
             className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-[#6566F1] to-[#B977F8]"
             layoutId="navbar-active-indicator"
@@ -91,17 +87,17 @@ export function NavbarToolsDropdown({ pathname }: NavbarToolsDropdownProps) {
               transition={{ duration: 0.2 }}
             >
               <div className="grid grid-cols-1 gap-2">
-                {Tools.map((tool) => (
+                {links.map((link) => (
                   <DropdownMenuItem
-                    key={tool.id}
+                    key={link.id}
                     asChild
                     className="p-0 focus:bg-transparent"
                   >
-                    <Link href={tool.href}>
+                    <Link href={link.href}>
                       <motion.div
                         className={cn(
                           "flex w-full cursor-pointer items-start gap-3 rounded-md p-3 transition-colors",
-                          pathname === tool.href
+                          pathname === link.href
                             ? "bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10"
                             : "hover:bg-muted",
                         )}
@@ -115,29 +111,29 @@ export function NavbarToolsDropdown({ pathname }: NavbarToolsDropdownProps) {
                         <div
                           className={cn(
                             "flex size-10 shrink-0 items-center justify-center rounded-md",
-                            tool.color === "purple" &&
+                            link.color === "purple" &&
                               "bg-purple-100 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400",
-                            tool.color === "blue" &&
+                            link.color === "blue" &&
                               "bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400",
-                            tool.color === "yellow" &&
+                            link.color === "yellow" &&
                               "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400",
-                            tool.color === "pink" &&
+                            link.color === "pink" &&
                               "bg-pink-100 text-pink-600 dark:bg-pink-900/20 dark:text-pink-400",
                           )}
                         >
-                          <tool.icon className="size-5" />
+                          <link.icon className="size-5" />
                         </div>
                         <div className="flex flex-col">
                           <div className="flex items-center gap-2">
                             <span
                               className={cn(
                                 "font-medium",
-                                pathname === tool.href ? "text-primary" : "",
+                                pathname === link.href ? "text-primary" : "",
                               )}
                             >
-                              {tool.title}
+                              {link.title}
                             </span>
-                            {tool.isFree && (
+                            {link.isFree && (
                               <Badge
                                 variant="outline"
                                 className="border-green-500 text-green-600 dark:text-green-400"
@@ -147,7 +143,7 @@ export function NavbarToolsDropdown({ pathname }: NavbarToolsDropdownProps) {
                             )}
                           </div>
                           <span className="text-xs text-muted-foreground">
-                            {tool.description}
+                            {link.description}
                           </span>
                         </div>
                       </motion.div>

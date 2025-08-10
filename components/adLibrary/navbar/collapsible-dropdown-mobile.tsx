@@ -3,15 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Calculator,
-  ChevronDown,
-  ChevronRight,
-  DollarSign,
-  LineChart,
-  PocketKnife,
-  ShoppingBag,
-} from "lucide-react";
+import { ChevronDown, ChevronRight, type LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -20,44 +12,43 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Icons } from "@/components/shared/icons";
 
-import { Tools } from "./navbar-links";
+import { CollapsibleDropdownProps } from "./navbar-links";
 
-interface NavbarToolsDropdownMobileProps {
-  pathname: string;
-}
-
-export function NavbarToolsDropdownMobile({
+export function CollapsibleDropdownMobile({
   pathname,
-}: NavbarToolsDropdownMobileProps) {
+  title,
+  icon: Icon,
+  showFreeBadge = false,
+  links,
+}: CollapsibleDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const isToolActive = Tools.some((tool) => pathname === tool.href);
+  const isActive = links.some((link) => pathname === link.href);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
       <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md px-4 py-3 text-sm font-medium transition-colors hover:bg-muted">
         <div className="flex items-center gap-3">
-          <PocketKnife
+          <Icon
             className={cn(
               "size-5",
-              isToolActive ? "text-primary" : "text-muted-foreground",
+              isActive ? "text-primary" : "text-muted-foreground",
             )}
           />
           <span
-            className={cn(
-              isToolActive ? "text-primary" : "text-muted-foreground",
-            )}
+            className={cn(isActive ? "text-primary" : "text-muted-foreground")}
           >
-            Tools
+            {title}
           </span>
-          <Badge
-            variant="outline"
-            className="border-green-500 text-green-600 dark:text-green-400"
-          >
-            Free
-          </Badge>
+          {showFreeBadge && (
+            <Badge
+              variant="outline"
+              className="border-green-500 text-green-600 dark:text-green-400"
+            >
+              Free
+            </Badge>
+          )}
         </div>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
@@ -77,37 +68,37 @@ export function NavbarToolsDropdownMobile({
               className="px-2"
             >
               <div className="mt-1 flex flex-col gap-1">
-                {Tools.map((tool) => (
+                {links.map((link) => (
                   <motion.div
-                    key={tool.id}
+                    key={link.id}
                     initial={{ opacity: 0, x: -5 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.2 }}
                   >
                     <Link
-                      href={tool.href}
+                      href={link.href}
                       className={cn(
                         "flex items-center gap-3 rounded-md px-4 py-2.5 text-sm transition-colors hover:bg-muted",
-                        pathname === tool.href
+                        pathname === link.href
                           ? "bg-gradient-to-r from-[#6566F1]/10 to-[#B977F8]/10 text-primary"
                           : "text-muted-foreground",
                       )}
                     >
-                      <tool.icon
+                      <link.icon
                         className={cn(
                           "size-4",
-                          tool.color === "purple" &&
+                          link.color === "purple" &&
                             "text-purple-600 dark:text-purple-400",
-                          tool.color === "blue" &&
+                          link.color === "blue" &&
                             "text-blue-600 dark:text-blue-400",
-                          tool.color === "yellow" &&
+                          link.color === "yellow" &&
                             "text-yellow-600 dark:text-yellow-400",
-                          tool.color === "pink" &&
+                          link.color === "pink" &&
                             "text-pink-600 dark:text-pink-400",
                         )}
                       />
-                      <span className="flex-1">{tool.title}</span>
-                      {tool.isFree && (
+                      <span className="flex-1">{link.title}</span>
+                      {link.isFree && (
                         <Badge
                           variant="outline"
                           className="border-green-500 text-xs text-green-600 dark:text-green-400"

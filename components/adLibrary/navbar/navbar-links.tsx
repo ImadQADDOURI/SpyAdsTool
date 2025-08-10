@@ -7,10 +7,15 @@ import {
   Calculator,
   CloudLightning,
   DollarSign,
+  Facebook,
+  Flag,
   Heart,
   LineChart,
+  LucideIcon,
   PackageOpen,
+  PocketKnife,
   Search,
+  Settings,
   ShoppingBag,
   Store,
   TrendingUp,
@@ -19,13 +24,31 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Icons } from "@/components/shared/icons";
 
-import { NavbarToolsDropdown } from "./navbar-tools-dropdown";
+import { CollapsibleDropdown } from "./collapsible-dropdown";
 
 interface NavbarLinksProps {
   pathname: string;
 }
+
+interface LinkItem {
+  id: string;
+  title: string;
+  href: string;
+  description: string;
+  icon: LucideIcon;
+  isFree: boolean;
+  color: string;
+}
+
+export interface CollapsibleDropdownProps {
+  pathname: string;
+  title: string;
+  icon: LucideIcon;
+  showFreeBadge?: boolean;
+  links: LinkItem[];
+}
+
 export const Links = [
   { title: "Pricing", href: "/pricing", icon: DollarSign },
   { title: "AdSearch", href: "/adsearch", icon: Search },
@@ -92,6 +115,37 @@ export const Deals = [
     gradient: "from-green-500 to-emerald-500",
   },
 ];
+
+export const AdminLinks = [
+  {
+    id: "meta-graphql-configs",
+    title: "Meta Graphql Configs",
+    href: "/meta-graphql-configs",
+    description: "",
+    icon: Facebook,
+    isFree: false,
+    color: "purple",
+  },
+  {
+    id: "top-products-config",
+    title: "Products Config",
+    href: "/top-products-config",
+    description: "",
+    icon: PackageOpen,
+    isFree: false,
+    color: "blue",
+  },
+  {
+    id: "top-stores-config",
+    title: "Stores Config",
+    href: "/top-stores-config",
+    description: "",
+    icon: Store,
+    isFree: false,
+    color: "yellow",
+  },
+];
+
 export function NavbarLinks({ pathname }: NavbarLinksProps) {
   return (
     <nav className="flex items-center gap-1 md:gap-2">
@@ -132,7 +186,13 @@ export function NavbarLinks({ pathname }: NavbarLinksProps) {
       ))}
 
       {/* Tools Dropdown */}
-      <NavbarToolsDropdown pathname={pathname} />
+      <CollapsibleDropdown
+        pathname={pathname}
+        title="Tools"
+        icon={PocketKnife}
+        showFreeBadge={true}
+        links={Tools}
+      />
     </nav>
   );
 }

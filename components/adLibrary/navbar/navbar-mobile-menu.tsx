@@ -7,7 +7,9 @@ import {
   ChevronRight,
   DollarSign,
   Heart,
+  PocketKnife,
   Search,
+  Settings,
   Store,
   TrendingUp,
 } from "lucide-react";
@@ -18,8 +20,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/shared/icons";
 
-import { Deals, Links } from "./navbar-links";
-import { NavbarToolsDropdownMobile } from "./navbar-tools-dropdown-mobile";
+import { CollapsibleDropdownMobile } from "./collapsible-dropdown-mobile";
+import { Deals, Links, Tools } from "./navbar-links";
 
 interface NavbarMobileMenuProps {
   isOpen: boolean;
@@ -139,7 +141,13 @@ export function NavbarMobileMenu({
 
           {/* Tools Dropdown Mobile */}
           <motion.div variants={item}>
-            <NavbarToolsDropdownMobile pathname={pathname} />
+            <CollapsibleDropdownMobile
+              pathname={pathname}
+              title="Tools"
+              icon={PocketKnife}
+              showFreeBadge={true}
+              links={Tools}
+            />
           </motion.div>
         </nav>
 
