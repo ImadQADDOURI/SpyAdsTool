@@ -182,15 +182,35 @@ export function Navbar() {
                 <DropdownMenuSeparator />
 
                 {session.user.role === "ADMIN" ? (
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/admin"
-                      className="flex items-center space-x-2.5"
-                    >
-                      <Lock className="size-4" />
-                      <p className="text-sm">Admin</p>
-                    </Link>
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/meta-graphql-configs"
+                        className="flex items-center space-x-2.5"
+                      >
+                        <Lock className="size-4" />
+                        <p className="text-sm">meta-graphql-configs</p>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/top-products-config"
+                        className="flex items-center space-x-2.5"
+                      >
+                        <Lock className="size-4" />
+                        <p className="text-sm">top-products-config</p>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/top-stores-config"
+                        className="flex items-center space-x-2.5"
+                      >
+                        <Lock className="size-4" />
+                        <p className="text-sm">top-stores-config</p>
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
                 ) : null}
 
                 <DropdownMenuItem asChild>

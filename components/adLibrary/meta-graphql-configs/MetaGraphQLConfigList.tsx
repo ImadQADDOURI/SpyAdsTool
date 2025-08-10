@@ -1,4 +1,3 @@
-// @components/adLibrary/meta-graphql-configs/MetaGraphQLConfigList.tsx
 "use client";
 
 import { useState } from "react";
@@ -9,7 +8,20 @@ import {
   toggleMetaGraphQLConfig,
   updateMetaGraphQLConfig,
 } from "@/actions/meta-graphql-config-actions";
-import { MetaGraphQLConfig } from "@prisma/client";
+import type { MetaGraphQLConfig } from "@prisma/client";
+import { Edit, Eye, RotateCcw, TestTube, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 
 import RefreshConfigsButton from "./RefreshConfigsButton";
 
@@ -17,238 +29,319 @@ type MetaGraphQLConfigListProps = {
   initialConfigs: MetaGraphQLConfig[];
 };
 
-// 🖥️ CONFIGURATION LIST COMPONENT =============================================
+// 🖥️ Main Configuration List Component
 export default function MetaGraphQLConfigList({
   initialConfigs,
 }: MetaGraphQLConfigListProps) {
-  // 🏷️ COMPONENT STATE ========================================================
   const [configs, setConfigs] = useState(initialConfigs);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingJson, setEditingJson] = useState("");
   const [testResults, setTestResults] = useState<Record<string, any>>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // 🔄 REFRESH CONFIGURATIONS =================================================
+  // 📊 Calculate active configs count
+  const activeCount = configs.filter((config) => config.is_active).length;
+  const totalCount = configs.length;
+
+  // 🔄 Refresh configurations
   const refreshConfigs = async () => {
     setIsRefreshing(true);
     try {
       const { success, data } = await getMetaGraphQLConfigs();
-      if (success && data) setConfigs(data);
+      if (success && data) {
+        setConfigs(data);
+        toast.success("Configurations refreshed");
+      }
+    } catch (error) {
+      toast.error("Failed to refresh configurations");
     } finally {
       setIsRefreshing(false);
     }
   };
 
-  // 🎯 CONFIGURATION ACTIONS ==================================================
+  // 🔄 Reset to initial state
+  const handleReset = () => {
+    setConfigs(initialConfigs);
+    setEditingId(null);
+    setEditingJson("");
+    setTestResults({});
+    toast.success("Reset to initial state");
+  };
+
+  // 🎯 Toggle configuration active status
   const handleToggle = async (id: string, currentStatus: boolean) => {
-    const { success } = await toggleMetaGraphQLConfig(id, !currentStatus);
-    if (success) await refreshConfigs();
+    try {
+      const { success } = await toggleMetaGraphQLConfig(id, !currentStatus);
+      if (success) {
+        await refreshConfigs();
+        toast.success(
+          `Configuration ${!currentStatus ? "activated" : "deactivated"}`,
+        );
+      }
+    } catch (error) {
+      toast.error("Failed to toggle configuration");
+    }
   };
 
+  // 🗑️ Delete configuration
   const handleDelete = async (id: string) => {
-    if (!confirm("⚠️ Are you sure you want to delete this configuration?"))
+    if (!window.confirm("Are you sure you want to delete this configuration?"))
       return;
-    const { success } = await deleteMetaGraphQLConfig(id);
-    if (success) await refreshConfigs();
+
+    try {
+      const { success } = await deleteMetaGraphQLConfig(id);
+      if (success) {
+        await refreshConfigs();
+        toast.success("Configuration deleted");
+      }
+    } catch (error) {
+      toast.error("Failed to delete configuration");
+    }
   };
 
-  // ✏️ EDITING HANDLERS =======================================================
+  // ✏️ Start editing
   const handleEdit = (config: MetaGraphQLConfig) => {
     setEditingId(config.id);
     setEditingJson(JSON.stringify(config.graphql_xhr, null, 2));
   };
 
+  // 💾 Save edited configuration
   const handleSave = async (id: string) => {
     try {
       const parsedConfig = JSON.parse(editingJson);
       if (typeof parsedConfig.body !== "string") {
-        throw new Error("📦 Body must be a string");
+        throw new Error("Body must be a string");
       }
 
       const { success } = await updateMetaGraphQLConfig(id, parsedConfig);
       if (success) {
         await refreshConfigs();
         setEditingId(null);
+        toast.success("Configuration updated");
       }
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Invalid JSON format";
       setTestResults({
         ...testResults,
         [id]: {
           success: false,
-          data: error instanceof Error ? error.message : "Invalid JSON format",
+          data: errorMessage,
+          timestamp: new Date().toLocaleTimeString(),
         },
       });
+      toast.error(errorMessage);
     }
   };
 
-  // 🧪 TEST CONFIGURATION =====================================================
+  // 🧪 Test configuration
   const handleTest = async (id: string) => {
-    const { success, data, error } = await testMetaGraphQLConfig(id);
-    setTestResults({
-      ...testResults,
-      [id]: {
-        success,
-        data: success ? data : error,
-        timestamp: new Date().toLocaleTimeString(),
-      },
-    });
+    try {
+      const { success, data, error } = await testMetaGraphQLConfig(id);
+      setTestResults({
+        ...testResults,
+        [id]: {
+          success,
+          data: success ? data : error,
+          timestamp: new Date().toLocaleTimeString(),
+        },
+      });
+      toast.success(success ? "Test successful" : "Test failed");
+    } catch (error) {
+      toast.error("Failed to test configuration");
+    }
   };
 
   return (
     <div className="space-y-6">
-      {/* 🗂️ LIST HEADER WITH CONTROLS */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-          📁 Saved Configurations
-        </h2>
-
-        <div className="mt-8 border-t pt-6">
-          <h2 className="mb-3 text-lg font-semibold">Cache Management</h2>
-          <RefreshConfigsButton />
-          <p className="mt-2 text-xs text-muted-foreground">
-            Manually refresh the list of active configurations used for
-            rotation.
-          </p>
-        </div>
-
-        <button
-          onClick={refreshConfigs}
-          disabled={isRefreshing}
-          className="flex items-center space-x-2 rounded-lg bg-gray-100 px-4 py-2 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
-        >
-          <svg
-            className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
-          </svg>
-          <span>{isRefreshing ? "🔄 Refreshing..." : "🔃 Refresh"}</span>
-        </button>
-      </div>
-
-      {/* 📜 CONFIGURATION ITEMS */}
-      <div className="grid gap-6">
-        {configs.map((config) => (
-          <div
-            key={config.id}
-            className="rounded-lg border border-gray-200 bg-white p-6 shadow-lg dark:border-gray-700 dark:bg-gray-800"
-          >
-            {/* 🎛️ CONFIG HEADER WITH CONTROLS */}
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => handleToggle(config.id, config.is_active)}
-                  className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                    config.is_active
-                      ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-800/30 dark:text-green-400"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
-                  }`}
-                >
-                  {config.is_active ? "● Active" : "○ Inactive"}
-                </button>
-                <span className="text-sm text-gray-500 dark:text-gray-400">
-                  🕒 Created: {new Date(config.createdAt).toLocaleString()}
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => handleTest(config.id)}
-                  className="rounded-lg bg-blue-100 px-4 py-2 text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-800/30 dark:text-blue-400"
-                >
-                  🧪 Test
-                </button>
-                <button
-                  onClick={() => handleEdit(config)}
-                  className="rounded-lg bg-yellow-100 px-4 py-2 text-yellow-700 transition-colors hover:bg-yellow-200 dark:bg-yellow-800/30 dark:text-yellow-400"
-                >
-                  ✏️ Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(config.id)}
-                  className="rounded-lg bg-red-100 px-4 py-2 text-red-700 transition-colors hover:bg-red-200 dark:bg-red-800/30 dark:text-red-400"
-                >
-                  🗑️ Delete
-                </button>
-              </div>
+      {/* 📊 Header with Stats and Controls */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                Meta GraphQL Configurations
+              </CardTitle>
+              <CardDescription className="mt-1">
+                Manage your GraphQL API configurations and test their
+                connectivity
+              </CardDescription>
             </div>
-
-            {editingId === config.id ? (
-              // ✏️ EDITING INTERFACE
-              <div className="mt-4 space-y-4">
-                <textarea
-                  value={editingJson}
-                  onChange={(e) => setEditingJson(e.target.value)}
-                  className="h-64 w-full rounded-lg border border-gray-300 p-4 font-mono text-sm focus:border-blue-500 focus:ring-2 dark:border-gray-600 dark:bg-gray-900"
-                  aria-label="Edit configuration JSON"
-                />
-                <div className="flex justify-end space-x-2">
-                  <button
-                    onClick={() => handleSave(config.id)}
-                    className="rounded-lg bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800"
-                  >
-                    💾 Save
-                  </button>
-                  <button
-                    onClick={() => setEditingId(null)}
-                    className="rounded-lg bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-800"
-                  >
-                    ❌ Cancel
-                  </button>
-                </div>
+            <div className="flex items-center gap-3">
+              {/* 📊 Active Count Badge */}
+              <div className="flex items-center gap-2">
+                <Badge
+                  variant={activeCount > 0 ? "default" : "secondary"}
+                  className="text-sm"
+                >
+                  {activeCount} / {totalCount} Active
+                </Badge>
               </div>
-            ) : (
-              // 📄 CONFIGURATION DETAILS
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div className="space-y-2">
-                  <h3 className="font-medium text-gray-700 dark:text-gray-300">
-                    ⚙️ Configuration Details
-                  </h3>
-                  <pre className="max-h-64 overflow-auto rounded-lg bg-gray-50 p-4 text-sm dark:bg-gray-900">
-                    {JSON.stringify(config.graphql_xhr, null, 2)}
-                  </pre>
-                </div>
+              <RefreshConfigsButton />
+              <Button onClick={handleReset} variant="outline" size="sm">
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Reset
+              </Button>
+              <Button
+                onClick={refreshConfigs}
+                disabled={isRefreshing}
+                variant="outline"
+                size="sm"
+              >
+                <Eye
+                  className={`mr-2 h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+                />
+                {isRefreshing ? "Loading..." : "Refresh"}
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
 
-                {/* 📊 TEST RESULTS */}
-                {testResults[config.id] && (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-medium text-gray-700 dark:text-gray-300">
-                        🧪 Test Results
-                      </h3>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {testResults[config.id].timestamp}
-                      </span>
-                    </div>
-                    <pre
-                      className={`max-h-64 overflow-auto rounded-lg p-4 text-sm ${
-                        testResults[config.id].success
-                          ? "bg-green-50 dark:bg-green-900/20"
-                          : "bg-red-50 dark:bg-red-900/20"
-                      }`}
+      {/* 📋 Configuration List */}
+      <div className="space-y-4">
+        {configs.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <p className="text-gray-500 dark:text-gray-400">
+                No configurations found
+              </p>
+              <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+                Add your first configuration using the form above
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          configs.map((config) => (
+            <Card key={config.id} className="overflow-hidden">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Badge variant={config.is_active ? "default" : "secondary"}>
+                      {config.is_active ? "Active" : "Inactive"}
+                    </Badge>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      Created: {new Date(config.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() => handleTest(config.id)}
+                      variant="outline"
+                      size="sm"
+                      className="text-blue-600 hover:text-blue-700"
                     >
-                      <code>
-                        {typeof testResults[config.id].data === "string"
-                          ? testResults[config.id].data
-                          : JSON.stringify(
-                              testResults[config.id].data,
-                              null,
-                              2,
-                            )}
-                      </code>
-                    </pre>
+                      <TestTube className="mr-1 h-3 w-3" />
+                      Test
+                    </Button>
+                    <Button
+                      onClick={() => handleToggle(config.id, config.is_active)}
+                      variant="outline"
+                      size="sm"
+                      className={
+                        config.is_active
+                          ? "text-orange-600 hover:text-orange-700"
+                          : "text-green-600 hover:text-green-700"
+                      }
+                    >
+                      {config.is_active ? "Deactivate" : "Activate"}
+                    </Button>
+                    <Button
+                      onClick={() => handleEdit(config)}
+                      variant="outline"
+                      size="sm"
+                      className="text-yellow-600 hover:text-yellow-700"
+                    >
+                      <Edit className="mr-1 h-3 w-3" />
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => handleDelete(config.id)}
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="mr-1 h-3 w-3" />
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent>
+                {editingId === config.id ? (
+                  // ✏️ Editing Mode
+                  <div className="space-y-4">
+                    <Textarea
+                      value={editingJson}
+                      onChange={(e) => setEditingJson(e.target.value)}
+                      className="min-h-[200px] font-mono text-sm"
+                      placeholder="Edit configuration JSON..."
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        onClick={() => handleSave(config.id)}
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        Save Changes
+                      </Button>
+                      <Button
+                        onClick={() => setEditingId(null)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  // 📄 View Mode
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    {/* Configuration Details */}
+                    <div>
+                      <h4 className="mb-2 font-medium text-gray-700 dark:text-gray-300">
+                        Configuration
+                      </h4>
+                      <pre className="max-h-48 overflow-auto rounded-lg border bg-gray-50 p-4 text-sm dark:bg-gray-900">
+                        {JSON.stringify(config.graphql_xhr, null, 2)}
+                      </pre>
+                    </div>
+
+                    {/* Test Results */}
+                    {testResults[config.id] && (
+                      <div>
+                        <div className="mb-2 flex items-center justify-between">
+                          <h4 className="font-medium text-gray-700 dark:text-gray-300">
+                            Test Results
+                          </h4>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {testResults[config.id].timestamp}
+                          </span>
+                        </div>
+                        <pre
+                          className={`max-h-48 overflow-auto rounded-lg border p-4 text-sm ${
+                            testResults[config.id].success
+                              ? "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20"
+                              : "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20"
+                          }`}
+                        >
+                          {typeof testResults[config.id].data === "string"
+                            ? testResults[config.id].data
+                            : JSON.stringify(
+                                testResults[config.id].data,
+                                null,
+                                2,
+                              )}
+                        </pre>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-            )}
-          </div>
-        ))}
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
     </div>
   );
