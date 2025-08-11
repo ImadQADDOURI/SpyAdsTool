@@ -6,7 +6,7 @@ import { SavedAdsProvider } from "@/components/adLibrary/favorites/SavedAdsConte
 import { SubscriptionProvider } from "@/components/adLibrary/subscription/SubscriptionProvider";
 
 // 🔒 Protected layout that requires authentication
-export default async function ProtectedLayout({
+export default async function Premium({
   children,
 }: {
   children: React.ReactNode;

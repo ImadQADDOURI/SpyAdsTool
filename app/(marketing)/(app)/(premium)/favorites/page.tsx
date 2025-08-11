@@ -24,14 +24,19 @@ import { useSavedAds } from "@/components/adLibrary/favorites/SavedAdsContext";
 import { useSavedAdsActions } from "@/components/adLibrary/favorites/useSavedAdsActions";
 import { Loading } from "@/components/adLibrary/microComponents/Loading";
 import { ScrollButtons } from "@/components/adLibrary/microComponents/ScrollButtons";
+import { SubscriptionPageGuard } from "@/components/adLibrary/subscription/SubscriptionPageGuard";
 import TitleSection from "@/components/adLibrary/TitleSection";
 
 // Wrap the main content with Suspense for loading state
 const FavoritesPage = () => {
   return (
-    <Suspense fallback={<Loading />}>
-      <FavoritesContent />
-    </Suspense>
+    <SubscriptionPageGuard>
+      <Suspense
+        fallback={<Loading message="Loading content..." size="large" />}
+      >
+        <FavoritesContent />
+      </Suspense>
+    </SubscriptionPageGuard>
   );
 };
 

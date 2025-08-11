@@ -1,7 +1,6 @@
-// src/app/(dashboard)/favorites/[boardName]/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { fetchAdsByBoard } from "@/actions/savedAds";
@@ -29,11 +28,31 @@ import {
 import AdCardGrid from "@/components/adLibrary/microComponents/AdCardGrid";
 import { Loading } from "@/components/adLibrary/microComponents/Loading";
 import { ScrollButtons } from "@/components/adLibrary/microComponents/ScrollButtons";
+import { SubscriptionPageGuard } from "@/components/adLibrary/subscription/SubscriptionPageGuard";
 import TitleSection from "@/components/adLibrary/TitleSection";
+
+type BoardContentProps = {
+  boardName: string;
+};
 
 export default function BoardPage() {
   const params = useParams();
   const boardName = decodeURIComponent(params.boardName as string);
+
+  return (
+    <SubscriptionPageGuard>
+      <Suspense
+        fallback={<Loading message="Loading content..." size="large" />}
+      >
+        <BoardContent boardName={boardName} />
+      </Suspense>
+    </SubscriptionPageGuard>
+  );
+}
+
+const BoardContent = ({ boardName }: BoardContentProps) => {
+  const { boards } = useSavedAds();
+  const currentBoard = boards.find((board) => board.name === boardName);
 
   const [loading, setLoading] = useState(true);
   const [ads, setAds] = useState<AdData[]>([]);
@@ -43,9 +62,6 @@ export default function BoardPage() {
     current: 1,
   });
   const [refreshing, setRefreshing] = useState(false);
-
-  const { boards } = useSavedAds();
-  const currentBoard = boards.find((board) => board.name === boardName);
 
   // 📥 Fetch ads for this board
   const loadBoardAds = async () => {
@@ -130,7 +146,9 @@ export default function BoardPage() {
             disabled={refreshing || loading}
           >
             <RefreshCw
-              className={`h-5 w-5 text-gray-600 transition-all duration-300 group-hover:scale-110 dark:text-gray-300 ${refreshing ? "animate-spin" : ""}`}
+              className={`h-5 w-5 text-gray-600 transition-all duration-300 group-hover:scale-110 dark:text-gray-300 ${
+                refreshing ? "animate-spin" : ""
+              }`}
             />
             <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
               Refresh
@@ -171,4 +189,4 @@ export default function BoardPage() {
       <ScrollButtons />
     </div>
   );
-}
+};

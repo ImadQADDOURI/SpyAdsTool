@@ -24,7 +24,7 @@ import { FAQSection } from "@/components/adLibrary/support/FAQSection";
 
 export default function SupportPage() {
   // 📞 Replace with your actual WhatsApp number
-  const whatsappNumber = "+1234567890"; // Example format
+  const whatsappNumber = process.env.WHATSAPP_NUMBER || "";
   const whatsappLink = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}`;
 
   return (
