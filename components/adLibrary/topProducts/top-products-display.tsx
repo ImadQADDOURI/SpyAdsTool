@@ -40,6 +40,7 @@ import {
 
 import { Loading } from "../microComponents/Loading";
 import { countryCodesAlpha2Flag } from "../searchFilters/filter-config";
+import TitleSection from "../TitleSection";
 
 // 📦 Product Type Definition
 type Product = {
@@ -359,6 +360,16 @@ export default function TopProductsDisplay() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16 dark:bg-gray-900">
+      <TitleSection
+        icon={Package}
+        badgeText="Top Products"
+        image={PackageOpen}
+        imageColor="text-indigo-500 dark:text-indigo-400"
+        highlightedText="Winning Products"
+        remainingTitle="Driving Results"
+        auroraColors={["#6366F1", "#818CF8", "#A5B4FC", "#C7D2FE"]}
+        description="Uncover leading products fueling growth with robust metrics."
+      />
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* 📊 Stats Summary */}
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">

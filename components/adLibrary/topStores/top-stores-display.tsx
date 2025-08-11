@@ -32,6 +32,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { Loading } from "../microComponents/Loading";
+import TitleSection from "../TitleSection";
 
 // 🔄 Sort Options Type
 type SortOption = {
@@ -264,6 +265,16 @@ export function TopStoresDisplay() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16 dark:bg-gray-900">
+      <TitleSection
+        icon={Store}
+        badgeText="Top Stores"
+        image={Rocket}
+        imageColor="text-blue-500 dark:text-blue-400"
+        highlightedText="Elite Picks"
+        remainingTitle="Max Growth"
+        auroraColors={["#1D4ED8", "#3B82F6", "#60A5FA", "#93C5FD"]}
+        description="Discover top-performing stores driving success with verified metrics."
+      />
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* 📊 Stats Bar */}
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
