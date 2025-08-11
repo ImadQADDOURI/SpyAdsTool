@@ -23,7 +23,6 @@ import { cn } from "@/lib/utils";
 import { DocsSidebarNav } from "@/components/docs/sidebar-nav";
 import { Icons } from "@/components/shared/icons";
 
-import ToolsNavigationMenu from "../adLibrary/microComponents/ToolsNavigationMenu";
 import { ModeToggle } from "./mode-toggle";
 
 export function NavMobile() {
@@ -89,10 +88,6 @@ export function NavMobile() {
                   </Link>
                 </li>
               ))}
-
-            <li className="py-1">
-              <ToolsNavigationMenu />
-            </li>
           </ul>
         </div>
 
