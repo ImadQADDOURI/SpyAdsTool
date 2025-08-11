@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/tooltip";
 
 import { Loading } from "../microComponents/Loading";
-import { countryCodesAlpha2Flag } from "../searchFilters/filter-config";
+import { countryCodesAlpha2Flag } from "../search/filter-config";
 import TitleSection from "../TitleSection";
 
 // 📦 Product Type Definition

@@ -22,7 +22,7 @@ import {
 
 import InsightItem from "../aiComponents/InsightItem";
 import { Loading } from "../microComponents/Loading";
-import { countryCodesAlpha2Flag } from "../searchFilters/filter-config";
+import { countryCodesAlpha2Flag } from "../search/filter-config";
 import SpendDisplay from "./SpendDisplay";
 
 const GenderPieChart = dynamic(

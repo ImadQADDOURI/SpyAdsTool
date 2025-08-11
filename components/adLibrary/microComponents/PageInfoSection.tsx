@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/tooltip";
 import FirefliesWrapper from "@/components/adLibrary/microComponents/FirefliesWrapper";
 
-import { countryCodesAlpha2Flag } from "../searchFilters/filter-config";
+import { countryCodesAlpha2Flag } from "../search/filter-config";
 
 interface TransparencyInfo {
   history_items?: Array<{

@@ -65,7 +65,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { countryCodesAlpha2Flag } from "../searchFilters/filter-config";
+import { countryCodesAlpha2Flag } from "../search/filter-config";
 
 // 📦 Simple Product Type
 type Product = {
