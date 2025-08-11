@@ -43,7 +43,7 @@ import { EuAdStatistic } from "./adInsights/EuAdStatistic";
 import AdCreativeGenerator from "./aiComponents/AdCreativeGenerator";
 import KeywordAnalysisTable from "./aiComponents/KeywordAnalysisTable";
 import WorldwideAdStatistics from "./aiComponents/WorldwideAdStatistics";
-import AdOptionsCard from "./microComponents/AdOptionsCard";
+import AdOptionsCard from "./sharedComponents/AdOptionsCard";
 
 interface AdDetailsProps {
   /** The advertisement data to display */

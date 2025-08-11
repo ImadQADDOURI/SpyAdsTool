@@ -2,7 +2,7 @@
 import { Suspense } from "react";
 
 import AdBrowser from "@/components/adTool/AdBrowser";
-import { Loading } from "@/components/adTool/microComponents/Loading";
+import { Loading } from "@/components/adTool/sharedComponents/Loading";
 import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
 
 interface SearchParams {

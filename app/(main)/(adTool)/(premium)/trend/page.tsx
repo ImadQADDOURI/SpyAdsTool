@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 
 import TrendAds from "@/components/adTool/favorites/TrendAds";
-import { Loading } from "@/components/adTool/microComponents/Loading";
+import { Loading } from "@/components/adTool/sharedComponents/Loading";
 import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
 
 export const metadata: Metadata = {

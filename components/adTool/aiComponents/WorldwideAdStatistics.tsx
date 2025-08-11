@@ -19,7 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { Loading } from "../microComponents/Loading";
+import { Loading } from "../sharedComponents/Loading";
 import BudgetIndicator from "./BudgetIndicator";
 import CPMDisplay from "./CPMDisplay";
 import InsightItem from "./InsightItem";

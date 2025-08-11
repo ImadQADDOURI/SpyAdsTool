@@ -34,7 +34,7 @@ import FeaturesSection from "@/components/adTool/landingPage/featuresSection/fea
 import GradientBackground from "@/components/adTool/landingPage/hero/gradient-background";
 import HeroSection from "@/components/adTool/landingPage/hero/hero-section";
 import { ReviewSection } from "@/components/adTool/landingPage/reviewSection/ReviewSection";
-import { Loading } from "@/components/adTool/microComponents/Loading";
+import { Loading } from "@/components/adTool/sharedComponents/Loading";
 
 export default function IndexPage() {
   const [isLoading, setIsLoading] = useState(true);

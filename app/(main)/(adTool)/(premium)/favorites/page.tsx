@@ -22,8 +22,8 @@ import { Input } from "@/components/ui/input";
 import BoardCard from "@/components/adTool/favorites/BoardCard";
 import { useSavedAds } from "@/components/adTool/favorites/SavedAdsContext";
 import { useSavedAdsActions } from "@/components/adTool/favorites/useSavedAdsActions";
-import { Loading } from "@/components/adTool/microComponents/Loading";
-import { ScrollButtons } from "@/components/adTool/microComponents/ScrollButtons";
+import { Loading } from "@/components/adTool/sharedComponents/Loading";
+import { ScrollButtons } from "@/components/adTool/sharedComponents/ScrollButtons";
 import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
 import TitleSection from "@/components/adTool/TitleSection";
 

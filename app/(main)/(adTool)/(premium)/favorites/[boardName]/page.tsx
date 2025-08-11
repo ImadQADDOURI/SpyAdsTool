@@ -25,9 +25,9 @@ import {
   SavedAd,
   useSavedAds,
 } from "@/components/adTool/favorites/SavedAdsContext";
-import AdCardGrid from "@/components/adTool/microComponents/AdCardGrid";
-import { Loading } from "@/components/adTool/microComponents/Loading";
-import { ScrollButtons } from "@/components/adTool/microComponents/ScrollButtons";
+import AdCardGrid from "@/components/adTool/sharedComponents/AdCardGrid";
+import { Loading } from "@/components/adTool/sharedComponents/Loading";
+import { ScrollButtons } from "@/components/adTool/sharedComponents/ScrollButtons";
 import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
 import TitleSection from "@/components/adTool/TitleSection";
 

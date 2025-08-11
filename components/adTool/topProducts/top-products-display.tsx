@@ -38,8 +38,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { Loading } from "../microComponents/Loading";
 import { countryCodesAlpha2Flag } from "../search/filter-config";
+import { Loading } from "../sharedComponents/Loading";
 import TitleSection from "../TitleSection";
 
 // 📦 Product Type Definition

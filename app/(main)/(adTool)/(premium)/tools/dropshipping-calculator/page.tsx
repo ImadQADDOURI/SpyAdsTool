@@ -20,7 +20,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import DropshippingCalculator from "@/components/adTool/calculator/DropshippingCalculator";
-import { Loading } from "@/components/adTool/microComponents/Loading";
+import { Loading } from "@/components/adTool/sharedComponents/Loading";
 import TitleSection from "@/components/adTool/TitleSection";
 
 export default function CalculatorPage() {

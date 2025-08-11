@@ -8,14 +8,14 @@ import {
 
 import type { AdData } from "@/types/ad";
 
-import PageInfoSection from "./microComponents/PageInfoSection";
-import { ScrollButtons } from "./microComponents/ScrollButtons";
-import SearchResults from "./microComponents/SearchResults";
 import {
   SearchFilterProvider,
   useSearchFilters,
 } from "./search/search-filter-context";
 import SearchFilters from "./search/search-filters";
+import PageInfoSection from "./sharedComponents/PageInfoSection";
+import { ScrollButtons } from "./sharedComponents/ScrollButtons";
+import SearchResults from "./sharedComponents/SearchResults";
 
 const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
   const { getSearchParams } = useSearchFilters();

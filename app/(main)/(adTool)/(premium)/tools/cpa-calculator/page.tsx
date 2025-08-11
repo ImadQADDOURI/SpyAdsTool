@@ -19,7 +19,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import CPACalculator from "@/components/adTool/calculator/CPACalculator";
-import { Loading } from "@/components/adTool/microComponents/Loading";
+import { Loading } from "@/components/adTool/sharedComponents/Loading";
 import TitleSection from "@/components/adTool/TitleSection";
 
 export default function CalculatorPage() {

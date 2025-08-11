@@ -18,7 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import FirefliesWrapper from "@/components/adTool/microComponents/FirefliesWrapper";
+import FirefliesWrapper from "@/components/adTool/sharedComponents/FirefliesWrapper";
 import { ContactForm } from "@/components/adTool/support/ContactForm";
 import { FAQSection } from "@/components/adTool/support/FAQSection";
 

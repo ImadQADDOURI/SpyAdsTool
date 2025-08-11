@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react"; // 🔒 Lock icon from Lucide React
 
-import { Loading } from "@/components/adTool/microComponents/Loading";
+import { Loading } from "@/components/adTool/sharedComponents/Loading";
 import { useSubscription } from "@/components/adTool/subscription/SubscriptionProvider";
 
 type SubscriptionPageGuardProps = {

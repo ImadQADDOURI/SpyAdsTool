@@ -22,10 +22,10 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { AdDetails } from "./AdDetails";
-import { AdOptions } from "./microComponents/AdOptions";
-import DisplayPixelPlatformPayment from "./microComponents/DisplayPixelPlatformPayment";
-import PageNameWithPopover from "./microComponents/PageNameWithPopover";
-import RenderMedia from "./microComponents/renderMedia";
+import { AdOptions } from "./sharedComponents/AdOptions";
+import DisplayPixelPlatformPayment from "./sharedComponents/DisplayPixelPlatformPayment";
+import PageNameWithPopover from "./sharedComponents/PageNameWithPopover";
+import RenderMedia from "./sharedComponents/renderMedia";
 import SubscriptionAccessGuard from "./subscription/SubscriptionAccessGuard";
 
 interface AdCardProps {

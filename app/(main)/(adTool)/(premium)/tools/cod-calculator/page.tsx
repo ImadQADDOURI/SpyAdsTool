@@ -20,7 +20,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import CODCalculator from "@/components/adTool/calculator/CODCalculator";
-import { Loading } from "@/components/adTool/microComponents/Loading";
+import { Loading } from "@/components/adTool/sharedComponents/Loading";
 import TitleSection from "@/components/adTool/TitleSection";
 
 export default function CODCalculatorPage() {

@@ -18,7 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import FirefliesWrapper from "@/components/adTool/microComponents/FirefliesWrapper";
+import FirefliesWrapper from "@/components/adTool/sharedComponents/FirefliesWrapper";
 
 import { countryCodesAlpha2Flag } from "../search/filter-config";
 

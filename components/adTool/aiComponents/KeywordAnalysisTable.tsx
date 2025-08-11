@@ -20,8 +20,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import ExpandableText from "../microComponents/expandableText";
-import { Loading } from "../microComponents/Loading";
+import ExpandableText from "../sharedComponents/expandableText";
+import { Loading } from "../sharedComponents/Loading";
 
 interface KeywordAnalysisTableProps {
   data: AdAnalysis | null;

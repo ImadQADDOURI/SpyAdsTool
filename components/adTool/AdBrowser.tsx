@@ -6,13 +6,13 @@ import { Facebook, Star } from "lucide-react";
 
 import type { AdData } from "@/types/ad";
 
-import { ScrollButtons } from "./microComponents/ScrollButtons";
-import SearchResults from "./microComponents/SearchResults";
 import {
   SearchFilterProvider,
   useSearchFilters,
 } from "./search/search-filter-context";
 import SearchFilters from "./search/search-filters";
+import { ScrollButtons } from "./sharedComponents/ScrollButtons";
+import SearchResults from "./sharedComponents/SearchResults";
 import TitleSection from "./TitleSection";
 
 /**
