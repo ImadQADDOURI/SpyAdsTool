@@ -40,7 +40,7 @@ import {
 
 import { countryCodesAlpha2Flag } from "../search/filter-config";
 import { Loading } from "../sharedComponents/Loading";
-import TitleSection from "../TitleSection";
+import TitleSection from "../sharedComponents/TitleSection";
 
 // 📦 Product Type Definition
 type Product = {

@@ -3,7 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
-import { AuroraText } from "./landingPage/hero/AuroraText";
+import { AuroraText } from "../landingPage/hero/AuroraText";
 
 interface TitleSectionProps {
   // Row 1 props

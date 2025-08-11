@@ -32,7 +32,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { Loading } from "../sharedComponents/Loading";
-import TitleSection from "../TitleSection";
+import TitleSection from "../sharedComponents/TitleSection";
 
 // 🔄 Sort Options Type
 type SortOption = {

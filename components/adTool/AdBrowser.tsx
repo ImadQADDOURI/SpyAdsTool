@@ -13,7 +13,7 @@ import {
 import SearchFilters from "./search/search-filters";
 import { ScrollButtons } from "./sharedComponents/ScrollButtons";
 import SearchResults from "./sharedComponents/SearchResults";
-import TitleSection from "./TitleSection";
+import TitleSection from "./sharedComponents/TitleSection";
 
 /**
  * Inner component that uses the search filter context

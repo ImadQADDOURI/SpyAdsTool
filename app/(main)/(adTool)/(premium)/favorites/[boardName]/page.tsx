@@ -28,8 +28,8 @@ import {
 import AdCardGrid from "@/components/adTool/sharedComponents/AdCardGrid";
 import { Loading } from "@/components/adTool/sharedComponents/Loading";
 import { ScrollButtons } from "@/components/adTool/sharedComponents/ScrollButtons";
+import TitleSection from "@/components/adTool/sharedComponents/TitleSection";
 import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
-import TitleSection from "@/components/adTool/TitleSection";
 
 type BoardContentProps = {
   boardName: string;

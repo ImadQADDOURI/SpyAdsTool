@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/accordion";
 import AffiliateMarketingCalculator from "@/components/adTool/calculator/AffiliateMarketingCalculator";
 import { Loading } from "@/components/adTool/sharedComponents/Loading";
-import TitleSection from "@/components/adTool/TitleSection";
+import TitleSection from "@/components/adTool/sharedComponents/TitleSection";
 
 export default function AffiliateCalculatorPage() {
   return (

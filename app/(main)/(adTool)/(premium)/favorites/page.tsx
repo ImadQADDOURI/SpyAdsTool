@@ -24,8 +24,8 @@ import { useSavedAds } from "@/components/adTool/favorites/SavedAdsContext";
 import { useSavedAdsActions } from "@/components/adTool/favorites/useSavedAdsActions";
 import { Loading } from "@/components/adTool/sharedComponents/Loading";
 import { ScrollButtons } from "@/components/adTool/sharedComponents/ScrollButtons";
+import TitleSection from "@/components/adTool/sharedComponents/TitleSection";
 import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
-import TitleSection from "@/components/adTool/TitleSection";
 
 // Wrap the main content with Suspense for loading state
 const FavoritesPage = () => {

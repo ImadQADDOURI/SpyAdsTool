@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/accordion";
 import CODCalculator from "@/components/adTool/calculator/CODCalculator";
 import { Loading } from "@/components/adTool/sharedComponents/Loading";
-import TitleSection from "@/components/adTool/TitleSection";
+import TitleSection from "@/components/adTool/sharedComponents/TitleSection";
 
 export default function CODCalculatorPage() {
   return (

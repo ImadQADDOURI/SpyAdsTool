@@ -12,7 +12,7 @@ import { Loading } from "@/components/adTool/sharedComponents/Loading";
 import LoadingTrigger from "@/components/adTool/sharedComponents/LoadingTrigger";
 import { ScrollButtons } from "@/components/adTool/sharedComponents/ScrollButtons";
 
-import TitleSection from "../TitleSection";
+import TitleSection from "../sharedComponents/TitleSection";
 
 // Define pagination response type to avoid TS errors
 type PaginationResponse = {
