@@ -19,9 +19,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import AffiliateMarketingCalculator from "@/components/adLibrary/calculator/AffiliateMarketingCalculator";
-import { Loading } from "@/components/adLibrary/microComponents/Loading";
-import TitleSection from "@/components/adLibrary/TitleSection";
+import AffiliateMarketingCalculator from "@/components/adTool/calculator/AffiliateMarketingCalculator";
+import { Loading } from "@/components/adTool/microComponents/Loading";
+import TitleSection from "@/components/adTool/TitleSection";
 
 export default function AffiliateCalculatorPage() {
   return (

@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 
-import { SubscriptionPageGuard } from "@/components/adLibrary/subscription/SubscriptionPageGuard";
-import { useSubscription } from "@/components/adLibrary/subscription/SubscriptionProvider";
+import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
+import { useSubscription } from "@/components/adTool/subscription/SubscriptionProvider";
 import { DeleteAccountSection } from "@/components/dashboard/delete-account";
 import { DashboardHeader } from "@/components/dashboard/header";
 

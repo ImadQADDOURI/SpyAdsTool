@@ -4,8 +4,8 @@
 
 import { useEffect } from "react";
 
-import { SubscriptionPageGuard } from "@/components/adLibrary/subscription/SubscriptionPageGuard";
-import { useSubscription } from "@/components/adLibrary/subscription/SubscriptionProvider";
+import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
+import { useSubscription } from "@/components/adTool/subscription/SubscriptionProvider";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { BillingInfo } from "@/components/pricing/billing-info";
 

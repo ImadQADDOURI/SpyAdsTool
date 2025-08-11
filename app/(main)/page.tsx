@@ -26,15 +26,15 @@
 
 import { useEffect, useState } from "react";
 
-import { AnalyticsSection } from "@/components/adLibrary/landingPage/analyticsSection/AnalyticsSection";
-import { CTASection } from "@/components/adLibrary/landingPage/CTASection";
-import ExtensionSection from "@/components/adLibrary/landingPage/exploreSection/ExtensionSection";
-import TrendingSection from "@/components/adLibrary/landingPage/exploreSection/TrendingSection";
-import FeaturesSection from "@/components/adLibrary/landingPage/featuresSection/features-section";
-import GradientBackground from "@/components/adLibrary/landingPage/hero/gradient-background";
-import HeroSection from "@/components/adLibrary/landingPage/hero/hero-section";
-import { ReviewSection } from "@/components/adLibrary/landingPage/reviewSection/ReviewSection";
-import { Loading } from "@/components/adLibrary/microComponents/Loading";
+import { AnalyticsSection } from "@/components/adTool/landingPage/analyticsSection/AnalyticsSection";
+import { CTASection } from "@/components/adTool/landingPage/CTASection";
+import ExtensionSection from "@/components/adTool/landingPage/exploreSection/ExtensionSection";
+import TrendingSection from "@/components/adTool/landingPage/exploreSection/TrendingSection";
+import FeaturesSection from "@/components/adTool/landingPage/featuresSection/features-section";
+import GradientBackground from "@/components/adTool/landingPage/hero/gradient-background";
+import HeroSection from "@/components/adTool/landingPage/hero/hero-section";
+import { ReviewSection } from "@/components/adTool/landingPage/reviewSection/ReviewSection";
+import { Loading } from "@/components/adTool/microComponents/Loading";
 
 export default function IndexPage() {
   const [isLoading, setIsLoading] = useState(true);

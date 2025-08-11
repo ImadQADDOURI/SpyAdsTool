@@ -18,9 +18,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import FirefliesWrapper from "@/components/adLibrary/microComponents/FirefliesWrapper";
-import { ContactForm } from "@/components/adLibrary/support/ContactForm";
-import { FAQSection } from "@/components/adLibrary/support/FAQSection";
+import FirefliesWrapper from "@/components/adTool/microComponents/FirefliesWrapper";
+import { ContactForm } from "@/components/adTool/support/ContactForm";
+import { FAQSection } from "@/components/adTool/support/FAQSection";
 
 export default function SupportPage() {
   // 📞 Replace with your actual WhatsApp number

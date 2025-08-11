@@ -19,9 +19,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import CODCalculator from "@/components/adLibrary/calculator/CODCalculator";
-import { Loading } from "@/components/adLibrary/microComponents/Loading";
-import TitleSection from "@/components/adLibrary/TitleSection";
+import CODCalculator from "@/components/adTool/calculator/CODCalculator";
+import { Loading } from "@/components/adTool/microComponents/Loading";
+import TitleSection from "@/components/adTool/TitleSection";
 
 export default function CODCalculatorPage() {
   return (

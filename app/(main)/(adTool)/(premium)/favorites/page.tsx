@@ -19,13 +19,13 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import BoardCard from "@/components/adLibrary/favorites/BoardCard";
-import { useSavedAds } from "@/components/adLibrary/favorites/SavedAdsContext";
-import { useSavedAdsActions } from "@/components/adLibrary/favorites/useSavedAdsActions";
-import { Loading } from "@/components/adLibrary/microComponents/Loading";
-import { ScrollButtons } from "@/components/adLibrary/microComponents/ScrollButtons";
-import { SubscriptionPageGuard } from "@/components/adLibrary/subscription/SubscriptionPageGuard";
-import TitleSection from "@/components/adLibrary/TitleSection";
+import BoardCard from "@/components/adTool/favorites/BoardCard";
+import { useSavedAds } from "@/components/adTool/favorites/SavedAdsContext";
+import { useSavedAdsActions } from "@/components/adTool/favorites/useSavedAdsActions";
+import { Loading } from "@/components/adTool/microComponents/Loading";
+import { ScrollButtons } from "@/components/adTool/microComponents/ScrollButtons";
+import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
+import TitleSection from "@/components/adTool/TitleSection";
 
 // Wrap the main content with Suspense for loading state
 const FavoritesPage = () => {

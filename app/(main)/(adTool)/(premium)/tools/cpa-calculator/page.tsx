@@ -18,9 +18,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import CPACalculator from "@/components/adLibrary/calculator/CPACalculator";
-import { Loading } from "@/components/adLibrary/microComponents/Loading";
-import TitleSection from "@/components/adLibrary/TitleSection";
+import CPACalculator from "@/components/adTool/calculator/CPACalculator";
+import { Loading } from "@/components/adTool/microComponents/Loading";
+import TitleSection from "@/components/adTool/TitleSection";
 
 export default function CalculatorPage() {
   return (

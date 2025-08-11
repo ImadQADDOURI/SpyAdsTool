@@ -7,10 +7,10 @@ import { ArrowRight, ChevronRight, Flame, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdData } from "@/types/ad";
-import { AdCardGrid } from "@/components/adLibrary/microComponents/AdCardGrid";
-import { Loading } from "@/components/adLibrary/microComponents/Loading";
-import LoadingTrigger from "@/components/adLibrary/microComponents/LoadingTrigger";
-import { ScrollButtons } from "@/components/adLibrary/microComponents/ScrollButtons";
+import { AdCardGrid } from "@/components/adTool/microComponents/AdCardGrid";
+import { Loading } from "@/components/adTool/microComponents/Loading";
+import LoadingTrigger from "@/components/adTool/microComponents/LoadingTrigger";
+import { ScrollButtons } from "@/components/adTool/microComponents/ScrollButtons";
 
 import TitleSection from "../TitleSection";
 

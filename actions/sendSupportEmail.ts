@@ -7,7 +7,7 @@
 import { Resend } from "resend";
 import { z } from "zod"; // For validation
 
-import SupportRequestEmail from "@/components/adLibrary/support/SupportRequestEmail"; // Import the React Email template
+import SupportRequestEmail from "@/components/adTool/support/SupportRequestEmail"; // Import the React Email template
 
 // 🔒 Initialize Resend
 const resend = new Resend(process.env.RESEND_API_KEY);

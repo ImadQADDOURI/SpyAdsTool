@@ -1,9 +1,9 @@
 // app/dashboard/ad-library/[pageId]/page.tsx
 import { Suspense } from "react";
 
-import { Loading } from "@/components/adLibrary/microComponents/Loading";
-import PageAdBrowser from "@/components/adLibrary/PageAdBrowser";
-import { SubscriptionPageGuard } from "@/components/adLibrary/subscription/SubscriptionPageGuard";
+import { Loading } from "@/components/adTool/microComponents/Loading";
+import PageAdBrowser from "@/components/adTool/PageAdBrowser";
+import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
 
 interface PageProps {
   params: {

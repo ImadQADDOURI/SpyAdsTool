@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useSubscription } from "@/components/adLibrary/subscription/SubscriptionProvider";
+import { useSubscription } from "@/components/adTool/subscription/SubscriptionProvider";
 
 {
   /*

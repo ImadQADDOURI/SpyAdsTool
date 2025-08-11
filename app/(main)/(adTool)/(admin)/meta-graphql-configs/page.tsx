@@ -1,7 +1,7 @@
 import { getMetaGraphQLConfigs } from "@/actions/meta-graphql-config-actions";
 
-import MetaGraphQLConfigForm from "@/components/adLibrary/meta-graphql-configs/MetaGraphQLConfigForm";
-import MetaGraphQLConfigList from "@/components/adLibrary/meta-graphql-configs/MetaGraphQLConfigList";
+import MetaGraphQLConfigForm from "@/components/adTool/meta-graphql-configs/MetaGraphQLConfigForm";
+import MetaGraphQLConfigList from "@/components/adTool/meta-graphql-configs/MetaGraphQLConfigList";
 
 export default async function MetaGraphQLConfigsPage() {
   const { data: configs = [] } = await getMetaGraphQLConfigs();

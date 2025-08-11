@@ -26,17 +26,17 @@ import { countryCodesAlpha2Flag } from "../search/filter-config";
 import SpendDisplay from "./SpendDisplay";
 
 const GenderPieChart = dynamic(
-  () => import("@/components/adLibrary/adInsights/GenderPieChart"),
+  () => import("@/components/adTool/adInsights/GenderPieChart"),
   { ssr: false },
 );
 
 const CountryBarChart = dynamic(
-  () => import("@/components/adLibrary/adInsights/CountryBarChart"),
+  () => import("@/components/adTool/adInsights/CountryBarChart"),
   { ssr: false },
 );
 
 const AgeBarChart = dynamic(
-  () => import("@/components/adLibrary/adInsights/AgeBarChart"),
+  () => import("@/components/adTool/adInsights/AgeBarChart"),
   { ssr: false },
 );
 

@@ -3,8 +3,8 @@
 import type React from "react";
 import { createContext, useCallback, useContext, useRef } from "react";
 
-import { filterConfig } from "../search/filter-config";
-import type { SearchParams } from "../search/filter-config";
+import { filterConfig } from "./filter-config";
+import type { SearchParams } from "./filter-config";
 
 interface SearchFilterContextType {
   getValue: (key: string) => any;

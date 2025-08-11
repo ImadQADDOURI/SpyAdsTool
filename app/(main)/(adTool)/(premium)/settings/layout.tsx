@@ -1,4 +1,4 @@
-import { SettingsNav } from "@/components/adLibrary/settings/settings-nav";
+import { SettingsNav } from "@/components/adTool/settings/settings-nav";
 
 export default function SettingsLayout({ children }) {
   return (

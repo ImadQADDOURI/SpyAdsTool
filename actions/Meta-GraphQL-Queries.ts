@@ -3,7 +3,7 @@
 import { metaGraphQLApi } from "@/actions/Meta-GraphQL-Api";
 
 import { AdData } from "@/types/ad";
-import { SearchParams } from "@/components/adLibrary/search/filter-config";
+import { SearchParams } from "@/components/adTool/search/filter-config";
 
 // API name to doc_id mapping
 export const apiNameToDocId = {

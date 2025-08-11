@@ -2,7 +2,7 @@
 
 import { getTopStores } from "@/actions/top-stores";
 
-import { TopStoresConfig } from "@/components/adLibrary/topStores/top-stores-config";
+import { TopStoresConfig } from "@/components/adTool/topStores/top-stores-config";
 
 export default async function TopStoresPage() {
   const stores = await getTopStores();

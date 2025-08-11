@@ -20,16 +20,16 @@ import { toast } from "sonner";
 
 import { AdData } from "@/types/ad";
 import { Button } from "@/components/ui/button";
-import BoardSettingsDropdown from "@/components/adLibrary/favorites/BoardSettingsDropdown";
+import BoardSettingsDropdown from "@/components/adTool/favorites/BoardSettingsDropdown";
 import {
   SavedAd,
   useSavedAds,
-} from "@/components/adLibrary/favorites/SavedAdsContext";
-import AdCardGrid from "@/components/adLibrary/microComponents/AdCardGrid";
-import { Loading } from "@/components/adLibrary/microComponents/Loading";
-import { ScrollButtons } from "@/components/adLibrary/microComponents/ScrollButtons";
-import { SubscriptionPageGuard } from "@/components/adLibrary/subscription/SubscriptionPageGuard";
-import TitleSection from "@/components/adLibrary/TitleSection";
+} from "@/components/adTool/favorites/SavedAdsContext";
+import AdCardGrid from "@/components/adTool/microComponents/AdCardGrid";
+import { Loading } from "@/components/adTool/microComponents/Loading";
+import { ScrollButtons } from "@/components/adTool/microComponents/ScrollButtons";
+import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
+import TitleSection from "@/components/adTool/TitleSection";
 
 type BoardContentProps = {
   boardName: string;

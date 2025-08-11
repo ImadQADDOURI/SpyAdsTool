@@ -19,9 +19,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import DropshippingCalculator from "@/components/adLibrary/calculator/DropshippingCalculator";
-import { Loading } from "@/components/adLibrary/microComponents/Loading";
-import TitleSection from "@/components/adLibrary/TitleSection";
+import DropshippingCalculator from "@/components/adTool/calculator/DropshippingCalculator";
+import { Loading } from "@/components/adTool/microComponents/Loading";
+import TitleSection from "@/components/adTool/TitleSection";
 
 export default function CalculatorPage() {
   return (

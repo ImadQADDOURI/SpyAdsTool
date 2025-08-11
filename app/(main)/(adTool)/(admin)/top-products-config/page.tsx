@@ -1,6 +1,6 @@
 // app/admin/top-stores-config/page.tsx
 
-import TopProductsConfig from "@/components/adLibrary/topProducts/top-products-config";
+import TopProductsConfig from "@/components/adTool/topProducts/top-products-config";
 
 export default async function TopProductsConfigPage() {
   return (

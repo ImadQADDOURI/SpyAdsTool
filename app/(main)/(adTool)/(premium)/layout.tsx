@@ -2,8 +2,8 @@
 import { redirect } from "next/navigation";
 
 import { getCurrentUser } from "@/lib/session";
-import { SavedAdsProvider } from "@/components/adLibrary/favorites/SavedAdsContext";
-import { SubscriptionProvider } from "@/components/adLibrary/subscription/SubscriptionProvider";
+import { SavedAdsProvider } from "@/components/adTool/favorites/SavedAdsContext";
+import { SubscriptionProvider } from "@/components/adTool/subscription/SubscriptionProvider";
 
 // 🔒 Protected layout that requires authentication
 export default async function Premium({

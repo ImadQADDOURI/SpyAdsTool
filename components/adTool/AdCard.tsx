@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import { AdData } from "@/types/ad";
-import SaveAdButton from "@/components/adLibrary/favorites/SaveAdButton";
+import SaveAdButton from "@/components/adTool/favorites/SaveAdButton";
 
 import { Card, CardContent, CardFooter } from "../ui/card";
 import {

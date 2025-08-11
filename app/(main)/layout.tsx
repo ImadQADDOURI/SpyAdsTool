@@ -1,6 +1,6 @@
-import { FooterSection } from "@/components/adLibrary/landingPage/FooterSection";
-import { Navbar } from "@/components/adLibrary/navbar/navbar";
-import { NavbarVisibilityProvider } from "@/components/adLibrary/navbar/navbar-visibility-context";
+import { FooterSection } from "@/components/adTool/landingPage/FooterSection";
+import { Navbar } from "@/components/adTool/navbar/navbar";
+import { NavbarVisibilityProvider } from "@/components/adTool/navbar/navbar-visibility-context";
 
 interface MarketingLayoutProps {
   children: React.ReactNode;

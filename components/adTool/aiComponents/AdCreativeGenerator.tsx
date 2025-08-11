@@ -30,7 +30,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { aiSupportedLanguages } from "@/components/adLibrary/aiComponents/AiSupportedLanguages";
+import { aiSupportedLanguages } from "@/components/adTool/aiComponents/AiSupportedLanguages";
 
 interface AdCreative {
   primaryText: string;
