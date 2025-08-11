@@ -32,6 +32,7 @@ import { ModalContext } from "@/components/modals/providers";
 import { Icons } from "@/components/shared/icons";
 import { UserAvatar } from "@/components/shared/user-avatar";
 
+import { AuroraText } from "../landingPage/hero/AuroraText";
 import { CollapsibleDropdownMobile } from "./collapsible-dropdown-mobile";
 import { AdminLinks, Deals, NavbarLinks } from "./navbar-links";
 import { NavbarMobileMenu } from "./navbar-mobile-menu";
@@ -96,14 +97,15 @@ export function Navbar() {
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-1.5"
+              className="flex items-start justify-center gap-1"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-r from-[#6566F1] to-[#B977F8] text-white">
-                <Icons.search className="h-4 w-4" />
-              </div>
-              <span className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-xl font-bold text-transparent">
+              <Icons.search className="h-6 w-6 flex-shrink-0 text-purple-500 dark:text-purple-400" />
+              <AuroraText
+                colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+                className="inline-block text-xl font-bold"
+              >
                 AdSearch
-              </span>
+              </AuroraText>
             </motion.div>
           </Link>
         </div>

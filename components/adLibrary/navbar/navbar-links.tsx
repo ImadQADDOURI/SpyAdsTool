@@ -100,19 +100,20 @@ export const Tools = [
 // Deal buttons data
 export const Deals = [
   {
-    title: "DigitalOcean",
-    url: "https://example.com/digitalocean",
-    description: "Get $100 in free credit",
-    icon: CloudLightning,
-    discountCode: "DO100",
-    gradient: "from-red-500 to-orange-500",
+    title: "Shopify",
+    url: "https://example.com/shopify",
+    description: "Exclusive 30% discount on Shopify plans",
+    icon: ShoppingBag,
+    discountCode: "SHOP30",
+    gradient: "from-pink-500 to-purple-500",
   },
   {
-    title: "Vercel",
-    url: "https://example.com/vercel",
-    description: "Pro plan 20% off",
-    icon: Zap,
-    gradient: "from-green-500 to-emerald-500",
+    title: "TikTok",
+    url: "https://example.com/tiktok",
+    description: "Grab a special 20% discount on TikTok ads",
+    icon: TrendingUp,
+    discountCode: "TIKTOK20",
+    gradient: "from-blue-500 to-green-500",
   },
 ];
 
