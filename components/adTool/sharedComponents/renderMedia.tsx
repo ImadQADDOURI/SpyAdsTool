@@ -18,6 +18,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import SubscriptionAccessGuard from "../subscription/SubscriptionAccessGuard";
 import DownloadMedia from "./DownloadMedia";
 import ExpandableText from "./expandableText";
 
@@ -200,54 +201,58 @@ export const RenderMedia: React.FC<RenderMediaProps> = memo(
                   </div>
                 )}
 
-                {/* 🎯 Action Buttons - always visible */}
-                <div
-                  className={`flex items-center space-x-2 ${compact ? "p-2" : "px-2"}`}
-                >
-                  <DownloadMedia item={item} />
+                <SubscriptionAccessGuard>
+                  {/* 🎯 Action Buttons - require subscription */}
+                  <div
+                    className={`flex items-center space-x-2 ${compact ? "p-2" : "px-2"}`}
+                  >
+                    <DownloadMedia item={item} />
 
-                  {(item.link_url || snapshot?.link_url) && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 flex-grow border-gray-200 bg-white text-xs text-gray-800 transition-all duration-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-                            asChild
-                          >
-                            <a
-                              href={item.link_url || snapshot?.link_url || "#"}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center justify-center"
+                    {(item.link_url || snapshot?.link_url) && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 flex-grow border-gray-200 bg-white text-xs text-gray-800 transition-all duration-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                              asChild
                             >
-                              <span className="truncate">
-                                {truncateText(
-                                  item.cta_text ||
-                                    snapshot?.cta_text ||
-                                    "Learn More",
-                                  20,
-                                )}
-                              </span>
-                              <ExternalLink className="ml-1 h-4 w-4" />
-                            </a>
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent
-                          side="top"
-                          className="border border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                        >
-                          <p>
-                            {item.cta_text ||
-                              snapshot?.cta_text ||
-                              "Learn More"}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                </div>
+                              <a
+                                href={
+                                  item.link_url || snapshot?.link_url || "#"
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center"
+                              >
+                                <span className="truncate">
+                                  {truncateText(
+                                    item.cta_text ||
+                                      snapshot?.cta_text ||
+                                      "Learn More",
+                                    20,
+                                  )}
+                                </span>
+                                <ExternalLink className="ml-1 h-4 w-4" />
+                              </a>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="top"
+                            className="border border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                          >
+                            <p>
+                              {item.cta_text ||
+                                snapshot?.cta_text ||
+                                "Learn More"}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
+                  </div>
+                </SubscriptionAccessGuard>
               </CarouselItem>
             ))}
           </CarouselContent>

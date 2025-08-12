@@ -235,7 +235,7 @@ export const SearchResults = memo(
     const Footer = useCallback(() => {
       return (
         <div className="mt-2 flex justify-center">
-          <SubscriptionAccessGuard showIcon>
+          <SubscriptionAccessGuard>
             {hasNextPage ? (
               isLoading ? (
                 <Loading size="small" />

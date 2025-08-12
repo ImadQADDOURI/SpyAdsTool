@@ -277,7 +277,7 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
 
       {/* Footer - hidden in compact mode */}
       {!compact && (
-        <SubscriptionAccessGuard showIcon>
+        <SubscriptionAccessGuard>
           <CardFooter className="m-0 p-1">
             <AdDetails ad={ad} />
           </CardFooter>
