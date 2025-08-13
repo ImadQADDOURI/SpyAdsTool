@@ -58,7 +58,9 @@ export function CloudflareSection() {
                   </Link>
                 </li>
                 <li>Navigate to R2 Object Storage in the dashboard</li>
-                <li>Create a new bucket (e.g., "your-app-dev-storage")</li>
+                <li>
+                  Create a new bucket (e.g., &quot;your-app-dev-storage&quot;)
+                </li>
                 <li>Note your Account ID from the R2 overview page</li>
               </ol>
 
@@ -66,8 +68,10 @@ export function CloudflareSection() {
                 2. Generate API Tokens
               </h4>
               <ol className="space-y-2 text-slate-700 dark:text-slate-300">
-                <li>Go to "My Profile" → "API Tokens"</li>
-                <li>Click "Create Token" → "Custom token"</li>
+                <li>Go to &quot;My Profile&quot; → &quot;API Tokens&quot;</li>
+                <li>
+                  Click &quot;Create Token&quot; → &quot;Custom token&quot;
+                </li>
                 <li>Configure permissions:</li>
                 <ul className="ml-4 space-y-1 text-sm">
                   <li>• Zone: Zone:Read (if using custom domain)</li>
@@ -139,7 +143,7 @@ export function CloudflareSection() {
               <ol className="space-y-2 text-slate-700 dark:text-slate-300">
                 <li>
                   Create a separate bucket for production (e.g.,
-                  "your-app-prod-storage")
+                  &quot;your-app-prod-storage&quot;)
                 </li>
                 <li>Configure bucket settings:</li>
                 <ul className="ml-4 space-y-1 text-sm">
