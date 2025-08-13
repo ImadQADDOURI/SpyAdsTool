@@ -80,16 +80,16 @@ export default function TitleSection({
       )}
 
       {/* Row 3: Description + Separation Line */}
-      {description && (
-        <div className="space-y-6">
+      <div className="space-y-6">
+        {description && (
           <p className="mx-auto max-w-2xl text-base leading-relaxed text-gray-600 dark:text-gray-400 md:text-lg">
             {description}
           </p>
-          <div className="flex justify-center">
-            <div className="h-0.5 w-40 rounded-full bg-gradient-to-r from-transparent via-purple-400/60 to-transparent"></div>
-          </div>
+        )}
+        <div className="flex justify-center">
+          <div className="h-0.5 w-40 rounded-full bg-gradient-to-r from-transparent via-purple-400/60 to-transparent"></div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
