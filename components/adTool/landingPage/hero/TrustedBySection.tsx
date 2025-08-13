@@ -3,34 +3,9 @@
 import Image from "next/image";
 import { Building2 } from "lucide-react";
 
-// 🏢 Trusted by leading teams section with optimized marquee animation
-export default function TrustedBySection() {
-  const companies = [
-    { name: "Google", logo: "https://cdn.magicui.design/companies/Google.svg" },
-    {
-      name: "Microsoft",
-      logo: "https://cdn.magicui.design/companies/Microsoft.svg",
-    },
-    { name: "Amazon", logo: "https://cdn.magicui.design/companies/Amazon.svg" },
-    {
-      name: "Netflix",
-      logo: "https://cdn.magicui.design/companies/Netflix.svg",
-    },
-    {
-      name: "YouTube",
-      logo: "https://cdn.magicui.design/companies/YouTube.svg",
-    },
-    {
-      name: "Instagram",
-      logo: "https://cdn.magicui.design/companies/Instagram.svg",
-    },
-    { name: "Uber", logo: "https://cdn.magicui.design/companies/Uber.svg" },
-    {
-      name: "Spotify",
-      logo: "https://cdn.magicui.design/companies/Spotify.svg",
-    },
-  ];
+import { trustedBySectionConfig } from "../../configuration/landing";
 
+export default function TrustedBySection() {
   return (
     <div className="relative py-8">
       {/* 📝 Section title */}
@@ -49,7 +24,7 @@ export default function TrustedBySection() {
         <div className="animate-marquee flex">
           {/* 🔄 First set of logos */}
           <div className="flex shrink-0 items-center justify-around gap-8 px-4">
-            {companies.map((company, index) => (
+            {trustedBySectionConfig.map((company, index) => (
               <div
                 key={`set1-${index}`}
                 className="flex items-center justify-center transition-transform duration-300 hover:scale-110"
@@ -69,7 +44,7 @@ export default function TrustedBySection() {
 
           {/* 🔄 Second set of logos for seamless loop */}
           <div className="flex shrink-0 items-center justify-around gap-8 px-4">
-            {companies.map((company, index) => (
+            {trustedBySectionConfig.map((company, index) => (
               <div
                 key={`set2-${index}`}
                 className="flex items-center justify-center transition-transform duration-300 hover:scale-110"

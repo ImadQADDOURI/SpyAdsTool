@@ -247,6 +247,32 @@ export const heroConfig = {
   ],
 };
 
+export const trustedBySectionConfig = [
+  { name: "Google", logo: "https://cdn.magicui.design/companies/Google.svg" },
+  {
+    name: "Microsoft",
+    logo: "https://cdn.magicui.design/companies/Microsoft.svg",
+  },
+  { name: "Amazon", logo: "https://cdn.magicui.design/companies/Amazon.svg" },
+  {
+    name: "Netflix",
+    logo: "https://cdn.magicui.design/companies/Netflix.svg",
+  },
+  {
+    name: "YouTube",
+    logo: "https://cdn.magicui.design/companies/YouTube.svg",
+  },
+  {
+    name: "Instagram",
+    logo: "https://cdn.magicui.design/companies/Instagram.svg",
+  },
+  { name: "Uber", logo: "https://cdn.magicui.design/companies/Uber.svg" },
+  {
+    name: "Spotify",
+    logo: "https://cdn.magicui.design/companies/Spotify.svg",
+  },
+];
+
 export const featuresConfig = [
   {
     id: "discover",
