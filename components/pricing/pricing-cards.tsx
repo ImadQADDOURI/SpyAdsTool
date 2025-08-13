@@ -4,6 +4,7 @@
 import { useContext, useState } from "react";
 import Link from "next/link";
 import { UserSubscriptionPlan } from "@/types";
+import { CircleCheckBig, CreditCard, Plane, Rocket } from "lucide-react";
 
 import { SubscriptionPlan } from "@/types/index";
 import { pricingData } from "@/config/subscriptions";
@@ -12,9 +13,10 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { BillingFormButton } from "@/components/forms/billing-form-button";
 import { ModalContext } from "@/components/modals/providers";
-import { HeaderSection } from "@/components/shared/header-section";
 import { Icons } from "@/components/shared/icons";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
+
+import TitleSection from "../adTool/sharedComponents/TitleSection";
 
 interface PricingCardsProps {
   userId?: string;
@@ -136,7 +138,17 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
   return (
     <MaxWidthWrapper>
       <section className="flex flex-col items-center text-center">
-        <HeaderSection label="Pricing" title="Start at full speed !" />
+        <TitleSection
+          icon={CircleCheckBig}
+          iconColor="text-purple-500 dark:text-purple-400"
+          badgeText="Pricing"
+          image={Rocket}
+          imageColor="text-pink-600 dark:text-pink-400"
+          highlightedText="Start"
+          remainingTitle="at full speed !"
+          auroraColors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+          description=""
+        />
 
         <div className="mb-4 mt-10 flex items-center gap-5">
           <ToggleGroup
@@ -171,18 +183,15 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
         </div>
 
         <p className="mt-3 text-balance text-center text-base text-muted-foreground">
-          Email{" "}
+          login if you want to contact our{" "}
           <a
             className="font-medium text-primary hover:underline"
-            href="mailto:support@saas-starter.com"
+            href="/support"
           >
-            support@saas-starter.com
+            Support
           </a>{" "}
-          for to contact our support team.
+          team.
           <br />
-          <strong>
-            You can test the subscriptions and won&apos;t be charged.
-          </strong>
         </p>
       </section>
     </MaxWidthWrapper>

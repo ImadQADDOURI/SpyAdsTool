@@ -48,33 +48,33 @@ export const pricingData: SubscriptionPlan[] = [
       yearly: env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID,
     },
   },
-  {
-    title: "Business",
-    description: "For Power Users",
-    benefits: [
-      "Unlimited posts",
-      "Real-time analytics and reporting",
-      "Access to all templates, including custom branding",
-      "24/7 business customer support",
-      "Personalized onboarding and account management.",
-    ],
-    limitations: [],
-    prices: {
-      monthly: 30,
-      yearly: 300,
-    },
-    stripeIds: {
-      monthly: env.NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PLAN_ID,
-      yearly: env.NEXT_PUBLIC_STRIPE_BUSINESS_YEARLY_PLAN_ID,
-    },
-  },
+  // {
+  //   title: "Business",
+  //   description: "For Power Users",
+  //   benefits: [
+  //     "Unlimited posts",
+  //     "Real-time analytics and reporting",
+  //     "Access to all templates, including custom branding",
+  //     "24/7 business customer support",
+  //     "Personalized onboarding and account management.",
+  //   ],
+  //   limitations: [],
+  //   prices: {
+  //     monthly: 30,
+  //     yearly: 300,
+  //   },
+  //   stripeIds: {
+  //     monthly: env.NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PLAN_ID,
+  //     yearly: env.NEXT_PUBLIC_STRIPE_BUSINESS_YEARLY_PLAN_ID,
+  //   },
+  // },
 ];
 
 export const plansColumns = [
   "starter",
   "pro",
-  "business",
-  "enterprise",
+  // "business",
+  // "enterprise",
 ] as const;
 
 export const comparePlans: PlansRow[] = [

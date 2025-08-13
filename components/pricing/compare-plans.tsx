@@ -1,5 +1,13 @@
 import { PlansRow } from "@/types";
-import { CircleCheck, Info } from "lucide-react";
+import {
+  BadgeDollarSign,
+  CircleCheck,
+  HandCoins,
+  Info,
+  ListCheck,
+  ListChecks,
+  TicketsIcon,
+} from "lucide-react";
 
 import { comparePlans, plansColumns } from "@/config/subscriptions";
 import {
@@ -9,6 +17,8 @@ import {
 } from "@/components/ui/popover";
 import { HeaderSection } from "@/components/shared/header-section";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
+
+import TitleSection from "../adTool/sharedComponents/TitleSection";
 
 export function ComparePlans() {
   const renderCell = (value: string | boolean | null) => {
@@ -20,10 +30,15 @@ export function ComparePlans() {
 
   return (
     <MaxWidthWrapper>
-      <HeaderSection
-        label="Plans"
-        title="Compare Our Plans"
-        subtitle="Find the perfect plan tailored for your business needs!"
+      <TitleSection
+        icon={TicketsIcon}
+        badgeText="Plans"
+        image={ListChecks}
+        imageColor="text-yellow-500 dark:text-yellow-300"
+        highlightedText="Compare"
+        remainingTitle="Our Plans"
+        auroraColors={["#f97316", "#f59e0b", "#fbbf24", "#fde047"]}
+        description="Find the perfect plan tailored for your business needs!"
       />
 
       <div className="my-10 overflow-x-scroll max-lg:mx-[-0.8rem] md:overflow-x-visible">

@@ -1,3 +1,5 @@
+import { HelpCircle, Mail, MessageCircleQuestion, Send } from "lucide-react";
+
 import {
   Accordion,
   AccordionContent,
@@ -5,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+import TitleSection from "../adTool/sharedComponents/TitleSection";
 import { HeaderSection } from "../shared/header-section";
 
 const pricingFaqData = [
@@ -36,21 +39,25 @@ const pricingFaqData = [
     id: "item-5",
     question: "Is there a trial period for the paid plans?",
     answer:
-      "We offer a 14-day free trial for both the Pro Monthly and Pro Annual plans. It's a great way to experience all the features before committing to a paid subscription.",
+      "You can log in and enjoy a range of free features that are fully open and provide great value. These give you a real feel for the app before deciding if a paid plan is right for you.",
   },
 ];
 
 export function PricingFaq() {
   return (
     <section className="container max-w-4xl py-2">
-      <HeaderSection
-        label="FAQ"
-        title="Frequently Asked Questions"
-        subtitle="Explore our comprehensive FAQ to find quick answers to common
+      <TitleSection
+        icon={Send}
+        badgeText="FAQ"
+        image={HelpCircle}
+        imageColor="text-green-500 dark:text-green-400"
+        highlightedText="Frequently"
+        remainingTitle="Asked Questions"
+        auroraColors={["#f87171", "#fbbf24", "#34d399", "#60a5fa"]}
+        description="Explore our comprehensive FAQ to find quick answers to common
           inquiries. If you need further assistance, don't hesitate to
           contact us for personalized help."
       />
-
       <Accordion type="single" collapsible className="my-12 w-full">
         {pricingFaqData.map((faqItem) => (
           <AccordionItem key={faqItem.id} value={faqItem.id}>
