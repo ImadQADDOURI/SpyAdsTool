@@ -1,36 +1,45 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Settings, Info } from "lucide-react"
+import { Info, Settings } from "lucide-react";
+
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function ConfigSection() {
   return (
     <Card id="config">
       <CardHeader>
         <div className="flex items-center gap-3">
-          <Settings className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+          <Settings className="h-6 w-6 text-slate-600 dark:text-slate-400" />
           <CardTitle className="text-2xl">Configuration Files</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="prose prose-slate dark:prose-invert max-w-none">
-          <p className="text-slate-700 dark:text-slate-300 mb-6">
-            The <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded">config/</code> folder contains various
-            configuration files that you can customize to match your application&apos;s needs.
+        <div className="prose prose-slate max-w-none dark:prose-invert">
+          <p className="mb-6 text-slate-700 dark:text-slate-300">
+            The{" "}
+            <code className="rounded bg-slate-200 px-1 dark:bg-slate-700">
+              config/
+            </code>{" "}
+            folder contains various configuration files that you can customize
+            to match your application&apos;s needs.
           </p>
 
-          <div className="grid md:grid-cols-2 gap-6 mb-6">
-            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-              <h4 className="font-semibold text-blue-800 dark:text-blue-300 mb-2">🚀 Development</h4>
-              <ul className="text-blue-700 dark:text-blue-300 text-sm space-y-1">
+          <div className="mb-6 grid gap-6 md:grid-cols-2">
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+              <h4 className="mb-2 font-semibold text-blue-800 dark:text-blue-300">
+                🚀 Development
+              </h4>
+              <ul className="space-y-1 text-sm text-blue-700 dark:text-blue-300">
                 <li>• Easy customization and testing</li>
                 <li>• Hot reload for config changes</li>
                 <li>• TypeScript support for validation</li>
                 <li>• Modular organization</li>
               </ul>
             </div>
-            <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
-              <h4 className="font-semibold text-green-800 dark:text-green-300 mb-2">🏢 Production</h4>
-              <ul className="text-green-700 dark:text-green-300 text-sm space-y-1">
+            <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900/20">
+              <h4 className="mb-2 font-semibold text-green-800 dark:text-green-300">
+                🏢 Production
+              </h4>
+              <ul className="space-y-1 text-sm text-green-700 dark:text-green-300">
                 <li>• Build-time optimization</li>
                 <li>• Environment-specific configs</li>
                 <li>• Type-safe configuration</li>
@@ -39,31 +48,37 @@ export function ConfigSection() {
             </div>
           </div>
 
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Available Configuration Files</h3>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Available Configuration Files
+          </h3>
 
           <div className="grid gap-4">
-            <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
-              <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">📄 site.ts</h4>
-              <p className="text-slate-600 dark:text-slate-400 text-sm mb-3">
+            <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+              <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
+                📄 site.ts
+              </h4>
+              <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
                 Manages global site metadata, SEO settings, and footer links.
               </p>
-              <div className="p-3 bg-slate-900 dark:bg-slate-800 rounded text-sm">
+              <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-800">
                 <code className="text-green-400">
                   export const siteConfig = {`{`}
                   <br />
-                  &nbsp;&nbsp;name: "Your App Name",
+                  &nbsp;&nbsp;name: &quot;Your App Name&quot;,
                   <br />
-                  &nbsp;&nbsp;description: "Your app description",
+                  &nbsp;&nbsp;description: &quot;Your app description&quot;,
                   <br />
-                  &nbsp;&nbsp;url: "https://yourapp.com",
+                  &nbsp;&nbsp;url: &quot;https://yourapp.com&quot;,
                   <br />
-                  &nbsp;&nbsp;ogImage: "https://yourapp.com/og.jpg",
+                  &nbsp;&nbsp;ogImage: &quot;https://yourapp.com/og.jpg&quot;,
                   <br />
                   &nbsp;&nbsp;links: {`{`}
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;twitter: "https://twitter.com/youraccount",
+                  &nbsp;&nbsp;&nbsp;&nbsp;twitter:
+                  &quot;https://twitter.com/youraccount&quot;,
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;github: "https://github.com/youraccount"
+                  &nbsp;&nbsp;&nbsp;&nbsp;github:
+                  &quot;https://github.com/youraccount&quot;
                   <br />
                   &nbsp;&nbsp;{`}`}
                   <br />
@@ -72,12 +87,14 @@ export function ConfigSection() {
               </div>
             </div>
 
-            <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
-              <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">💰 subscriptions.ts</h4>
-              <p className="text-slate-600 dark:text-slate-400 text-sm mb-3">
+            <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+              <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
+                💰 subscriptions.ts
+              </h4>
+              <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
                 Contains all pricing plans and subscription configurations.
               </p>
-              <div className="p-3 bg-slate-900 dark:bg-slate-800 rounded text-sm">
+              <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-800">
                 <code className="text-green-400">
                   {`{`}
                   <br />
@@ -89,7 +106,8 @@ export function ConfigSection() {
                   <br />
                   &nbsp;&nbsp;&nbsp;&nbsp;&apos;Up to 500 monthly posts&apos;,
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;&apos;Advanced analytics and reporting&apos;,
+                  &nbsp;&nbsp;&nbsp;&nbsp;&apos;Advanced analytics and
+                  reporting&apos;,
                   <br />
                   &nbsp;&nbsp;&nbsp;&nbsp;&apos;Priority customer support&apos;,
                   <br />
@@ -111,9 +129,11 @@ export function ConfigSection() {
                   <br />
                   &nbsp;&nbsp;stripeIds: {`{`}
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;monthly: env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PLAN_ID,
+                  &nbsp;&nbsp;&nbsp;&nbsp;monthly:
+                  env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PLAN_ID,
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;yearly: env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID,
+                  &nbsp;&nbsp;&nbsp;&nbsp;yearly:
+                  env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID,
                   <br />
                   &nbsp;&nbsp;{`}`}
                   <br />
@@ -122,29 +142,34 @@ export function ConfigSection() {
               </div>
             </div>
 
-            <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
-              <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">🏠 landing.ts</h4>
-              <p className="text-slate-600 dark:text-slate-400 text-sm mb-3">
+            <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+              <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
+                🏠 landing.ts
+              </h4>
+              <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
                 Configuration for homepage sections, hero content, and features.
               </p>
-              <div className="p-3 bg-slate-900 dark:bg-slate-800 rounded text-sm">
+              <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-800">
                 <code className="text-green-400">
                   export const landingConfig = {`{`}
                   <br />
                   &nbsp;&nbsp;hero: {`{`}
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;title: "Your Hero Title",
+                  &nbsp;&nbsp;&nbsp;&nbsp;title: &quot;Your Hero Title&quot;,
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;description: "Your hero description",
+                  &nbsp;&nbsp;&nbsp;&nbsp;description: &quot;Your hero
+                  description&quot;,
                   <br />
                   &nbsp;&nbsp;{`}`},
                   <br />
                   &nbsp;&nbsp;features: [
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;{`{`} title: "Feature 1", description: "..." {`}`}
+                  &nbsp;&nbsp;&nbsp;&nbsp;{`{`} title: &quot;Feature 1&quot;,
+                  description: &quot;...&quot; {`}`}
                   ,
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;{`{`} title: "Feature 2", description: "..." {`}`}
+                  &nbsp;&nbsp;&nbsp;&nbsp;{`{`} title: &quot;Feature 2&quot;,
+                  description: &quot;...&quot; {`}`}
                   <br />
                   &nbsp;&nbsp;]
                   <br />
@@ -153,12 +178,14 @@ export function ConfigSection() {
               </div>
             </div>
 
-            <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
-              <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">🧭 Navigation Files</h4>
-              <p className="text-slate-600 dark:text-slate-400 text-sm mb-3">
+            <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+              <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
+                🧭 Navigation Files
+              </h4>
+              <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
                 Separate navigation configurations for different sections:
               </p>
-              <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+              <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
                 <li>
                   • <strong>marketing.ts</strong> - Marketing site navigation
                 </li>
@@ -169,16 +196,18 @@ export function ConfigSection() {
                   • <strong>docs.ts</strong> - Documentation navigation
                 </li>
               </ul>
-              <div className="p-3 bg-slate-900 dark:bg-slate-800 rounded text-sm mt-3">
+              <div className="mt-3 rounded bg-slate-900 p-3 text-sm dark:bg-slate-800">
                 <code className="text-green-400">
                   export const dashboardConfig = {`{`}
                   <br />
                   &nbsp;&nbsp;mainNav: [
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;{`{`} title: "Dashboard", href: "/dashboard" {`}`}
+                  &nbsp;&nbsp;&nbsp;&nbsp;{`{`} title: &quot;Dashboard&quot;,
+                  href: &quot;/dashboard&quot; {`}`}
                   ,
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;{`{`} title: "Settings", href: "/dashboard/settings" {`}`}
+                  &nbsp;&nbsp;&nbsp;&nbsp;{`{`} title: &quot;Settings&quot;,
+                  href: &quot;/dashboard/settings&quot; {`}`}
                   <br />
                   &nbsp;&nbsp;],
                   <br />
@@ -190,23 +219,30 @@ export function ConfigSection() {
             </div>
           </div>
 
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mt-6">Customization Tips</h3>
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-            <ul className="text-blue-700 dark:text-blue-300 text-sm space-y-2">
+          <h3 className="mt-6 text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Customization Tips
+          </h3>
+          <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+            <ul className="space-y-2 text-sm text-blue-700 dark:text-blue-300">
               <li>
-                • <strong>Start with site.ts</strong> - Update your app name, description, and social links
+                • <strong>Start with site.ts</strong> - Update your app name,
+                description, and social links
               </li>
               <li>
-                • <strong>Customize subscriptions.ts</strong> - Match your Stripe products and pricing
+                • <strong>Customize subscriptions.ts</strong> - Match your
+                Stripe products and pricing
               </li>
               <li>
-                • <strong>Update landing.ts</strong> - Personalize your homepage content
+                • <strong>Update landing.ts</strong> - Personalize your homepage
+                content
               </li>
               <li>
-                • <strong>Modify navigation</strong> - Add or remove menu items as needed
+                • <strong>Modify navigation</strong> - Add or remove menu items
+                as needed
               </li>
               <li>
-                • <strong>Use TypeScript</strong> - All configs are type-safe for better development experience
+                • <strong>Use TypeScript</strong> - All configs are type-safe
+                for better development experience
               </li>
             </ul>
           </div>
@@ -214,12 +250,13 @@ export function ConfigSection() {
           <Alert className="mt-4">
             <Info className="h-4 w-4" />
             <AlertDescription>
-              After updating configuration files, restart your development server to see changes. Some configs are used
-              at build time and require a rebuild for production deployments.
+              After updating configuration files, restart your development
+              server to see changes. Some configs are used at build time and
+              require a rebuild for production deployments.
             </AlertDescription>
           </Alert>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

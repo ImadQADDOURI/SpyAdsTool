@@ -1,16 +1,19 @@
-import Link from "next/link"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ExternalLink, Info, AlertCircle, CheckCircle } from "lucide-react"
+import Link from "next/link";
+import { AlertCircle, CheckCircle, ExternalLink, Info } from "lucide-react";
+
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function DeploymentSection() {
   return (
     <Card id="deployment">
       <CardHeader>
         <div className="flex items-center gap-3">
-          <ExternalLink className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-          <CardTitle className="text-2xl">Production Deployment Guide</CardTitle>
+          <ExternalLink className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+          <CardTitle className="text-2xl">
+            Production Deployment Guide
+          </CardTitle>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -22,15 +25,20 @@ export function DeploymentSection() {
           </TabsList>
 
           <TabsContent value="vercel" className="space-y-6">
-            <div className="prose prose-slate dark:prose-invert max-w-none">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Vercel Deployment</h3>
+            <div className="prose prose-slate max-w-none dark:prose-invert">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                Vercel Deployment
+              </h3>
               <p className="text-slate-700 dark:text-slate-300">
-                Vercel is the recommended platform for Next.js applications with zero-config deployment.
+                Vercel is the recommended platform for Next.js applications with
+                zero-config deployment.
               </p>
 
-              <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800 mb-6">
-                <h4 className="font-semibold text-green-800 dark:text-green-300 mb-2">🚀 Vercel Benefits</h4>
-                <ul className="text-green-700 dark:text-green-300 text-sm space-y-1">
+              <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900/20">
+                <h4 className="mb-2 font-semibold text-green-800 dark:text-green-300">
+                  🚀 Vercel Benefits
+                </h4>
+                <ul className="space-y-1 text-sm text-green-700 dark:text-green-300">
                   <li>• Zero-config Next.js deployment</li>
                   <li>• Automatic SSL certificates</li>
                   <li>• Global CDN and edge functions</li>
@@ -40,28 +48,37 @@ export function DeploymentSection() {
                 </ul>
               </div>
 
-              <h4 className="text-md font-semibold text-slate-900 dark:text-slate-100">1. Connect Repository</h4>
+              <h4 className="text-md font-semibold text-slate-900 dark:text-slate-100">
+                1. Connect Repository
+              </h4>
               <ol className="space-y-2 text-slate-700 dark:text-slate-300">
                 <li>Push your code to GitHub, GitLab, or Bitbucket</li>
                 <li>
                   Go to{" "}
-                  <Link href="https://vercel.com" className="text-blue-600 hover:underline">
+                  <Link
+                    href="https://vercel.com"
+                    className="text-blue-600 hover:underline"
+                  >
                     vercel.com
                   </Link>{" "}
                   and sign up
                 </li>
-                <li>Click "New Project" and import your repository</li>
-                <li>Vercel will auto-detect Next.js and configure build settings</li>
+                <li>
+                  Click &quot;New Project&quot; and import your repository
+                </li>
+                <li>
+                  Vercel will auto-detect Next.js and configure build settings
+                </li>
               </ol>
 
-              <h4 className="text-md font-semibold text-slate-900 dark:text-slate-100 mt-4">
+              <h4 className="text-md mt-4 font-semibold text-slate-900 dark:text-slate-100">
                 2. Environment Variables
               </h4>
               <p className="text-slate-700 dark:text-slate-300">
                 Add all production environment variables in Vercel dashboard:
               </p>
-              <div className="p-3 bg-slate-900 dark:bg-slate-800 rounded-lg">
-                <code className="text-green-400 text-sm">
+              <div className="rounded-lg bg-slate-900 p-3 dark:bg-slate-800">
+                <code className="text-sm text-green-400">
                   # Go to Project Settings → Environment Variables
                   <br />
                   NEXT_PUBLIC_APP_URL=https://yourapp.vercel.app
@@ -77,7 +94,9 @@ export function DeploymentSection() {
                 </code>
               </div>
 
-              <h4 className="text-md font-semibold text-slate-900 dark:text-slate-100 mt-4">3. Custom Domain</h4>
+              <h4 className="text-md mt-4 font-semibold text-slate-900 dark:text-slate-100">
+                3. Custom Domain
+              </h4>
               <ol className="space-y-2 text-slate-700 dark:text-slate-300">
                 <li>Go to Project Settings → Domains</li>
                 <li>Add your custom domain (e.g., yourapp.com)</li>
@@ -89,38 +108,45 @@ export function DeploymentSection() {
               <Alert className="mt-4">
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Vercel automatically handles SSL certificates, CDN, and global deployment for optimal performance.
-                  Perfect for SaaS applications with global users.
+                  Vercel automatically handles SSL certificates, CDN, and global
+                  deployment for optimal performance. Perfect for SaaS
+                  applications with global users.
                 </AlertDescription>
               </Alert>
             </div>
           </TabsContent>
 
           <TabsContent value="vps" className="space-y-6">
-            <div className="prose prose-slate dark:prose-invert max-w-none">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">VPS/Server Deployment</h3>
+            <div className="prose prose-slate max-w-none dark:prose-invert">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                VPS/Server Deployment
+              </h3>
               <p className="text-slate-700 dark:text-slate-300">
-                Deploy to your own server for full control over the infrastructure.
+                Deploy to your own server for full control over the
+                infrastructure.
               </p>
 
               <Alert className="mb-6">
                 <Info className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Requirements:</strong> Ubuntu 20.04+ or similar Linux distribution, 2GB+ RAM, Node.js 18+,
-                  PM2, Nginx
+                  <strong>Requirements:</strong> Ubuntu 20.04+ or similar Linux
+                  distribution, 2GB+ RAM, Node.js 18+, PM2, Nginx
                 </AlertDescription>
               </Alert>
 
-              <h4 className="text-md font-semibold text-slate-900 dark:text-slate-100">1. Server Preparation</h4>
-              <div className="p-3 bg-slate-900 dark:bg-slate-800 rounded-lg">
-                <code className="text-green-400 text-sm">
+              <h4 className="text-md font-semibold text-slate-900 dark:text-slate-100">
+                1. Server Preparation
+              </h4>
+              <div className="rounded-lg bg-slate-900 p-3 dark:bg-slate-800">
+                <code className="text-sm text-green-400">
                   # Update system
                   <br />
                   sudo apt update &amp;&amp; sudo apt upgrade -y
                   <br />
                   <br /># Install Node.js 18+
                   <br />
-                  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+                  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E
+                  bash -
                   <br />
                   sudo apt-get install -y nodejs
                   <br />
@@ -138,9 +164,11 @@ export function DeploymentSection() {
                 </code>
               </div>
 
-              <h4 className="text-md font-semibold text-slate-900 dark:text-slate-100 mt-6">2. Application Setup</h4>
-              <div className="p-3 bg-slate-900 dark:bg-slate-800 rounded-lg">
-                <code className="text-green-400 text-sm">
+              <h4 className="text-md mt-6 font-semibold text-slate-900 dark:text-slate-100">
+                2. Application Setup
+              </h4>
+              <div className="rounded-lg bg-slate-900 p-3 dark:bg-slate-800">
+                <code className="text-sm text-green-400">
                   # Create application directory
                   <br />
                   sudo mkdir -p /var/www/yourapp
@@ -151,7 +179,8 @@ export function DeploymentSection() {
                   <br />
                   cd /var/www/yourapp
                   <br />
-                  git clone https://github.com/your-username/ad-search-platform.git .
+                  git clone
+                  https://github.com/your-username/ad-search-platform.git .
                   <br />
                   <br /># Install dependencies
                   <br />
@@ -168,23 +197,29 @@ export function DeploymentSection() {
               <Alert className="mt-4">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Security:</strong> Regularly update your server, use strong passwords, disable root login, and
-                  consider using SSH keys for authentication. Set up a firewall and fail2ban.
+                  <strong>Security:</strong> Regularly update your server, use
+                  strong passwords, disable root login, and consider using SSH
+                  keys for authentication. Set up a firewall and fail2ban.
                 </AlertDescription>
               </Alert>
             </div>
           </TabsContent>
 
           <TabsContent value="docker" className="space-y-6">
-            <div className="prose prose-slate dark:prose-invert max-w-none">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Docker Deployment</h3>
+            <div className="prose prose-slate max-w-none dark:prose-invert">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                Docker Deployment
+              </h3>
               <p className="text-slate-700 dark:text-slate-300">
-                Containerize your application for consistent deployment across environments.
+                Containerize your application for consistent deployment across
+                environments.
               </p>
 
-              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800 mb-6">
-                <h4 className="font-semibold text-purple-800 dark:text-purple-300 mb-2">🐳 Docker Benefits</h4>
-                <ul className="text-purple-700 dark:text-purple-300 text-sm space-y-1">
+              <div className="mb-6 rounded-lg border border-purple-200 bg-purple-50 p-4 dark:border-purple-800 dark:bg-purple-900/20">
+                <h4 className="mb-2 font-semibold text-purple-800 dark:text-purple-300">
+                  🐳 Docker Benefits
+                </h4>
+                <ul className="space-y-1 text-sm text-purple-700 dark:text-purple-300">
                   <li>• Consistent environment across dev/staging/prod</li>
                   <li>• Easy scaling and orchestration</li>
                   <li>• Isolated dependencies and runtime</li>
@@ -192,10 +227,14 @@ export function DeploymentSection() {
                 </ul>
               </div>
 
-              <h4 className="text-md font-semibold text-slate-900 dark:text-slate-100">1. Create Dockerfile</h4>
-              <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
-                <h5 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Dockerfile:</h5>
-                <div className="p-3 bg-slate-900 dark:bg-slate-700 rounded text-sm overflow-x-auto">
+              <h4 className="text-md font-semibold text-slate-900 dark:text-slate-100">
+                1. Create Dockerfile
+              </h4>
+              <div className="rounded-lg bg-slate-50 p-4 dark:bg-slate-800">
+                <h5 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
+                  Dockerfile:
+                </h5>
+                <div className="overflow-x-auto rounded bg-slate-900 p-3 text-sm dark:bg-slate-700">
                   <code className="text-green-400">
                     FROM node:18-alpine AS base
                     <br />
@@ -247,9 +286,11 @@ export function DeploymentSection() {
                     <br />
                     COPY --from=builder /app/public ./public
                     <br />
-                    COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+                    COPY --from=builder --chown=nextjs:nodejs
+                    /app/.next/standalone ./
                     <br />
-                    COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+                    COPY --from=builder --chown=nextjs:nodejs /app/.next/static
+                    ./.next/static
                     <br />
                     <br />
                     USER nextjs
@@ -260,10 +301,10 @@ export function DeploymentSection() {
                     <br />
                     ENV PORT 3000
                     <br />
-                    ENV HOSTNAME "0.0.0.0"
+                    ENV HOSTNAME &quot;0.0.0.0&quot;
                     <br />
                     <br />
-                    CMD ["node", "server.js"]
+                    CMD [&quot;node&quot;, &quot;server.js&quot;]
                   </code>
                 </div>
               </div>
@@ -271,7 +312,8 @@ export function DeploymentSection() {
               <Alert className="mt-4">
                 <Info className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Note:</strong> Make sure to configure your next.config.js with{" "}
+                  <strong>Note:</strong> Make sure to configure your
+                  next.config.js with{" "}
                   <code>output: &apos;standalone&apos;</code>
                   for Docker deployment.
                 </AlertDescription>
@@ -280,60 +322,88 @@ export function DeploymentSection() {
           </TabsContent>
         </Tabs>
 
-        <div className="prose prose-slate dark:prose-invert max-w-none">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mt-8">Post-Deployment Checklist</h3>
-          <div className="grid md:grid-cols-2 gap-4">
+        <div className="prose prose-slate max-w-none dark:prose-invert">
+          <h3 className="mt-8 text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Post-Deployment Checklist
+          </h3>
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <h4 className="font-semibold text-slate-900 dark:text-slate-100">🔧 Technical Verification</h4>
+              <h4 className="font-semibold text-slate-900 dark:text-slate-100">
+                🔧 Technical Verification
+              </h4>
               <div className="space-y-1 text-sm">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-slate-700 dark:text-slate-300">Application loads correctly</span>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-slate-700 dark:text-slate-300">
+                    Application loads correctly
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-slate-700 dark:text-slate-300">Database connections working</span>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-slate-700 dark:text-slate-300">
+                    Database connections working
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-slate-700 dark:text-slate-300">Authentication flow functional</span>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-slate-700 dark:text-slate-300">
+                    Authentication flow functional
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-slate-700 dark:text-slate-300">SSL certificate installed</span>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-slate-700 dark:text-slate-300">
+                    SSL certificate installed
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-slate-700 dark:text-slate-300">Environment variables configured</span>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-slate-700 dark:text-slate-300">
+                    Environment variables configured
+                  </span>
                 </div>
               </div>
             </div>
             <div className="space-y-2">
-              <h4 className="font-semibold text-slate-900 dark:text-slate-100">💳 Integration Testing</h4>
+              <h4 className="font-semibold text-slate-900 dark:text-slate-100">
+                💳 Integration Testing
+              </h4>
               <div className="space-y-1 text-sm">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-slate-700 dark:text-slate-300">Stripe payments processing</span>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-slate-700 dark:text-slate-300">
+                    Stripe payments processing
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-slate-700 dark:text-slate-300">Webhooks receiving events</span>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-slate-700 dark:text-slate-300">
+                    Webhooks receiving events
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-slate-700 dark:text-slate-300">Email delivery working</span>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-slate-700 dark:text-slate-300">
+                    Email delivery working
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-slate-700 dark:text-slate-300">File uploads to R2 storage</span>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-slate-700 dark:text-slate-300">
+                    File uploads to R2 storage
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-slate-700 dark:text-slate-300">AI API responses</span>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-slate-700 dark:text-slate-300">
+                    AI API responses
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-slate-700 dark:text-slate-300">Chrome extension communication</span>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-slate-700 dark:text-slate-300">
+                    Chrome extension communication
+                  </span>
                 </div>
               </div>
             </div>
@@ -342,12 +412,13 @@ export function DeploymentSection() {
           <Alert className="mt-6">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Production Tips:</strong> Always test deployments in a staging environment first, implement proper
-              logging, set up monitoring alerts, and have a rollback plan ready.
+              <strong>Production Tips:</strong> Always test deployments in a
+              staging environment first, implement proper logging, set up
+              monitoring alerts, and have a rollback plan ready.
             </AlertDescription>
           </Alert>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

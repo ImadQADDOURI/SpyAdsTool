@@ -45,10 +45,12 @@ export function StripeSection() {
                   </Link>
                 </li>
                 <li>
-                  Ensure you&apos;re in "Test mode" (toggle in the left sidebar)
+                  Ensure you&apos;re in &quot;Test mode&quot; (toggle in the
+                  left sidebar)
                 </li>
                 <li>
-                  Go to "Developers" → "API Keys" and copy your test secret key
+                  Go to &quot;Developers&quot; → &quot;API Keys&quot; and copy
+                  your test secret key
                 </li>
                 <li>Add it to your environment variables</li>
               </ol>
@@ -59,7 +61,7 @@ export function StripeSection() {
                 </h4>
                 <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-700">
                   <code className="text-green-400">
-                    STRIPE_API_KEY="sk_test_your_secret_key_here"
+                    STRIPE_API_KEY=&quot;sk_test_your_secret_key_here&quot;
                   </code>
                 </div>
               </div>
@@ -68,8 +70,13 @@ export function StripeSection() {
                 2. Create Test Products and Pricing
               </h4>
               <ol className="space-y-2 text-slate-700 dark:text-slate-300">
-                <li>Navigate to "Products" in your Stripe dashboard</li>
-                <li>Click "Create Product" and enter your product details</li>
+                <li>
+                  Navigate to &quot;Products&quot; in your Stripe dashboard
+                </li>
+                <li>
+                  Click &quot;Create Product&quot; and enter your product
+                  details
+                </li>
                 <li>Add pricing plans (monthly and yearly)</li>
                 <li>Copy the Price IDs for each plan</li>
               </ol>
@@ -80,9 +87,9 @@ export function StripeSection() {
                 </h4>
                 <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-700">
                   <code className="text-green-400">
-                    NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PLAN_ID="price_your_test_monthly_id"
+                    NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PLAN_ID=&quot;price_your_test_monthly_id&quot;
                     <br />
-                    NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID="price_your_test_yearly_id"
+                    NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID=&quot;price_your_test_yearly_id&quot;
                   </code>
                 </div>
               </div>
@@ -99,14 +106,17 @@ export function StripeSection() {
               </Alert>
 
               <ol className="space-y-2 text-slate-700 dark:text-slate-300">
-                <li>Ensure you&apos;re in "Test mode"</li>
-                <li>Go to "Settings" → "Billing" → "Customer Portal"</li>
+                <li>Ensure you&apos;re in &quot;Test mode&quot;</li>
                 <li>
-                  <strong>Click the "Activate" button</strong> - this is
-                  essential!
+                  Go to &quot;Settings&quot; → &quot;Billing&quot; →
+                  &quot;Customer Portal&quot;
+                </li>
+                <li>
+                  <strong>Click the &quot;Activate&quot; button</strong> - this
+                  is essential!
                 </li>
                 <li>Configure the portal settings (or use defaults)</li>
-                <li>Click "Save" to finalize the configuration</li>
+                <li>Click &quot;Save&quot; to finalize the configuration</li>
               </ol>
 
               <h4 className="text-md mt-6 font-semibold text-slate-900 dark:text-slate-100">
@@ -154,7 +164,7 @@ export function StripeSection() {
                 </h4>
                 <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-700">
                   <code className="text-green-400">
-                    STRIPE_WEBHOOK_SECRET="whsec_your_test_webhook_signing_secret"
+                    STRIPE_WEBHOOK_SECRET=&quot;whsec_your_test_webhook_signing_secret&quot;
                   </code>
                 </div>
               </div>
@@ -237,10 +247,10 @@ export function StripeSection() {
               </h4>
               <ol className="space-y-2 text-slate-700 dark:text-slate-300">
                 <li>
-                  In your Stripe dashboard, toggle from "Test mode" to "Live
-                  mode"
+                  In your Stripe dashboard, toggle from &quot;Test mode&quot; to
+                  &quot;Live mode&quot;
                 </li>
-                <li>Go to "Developers" → "API Keys"</li>
+                <li>Go to &quot;Developers&quot; → &quot;API Keys&quot;</li>
                 <li>Copy your live secret key (starts with sk_live_)</li>
                 <li>Copy your live publishable key (starts with pk_live_)</li>
               </ol>
@@ -251,9 +261,9 @@ export function StripeSection() {
                 </h4>
                 <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-700">
                   <code className="text-green-400">
-                    STRIPE_API_KEY="sk_live_your_live_secret_key"
+                    STRIPE_API_KEY=&quot;sk_live_your_live_secret_key&quot;
                     <br />
-                    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_live_your_live_publishable_key"
+                    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=&quot;pk_live_your_live_publishable_key&quot;
                   </code>
                 </div>
               </div>
@@ -262,8 +272,10 @@ export function StripeSection() {
                 3. Create Production Products
               </h4>
               <ol className="space-y-2 text-slate-700 dark:text-slate-300">
-                <li>Ensure you&apos;re in "Live mode"</li>
-                <li>Navigate to "Products" and create your live products</li>
+                <li>Ensure you&apos;re in &quot;Live mode&quot;</li>
+                <li>
+                  Navigate to &quot;Products&quot; and create your live products
+                </li>
                 <li>Set up the same pricing structure as your test products</li>
                 <li>Copy the live Price IDs</li>
                 <li>Update your environment variables with live Price IDs</li>
@@ -275,9 +287,9 @@ export function StripeSection() {
                 </h4>
                 <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-700">
                   <code className="text-green-400">
-                    NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PLAN_ID="price_your_live_monthly_id"
+                    NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PLAN_ID=&quot;price_your_live_monthly_id&quot;
                     <br />
-                    NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID="price_your_live_yearly_id"
+                    NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID=&quot;price_your_live_yearly_id&quot;
                   </code>
                 </div>
               </div>
@@ -286,11 +298,16 @@ export function StripeSection() {
                 4. Production Billing Portal
               </h4>
               <ol className="space-y-2 text-slate-700 dark:text-slate-300">
-                <li>Switch to "Live mode" in your Stripe dashboard</li>
-                <li>Go to "Settings" → "Billing" → "Customer Portal"</li>
                 <li>
-                  <strong>Click "Activate"</strong> for the live mode portal
-                  (separate from test mode)
+                  Switch to &quot;Live mode&quot; in your Stripe dashboard
+                </li>
+                <li>
+                  Go to &quot;Settings&quot; → &quot;Billing&quot; →
+                  &quot;Customer Portal&quot;
+                </li>
+                <li>
+                  <strong>Click &quot;Activate&quot;</strong> for the live mode
+                  portal (separate from test mode)
                 </li>
                 <li>Configure production portal settings:</li>
                 <ul className="ml-4 space-y-1 text-sm">
@@ -308,8 +325,11 @@ export function StripeSection() {
                 5. Production Webhooks
               </h4>
               <ol className="space-y-2 text-slate-700 dark:text-slate-300">
-                <li>In "Live mode", go to "Developers" → "Webhooks"</li>
-                <li>Click "Add endpoint"</li>
+                <li>
+                  In &quot;Live mode&quot;, go to &quot;Developers&quot; →
+                  &quot;Webhooks&quot;
+                </li>
+                <li>Click &quot;Add endpoint&quot;</li>
                 <li>Enter your production webhook URL:</li>
               </ol>
 
@@ -337,7 +357,7 @@ export function StripeSection() {
                 </h4>
                 <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-700">
                   <code className="text-green-400">
-                    STRIPE_WEBHOOK_SECRET="whsec_your_live_webhook_signing_secret"
+                    STRIPE_WEBHOOK_SECRET=&quot;whsec_your_live_webhook_signing_secret&quot;
                   </code>
                 </div>
               </div>

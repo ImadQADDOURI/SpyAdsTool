@@ -58,7 +58,7 @@ export function GeminiSection() {
                   </Link>
                 </li>
                 <li>Sign in with your Google account</li>
-                <li>Click "Get API Key" and create a new API key</li>
+                <li>Click &quot;Get API Key&quot; and create a new API key</li>
                 <li>Copy the API key for your environment variables</li>
               </ol>
 
@@ -93,7 +93,7 @@ export function GeminiSection() {
                     <code className="text-green-400">
                       # Multiple API keys for testing rotation
                       <br />
-                      GOOGLE_AI_API_KEY="dev_key1_personal@gmail.com,dev_key2_work@gmail.com"
+                      GOOGLE_AI_API_KEY=&quot;dev_key1_personal@gmail.com,dev_key2_work@gmail.com&quot;
                     </code>
                   </div>
                   <p className="mt-2 text-sm text-blue-700 dark:text-blue-300">
@@ -229,7 +229,7 @@ export function GeminiSection() {
                       <strong>3. Configure Environment Variable:</strong>
                       <div className="mt-2 rounded bg-slate-900 p-2 text-xs dark:bg-slate-700">
                         <code className="text-green-400">
-                          GOOGLE_AI_API_KEY="key1,key2,key3,key4,key5"
+                          GOOGLE_AI_API_KEY=&quot;key1,key2,key3,key4,key5&quot;
                         </code>
                       </div>
                     </li>
@@ -315,7 +315,7 @@ export function GeminiSection() {
               </div>
 
               <h4 className="text-md mt-6 font-semibold text-slate-900 dark:text-slate-100">
-                3. Rate Limiting & Quotas
+                3. Rate Limiting &amp; Quotas
               </h4>
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">
                 <h5 className="mb-2 font-semibold text-amber-800 dark:text-amber-300">
