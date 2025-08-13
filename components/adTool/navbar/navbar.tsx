@@ -27,9 +27,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ModeToggle } from "@/components/adTool/sharedComponents/mode-toggle";
 import { ModalContext } from "@/components/modals/providers";
 import { Icons } from "@/components/shared/icons";
+import { ModeToggle } from "@/components/shared/mode-toggle";
 import { UserAvatar } from "@/components/shared/user-avatar";
 
 import { AuroraText } from "../landingPage/hero/AuroraText";
