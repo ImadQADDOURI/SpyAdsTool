@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/accordion";
 
 import TitleSection from "../adTool/sharedComponents/TitleSection";
-import { HeaderSection } from "../shared/header-section";
 
 const pricingFaqData = [
   {

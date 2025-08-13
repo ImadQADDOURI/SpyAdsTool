@@ -15,7 +15,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { HeaderSection } from "@/components/shared/header-section";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 
 import TitleSection from "../adTool/sharedComponents/TitleSection";

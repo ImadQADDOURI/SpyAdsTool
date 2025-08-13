@@ -1,5 +1,4 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { HeaderSection } from "@/components/shared/header-section";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 
 export default function Loading() {
@@ -8,7 +7,6 @@ export default function Loading() {
       <MaxWidthWrapper>
         <section className="flex flex-col items-center">
           <div className="mx-auto flex w-full flex-col items-center gap-5">
-            {/* <HeaderSection label="Pricing" title="Start at full speed !" /> */}
             <Skeleton className="mb-3 mt-5 h-8 w-1/5 rounded-full" />
           </div>
 
