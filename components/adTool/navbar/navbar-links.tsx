@@ -8,6 +8,7 @@ import {
   CloudLightning,
   DollarSign,
   Facebook,
+  File,
   Flag,
   Heart,
   LineChart,
@@ -144,6 +145,15 @@ export const AdminLinks = [
     icon: Store,
     isFree: false,
     color: "yellow",
+  },
+  {
+    id: "documentation",
+    title: "Documentation",
+    href: "/documentation",
+    description: "Access comprehensive documentation",
+    icon: File,
+    isFree: false,
+    color: "pink",
   },
 ];
 
