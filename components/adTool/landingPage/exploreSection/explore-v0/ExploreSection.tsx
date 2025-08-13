@@ -4,8 +4,8 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
-import AnimatedBackground from "../hero/animated-background";
-import ExtensionSection from "./ExtensionSection";
+import AnimatedBackground from "../../hero/hero-v0/animated-background";
+import ExtensionSection from "../ExtensionSection";
 import TopProductsStoresSection from "./TopProductsStoresSection";
 import TrendSection from "./TrendSection";
 

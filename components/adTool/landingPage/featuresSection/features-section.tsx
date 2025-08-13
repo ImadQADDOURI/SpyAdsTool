@@ -18,6 +18,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { featuresConfig } from "../../configuration/landing";
 import { CTAButton } from "../exploreSection/CTAButton";
 import { AuroraText } from "../hero/AuroraText";
 import FloatingGlassImage from "../hero/FloatingGlassImage";
@@ -40,101 +41,17 @@ interface Feature {
   Icon: LucideIcon;
 }
 
-const features: Feature[] = [
-  {
-    id: "discover",
-    title: "Discover",
-    highlightText: "Winning Products",
-    description:
-      "Find profitable products with AI-powered discovery. Access millions of active campaigns.",
-    image: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
-    background:
-      "linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 30%, #16213e 70%, #0f1419 100%)",
-    accentColor: "#3b82f6",
-    stats: [
-      { label: "Active Ads", value: "10M+" },
-      { label: "Success", value: "94%" },
-      { label: "Updates", value: "24/7" },
-    ],
-    Icon: Search,
-  },
-  {
-    id: "search",
-    title: "Advanced",
-    highlightText: "Search & Filters",
-    description:
-      "Search with 15+ filter types. Find exactly what you need with precision targeting.",
-    image: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
-    background:
-      "linear-gradient(135deg, #0f0a0f 0%, #1a0f1a 30%, #2d1b3d 70%, #1a0f1a 100%)",
-    accentColor: "#8b5cf6",
-    stats: [
-      { label: "Filters", value: "15+" },
-      { label: "Database", value: "50M+" },
-      { label: "Speed", value: "<0.1s" },
-    ],
-    Icon: Filter,
-  },
-  {
-    id: "analytics",
-    title: "Visual",
-    highlightText: "Analytics",
-    description:
-      "Get insights with visual dashboard. Track performance and identify trends.",
-    image: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
-    background:
-      "linear-gradient(135deg, #0a0f0a 0%, #1a1a0f 30%, #2d2d1b 70%, #1a1a0f 100%)",
-    accentColor: "#10b981",
-    stats: [
-      { label: "Data Points", value: "1B+" },
-      { label: "Accuracy", value: "99.9%" },
-      { label: "Real-time", value: "Live" },
-    ],
-    Icon: BarChart,
-  },
-  {
-    id: "ai-tools",
-    title: "Built-in",
-    highlightText: "AI Tools",
-    description:
-      "Leverage AI-powered tools and calculators. Get instant recommendations.",
-    image: "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
-    background:
-      "linear-gradient(135deg, #0f0a0f 0%, #1a0f1a 30%, #3d1b2d 70%, #1a0f1a 100%)",
-    accentColor: "#f59e0b",
-    stats: [
-      { label: "AI Models", value: "8+" },
-      { label: "Accuracy", value: "96%" },
-      { label: "Processing", value: "Instant" },
-    ],
-    Icon: Cpu,
-  },
-  {
-    id: "organize",
-    title: "Save &",
-    highlightText: "Organize",
-    description:
-      "Download media and organize findings. Keep track of strategies with cloud storage.",
-    image: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
-    background:
-      "linear-gradient(135deg, #0f0f0f 0%, #0f1a1a 30%, #1b2d3d 70%, #0f1a1a 100%)",
-    accentColor: "#06b6d4",
-    stats: [
-      { label: "Downloads", value: "∞" },
-      { label: "Storage", value: "Cloud" },
-      { label: "Boards", value: "Custom" },
-    ],
-    Icon: Folder,
-  },
-];
-
-interface FeatureSlideProps {
+interface FeatureSConfiglideProps {
   feature: Feature;
   index: number;
   isActive: boolean;
 }
 
-function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
+function FeatureSConfiglide({
+  feature,
+  index,
+  isActive,
+}: FeatureSConfiglideProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: false, margin: "-20%" });
 
@@ -268,7 +185,7 @@ function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
   );
 }
 
-export default function FeaturesSection() {
+export default function FeaturesConfigSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -293,11 +210,13 @@ export default function FeaturesSection() {
   };
 
   const nextSlide = () => {
-    goToSlide((currentSlide + 1) % features.length);
+    goToSlide((currentSlide + 1) % featuresConfig.length);
   };
 
   const prevSlide = () => {
-    goToSlide(currentSlide === 0 ? features.length - 1 : currentSlide - 1);
+    goToSlide(
+      currentSlide === 0 ? featuresConfig.length - 1 : currentSlide - 1,
+    );
   };
 
   // ⏯️ Toggle auto-play
@@ -310,7 +229,7 @@ export default function FeaturesSection() {
     if (!isAutoPlaying || !isInView) return;
 
     const autoSlideInterval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % features.length);
+      setCurrentSlide((prev) => (prev + 1) % featuresConfig.length);
     }, 2000);
 
     return () => clearInterval(autoSlideInterval);
@@ -360,7 +279,11 @@ export default function FeaturesSection() {
   }, [currentSlide]);
 
   return (
-    <section ref={sectionRef} id="features" className="relative bg-[#0a0a0f]">
+    <section
+      ref={sectionRef}
+      id="featuresConfig"
+      className="relative bg-[#0a0a0f]"
+    >
       {/* 🎠 Slideshow Container */}
       <div
         className="relative overflow-hidden"
@@ -375,8 +298,8 @@ export default function FeaturesSection() {
             transform: `translateX(-${currentSlide * 100}%)`,
           }}
         >
-          {features.map((feature, index) => (
-            <FeatureSlide
+          {featuresConfig.map((feature, index) => (
+            <FeatureSConfiglide
               key={feature.id}
               feature={feature}
               index={index}
@@ -422,7 +345,7 @@ export default function FeaturesSection() {
 
         {/* 🔘 Slide Indicators */}
         <div className="flex items-center gap-1.5 overflow-hidden">
-          {features.map((feature, index) => (
+          {featuresConfig.map((feature, index) => (
             <button
               key={feature.id}
               onClick={() => goToSlide(index)}

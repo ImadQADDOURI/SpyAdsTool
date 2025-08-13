@@ -3,41 +3,9 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Chrome, Download } from "lucide-react";
 
+import { EXTENSION_CONFIG } from "../../configuration/landing";
 import { AuroraText } from "../hero/AuroraText";
 import { CTAButton } from "./CTAButton";
-
-const EXTENSION_CONFIG = {
-  gradientColors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
-  headline: {
-    prefix: "Powerful",
-    highlight: "Browser Extension",
-    suffix: "For Ad Research",
-  },
-  subtitle:
-    "Analyze ads directly from your browser. Save time and boost productivity with our powerful extension that integrates seamlessly with your workflow.",
-  ctaText: "Install Extension",
-  ctaLink: "https://chrome.google.com/webstore",
-  screenshots: [
-    {
-      id: 1,
-      image:
-        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
-      alt: "Extension Dashboard",
-    },
-    {
-      id: 2,
-      image:
-        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
-      alt: "Ad Analysis Feature",
-    },
-    {
-      id: 3,
-      image:
-        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
-      alt: "Quick Save Feature",
-    },
-  ],
-};
 
 interface ExtensionSectionProps {
   customScreenshots?: Array<{ id: number; image: string; alt: string }>;

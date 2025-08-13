@@ -2,9 +2,9 @@
 
 import { Package, Star, Store } from "lucide-react";
 
-import { AuroraText } from "../hero/AuroraText";
-import { CTAButton } from "./CTAButton";
-import { MarqueeColumn } from "./MarqueeColumn";
+import { AuroraText } from "../../hero/AuroraText";
+import { CTAButton } from "../CTAButton";
+import { MarqueeColumn } from "../MarqueeColumn";
 
 const TOP_PRODUCTS_STORES_CONFIG = {
   gradientColors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],

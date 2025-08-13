@@ -4,57 +4,8 @@ import Link from "next/link";
 import { CreditCard } from "lucide-react";
 import { useTheme } from "next-themes";
 
+import { CTA_CONFIG } from "../configuration/landing";
 import { AuroraText } from "./hero/AuroraText";
-
-// 🎨 Centralized Configuration - Compact Version
-const CTA_CONFIG = {
-  content: {
-    headline: {
-      beforeText: "Start",
-      highlightText: "Winning",
-      highlightColors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
-    },
-    button: {
-      text: "Get Started Free",
-      href: "/signup",
-      external: false,
-    },
-    pills: [
-      { text: "No credit card", icon: "credit-card" }, // 💳 Added credit card pill
-      { text: "Cancel anytime", icon: "check" },
-      { text: "No setup fees", icon: "check" },
-    ],
-  },
-  styling: {
-    section: {
-      padding: "py-16 md:py-20 lg:py-24", // 📏 Reduced from py-32/40/48
-    },
-    headline: {
-      sizes: "text-4xl md:text-6xl lg:text-7xl xl:text-8xl", // 📏 Significantly reduced from text-6xl/8xl/9xl/10rem
-      spacing: "mb-8", // 📏 Reduced from mb-12
-    },
-    button: {
-      padding: "px-8 py-4", // 📏 Reduced from px-16 py-8
-      textSize: "text-lg", // 📏 Reduced from text-2xl
-      borderRadius: "rounded-full",
-    },
-    pills: {
-      spacing: "mt-6", // 📏 Reduced from mt-10
-      gap: "gap-3", // 📏 Reduced from gap-4
-      padding: "px-4 py-2", // 📏 Reduced from px-5 py-3
-      textSize: "text-xs", // 📏 Reduced from text-sm
-    },
-  },
-  animation: {
-    backgroundBlur: "blur-3xl",
-    pulseSpeed: "4s",
-    delays: {
-      button: "0.2s", // 📏 Reduced delays
-      pills: "0.3s",
-      pillStagger: "0.08s",
-    },
-  },
-};
 
 interface CTASectionProps {
   isDark?: boolean;

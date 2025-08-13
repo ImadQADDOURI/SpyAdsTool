@@ -34,7 +34,7 @@ import TrendingSection from "@/components/adTool/landingPage/exploreSection/Tren
 import FeaturesSection from "@/components/adTool/landingPage/featuresSection/features-section";
 import GradientBackground from "@/components/adTool/landingPage/hero/gradient-background";
 import HeroSection from "@/components/adTool/landingPage/hero/hero-section";
-import { ReviewSection } from "@/components/adTool/landingPage/reviewSection/ReviewSection";
+import { ReviewSection } from "@/components/adTool/landingPage/reviewSection/review-v0/ReviewSection";
 import { TestimonialsSection } from "@/components/adTool/landingPage/reviewSection/testimonials-with-marquee";
 import { Loading } from "@/components/adTool/sharedComponents/Loading";
 

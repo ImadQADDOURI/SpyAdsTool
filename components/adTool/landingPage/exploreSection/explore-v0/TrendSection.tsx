@@ -2,8 +2,8 @@
 
 import { BarChart3, Flame, Search, TrendingUp } from "lucide-react";
 
-import { AuroraText } from "../hero/AuroraText";
-import { CTAButton } from "./CTAButton";
+import { AuroraText } from "../../hero/AuroraText";
+import { CTAButton } from "../CTAButton";
 import FanOutCard, { type CardData } from "./fan-out-card";
 
 const TREND_CONFIG = {

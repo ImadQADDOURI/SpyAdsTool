@@ -2,92 +2,10 @@
 
 import { Flame, Package, Store, TrendingUp } from "lucide-react";
 
+import { TrendingConfig } from "../../configuration/landing";
 import { AuroraText } from "../hero/AuroraText";
 import { CTAButton } from "./CTAButton";
 import { MarqueeColumn } from "./MarqueeColumn";
-
-const CONFIG = {
-  gradientColors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
-  headline: {
-    prefix: "Discover",
-    highlight: "Top Performing",
-    suffix: "Market Leaders",
-  },
-  subtitle:
-    "Explore the most successful ads, products, and stores dominating today's market. Get actionable insights and scale your business with proven winners.",
-  ctas: {
-    ads: "View Top Ads",
-    products: "Explore Products",
-    stores: "Browse Stores",
-  },
-  // 🔥 Sample trending ads data
-  sampleAds: [
-    {
-      id: 1,
-      image: "/placeholder.svg?height=280&width=180",
-      name: "Viral Product Launch Ad",
-    },
-    {
-      id: 2,
-      image: "/placeholder.svg?height=280&width=180",
-      name: "Social Media Campaign",
-    },
-    {
-      id: 3,
-      image: "/placeholder.svg?height=280&width=180",
-      name: "E-commerce Promo Ad",
-    },
-    {
-      id: 4,
-      image: "/placeholder.svg?height=280&width=180",
-      name: "Brand Awareness Campaign",
-    },
-  ],
-  sampleProducts: [
-    {
-      id: 1,
-      image: "/placeholder.svg?height=280&width=180",
-      name: "Wireless Earbuds Pro",
-    },
-    {
-      id: 2,
-      image: "/placeholder.svg?height=280&width=180",
-      name: "Smart Fitness Watch",
-    },
-    {
-      id: 3,
-      image: "/placeholder.svg?height=280&width=180",
-      name: "Portable Phone Charger",
-    },
-    {
-      id: 4,
-      image: "/placeholder.svg?height=280&width=180",
-      name: "LED Strip Lights",
-    },
-  ],
-  sampleStores: [
-    {
-      id: 1,
-      image: "/placeholder.svg?height=280&width=180",
-      name: "TechGadgets Pro",
-    },
-    {
-      id: 2,
-      image: "/placeholder.svg?height=280&width=180",
-      name: "Fashion Forward",
-    },
-    {
-      id: 3,
-      image: "/placeholder.svg?height=280&width=180",
-      name: "Home & Living",
-    },
-    {
-      id: 4,
-      image: "/placeholder.svg?height=280&width=180",
-      name: "Sports Central",
-    },
-  ],
-};
 
 interface TrendingSectionProps {
   customAds?: Array<{ id: number; image: string; name: string }>;
@@ -102,9 +20,9 @@ export default function TrendingSection({
   customStores,
   className = "",
 }: TrendingSectionProps) {
-  const ads = customAds || CONFIG.sampleAds;
-  const products = customProducts || CONFIG.sampleProducts;
-  const stores = customStores || CONFIG.sampleStores;
+  const ads = customAds || TrendingConfig.sampleAds;
+  const products = customProducts || TrendingConfig.sampleProducts;
+  const stores = customStores || TrendingConfig.sampleStores;
 
   return (
     <section className={`relative w-full ${className}`}>
@@ -127,19 +45,21 @@ export default function TrendingSection({
               </div>
 
               <h1 className="mb-4 text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
-                {CONFIG.headline.prefix}{" "}
+                {TrendingConfig.headline.prefix}{" "}
                 <AuroraText
-                  colors={CONFIG.gradientColors}
+                  colors={TrendingConfig.gradientColors}
                   className="inline-block"
                 >
-                  {CONFIG.headline.highlight}
+                  {TrendingConfig.headline.highlight}
                 </AuroraText>
                 <br className="hidden sm:block" />
-                <span className="text-white/90">{CONFIG.headline.suffix}</span>
+                <span className="text-white/90">
+                  {TrendingConfig.headline.suffix}
+                </span>
               </h1>
 
               <p className="mx-auto mb-6 max-w-3xl text-base leading-relaxed text-white/75 sm:text-lg">
-                {CONFIG.subtitle}
+                {TrendingConfig.subtitle}
               </p>
 
               {/* 🚀 Horizontal Three-Column Layout - Always Side by Side */}
@@ -156,7 +76,7 @@ export default function TrendingSection({
                       className="w-full text-xs sm:text-sm"
                     >
                       <span className="hidden sm:inline">
-                        {CONFIG.ctas.stores}
+                        {TrendingConfig.ctas.stores}
                       </span>
                       <span className="sm:hidden">Stores</span>
                     </CTAButton>
@@ -185,7 +105,7 @@ export default function TrendingSection({
                       className="w-full text-xs sm:text-sm"
                     >
                       <span className="hidden sm:inline">
-                        {CONFIG.ctas.ads}
+                        {TrendingConfig.ctas.ads}
                       </span>
                       <span className="sm:hidden">Ads</span>
                     </CTAButton>
@@ -210,7 +130,7 @@ export default function TrendingSection({
                       className="w-full text-xs sm:text-sm"
                     >
                       <span className="hidden sm:inline">
-                        {CONFIG.ctas.products}
+                        {TrendingConfig.ctas.products}
                       </span>
                       <span className="sm:hidden">Products</span>
                     </CTAButton>

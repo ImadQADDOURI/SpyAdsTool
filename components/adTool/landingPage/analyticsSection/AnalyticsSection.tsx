@@ -1,68 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BarChart3, Brain, FileText, TrendingUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+import { analyticsConfig } from "../../configuration/landing";
 import { AuroraText } from "../hero/AuroraText";
 import { AnalyticsTab } from "./AnalyticsTab";
-
-export const analyticsConfig = {
-  headline: {
-    prefix: "Powerful",
-    highlight: "Analytics",
-    suffix: "Dashboard",
-  },
-  subtitle:
-    "Get deep insights into your ad performance with our comprehensive analytics suite. Track metrics, analyze trends, and make data-driven decisions.",
-  tabs: [
-    {
-      id: "overview",
-      label: "Overview",
-      icon: BarChart3,
-      color: "from-blue-500 to-cyan-500", // 🎨 Custom color for Overview
-      image:
-        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
-      alt: "Analytics Overview Dashboard",
-    },
-    {
-      id: "performance",
-      label: "Performance",
-      icon: TrendingUp,
-      color: "from-green-500 to-emerald-500", // 🎨 Custom color for Performance
-      image:
-        "https://cdn-useast1.kapwing.com/static/templates/blank-iphone-x-and-11-frame-mockup-template-full-4521e68d.webp?height=600&width=800",
-      alt: "Performance Analytics",
-    },
-    {
-      id: "insights",
-      label: "Insights",
-      icon: Brain,
-      color: "from-purple-500 to-violet-500", // 🎨 Custom color for Insights
-      image: "/placeholder.svg?height=540&width=960",
-      alt: "AI-Powered Insights",
-    },
-    {
-      id: "reports",
-      label: "Reports",
-      icon: FileText,
-      color: "from-orange-500 to-red-500", // 🎨 Custom color for Reports
-      image: "/placeholder.svg?height=540&width=960",
-      alt: "Custom Reports",
-    },
-  ],
-  stats: [
-    { label: "Data Points Analyzed", value: "10M+", icon: "BarChart" },
-    { label: "Real-time Updates", value: "24/7", icon: "Zap" },
-    { label: "Custom Reports", value: "Unlimited", icon: "TrendingUp" },
-    { label: "Export Formats", value: "5+", icon: "Download" },
-  ],
-  animation: {
-    stagger: 0.1,
-    duration: 0.6,
-  },
-};
 
 interface AnalyticsSectionProps {
   className?: string;
