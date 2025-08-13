@@ -60,7 +60,6 @@ export const ReviewSection: React.FC = () => {
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-bl from-gray-900 to-gray-800 px-4 py-16 sm:px-6 lg:px-8">
-      {" "}
       {/* 📏 Reduced padding from py-24 to py-16 */}
       {/* 🎨 Beautiful dot pattern background */}
       <DotPattern
@@ -73,7 +72,6 @@ export const ReviewSection: React.FC = () => {
       />
       {/* 📝 Compact header */}
       <div className="relative z-10 mx-auto mb-8 max-w-4xl text-center">
-        {" "}
         {/* 📏 Reduced margin from mb-12 to mb-8 */}
         <motion.h2
           className="mb-3 text-2xl font-extrabold text-gray-100 sm:text-3xl" // 📏 Reduced text size and margin
@@ -95,10 +93,8 @@ export const ReviewSection: React.FC = () => {
           with our platform.
         </motion.p>
       </div>
-      {/* 🎴 Compact testimonial cards container */}
-      <div className="relative z-10 mx-auto h-[280px] w-full max-w-[260px] sm:h-[300px] sm:max-w-[280px]">
-        {" "}
-        {/* 📏 Reduced container size */}
+      {/* 🎴 Expanded testimonial cards container for better spread */}
+      <div className="relative z-10 mx-auto h-[280px] w-full max-w-[350px] sm:h-[300px] sm:max-w-[380px]">
         {SAMPLE_TESTIMONIALS.map((t, idx) => (
           <TestimonialCard
             key={t.id}
@@ -110,7 +106,6 @@ export const ReviewSection: React.FC = () => {
       </div>
       {/* 🔄 Compact shuffle button */}
       <div className="relative z-10 mt-6 flex justify-center">
-        {" "}
         {/* 📏 Reduced margin from mt-8 to mt-6 */}
         <button
           onClick={shufflePositions}

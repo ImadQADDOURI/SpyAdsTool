@@ -26,6 +26,7 @@
 
 import { useEffect, useState } from "react";
 
+import { testimonials } from "@/components/adTool/configuration/landing";
 import { AnalyticsSection } from "@/components/adTool/landingPage/analyticsSection/AnalyticsSection";
 import { CTASection } from "@/components/adTool/landingPage/CTASection";
 import ExtensionSection from "@/components/adTool/landingPage/exploreSection/ExtensionSection";
@@ -34,6 +35,7 @@ import FeaturesSection from "@/components/adTool/landingPage/featuresSection/fea
 import GradientBackground from "@/components/adTool/landingPage/hero/gradient-background";
 import HeroSection from "@/components/adTool/landingPage/hero/hero-section";
 import { ReviewSection } from "@/components/adTool/landingPage/reviewSection/ReviewSection";
+import { TestimonialsSection } from "@/components/adTool/landingPage/reviewSection/testimonials-with-marquee";
 import { Loading } from "@/components/adTool/sharedComponents/Loading";
 
 export default function IndexPage() {
@@ -63,7 +65,12 @@ export default function IndexPage() {
       <ExtensionSection className="pt-8 sm:pt-12" />
       <AnalyticsSection />
       {/* </GradientBackground> */}
-      <ReviewSection />
+      {/* <ReviewSection /> */}
+      <TestimonialsSection
+        title="What Our Users Are Saying"
+        description="Real feedback from our community—see how they're scaling faster with our platform."
+        testimonials={testimonials}
+      />
       <CTASection />
       {/* Footer Section in layout */}
     </div>
