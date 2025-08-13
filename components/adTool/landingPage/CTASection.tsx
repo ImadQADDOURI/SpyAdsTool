@@ -2,19 +2,11 @@
 
 import Link from "next/link";
 import { CreditCard } from "lucide-react";
-import { useTheme } from "next-themes";
 
 import { CTA_CONFIG } from "../configuration/landing";
 import { AuroraText } from "./hero/AuroraText";
 
-interface CTASectionProps {
-  isDark?: boolean;
-}
-
-export function CTASection({ isDark }: CTASectionProps) {
-  const { theme } = useTheme();
-  const isThemeDark = theme === "dark";
-
+export function CTASection() {
   // 🎨 Render pill icons
   const renderPillIcon = (iconType: string) => {
     if (iconType === "credit-card") {
@@ -39,9 +31,7 @@ export function CTASection({ isDark }: CTASectionProps) {
 
   return (
     <section
-      className={`relative w-full ${CTA_CONFIG.styling.section.padding} overflow-hidden ${
-        isThemeDark ? "bg-black" : "bg-white"
-      }`}
+      className={`relative w-full ${CTA_CONFIG.styling.section.padding} overflow-hidden bg-white dark:bg-black`}
     >
       {/* 🌟 Background Effects - Compact */}
       <div className="absolute inset-0 opacity-15">
@@ -62,9 +52,7 @@ export function CTASection({ isDark }: CTASectionProps) {
           {/* 📏 Reduced max-width */}
           {/* 📝 Compact Headline */}
           <h2
-            className={`${CTA_CONFIG.styling.headline.sizes} font-bold ${CTA_CONFIG.styling.headline.spacing} leading-tight tracking-tight ${
-              isThemeDark ? "text-white" : "text-black"
-            }`}
+            className={`${CTA_CONFIG.styling.headline.sizes} font-bold ${CTA_CONFIG.styling.headline.spacing} leading-tight tracking-tight text-black dark:text-white`}
           >
             {CTA_CONFIG.content.headline.beforeText}{" "}
             <AuroraText
@@ -111,11 +99,7 @@ export function CTASection({ isDark }: CTASectionProps) {
             {CTA_CONFIG.content.pills.map((pill, index) => (
               <div
                 key={pill.text}
-                className={`${CTA_CONFIG.styling.pills.padding} rounded-full ${CTA_CONFIG.styling.pills.textSize} animate-fade-in-scale border font-medium backdrop-blur-sm transition-all duration-300 ${
-                  isThemeDark
-                    ? "border-white/20 bg-white/10 text-gray-300 hover:bg-white/20"
-                    : "border-black/20 bg-black/10 text-gray-600 hover:bg-black/20"
-                }`}
+                className={`${CTA_CONFIG.styling.pills.padding} rounded-full ${CTA_CONFIG.styling.pills.textSize} animate-fade-in-scale border border-black/20 bg-black/10 font-medium text-gray-600 backdrop-blur-sm transition-all duration-300 hover:bg-black/20 dark:border-white/20 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20`}
                 style={{
                   animationDelay: `calc(${CTA_CONFIG.animation.delays.pills} + ${index} * ${CTA_CONFIG.animation.delays.pillStagger})`,
                 }}
