@@ -36,7 +36,7 @@ export function TestimonialCard({
           "transition-colors duration-200",
           i < rating
             ? "fill-yellow-400 text-yellow-400"
-            : "fill-gray-200 text-gray-200",
+            : "fill-gray-200 text-gray-200 dark:fill-gray-600 dark:text-gray-600",
         )}
       />
     ));
@@ -46,13 +46,12 @@ export function TestimonialCard({
     <Card
       {...(href ? { href } : {})}
       className={cn(
-        "flex flex-col rounded-lg border-t border-gray-800",
-        "bg-gradient-to-b from-gray-900/80 to-gray-900/40",
+        "flex flex-col rounded-lg border-t",
+        "bg-gradient-to-b from-muted/50 to-muted/10",
         "p-4 text-start sm:p-6",
-        "hover:from-gray-800/80 hover:to-gray-800/40",
+        "hover:from-muted/60 hover:to-muted/20",
         "max-w-[320px] sm:max-w-[320px]",
         "transition-colors duration-300",
-        "text-white",
         className,
       )}
     >
@@ -61,10 +60,8 @@ export function TestimonialCard({
           <AvatarImage src={author.avatar} alt={author.name} />
         </Avatar>
         <div className="flex flex-col items-start">
-          <h3 className="text-md font-semibold leading-none text-white">
-            {author.name}
-          </h3>
-          <p className="text-sm text-gray-400">{author.handle}</p>
+          <h3 className="text-md font-semibold leading-none">{author.name}</h3>
+          <p className="text-sm text-muted-foreground">{author.handle}</p>
         </div>
       </div>
 
