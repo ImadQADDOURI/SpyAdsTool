@@ -19,104 +19,74 @@ export default function TrustedBySection() {
         <div className="mx-auto mt-2 h-px w-24 bg-gradient-to-r from-transparent via-gray-300 to-transparent dark:via-gray-600" />
       </div>
 
-      {/* 🎠 Optimized marquee container */}
+      {/* Marquee container */}
       <div className="relative overflow-hidden">
-        <div className="animate-marquee flex">
-          {/* 🔄 First set of logos */}
-          <div className="flex shrink-0 items-center justify-around gap-8 px-4">
-            {trustedBySectionConfig.map((company, index) => (
-              <div
-                key={`set1-${index}`}
-                className="flex items-center justify-center transition-transform duration-300 hover:scale-110"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <Image
-                  alt={`${company.name} logo`}
-                  width={112}
-                  height={40}
-                  src={company.logo || "/placeholder.svg"}
-                  className="h-8 w-24 object-contain opacity-40 grayscale transition-all duration-300 hover:opacity-80 hover:grayscale-0 dark:brightness-0 dark:invert dark:hover:brightness-100 dark:hover:invert-0 lg:h-10 lg:w-28"
-                  loading="lazy"
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* 🔄 Second set of logos for seamless loop */}
-          <div className="flex shrink-0 items-center justify-around gap-8 px-4">
-            {trustedBySectionConfig.map((company, index) => (
-              <div
-                key={`set2-${index}`}
-                className="flex items-center justify-center transition-transform duration-300 hover:scale-110"
-              >
-                <Image
-                  alt={`${company.name} logo`}
-                  width={112}
-                  height={40}
-                  src={company.logo || "/placeholder.svg"}
-                  className="h-8 w-24 object-contain opacity-40 grayscale transition-all duration-300 hover:opacity-80 hover:grayscale-0 dark:brightness-0 dark:invert dark:hover:brightness-100 dark:hover:invert-0 lg:h-10 lg:w-28"
-                  loading="lazy"
-                />
-              </div>
-            ))}
-          </div>
+        <div
+          className="flex whitespace-nowrap"
+          style={{
+            animation: "marquee 40s linear infinite",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.animationPlayState = "paused")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.animationPlayState = "running")
+          }
+        >
+          {/* Triple the logos for smooth infinite scroll */}
+          {[...Array(3)].map((_, setIndex) => (
+            <div key={setIndex} className="flex shrink-0">
+              {trustedBySectionConfig.map((company, index) => (
+                <div
+                  key={`${setIndex}-${index}`}
+                  className="mx-6 flex items-center justify-center transition-transform duration-300 hover:scale-110"
+                >
+                  <Image
+                    alt={`${company.name} logo`}
+                    width={112}
+                    height={40}
+                    src={company.logo || "/placeholder.svg"}
+                    className="h-8 w-28 object-contain opacity-40 grayscale transition-all duration-300 hover:opacity-80 hover:grayscale-0 dark:brightness-0 dark:invert dark:hover:brightness-100 dark:hover:invert-0 lg:h-10 lg:w-32"
+                    loading="lazy"
+                    onError={(e) => {
+                      // Fallback if image fails to load
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
 
-        {/* 🌫️ Smooth fade edges */}
+        {/* Fade edges */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-900" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-gray-50 to-transparent dark:from-gray-900" />
       </div>
 
-      {/* 🎨 Optimized CSS animations */}
-      <style jsx>{`
-        .animate-fade-in {
-          animation: fadeIn 0.8s ease-out forwards;
-          opacity: 0;
-        }
-
-        .animate-marquee {
-          animation: marquee 40s linear infinite;
-          will-change: transform;
-        }
-
-        .animate-marquee:hover {
-          animation-play-state: paused;
-        }
-
-        @keyframes fadeIn {
-          to {
-            opacity: 1;
+      {/* CSS animations */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-33.333%); }
           }
-        }
-
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
+          
+          @media (prefers-reduced-motion: reduce) {
+            [style*="animation: marquee"] {
+              animation: none !important;
+            }
           }
-          100% {
-            transform: translateX(-50%);
+          
+          @media (max-width: 640px) {
+            [style*="animation: marquee"] {
+              animation-duration: 30s !important;
+            }
           }
-        }
-
-        /* ♿ Respect reduced motion preferences */
-        @media (prefers-reduced-motion: reduce) {
-          .animate-marquee {
-            animation: none !important;
-          }
-
-          .animate-fade-in {
-            animation: none !important;
-            opacity: 1 !important;
-          }
-        }
-
-        /* 📱 Mobile optimizations */
-        @media (max-width: 640px) {
-          .animate-marquee {
-            animation-duration: 30s;
-          }
-        }
-      `}</style>
+        `,
+        }}
+      />
     </div>
   );
 }
