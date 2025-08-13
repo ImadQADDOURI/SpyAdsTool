@@ -23,7 +23,7 @@ export function TestimonialsSection({
   return (
     <section
       className={cn(
-        "bg-gray-900 text-white",
+        "bg-black text-white",
         "px-0 py-8 sm:py-12 md:py-24",
         className,
       )}
@@ -49,8 +49,8 @@ export function TestimonialsSection({
             </div>
           </div>
 
-          <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-1/3 bg-gradient-to-r from-gray-900 sm:block" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 bg-gradient-to-l from-gray-900 sm:block" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-1/3 bg-gradient-to-r from-black sm:block" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 bg-gradient-to-l from-black sm:block" />
         </div>
       </div>
       <style jsx>{`
