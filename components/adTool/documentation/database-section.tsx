@@ -83,7 +83,7 @@ export function DatabaseSection() {
                 </h4>
                 <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-700">
                   <code className="text-green-400">
-                    DATABASE_URL="postgresql://user:password@ep-xxx.us-east-1.aws.neon.tech/dbname?sslmode=require"
+                    DATABASE_URL=&quot;postgresql://user:password@ep-xxx.us-east-1.aws.neon.tech/dbname?sslmode=require&quot;
                   </code>
                 </div>
               </div>
@@ -191,7 +191,7 @@ export function DatabaseSection() {
                 </h5>
                 <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-700">
                   <code className="text-green-400">
-                    DATABASE_URL="postgresql://your_app_user:your_secure_password@localhost:5432/your_app_db"
+                    DATABASE_URL=&quot;postgresql://your_app_user:your_secure_password@localhost:5432/your_app_db&quot;
                   </code>
                 </div>
               </div>
@@ -202,7 +202,7 @@ export function DatabaseSection() {
                 </h5>
                 <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-700">
                   <code className="text-green-400">
-                    DATABASE_URL="postgresql://your_app_user:your_secure_password@your-server-ip:5432/your_app_db?sslmode=require"
+                    DATABASE_URL=&quot;postgresql://your_app_user:your_secure_password@your-server-ip:5432/your_app_db?sslmode=require&quot;
                   </code>
                 </div>
               </div>
