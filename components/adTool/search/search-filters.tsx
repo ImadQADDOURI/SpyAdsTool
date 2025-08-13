@@ -145,12 +145,12 @@ export default function SearchFilters({
                   <ChevronDown className="ml-1.5 h-4 w-4" />
                 )}
               </Button>
-
+              {/* from-[#8b5cf6] via-[#3b82f6] via-[#ec4899] to-[#06b6d4] */}
               <Button
                 onClick={handleSearch}
                 disabled={isLoading}
                 size="sm"
-                className="h-9 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 disabled:opacity-60"
+                className="h-9 bg-gradient-to-r from-[#ec4899] via-[#3b82f6] to-[#06b6d4] text-white hover:brightness-110 disabled:opacity-60"
               >
                 {isLoading ? (
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white sm:mr-1.5" />

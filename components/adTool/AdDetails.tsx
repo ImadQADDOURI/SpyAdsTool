@@ -224,9 +224,10 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
     <Dialog open={open} onOpenChange={handleDialogOpen}>
       <DialogTrigger asChild>
         {trigger || (
+          // from-[#ec4899] via-[#06b6d4] via-[#8b5cf6] to-[#3b82f6]
           <Button
             variant="outline"
-            className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-md border-0 bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:from-blue-600 hover:to-purple-700 hover:shadow-xl hover:shadow-purple-500/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+            className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-md border-0 bg-gradient-to-r from-[#ec4899] via-[#3b82f6] to-[#06b6d4] px-5 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-[#8b5cf6]/30 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/50"
           >
             <div className="absolute inset-0 bg-white opacity-0 mix-blend-overlay transition-opacity duration-300 group-hover:opacity-10" />
             <BarChart3 className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
