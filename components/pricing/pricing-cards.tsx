@@ -4,7 +4,15 @@
 import { useContext, useState } from "react";
 import Link from "next/link";
 import { UserSubscriptionPlan } from "@/types";
-import { CircleCheckBig, CreditCard, Plane, Rocket } from "lucide-react";
+import {
+  CircleCheckBig,
+  CreditCard,
+  Crown,
+  Plane,
+  Rocket,
+  Star,
+  Zap,
+} from "lucide-react";
 
 import { SubscriptionPlan } from "@/types/index";
 import { pricingData } from "@/config/subscriptions";
@@ -33,34 +41,113 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
     setIsYearly(!isYearly);
   };
 
+  const getCardStyles = (title: string) => {
+    switch (title.toLowerCase()) {
+      case "starter":
+        return {
+          border:
+            "border-blue-200 dark:border-blue-800 hover:border-blue-300 dark:hover:border-blue-700",
+          background:
+            "bg-gradient-to-br from-blue-50/50 to-blue-100/30 dark:from-blue-950/20 dark:to-blue-900/10",
+          headerBg:
+            "bg-gradient-to-r from-blue-500/10 to-blue-600/10 dark:from-blue-500/20 dark:to-blue-600/20",
+          accent: "text-blue-600 dark:text-blue-400",
+          icon: Zap,
+          shadow: "shadow-blue-100 dark:shadow-blue-900/20",
+        };
+      case "pro":
+        return {
+          border:
+            "border-purple-300 dark:border-purple-700 hover:border-purple-400 dark:hover:border-purple-600 ring-2 ring-purple-200 dark:ring-purple-800",
+          background:
+            "bg-gradient-to-br from-purple-50/50 to-purple-100/30 dark:from-purple-950/20 dark:to-purple-900/10",
+          headerBg:
+            "bg-gradient-to-r from-purple-500/10 to-purple-600/10 dark:from-purple-500/20 dark:to-purple-600/20",
+          accent: "text-purple-600 dark:text-purple-400",
+          icon: Crown,
+          shadow: "shadow-purple-200 dark:shadow-purple-900/30",
+        };
+      default:
+        return {
+          border:
+            "border-green-200 dark:border-green-800 hover:border-green-300 dark:hover:border-green-700",
+          background:
+            "bg-gradient-to-br from-green-50/50 to-green-100/30 dark:from-green-950/20 dark:to-green-900/10",
+          headerBg:
+            "bg-gradient-to-r from-green-500/10 to-green-600/10 dark:from-green-500/20 dark:to-green-600/20",
+          accent: "text-green-600 dark:text-green-400",
+          icon: Star,
+          shadow: "shadow-green-100 dark:shadow-green-900/20",
+        };
+    }
+  };
+
   const PricingCard = ({ offer }: { offer: SubscriptionPlan }) => {
+    const styles = getCardStyles(offer.title);
+    const IconComponent = styles.icon;
+    const isPro = offer.title.toLowerCase() === "pro";
+
     return (
       <div
         className={cn(
-          "relative flex flex-col overflow-hidden rounded-3xl border shadow-sm",
-          offer.title.toLocaleLowerCase() === "pro"
-            ? "-m-0.5 border-2 border-purple-400"
-            : "",
+          "relative flex flex-col overflow-visible rounded-2xl border-2 transition-all duration-300 hover:scale-105 hover:shadow-xl",
+          styles.border,
+          styles.background,
+          styles.shadow,
+          isPro ? "z-10 scale-105 transform" : "",
         )}
         key={offer.title}
       >
-        <div className="min-h-[150px] items-start space-y-4 bg-muted/50 p-6">
-          <p className="flex font-urban text-sm font-bold uppercase tracking-wider text-muted-foreground">
-            {offer.title}
-          </p>
+        {isPro && (
+          <div className="absolute -top-3 left-1/2 z-50 flex -translate-x-1/2 transform items-center space-x-1 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 px-4 py-1 text-xs font-bold uppercase text-white shadow-lg">
+            <Crown className="h-4 w-4" />
+            <span>Most Popular</span>
+          </div>
+        )}
+        <div
+          className={cn(
+            "min-h-[180px] items-start space-y-4 p-6",
+            styles.headerBg,
+          )}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className={cn(
+                "rounded-lg bg-white/80 p-2 dark:bg-gray-800/80",
+                styles.accent,
+              )}
+            >
+              <IconComponent className="size-6" />
+            </div>
+            <div>
+              <p
+                className={cn(
+                  "font-urban text-lg font-bold uppercase tracking-wider",
+                  styles.accent,
+                )}
+              >
+                {offer.title}
+              </p>
+              <p className="text-sm font-medium text-muted-foreground">
+                {offer.description}
+              </p>
+            </div>
+          </div>
 
-          <div className="flex flex-row">
+          <div className="flex flex-row items-end">
             <div className="flex items-end">
-              <div className="flex text-left text-3xl font-semibold leading-6">
+              <div className="flex text-left text-4xl font-bold leading-6">
                 {isYearly && offer.prices.monthly > 0 ? (
                   <>
-                    <span className="mr-2 text-muted-foreground/80 line-through">
+                    <span className="mr-2 text-2xl text-muted-foreground/60 line-through">
                       ${offer.prices.monthly}
                     </span>
-                    <span>${offer.prices.yearly / 12}</span>
+                    <span className={styles.accent}>
+                      ${offer.prices.yearly / 12}
+                    </span>
                   </>
                 ) : (
-                  `$${offer.prices.monthly}`
+                  <span className={styles.accent}>${offer.prices.monthly}</span>
                 )}
               </div>
               <div className="-mb-1 ml-2 text-left text-sm font-medium text-muted-foreground">
@@ -69,30 +156,36 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
             </div>
           </div>
           {offer.prices.monthly > 0 ? (
-            <div className="text-left text-sm text-muted-foreground">
+            <div className="text-left text-sm font-medium text-muted-foreground">
               {isYearly
-                ? `$${offer.prices.yearly} will be charged when annual`
-                : "when charged monthly"}
+                ? `$${offer.prices.yearly} billed annually`
+                : "billed monthly"}
             </div>
-          ) : null}
+          ) : (
+            <div className="text-left text-sm font-medium text-green-600 dark:text-green-400">
+              Forever free
+            </div>
+          )}
         </div>
 
-        <div className="flex h-full flex-col justify-between gap-16 p-6">
-          <ul className="space-y-2 text-left text-sm font-medium leading-normal">
+        <div className="flex h-full flex-col justify-between gap-6 p-6">
+          <ul className="space-y-3 text-left text-sm font-medium leading-normal">
             {offer.benefits.map((feature) => (
               <li className="flex items-start gap-x-3" key={feature}>
-                <Icons.check className="size-5 shrink-0 text-purple-500" />
-                <p>{feature}</p>
+                <Icons.check
+                  className={cn("mt-0.5 size-5 shrink-0", styles.accent)}
+                />
+                <p className="text-foreground">{feature}</p>
               </li>
             ))}
 
             {offer.limitations.length > 0 &&
               offer.limitations.map((feature) => (
                 <li
-                  className="flex items-start text-muted-foreground"
+                  className="flex items-start text-muted-foreground/80"
                   key={feature}
                 >
-                  <Icons.close className="mr-3 size-5 shrink-0" />
+                  <Icons.close className="mr-3 mt-0.5 size-5 shrink-0 text-muted-foreground/60" />
                   <p>{feature}</p>
                 </li>
               ))}
@@ -101,15 +194,16 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
           {userId && subscriptionPlan ? (
             offer.title === "Starter" ? (
               <Link
-                href="/dashboard"
+                href="/settings"
                 className={cn(
                   buttonVariants({
                     variant: "outline",
                   }),
-                  "w-full",
+                  "h-12 w-full border-2 font-semibold transition-all duration-200 hover:scale-105",
+                  "border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950/20",
                 )}
               >
-                Go to dashboard
+                Go to Profile
               </Link>
             ) : (
               <BillingFormButton
@@ -120,14 +214,25 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
             )
           ) : (
             <Button
-              variant={
-                offer.title.toLocaleLowerCase() === "pro"
-                  ? "default"
-                  : "outline"
-              }
+              variant={isPro ? "default" : "outline"}
+              className={cn(
+                "h-12 w-full font-semibold transition-all duration-200 hover:scale-105",
+                isPro
+                  ? "bg-gradient-to-r from-purple-500 to-purple-600 shadow-lg hover:from-purple-600 hover:to-purple-700 hover:shadow-xl"
+                  : offer.title.toLowerCase() === "starter"
+                    ? "border-2 border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950/20"
+                    : "border-2 border-green-200 text-green-600 hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-950/20",
+              )}
               onClick={() => setShowSignInModal(true)}
             >
-              Sign in
+              {isPro ? (
+                <span className="flex items-center gap-2">
+                  <Crown className="size-4" />
+                  Get Started
+                </span>
+              ) : (
+                "Sign in"
+              )}
             </Button>
           )}
         </div>
@@ -150,47 +255,51 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
           description=""
         />
 
-        <div className="mb-4 mt-10 flex items-center gap-5">
+        <div className="mb-8 flex items-center gap-5">
           <ToggleGroup
             type="single"
             size="sm"
             defaultValue={isYearly ? "yearly" : "monthly"}
             onValueChange={toggleBilling}
             aria-label="toggle-year"
-            className="h-9 overflow-hidden rounded-full border bg-background p-1 *:h-7 *:text-muted-foreground"
+            className="h-12 overflow-hidden rounded-full border-2 bg-background p-1.5 shadow-lg *:h-9 *:text-muted-foreground"
           >
             <ToggleGroupItem
               value="yearly"
-              className="rounded-full px-5 data-[state=on]:!bg-primary data-[state=on]:!text-primary-foreground"
+              className="rounded-full px-6 font-semibold transition-all duration-200 data-[state=on]:!bg-gradient-to-r data-[state=on]:!from-purple-500 data-[state=on]:!to-purple-600 data-[state=on]:!text-white data-[state=on]:shadow-md"
               aria-label="Toggle yearly billing"
             >
               Yearly (-20%)
             </ToggleGroupItem>
             <ToggleGroupItem
               value="monthly"
-              className="rounded-full px-5 data-[state=on]:!bg-primary data-[state=on]:!text-primary-foreground"
+              className="rounded-full px-6 font-semibold transition-all duration-200 data-[state=on]:!bg-gradient-to-r data-[state=on]:!from-blue-500 data-[state=on]:!to-blue-600 data-[state=on]:!text-white data-[state=on]:shadow-md"
               aria-label="Toggle monthly billing"
             >
               Monthly
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
-
-        <div className="grid gap-5 bg-inherit py-5 lg:grid-cols-3">
-          {pricingData.map((offer) => (
-            <PricingCard offer={offer} key={offer.title} />
-          ))}
+        <div className="flex w-full justify-center">
+          <div
+            className={cn("flex flex-col gap-8 bg-inherit py-5 md:flex-row")}
+          >
+            {pricingData.map((offer) => (
+              <div key={offer.title} className="flex-1">
+                <PricingCard offer={offer} />
+              </div>
+            ))}
+          </div>
         </div>
-
-        <p className="mt-3 text-balance text-center text-base text-muted-foreground">
-          login if you want to contact our{" "}
+        <p className="mt-8 text-balance text-center text-base text-muted-foreground">
+          Login to contact our{" "}
           <a
-            className="font-medium text-primary hover:underline"
+            className="font-medium text-primary transition-colors hover:underline"
             href="/support"
           >
             Support
           </a>{" "}
-          team.
+          team for personalized assistance.
           <br />
         </p>
       </section>
