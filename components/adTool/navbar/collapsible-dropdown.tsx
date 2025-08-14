@@ -111,14 +111,7 @@ export function CollapsibleDropdown({
                         <div
                           className={cn(
                             "flex size-10 shrink-0 items-center justify-center rounded-md",
-                            link.color === "purple" &&
-                              "bg-purple-100 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400",
-                            link.color === "blue" &&
-                              "bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400",
-                            link.color === "yellow" &&
-                              "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400",
-                            link.color === "pink" &&
-                              "bg-pink-100 text-pink-600 dark:bg-pink-900/20 dark:text-pink-400",
+                            link.color,
                           )}
                         >
                           <link.icon className="size-5" />

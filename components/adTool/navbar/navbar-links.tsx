@@ -3,29 +3,11 @@
 import { title } from "process";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  Calculator,
-  CloudLightning,
-  DollarSign,
-  Facebook,
-  File,
-  Flag,
-  Heart,
-  LineChart,
-  LucideIcon,
-  PackageOpen,
-  PocketKnife,
-  Search,
-  Settings,
-  ShoppingBag,
-  Store,
-  TrendingUp,
-  Trophy,
-  Zap,
-} from "lucide-react";
+import { LucideIcon, PocketKnife } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+import { Links, Tools } from "../configuration/navigation";
 import { CollapsibleDropdown } from "./collapsible-dropdown";
 
 interface NavbarLinksProps {
@@ -49,113 +31,6 @@ export interface CollapsibleDropdownProps {
   showFreeBadge?: boolean;
   links: LinkItem[];
 }
-
-export const Links = [
-  { title: "Pricing", href: "/pricing", icon: DollarSign },
-  { title: "AdSearch", href: "/adsearch", icon: Search },
-  { title: "Favorites", href: "/favorites", icon: Heart },
-  { title: "Trend", href: "/trend", icon: TrendingUp },
-  { title: "Top Stores", href: "/top-stores", icon: Store },
-  { title: "Top Products", href: "/top-products", icon: PackageOpen },
-];
-
-export const Tools = [
-  {
-    id: "cod-calculator",
-    title: "COD Calculator",
-    href: "/tools/cod-calculator",
-    description: "Calculate Cash on Delivery fees and profit margins instantly",
-    icon: Calculator,
-    isFree: true,
-    color: "purple",
-  },
-  {
-    id: "dropshipping-calculator",
-    title: "Dropshipping Calculator",
-    href: "/tools/dropshipping-calculator",
-    description: "Estimate dropshipping costs, margins, and potential profits",
-    icon: ShoppingBag,
-    isFree: false,
-    color: "blue",
-  },
-  {
-    id: "cpa-calculator",
-    title: "CPA Calculator",
-    href: "/tools/cpa-calculator",
-    description: "Analyze Cost Per Acquisition metrics for your campaigns",
-    icon: DollarSign,
-    isFree: false,
-    color: "yellow",
-  },
-  {
-    id: "affiliate-calculator",
-    title: "Affiliate Marketing Calculator",
-    href: "/tools/affiliate-calculator",
-    description: "Track affiliate commissions and conversion metrics",
-    icon: LineChart,
-    isFree: true,
-    color: "pink",
-  },
-];
-
-// Deal buttons data
-export const Deals = [
-  {
-    title: "Shopify",
-    url: "https://example.com/shopify",
-    description: "Exclusive 30% discount on Shopify plans",
-    icon: ShoppingBag,
-    discountCode: "SHOP30",
-    gradient: "from-pink-500 to-purple-500",
-  },
-  {
-    title: "TikTok",
-    url: "https://example.com/tiktok",
-    description: "Grab a special 20% discount on TikTok ads",
-    icon: TrendingUp,
-    discountCode: "TIKTOK20",
-    gradient: "from-blue-500 to-green-500",
-  },
-];
-
-export const AdminLinks = [
-  {
-    id: "meta-graphql-configs",
-    title: "Meta Graphql Configs",
-    href: "/meta-graphql-configs",
-    description: "",
-    icon: Facebook,
-    isFree: false,
-    color: "purple",
-  },
-  {
-    id: "top-products-config",
-    title: "Products Config",
-    href: "/top-products-config",
-    description: "",
-    icon: PackageOpen,
-    isFree: false,
-    color: "blue",
-  },
-  {
-    id: "top-stores-config",
-    title: "Stores Config",
-    href: "/top-stores-config",
-    description: "",
-    icon: Store,
-    isFree: false,
-    color: "yellow",
-  },
-  {
-    id: "documentation",
-    title: "Documentation",
-    href: "/documentation",
-    description: "Access comprehensive documentation",
-    icon: File,
-    isFree: false,
-    color: "pink",
-  },
-];
 
 export function NavbarLinks({ pathname }: NavbarLinksProps) {
   return (

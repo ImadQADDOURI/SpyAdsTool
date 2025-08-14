@@ -32,9 +32,10 @@ import { Icons } from "@/components/shared/icons";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { UserAvatar } from "@/components/shared/user-avatar";
 
+import { AdminLinks, Deals } from "../configuration/navigation";
 import { AuroraText } from "../landingPage/hero/AuroraText";
 import { CollapsibleDropdownMobile } from "./collapsible-dropdown-mobile";
-import { AdminLinks, Deals, NavbarLinks } from "./navbar-links";
+import { NavbarLinks } from "./navbar-links";
 import { NavbarMobileMenu } from "./navbar-mobile-menu";
 import { useNavbarVisibility } from "./navbar-visibility-context";
 
