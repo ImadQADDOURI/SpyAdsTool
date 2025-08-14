@@ -20,8 +20,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/shared/icons";
 
+import { Deals, Links, Tools } from "../configuration/navigation";
 import { CollapsibleDropdownMobile } from "./collapsible-dropdown-mobile";
-import { Deals, Links, Tools } from "./navbar-links";
 
 interface NavbarMobileMenuProps {
   isOpen: boolean;
