@@ -415,7 +415,7 @@ export function StripeSection() {
           <AlertDescription>
             Remember to update your pricing in{" "}
             <code className="rounded bg-slate-200 px-1 dark:bg-slate-700">
-              config/subscriptions.ts
+              configuration\pricing-config.ts
             </code>{" "}
             to match your Stripe products for both test and production
             environments.

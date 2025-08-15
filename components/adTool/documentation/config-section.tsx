@@ -17,7 +17,7 @@ export function ConfigSection() {
           <p className="mb-6 text-slate-700 dark:text-slate-300">
             The{" "}
             <code className="rounded bg-slate-200 px-1 dark:bg-slate-700">
-              config/
+              configuration/
             </code>{" "}
             folder contains various configuration files that you can customize
             to match your application&apos;s needs.
@@ -124,7 +124,7 @@ export function ConfigSection() {
                 e.g.,
               </p>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
-                Why: It’s read by your Next.js layouts or components to
+                Why: It&apos;s read by your Next.js layouts or components to
                 dynamically inject metadata into HTML pages.
               </p>
               <div>
