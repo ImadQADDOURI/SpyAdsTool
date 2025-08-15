@@ -1,18 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useTheme } from "next-themes";
 
-import { FOOTER_CONFIG } from "../configuration/landing";
+import { FOOTER_CONFIG } from "../configuration/site";
 
-interface FooterSectionProps {
-  isDark?: boolean;
-}
-
-export function FooterSection({ isDark }: FooterSectionProps) {
-  const { theme } = useTheme();
-  const isThemeDark = theme === "dark";
-
+export function FooterSection() {
   return (
     <footer
       className="relative w-full"
