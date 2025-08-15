@@ -11,12 +11,6 @@ export interface NavbarConfig {
   };
 }
 
-export interface AvatarMenuItem {
-  title: string;
-  href: string;
-  icon: LucideIcon;
-}
-
 export const NavbarConfig: NavbarConfig = {
   name: "AdSearch",
   colors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
@@ -27,7 +21,7 @@ export const NavbarConfig: NavbarConfig = {
   },
 };
 
-export const AvatarMenuConfig: AvatarMenuItem[] = [
+export const AvatarMenuConfig = [
   { title: "Profile", href: "/settings/profile", icon: User },
   { title: "Billing", href: "/settings/billing", icon: CreditCard },
   { title: "Account", href: "/settings/account", icon: Settings },
