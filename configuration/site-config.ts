@@ -1,6 +1,8 @@
 // config/navbar.ts
 import { CreditCard, LucideIcon, Search, Settings, User } from "lucide-react";
 
+import { site_url } from "./metadata-config";
+
 export interface NavbarConfig {
   name: string;
   colors: string[];
@@ -14,7 +16,7 @@ export interface NavbarConfig {
 export const NavbarConfig: NavbarConfig = {
   name: "AdSearch",
   colors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
-  url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  url: site_url,
   logo: {
     type: "icon",
     value: Search,
