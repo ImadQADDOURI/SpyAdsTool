@@ -1,18 +1,11 @@
 "use client";
 
 import { useContext, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  CloudLightning,
-  Lock,
-  LogOut,
-  Menu,
-  Settings,
-  X,
-  Zap,
-} from "lucide-react";
+import { LogOut, Menu, Settings, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
 import { cn } from "@/lib/utils";
@@ -33,11 +26,35 @@ import { ModeToggle } from "@/components/shared/mode-toggle";
 import { UserAvatar } from "@/components/shared/user-avatar";
 
 import { AdminLinks, Deals } from "../configuration/navigation";
+// Import the configuration
+import { AvatarMenuConfig, NavbarConfig } from "../configuration/site";
 import { AuroraText } from "../landingPage/hero/AuroraText";
 import { CollapsibleDropdownMobile } from "./collapsible-dropdown-mobile";
 import { NavbarLinks } from "./navbar-links";
 import { NavbarMobileMenu } from "./navbar-mobile-menu";
 import { useNavbarVisibility } from "./navbar-visibility-context";
+
+// Logo Component
+const NavbarLogo = () => {
+  const LogoIcon =
+    NavbarConfig.logo.type === "icon" ? (NavbarConfig.logo.value as any) : null;
+
+  if (NavbarConfig.logo.type === "image") {
+    return (
+      <Image
+        src={NavbarConfig.logo.value as string}
+        alt={`${NavbarConfig.name} logo`}
+        width={24}
+        height={24}
+        className="h-6 w-6 flex-shrink-0"
+      />
+    );
+  }
+
+  return (
+    <LogoIcon className="h-6 w-6 flex-shrink-0 text-purple-500 dark:text-purple-400" />
+  );
+};
 
 export function Navbar() {
   const scrolled = useScroll(50);
@@ -100,12 +117,12 @@ export function Navbar() {
               whileTap={{ scale: 0.95 }}
               className="flex items-start justify-center gap-1"
             >
-              <Icons.search className="h-6 w-6 flex-shrink-0 text-purple-500 dark:text-purple-400" />
+              <NavbarLogo />
               <AuroraText
-                colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+                colors={NavbarConfig.colors}
                 className="inline-block text-xl font-bold"
               >
-                AdSearch
+                {NavbarConfig.name}
               </AuroraText>
             </motion.div>
           </Link>
@@ -192,7 +209,7 @@ export function Navbar() {
                   </div>
                 </div>
                 <DropdownMenuSeparator />
-
+                {/* Admin Links - Only show for ADMIN role */}
                 {session.user.role === "ADMIN" ? (
                   <>
                     <CollapsibleDropdownMobile
@@ -205,35 +222,19 @@ export function Navbar() {
                   </>
                 ) : null}
 
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/settings/profile"
-                    className="flex items-center space-x-2.5"
-                  >
-                    <Icons.user className="size-4" />
-                    <p className="text-sm">Profile</p>
-                  </Link>
-                </DropdownMenuItem>
+                {/* Avatar Menu Items */}
+                {AvatarMenuConfig.map((item) => (
+                  <DropdownMenuItem key={item.title} asChild>
+                    <Link
+                      href={item.href}
+                      className="flex items-center space-x-2.5"
+                    >
+                      <item.icon className="size-4" />
+                      <p className="text-sm">{item.title}</p>
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
 
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/settings/billing"
-                    className="flex items-center space-x-2.5"
-                  >
-                    <Icons.creditCard className="size-4" />
-                    <p className="text-sm">Billing</p>
-                  </Link>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/settings/account"
-                    className="flex items-center space-x-2.5"
-                  >
-                    <Icons.settings className="size-4" />
-                    <p className="text-sm">Account</p>
-                  </Link>
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer"
