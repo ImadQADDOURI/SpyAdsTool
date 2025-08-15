@@ -55,165 +55,96 @@ export function ConfigSection() {
           <div className="grid gap-4">
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
               <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
-                📄 site.ts
+                📄 components\adTool\configuration\site-config.ts
               </h4>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
                 Manages global site metadata, SEO settings, and footer links.
               </p>
               <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-800">
                 <code className="text-green-400">
-                  export const siteConfig = {`{`}
                   <br />
-                  &nbsp;&nbsp;name: &quot;Your App Name&quot;,
+                  export const pricingData ;
                   <br />
-                  &nbsp;&nbsp;description: &quot;Your app description&quot;,
+                  export const plansColumns ;
                   <br />
-                  &nbsp;&nbsp;url: &quot;https://yourapp.com&quot;,
+                  export const comparePlans ;
                   <br />
-                  &nbsp;&nbsp;ogImage: &quot;https://yourapp.com/og.jpg&quot;,
-                  <br />
-                  &nbsp;&nbsp;links: {`{`}
-                  <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;twitter:
-                  &quot;https://twitter.com/youraccount&quot;,
-                  <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;github:
-                  &quot;https://github.com/youraccount&quot;
-                  <br />
-                  &nbsp;&nbsp;{`}`}
-                  <br />
-                  {`}`}
                 </code>
               </div>
             </div>
 
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
               <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
-                💰 subscriptions.ts
+                💰 components\adTool\configuration\pricing-config.ts
               </h4>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
                 Contains all pricing plans and subscription configurations.
               </p>
               <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-800">
                 <code className="text-green-400">
-                  {`{`}
                   <br />
-                  &nbsp;&nbsp;title: &apos;Pro&apos;,
+                  export const NavbarConfig ;
                   <br />
-                  &nbsp;&nbsp;description: &apos;Unlock Advanced Features&apos;,
+                  export const AvatarMenuConfig ;
                   <br />
-                  &nbsp;&nbsp;benefits: [
+                  export const FOOTER_CONFIG ;
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;&apos;Up to 500 monthly posts&apos;,
+                  export const paymentMethods ;
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;&apos;Advanced analytics and
-                  reporting&apos;,
-                  <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;&apos;Priority customer support&apos;,
-                  <br />
-                  &nbsp;&nbsp;],
-                  <br />
-                  &nbsp;&nbsp;limitations: [
-                  <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;&apos;No custom branding&apos;,
-                  <br />
-                  &nbsp;&nbsp;],
-                  <br />
-                  &nbsp;&nbsp;prices: {`{`}
-                  <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;monthly: 15,
-                  <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;yearly: 144,
-                  <br />
-                  &nbsp;&nbsp;{`}`},
-                  <br />
-                  &nbsp;&nbsp;stripeIds: {`{`}
-                  <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;monthly:
-                  env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PLAN_ID,
-                  <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;yearly:
-                  env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID,
-                  <br />
-                  &nbsp;&nbsp;{`}`}
-                  <br />
-                  {`}`}
                 </code>
               </div>
             </div>
 
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
               <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
-                🏠 landing.ts
+                🏠 components\adTool\configuration\landing-config.ts
               </h4>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
-                Configuration for homepage sections, hero content, and features.
+                Configuration for homepage sections, hero content, and
+                features...
               </p>
               <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-800">
                 <code className="text-green-400">
-                  export const landingConfig = {`{`}
                   <br />
-                  &nbsp;&nbsp;hero: {`{`}
+                  export const heroConfig ;
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;title: &quot;Your Hero Title&quot;,
+                  export const trustedBySectionConfig ;
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;description: &quot;Your hero
-                  description&quot;,
+                  export const featuresConfig ;
                   <br />
-                  &nbsp;&nbsp;{`}`},
+                  export const TrendingConfig ;
                   <br />
-                  &nbsp;&nbsp;features: [
+                  export const EXTENSION_CONFIG ;
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;{`{`} title: &quot;Feature 1&quot;,
-                  description: &quot;...&quot; {`}`}
-                  ,
+                  export const analyticsConfig ;
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;{`{`} title: &quot;Feature 2&quot;,
-                  description: &quot;...&quot; {`}`}
+                  export const testimonials ;
                   <br />
-                  &nbsp;&nbsp;]
+                  export const CTA_CONFIG ;
                   <br />
-                  {`}`}
                 </code>
               </div>
             </div>
 
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
               <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
-                🧭 Navigation Files
+                🧭 components\adTool\configuration\navigation-config.ts
               </h4>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
-                Separate navigation configurations for different sections:
+                Configuration for navigation menus
               </p>
-              <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
-                <li>
-                  • <strong>marketing.ts</strong> - Marketing site navigation
-                </li>
-                <li>
-                  • <strong>dashboard.ts</strong> - Dashboard sidebar navigation
-                </li>
-                <li>
-                  • <strong>docs.ts</strong> - Documentation navigation
-                </li>
-              </ul>
+
               <div className="mt-3 rounded bg-slate-900 p-3 text-sm dark:bg-slate-800">
                 <code className="text-green-400">
-                  export const dashboardConfig = {`{`}
                   <br />
-                  &nbsp;&nbsp;mainNav: [
+                  export const Links ;
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;{`{`} title: &quot;Dashboard&quot;,
-                  href: &quot;/dashboard&quot; {`}`}
-                  ,
+                  export const Tools ;
                   <br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;{`{`} title: &quot;Settings&quot;,
-                  href: &quot;/dashboard/settings&quot; {`}`}
+                  export const Deals ;
                   <br />
-                  &nbsp;&nbsp;],
+                  export const AdminLinks ;
                   <br />
-                  &nbsp;&nbsp;sidebarNav: [...]
-                  <br />
-                  {`}`}
                 </code>
               </div>
             </div>
