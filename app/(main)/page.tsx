@@ -26,7 +26,7 @@
 
 import { useEffect, useState } from "react";
 
-import { testimonials } from "@/components/adTool/configuration/landing";
+import { testimonials } from "@/components/adTool/configuration/landing-config";
 import { AnalyticsSection } from "@/components/adTool/landingPage/analyticsSection/AnalyticsSection";
 import { CTASection } from "@/components/adTool/landingPage/CTASection";
 import ExtensionSection from "@/components/adTool/landingPage/exploreSection/ExtensionSection";

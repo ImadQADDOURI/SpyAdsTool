@@ -12,7 +12,7 @@ import {
   Search,
 } from "lucide-react";
 
-import { heroConfig } from "../../configuration/landing";
+import { heroConfig } from "../../configuration/landing-config";
 import { CTAButton } from "../exploreSection/CTAButton";
 import { AuroraText } from "./AuroraText";
 import AvatarTrustedby from "./AvatarTrustedby";

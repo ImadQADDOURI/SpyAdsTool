@@ -7,7 +7,7 @@ import { LucideIcon, PocketKnife } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { Links, Tools } from "../configuration/navigation";
+import { Links, Tools } from "../configuration/navigation-config";
 import { CollapsibleDropdown } from "./collapsible-dropdown";
 
 interface NavbarLinksProps {

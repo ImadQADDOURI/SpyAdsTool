@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
-import { analyticsConfig } from "../../configuration/landing";
+import { analyticsConfig } from "../../configuration/landing-config";
 import { AuroraText } from "../hero/AuroraText";
 import { AnalyticsTab } from "./AnalyticsTab";
 

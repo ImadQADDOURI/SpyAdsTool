@@ -25,9 +25,9 @@ import { Icons } from "@/components/shared/icons";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { UserAvatar } from "@/components/shared/user-avatar";
 
-import { AdminLinks, Deals } from "../configuration/navigation";
+import { AdminLinks, Deals } from "../configuration/navigation-config";
 // Import the configuration
-import { AvatarMenuConfig, NavbarConfig } from "../configuration/site";
+import { AvatarMenuConfig, NavbarConfig } from "../configuration/site-config";
 import { AuroraText } from "../landingPage/hero/AuroraText";
 import { CollapsibleDropdownMobile } from "./collapsible-dropdown-mobile";
 import { NavbarLinks } from "./navbar-links";
