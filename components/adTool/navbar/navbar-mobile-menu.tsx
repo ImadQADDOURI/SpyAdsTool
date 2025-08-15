@@ -20,7 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/shared/icons";
 
-import { Deals, Links, Tools } from "../configuration/navigation-config";
+import { Deals, Links, Tools } from "../../../configuration/navigation-config";
 import { CollapsibleDropdownMobile } from "./collapsible-dropdown-mobile";
 
 interface NavbarMobileMenuProps {

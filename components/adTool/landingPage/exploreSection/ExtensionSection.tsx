@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Chrome, Download } from "lucide-react";
 
-import { EXTENSION_CONFIG } from "../../configuration/landing-config";
+import { EXTENSION_CONFIG } from "../../../../configuration/landing-config";
 import { AuroraText } from "../hero/AuroraText";
 import { CTAButton } from "./CTAButton";
 

@@ -2,7 +2,7 @@
 
 import { Flame, Package, Store, TrendingUp } from "lucide-react";
 
-import { TrendingConfig } from "../../configuration/landing-config";
+import { TrendingConfig } from "../../../../configuration/landing-config";
 import { AuroraText } from "../hero/AuroraText";
 import { CTAButton } from "./CTAButton";
 import { MarqueeColumn } from "./MarqueeColumn";

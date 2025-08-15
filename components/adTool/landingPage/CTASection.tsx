@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { CreditCard } from "lucide-react";
 
-import { CTA_CONFIG } from "../configuration/landing-config";
+import { CTA_CONFIG } from "../../../configuration/landing-config";
 import { AuroraText } from "./hero/AuroraText";
 
 export function CTASection() {

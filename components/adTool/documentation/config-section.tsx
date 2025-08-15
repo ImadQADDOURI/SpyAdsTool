@@ -55,7 +55,7 @@ export function ConfigSection() {
           <div className="grid gap-4">
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
               <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
-                📄 components\adTool\configuration\site-config.ts
+                📄 configuration\site-config.ts
               </h4>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
                 Manages global site metadata, SEO settings, and footer links.
@@ -75,7 +75,7 @@ export function ConfigSection() {
 
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
               <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
-                💰 components\adTool\configuration\pricing-config.ts
+                💰 configuration\pricing-config.ts
               </h4>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
                 Contains all pricing plans and subscription configurations.
@@ -97,7 +97,7 @@ export function ConfigSection() {
 
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
               <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
-                🏠 components\adTool\configuration\landing-config.ts
+                🏠 configuration\landing-config.ts
               </h4>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
                 Configuration for homepage sections, hero content, and
@@ -128,7 +128,7 @@ export function ConfigSection() {
 
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
               <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
-                🧭 components\adTool\configuration\navigation-config.ts
+                🧭 configuration\navigation-config.ts
               </h4>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
                 Configuration for navigation menus

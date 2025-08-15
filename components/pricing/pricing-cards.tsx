@@ -25,7 +25,7 @@ import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 import {
   paymentMethods,
   pricingData,
-} from "../adTool/configuration/pricing-config";
+} from "../../configuration/pricing-config";
 import TitleSection from "../adTool/sharedComponents/TitleSection";
 
 interface PricingCardsProps {

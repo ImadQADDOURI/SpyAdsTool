@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { FOOTER_CONFIG } from "../configuration/site-config";
+import { FOOTER_CONFIG } from "../../../configuration/site-config";
 
 export function FooterSection() {
   return (

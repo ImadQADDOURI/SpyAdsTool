@@ -18,7 +18,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { featuresConfig } from "../../configuration/landing-config";
+import { featuresConfig } from "../../../../configuration/landing-config";
 import { CTAButton } from "../exploreSection/CTAButton";
 import { AuroraText } from "../hero/AuroraText";
 import FloatingGlassImage from "../hero/FloatingGlassImage";
