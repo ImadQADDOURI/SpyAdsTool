@@ -326,7 +326,7 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
                       alt={method.name}
                       width={40}
                       height={24}
-                      className="h-6 w-auto object-contain opacity-70 transition-all duration-300 hover:opacity-100"
+                      className="h-6 w-auto object-contain opacity-70 transition-all duration-300 hover:opacity-100 dark:drop-shadow-[0_0_0.5px_white]"
                       crossOrigin="anonymous"
                     />
                   </div>
