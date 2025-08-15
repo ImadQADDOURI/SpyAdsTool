@@ -54,11 +54,129 @@ export function ConfigSection() {
 
           <div className="grid gap-4">
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+              <h1>🌐 site.webmanifest</h1>
               <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
-                📄 configuration\site-config.ts
+                📌 public\site.webmanifest
               </h4>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
-                Manages global site metadata, SEO settings, and footer links.
+                Purpose: Enables Progressive Web App (PWA) behavior. It tells
+                the browser how your app should appear when installed on a
+                device (like an app icon, theme color, display mode).
+              </p>
+              <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
+                Used by: Browsers and OS (mobile/desktop) when a user adds to
+                home screen.
+              </p>
+              <p className="mb-3 text-sm text-red-600 dark:text-red-400">
+                Where it lives: public/ folder. This is required because the
+                browser needs to fetch it as a static file via URL
+                (/site.webmanifest).
+              </p>
+              <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
+                Why: Without it, users can&apos;t &quot;install&quot; your web
+                app like a native app, and some PWA features (like splash
+                screens, standalone display) won&apos;t work.
+              </p>
+              <div>
+                <pre>
+                  {JSON.stringify(
+                    {
+                      name: "SaaS Starter",
+                      short_name: "SaaS Starter",
+                      icons: [
+                        {
+                          src: "/favicons/android-chrome-192x192.png",
+                          sizes: "192x192",
+                          type: "image/png",
+                        },
+                        {
+                          src: "/favicons/android-chrome-512x512.png",
+                          sizes: "512x512",
+                          type: "image/png",
+                        },
+                      ],
+                      theme_color: "#ffffff",
+                      background_color: "#ffffff",
+                      display: "standalone",
+                    },
+                    null,
+                    2,
+                  )}
+                </pre>
+              </div>
+            </div>
+            <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+              <h1>🔍 metadata-config.ts</h1>
+              <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
+                📌 configuration\metadata-config.ts
+              </h4>
+              <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
+                Purpose: Provides page-level information for SEO, social
+                sharing, browser tabs, and sometimes PWA hints.
+              </p>
+              <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
+                Used by: Next.js (or your framework) to set {"<title>"},{" "}
+                {"<meta>"} tags, {"<link>"} tags for icons, Open Graph / Twitter
+                cards, etc.{" "}
+              </p>
+              <p className="mb-3 text-sm text-red-600 dark:text-red-400">
+                Where it lives: Anywhere in your project for config purposes,
+                e.g.,
+              </p>
+              <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
+                Why: It’s read by your Next.js layouts or components to
+                dynamically inject metadata into HTML pages.
+              </p>
+              <div>
+                <pre>
+                  {JSON.stringify(
+                    {
+                      title: "My App",
+                      description: "Awesome Next.js SaaS App",
+                      keywords: ["SaaS", "Next.js", "Dashboard"],
+                      icons: [
+                        { rel: "icon", url: "/favicon.ico" },
+                        {
+                          rel: "apple-touch-icon",
+                          url: "/apple-touch-icon.png",
+                        },
+                      ],
+                      themeColor: "#ffffff",
+                    },
+                    null,
+                    2,
+                  )}
+                </pre>
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+              <h1>🔗 site-config.ts</h1>
+              <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
+                📌 configuration\site-config.ts
+              </h4>
+              <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
+                Manages Navbar and Footer configurations, including links,
+              </p>
+              <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-800">
+                <code className="text-green-400">
+                  <br />
+                  export const NavbarConfig ;
+                  <br />
+                  export const AvatarMenuConfig ;
+                  <br />
+                  export const FOOTER_CONFIG ;
+                </code>
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+              <h1>💰 pricing-config.ts</h1>
+              <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
+                📌 configuration\pricing-config.ts
+              </h4>
+              <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
+                Contains all pricing plans and subscription configurations.
               </p>
               <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-800">
                 <code className="text-green-400">
@@ -69,26 +187,6 @@ export function ConfigSection() {
                   <br />
                   export const comparePlans ;
                   <br />
-                </code>
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
-              <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
-                💰 configuration\pricing-config.ts
-              </h4>
-              <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
-                Contains all pricing plans and subscription configurations.
-              </p>
-              <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-800">
-                <code className="text-green-400">
-                  <br />
-                  export const NavbarConfig ;
-                  <br />
-                  export const AvatarMenuConfig ;
-                  <br />
-                  export const FOOTER_CONFIG ;
-                  <br />
                   export const paymentMethods ;
                   <br />
                 </code>
@@ -96,8 +194,9 @@ export function ConfigSection() {
             </div>
 
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+              <h1>🏠 landing-config.ts</h1>
               <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
-                🏠 configuration\landing-config.ts
+                📌 configuration\landing-config.ts
               </h4>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
                 Configuration for homepage sections, hero content, and
@@ -127,8 +226,9 @@ export function ConfigSection() {
             </div>
 
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+              <h1>🧭 navigation-config.ts</h1>
               <h4 className="mb-2 font-semibold text-slate-900 dark:text-slate-100">
-                🧭 configuration\navigation-config.ts
+                📌 configuration\navigation-config.ts
               </h4>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
                 Configuration for navigation menus
