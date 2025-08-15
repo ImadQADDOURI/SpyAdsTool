@@ -1,21 +1,19 @@
-// @components\pricing\pricing-cards.tsx
 "use client";
 
 import { useContext, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { UserSubscriptionPlan } from "@/types";
+import type { UserSubscriptionPlan } from "@/types";
 import {
   CircleCheckBig,
   CreditCard,
   Crown,
-  Plane,
   Rocket,
   Star,
   Zap,
 } from "lucide-react";
 
-import { SubscriptionPlan } from "@/types/index";
-import { pricingData } from "@/config/subscriptions";
+import type { SubscriptionPlan } from "@/types/index";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -24,6 +22,10 @@ import { ModalContext } from "@/components/modals/providers";
 import { Icons } from "@/components/shared/icons";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 
+import {
+  paymentMethods,
+  pricingData,
+} from "../adTool/configuration/pricing-config";
 import TitleSection from "../adTool/sharedComponents/TitleSection";
 
 interface PricingCardsProps {
@@ -58,14 +60,14 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
       case "pro":
         return {
           border:
-            "border-purple-300 dark:border-purple-700 hover:border-purple-400 dark:hover:border-purple-600 ring-2 ring-purple-200 dark:ring-purple-800",
+            "border-pink-300 dark:border-pink-700 hover:border-pink-400 dark:hover:border-pink-600 ring-2 ring-pink-200 dark:ring-pink-800",
           background:
-            "bg-gradient-to-br from-purple-50/50 to-purple-100/30 dark:from-purple-950/20 dark:to-purple-900/10",
+            "bg-gradient-to-br from-pink-50/50 to-rose-100/30 dark:from-pink-950/20 dark:to-rose-900/10",
           headerBg:
-            "bg-gradient-to-r from-purple-500/10 to-purple-600/10 dark:from-purple-500/20 dark:to-purple-600/20",
-          accent: "text-purple-600 dark:text-purple-400",
+            "bg-gradient-to-r from-pink-500/10 to-rose-500/10 dark:from-pink-500/20 dark:to-rose-500/20",
+          accent: "text-pink-600 dark:text-pink-400",
           icon: Crown,
-          shadow: "shadow-purple-200 dark:shadow-purple-900/30",
+          shadow: "shadow-pink-200 dark:shadow-pink-900/30",
         };
       default:
         return {
@@ -99,7 +101,7 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
         key={offer.title}
       >
         {isPro && (
-          <div className="absolute -top-3 left-1/2 z-50 flex -translate-x-1/2 transform items-center space-x-1 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 px-4 py-1 text-xs font-bold uppercase text-white shadow-lg">
+          <div className="absolute -top-3 left-1/2 z-50 flex -translate-x-1/2 transform items-center space-x-1 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-4 py-1 text-xs font-bold uppercase text-white shadow-lg">
             <Crown className="h-4 w-4" />
             <span>Most Popular</span>
           </div>
@@ -218,7 +220,7 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
               className={cn(
                 "h-12 w-full font-semibold transition-all duration-200 hover:scale-105",
                 isPro
-                  ? "bg-gradient-to-r from-purple-500 to-purple-600 shadow-lg hover:from-purple-600 hover:to-purple-700 hover:shadow-xl"
+                  ? "bg-gradient-to-r from-pink-500 to-rose-500 shadow-lg hover:from-pink-600 hover:to-rose-600 hover:shadow-xl"
                   : offer.title.toLowerCase() === "starter"
                     ? "border-2 border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950/20"
                     : "border-2 border-green-200 text-green-600 hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-950/20",
@@ -266,7 +268,7 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
           >
             <ToggleGroupItem
               value="yearly"
-              className="rounded-full px-6 font-semibold transition-all duration-200 data-[state=on]:!bg-gradient-to-r data-[state=on]:!from-purple-500 data-[state=on]:!to-purple-600 data-[state=on]:!text-white data-[state=on]:shadow-md"
+              className="rounded-full px-6 font-semibold transition-all duration-200 data-[state=on]:!bg-gradient-to-r data-[state=on]:!from-pink-500 data-[state=on]:!to-rose-500 data-[state=on]:!text-white data-[state=on]:shadow-md"
               aria-label="Toggle yearly billing"
             >
               Yearly (-20%)
@@ -291,6 +293,65 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
             ))}
           </div>
         </div>
+
+        <div className="mt-12 w-full max-w-5xl">
+          <div className="rounded-2xl border bg-gradient-to-br from-gray-50/50 to-gray-100/30 p-8 dark:from-gray-950/20 dark:to-gray-900/10">
+            <div className="text-center">
+              {/* <div className="mb-4 flex items-center justify-center gap-3">
+                <div className="rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 p-3">
+                  <CreditCard className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <h3 className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-2xl font-bold text-transparent dark:from-gray-100 dark:via-gray-200 dark:to-gray-100">
+                  Secure Payment Methods
+                </h3>
+              </div> */}
+
+              <p className="mb-12 text-lg text-gray-600/90 dark:text-gray-400/90">
+                Powered by Stripe with support for{" "}
+                <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text font-semibold text-transparent dark:from-purple-400 dark:to-pink-400">
+                  125+ payment methods
+                </span>{" "}
+                worldwide
+              </p>
+
+              {/* Payment methods with no containers - cleaner look */}
+              <div className="flex flex-wrap items-center justify-center gap-8">
+                {paymentMethods.map((method) => (
+                  <div
+                    key={method.name}
+                    className="transition-all duration-300 hover:scale-110"
+                  >
+                    <Image
+                      src={method.logo || "/placeholder.svg"}
+                      alt={method.name}
+                      width={40}
+                      height={24}
+                      className="h-6 w-auto object-contain opacity-70 transition-all duration-300 hover:opacity-100"
+                      crossOrigin="anonymous"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Trust indicators */}
+              {/* <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-green-500" />
+                  <span>256-bit SSL encryption</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-blue-500" />
+                  <span>PCI DSS compliant</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-purple-500" />
+                  <span>Global coverage</span>
+                </div>
+              </div> */}
+            </div>
+          </div>
+        </div>
+
         <p className="mt-8 text-balance text-center text-base text-muted-foreground">
           Login to contact our{" "}
           <a

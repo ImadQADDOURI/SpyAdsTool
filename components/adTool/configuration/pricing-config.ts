@@ -161,3 +161,47 @@ export const comparePlans: PlansRow[] = [
   },
   // Add more rows as needed
 ];
+
+// Payment methods configuration
+export const paymentMethods = [
+  {
+    name: "Visa",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg",
+  },
+  {
+    name: "Mastercard",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/8/88/MasterCard_early_1990s_logo.svg",
+  },
+  {
+    name: "American Express",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/7/72/Warner-Amex_logo.svg",
+  },
+  {
+    name: "Discover",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/5/57/Discover_Card_logo.svg",
+  },
+  {
+    name: "JCB",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/4/40/JCB_logo.svg",
+  },
+  {
+    name: "UnionPay",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/1/1b/UnionPay_logo.svg",
+  },
+  {
+    name: "Apple Pay",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg",
+  },
+  {
+    name: "Google Pay",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg",
+  },
+  {
+    name: "Klarna",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/4/40/Klarna_Payment_Badge.svg",
+  },
+  {
+    name: "SEPA Direct Debit",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Single_Euro_Payments_Area_logo.svg",
+  },
+];
