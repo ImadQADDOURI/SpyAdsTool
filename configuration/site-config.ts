@@ -42,7 +42,7 @@ export const NavbarConfig: NavbarConfig = {
   url: siteConfig.url,
   logo: {
     type: "icon",
-    value: SearchIcon,
+    value: Settings,
   },
 };
 
