@@ -1,7 +1,24 @@
 // config/navbar.ts
 import { CreditCard, LucideIcon, Search, Settings, User } from "lucide-react";
 
-import { site_url } from "./metadata-config";
+import { env } from "@/env.mjs";
+
+const site_url = env.NEXT_PUBLIC_APP_URL;
+
+export type SiteConfig = {
+  name: string;
+  description: string;
+  url: string;
+  ogImage: string;
+};
+
+export const siteConfig: SiteConfig = {
+  name: "Spy Tool",
+  description:
+    "Get your project off to an explosive start with SaaS Starter! Harness the power of Next.js 14, Prisma, Neon, Auth.js v5, Resend, React Email, Shadcn/ui and Stripe to build your next big thing.",
+  url: site_url,
+  ogImage: `${site_url}/_static/og.jpg`,
+};
 
 export interface NavbarConfig {
   name: string;
@@ -14,9 +31,9 @@ export interface NavbarConfig {
 }
 
 export const NavbarConfig: NavbarConfig = {
-  name: "AdSearch",
+  name: siteConfig.name,
   colors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
-  url: site_url,
+  url: siteConfig.url,
   logo: {
     type: "icon",
     value: Search,

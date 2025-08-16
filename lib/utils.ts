@@ -1,4 +1,4 @@
-import { site_url } from "@/configuration/metadata-config";
+import { siteConfig } from "@/configuration/site-config";
 import { clsx, type ClassValue } from "clsx";
 import ms from "ms";
 import { twMerge } from "tailwind-merge";
@@ -91,7 +91,7 @@ export const getBlurDataURL = async (url: string | null) => {
   }
 
   if (url.startsWith("/_static/")) {
-    url = `${site_url}${url}`;
+    url = `${siteConfig.url}${url}`;
   }
 
   try {

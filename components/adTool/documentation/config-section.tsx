@@ -156,11 +156,28 @@ export function ConfigSection() {
                 📌 configuration\site-config.ts
               </h4>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
-                Manages Navbar and Footer configurations, including links,
+                Manages site-wide settings like name, description, URL, and
+                social links.
               </p>
               <div className="rounded bg-slate-900 p-3 text-sm dark:bg-slate-800">
                 <code className="text-green-400">
                   <br />
+                  export const siteConfig ;
+                  <div>
+                    <pre>
+                      {JSON.stringify(
+                        {
+                          name: "Spy Tool",
+                          description:
+                            "Get your project off to an explosive start with SaaS Starter! Harness the power of Next.js 14, Prisma, Neon, Auth.js v5, Resend, React Email, Shadcn/ui and Stripe to build your next big thing.",
+                          url: "site_url",
+                          ogImage: "${site_url}/_static/og.jpg",
+                        },
+                        null,
+                        2,
+                      )}
+                    </pre>
+                  </div>
                   export const NavbarConfig ;
                   <br />
                   export const AvatarMenuConfig ;
@@ -189,6 +206,7 @@ export function ConfigSection() {
                   <br />
                   export const paymentMethods ;
                   <br />
+                  export const pricingFaqData ;
                 </code>
               </div>
             </div>

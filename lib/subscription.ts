@@ -1,8 +1,8 @@
 // @lib/subscription.ts
+import { pricingData } from "@/configuration/pricing-config";
 import Stripe from "stripe";
 
 import { UserSubscriptionPlan } from "types";
-import { pricingData } from "@/config/subscriptions";
 import { prisma } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 

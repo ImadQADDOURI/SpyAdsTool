@@ -1,13 +1,11 @@
 import { Metadata } from "next";
 
-import { env } from "@/env.mjs";
-
-export const site_url = env.NEXT_PUBLIC_APP_URL;
+import { siteConfig } from "./site-config";
 
 export function constructMetadata({
-  title = "Spy Tool",
-  description = "Get your project off to an explosive start with SaaS Starter! Harness the power of Next.js 14, Prisma, Neon, Auth.js v5, Resend, React Email, Shadcn/ui and Stripe to build your next big thing.",
-  image = `${site_url}/_static/og.jpg`,
+  title = siteConfig.name,
+  description = siteConfig.description,
+  image = siteConfig.ogImage,
   icons = "/favicon.ico",
   noIndex = false,
 }: {
@@ -40,7 +38,7 @@ export function constructMetadata({
     openGraph: {
       type: "website",
       locale: "en_US",
-      url: site_url,
+      url: siteConfig.url,
       title,
       description,
       siteName: title,
@@ -53,8 +51,8 @@ export function constructMetadata({
       creator: "@miickasmt",
     },
     icons,
-    metadataBase: new URL(site_url),
-    manifest: `${site_url}/site.webmanifest`,
+    metadataBase: new URL(siteConfig.url),
+    manifest: `${siteConfig.url}/site.webmanifest`,
     ...(noIndex && {
       robots: {
         index: false,

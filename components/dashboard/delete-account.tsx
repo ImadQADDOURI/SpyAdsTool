@@ -2,9 +2,9 @@
 "use client";
 
 import { useState } from "react";
+import { siteConfig } from "@/configuration/site-config";
 import { UserSubscriptionPlan } from "@/types";
 
-import { siteConfig } from "@/config/site";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

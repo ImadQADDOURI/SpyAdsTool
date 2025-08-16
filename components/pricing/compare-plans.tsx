@@ -1,3 +1,4 @@
+import { comparePlans, plansColumns } from "@/configuration/pricing-config";
 import { PlansRow } from "@/types";
 import {
   BadgeDollarSign,
@@ -9,7 +10,6 @@ import {
   TicketsIcon,
 } from "lucide-react";
 
-import { comparePlans, plansColumns } from "@/config/subscriptions";
 import {
   Popover,
   PopoverContent,

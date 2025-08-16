@@ -1,6 +1,6 @@
+import { pricingFaqData } from "@/configuration/pricing-config";
 import { HelpCircle, Mail, MessageCircleQuestion, Send } from "lucide-react";
 
-import { pricingFaqData } from "@/config/subscriptions";
 import {
   Accordion,
   AccordionContent,
