@@ -1,11 +1,9 @@
 // config/navbar.ts
-import {
-  CreditCard,
-  LucideIcon,
-  SearchIcon,
-  Settings,
-  User,
-} from "lucide-react";
+import { LucideIcon } from "lucide-react";
+import CreditCard from "lucide-react/dist/esm/icons/credit-card";
+import Search from "lucide-react/dist/esm/icons/search";
+import Settings from "lucide-react/dist/esm/icons/settings";
+import User from "lucide-react/dist/esm/icons/user";
 
 import { env } from "@/env.mjs";
 
@@ -42,7 +40,7 @@ export const NavbarConfig: NavbarConfig = {
   url: siteConfig.url,
   logo: {
     type: "icon",
-    value: Settings,
+    value: Search,
   },
 };
 
