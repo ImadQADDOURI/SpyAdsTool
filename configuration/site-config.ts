@@ -1,5 +1,11 @@
 // config/navbar.ts
-import { CreditCard, LucideIcon, Search, Settings, User } from "lucide-react";
+import {
+  CreditCard,
+  LucideIcon,
+  SearchIcon,
+  Settings,
+  User,
+} from "lucide-react";
 
 import { env } from "@/env.mjs";
 
@@ -36,7 +42,7 @@ export const NavbarConfig: NavbarConfig = {
   url: siteConfig.url,
   logo: {
     type: "icon",
-    value: Search,
+    value: SearchIcon,
   },
 };
 
@@ -59,14 +65,9 @@ export const AvatarMenuConfig = [
 
 export const FOOTER_CONFIG = {
   brand: {
-    name: "AdSearch",
+    name: siteConfig.name,
     description:
       "Discover winning products & ads instantly with our all-in-one tool for scaling sales & boosting eCom profits.",
-    logo: {
-      colors: "from-pink-500 to-purple-600",
-      size: "w-10 h-10",
-      borderRadius: "rounded-xl",
-    },
   },
   navigation: {
     quickLinks: [
@@ -108,30 +109,5 @@ export const FOOTER_CONFIG = {
         icon: "M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z M4 2a2 2 0 100 4 2 2 0 000-4z",
       },
     ],
-  },
-  styling: {
-    backgroundColor: "#0F1123",
-    gradientBorder:
-      "linear-gradient(90deg, rgba(236, 72, 153, 0.5) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(59, 130, 246, 0.5) 100%)",
-    padding: {
-      top: "pt-16",
-      bottom: "pb-8",
-      section: "mb-12",
-    },
-    grid: {
-      brand: "lg:col-span-5",
-      links: "lg:col-span-3",
-      contact: "lg:col-span-4",
-    },
-  },
-  animation: {
-    delays: {
-      brand: "0s",
-      links: "0.2s",
-      contact: "0.4s",
-      social: "0.2s",
-      socialStagger: "0.1s",
-      linkStagger: "0.05s",
-    },
   },
 };

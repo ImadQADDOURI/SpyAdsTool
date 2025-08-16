@@ -1,58 +1,38 @@
 "use client";
 
 import Link from "next/link";
-
-import { FOOTER_CONFIG } from "../../../configuration/site-config";
+import { FOOTER_CONFIG } from "@/configuration/site-config";
 
 export function FooterSection() {
   return (
-    <footer
-      className="relative w-full"
-      style={{ backgroundColor: FOOTER_CONFIG.styling.backgroundColor }}
-    >
+    <footer className="relative w-full bg-gray-900">
       {/* Gradient Top Border */}
-      <div
-        className="h-0.5 w-full"
-        style={{
-          background: FOOTER_CONFIG.styling.gradientBorder,
-        }}
-      ></div>
+      <div className="h-0.5 w-full bg-gradient-to-r from-pink-500/50 via-purple-500/50 to-blue-500/50"></div>
 
-      <div
-        className={`container mx-auto px-4 ${FOOTER_CONFIG.styling.padding.top} ${FOOTER_CONFIG.styling.padding.bottom}`}
-      >
-        {/* Main Footer Grid */}
-        <div
-          className={`grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-12 lg:gap-12 ${FOOTER_CONFIG.styling.padding.section}`}
-        >
+      <div className="container mx-auto px-4 pb-8 pt-16">
+        {/* Main Footer Flex */}
+        <div className="mb-12 flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between lg:gap-12">
           {/* Brand Section */}
-          <div
-            className={`${FOOTER_CONFIG.styling.grid.brand} animate-fade-in-up`}
-          >
+          <div className="flex-1 lg:max-w-md">
             <div className="mb-6 flex items-center">
-              <div
-                className={`${FOOTER_CONFIG.brand.logo.size} bg-gradient-to-r ${FOOTER_CONFIG.brand.logo.colors} ${FOOTER_CONFIG.brand.logo.borderRadius} mr-4 flex-shrink-0`}
-              ></div>
+              <div className="mr-4 h-10 w-10 flex-shrink-0 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600"></div>
               <span className="text-2xl font-bold text-white">
                 {FOOTER_CONFIG.brand.name}
               </span>
             </div>
-            <p className="mb-8 max-w-md text-base leading-relaxed text-gray-400">
+            <p className="mb-8 text-base leading-relaxed text-gray-400">
               {FOOTER_CONFIG.brand.description}
             </p>
 
             {/* Social Links */}
             <div className="flex space-x-4">
-              {FOOTER_CONFIG.social.links.map((social, index) => (
+              {FOOTER_CONFIG.social.links.map((social) => (
                 <Link
                   key={social.name}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="animate-fade-in-scale flex h-11 w-11 items-center justify-center rounded-xl border border-gray-700/30 bg-gray-800/50 text-gray-400 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-gradient-to-r hover:from-pink-500 hover:to-purple-600 hover:text-white"
-                  style={{
-                    animationDelay: `calc(${FOOTER_CONFIG.animation.delays.social} + ${index} * ${FOOTER_CONFIG.animation.delays.socialStagger})`,
-                  }}
+                  className="flex h-11 w-11 items-center justify-center rounded-xl border border-gray-700/30 bg-gray-800/50 text-gray-400 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-gradient-to-r hover:from-pink-500 hover:to-purple-600 hover:text-white"
                 >
                   <svg
                     className="h-5 w-5"
@@ -73,21 +53,16 @@ export function FooterSection() {
           </div>
 
           {/* Quick Links */}
-          <div
-            className={`${FOOTER_CONFIG.styling.grid.links} animate-fade-in-up-delayed`}
-          >
+          <div className="flex-shrink-0 lg:min-w-[200px]">
             <h3 className="mb-6 text-lg font-semibold text-white">
               Quick Links
             </h3>
             <ul className="space-y-4">
-              {FOOTER_CONFIG.navigation.quickLinks.map((link, index) => (
+              {FOOTER_CONFIG.navigation.quickLinks.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="animate-fade-in-left group flex items-center text-base text-gray-400 transition-colors duration-200 hover:text-white"
-                    style={{
-                      animationDelay: `calc(${FOOTER_CONFIG.animation.delays.links} + ${index} * ${FOOTER_CONFIG.animation.delays.linkStagger})`,
-                    }}
+                    className="group flex items-center text-base text-gray-400 transition-colors duration-200 hover:text-white"
                   >
                     <span className="mr-3 h-1.5 w-1.5 rounded-full bg-gray-600 transition-colors duration-200 group-hover:bg-pink-500"></span>
                     {link.name}
@@ -98,9 +73,7 @@ export function FooterSection() {
           </div>
 
           {/* Contact Support */}
-          <div
-            className={`${FOOTER_CONFIG.styling.grid.contact} animate-fade-in-up-more-delayed`}
-          >
+          <div className="flex-shrink-0 lg:min-w-[280px]">
             <h3 className="mb-6 text-lg font-semibold text-white">
               {FOOTER_CONFIG.contact.title}
             </h3>
@@ -137,7 +110,7 @@ export function FooterSection() {
         </div>
 
         {/* Bottom Section */}
-        <div className="animate-fade-in border-t border-gray-800/50 pt-8">
+        <div className="border-t border-gray-800/50 pt-8">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-sm text-gray-400">
               © 2024 {FOOTER_CONFIG.brand.name}. All rights reserved.
@@ -160,82 +133,6 @@ export function FooterSection() {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fade-in-left {
-          from {
-            opacity: 0;
-            transform: translateX(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes fade-in-scale {
-          from {
-            opacity: 0;
-            transform: scale(0.8);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        .animate-fade-in-up {
-          animation: fade-in-up 0.6s ease-out;
-        }
-
-        .animate-fade-in-up-delayed {
-          animation: fade-in-up 0.6s ease-out;
-          animation-delay: ${FOOTER_CONFIG.animation.delays.links};
-          animation-fill-mode: both;
-        }
-
-        .animate-fade-in-up-more-delayed {
-          animation: fade-in-up 0.6s ease-out;
-          animation-delay: ${FOOTER_CONFIG.animation.delays.contact};
-          animation-fill-mode: both;
-        }
-
-        .animate-fade-in-left {
-          animation: fade-in-left 0.4s ease-out;
-          animation-fill-mode: both;
-        }
-
-        .animate-fade-in-scale {
-          animation: fade-in-scale 0.4s ease-out;
-          animation-fill-mode: both;
-        }
-
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out;
-          animation-delay: 0.6s;
-          animation-fill-mode: both;
-        }
-      `}</style>
     </footer>
   );
 }
