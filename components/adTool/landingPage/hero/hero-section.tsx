@@ -1,6 +1,5 @@
 "use client";
 
-import { heroConfig } from "@/configuration/landing-config";
 import {
   BarChart3,
   Bookmark,
@@ -22,6 +21,234 @@ import FloatingGlassTextIcon from "./FloatingGlassTextIcon";
 import GradientBackground from "./gradient-background";
 import GlassVideo from "./hero-v0/GlassVideo";
 import TrustedBySection from "./TrustedBySection";
+
+export const heroConfig = {
+  // Animation settings
+  animations: {
+    flipWordsDuration: 2500,
+  },
+
+  // Background settings
+  background: {
+    opacity: 0.4,
+    mouseInfluence: 0.3,
+    colors: {
+      blue: "59, 130, 246",
+      purple: "147, 51, 234",
+      pink: "236, 72, 153",
+    },
+  },
+
+  // Particles settings
+  particles: {
+    quantity: 20,
+    preset: "cosmic" as const,
+    size: 0.3,
+    speed: 0.8,
+  },
+
+  // Content
+  flipWords: ["Ads", "Products", "Stores", "Trends"],
+  videoUrl:
+    "https://assets-static.invideo.io/files/Invideo_Demo_HP_18_10_2024_V001_1921f1aee3.mp4",
+
+  // 🖼️ Floating Images heroConfiguration - Centralized positioning and settings
+  heroImages: [
+    {
+      id: "main-center",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
+      alt: "Main hero banner",
+      position: {
+        className: "relative z-20",
+      },
+      animation: {
+        floatAmplitude: 8,
+        floatSpeed: 6,
+        delay: 0,
+      },
+      settings: {
+        glass: true,
+        lens: true,
+        zoomFactor: 1.3,
+      },
+    },
+    {
+      id: "top-left",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
+      alt: "Hero banner 1",
+      position: {
+        className: "absolute left-0 top-0 z-10",
+      },
+      animation: {
+        floatAmplitude: 6,
+        floatSpeed: 8,
+        delay: 0.5,
+      },
+      settings: {
+        glass: true,
+        lens: true,
+      },
+    },
+    {
+      id: "top-right",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
+      alt: "Hero banner 2",
+      position: {
+        className: "absolute right-0 top-8 z-10",
+      },
+      animation: {
+        floatAmplitude: 7,
+        floatSpeed: 7,
+        delay: 1,
+      },
+      settings: {
+        glass: true,
+        lens: true,
+      },
+    },
+    {
+      id: "bottom-left",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
+      alt: "Hero banner 4",
+      position: {
+        className: "absolute bottom-8 left-8 z-10",
+      },
+      animation: {
+        floatAmplitude: 5,
+        floatSpeed: 9,
+        delay: 1.5,
+      },
+      settings: {
+        glass: true,
+        lens: true,
+      },
+    },
+    {
+      id: "bottom-right",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
+      alt: "Hero banner 5",
+      position: {
+        className: "absolute bottom-0 right-8 z-10",
+      },
+      animation: {
+        floatAmplitude: 6,
+        floatSpeed: 8,
+        delay: 2,
+      },
+      settings: {
+        glass: true,
+        lens: true,
+      },
+    },
+  ],
+
+  // 🏷️ Feature Pills heroConfiguration - Centralized positioning and styling
+  featurePills: [
+    {
+      id: "ai-insights",
+      text: "AI-Insights",
+      icon: Bot,
+      position: {
+        className: "absolute -left-8 top-16 z-30 hidden lg:block",
+      },
+      animation: {
+        floatAmplitude: 4,
+        floatSpeed: 6,
+        delay: 0.8,
+      },
+      styling: {
+        textClass: "text-gray-600 dark:text-gray-800 font-semibold text-sm",
+        iconClass: "w-4 h-4 text-blue-400 dark:text-blue-500",
+      },
+    },
+    {
+      id: "ads-database",
+      text: "10M+ Ads",
+      icon: Database,
+      position: {
+        className: "absolute -right-8 top-4 z-30 hidden lg:block",
+      },
+      animation: {
+        floatAmplitude: 5,
+        floatSpeed: 7,
+        delay: 1.2,
+      },
+      styling: {
+        textClass: "text-purple-700 dark:text-purple-300 font-semibold text-sm",
+        iconClass: "w-4 h-4 text-purple-600 dark:text-purple-400",
+      },
+    },
+    // {
+    //   id: "visual-analytics",
+    //   text: "Analytics",
+    //   icon: BarChart3,
+    //   position: {
+    //     className: "absolute -left-12 top-1/2 z-30 hidden lg:block",
+    //   },
+    //   animation: {
+    //     floatAmplitude: 6,
+    //     floatSpeed: 8,
+    //     delay: 1.6,
+    //   },
+    //   styling: {
+    //     textClass: "text-pink-700 dark:text-pink-300 font-semibold text-sm",
+    //     iconClass: "w-4 h-4 text-pink-600 dark:text-pink-400",
+    //   },
+    // },
+    {
+      id: "download-media",
+      text: "Media",
+      icon: Download,
+      position: {
+        className: "absolute -right-12 top-1/2 z-30 hidden lg:block",
+      },
+      animation: {
+        floatAmplitude: 4,
+        floatSpeed: 6,
+        delay: 2,
+      },
+      styling: {
+        textClass: "text-cyan-700 dark:text-cyan-300 font-semibold text-sm",
+        iconClass: "w-4 h-4 text-cyan-600 dark:text-cyan-400",
+      },
+    },
+    {
+      id: "save-boards",
+      text: "Boards",
+      icon: Bookmark,
+      position: {
+        className: "absolute -left-8 bottom-4 z-30 hidden lg:block",
+      },
+      animation: {
+        floatAmplitude: 5,
+        floatSpeed: 7,
+        delay: 2.4,
+      },
+      styling: {
+        textClass:
+          "text-emerald-700 dark:text-emerald-300 font-semibold text-sm",
+        iconClass: "w-4 h-4 text-emerald-600 dark:text-emerald-400",
+      },
+    },
+    {
+      id: "profit-calculator",
+      text: "Calculator",
+      icon: Calculator,
+      position: {
+        className: "absolute -right-8 bottom-16 z-30 hidden lg:block",
+      },
+      animation: {
+        floatAmplitude: 6,
+        floatSpeed: 8,
+        delay: 2.8,
+      },
+      styling: {
+        textClass: "text-orange-700 dark:text-orange-300 font-semibold text-sm",
+        iconClass: "w-4 h-4 text-orange-600 dark:text-orange-400",
+      },
+    },
+  ],
+};
 
 const HeroSection = () => {
   return (
