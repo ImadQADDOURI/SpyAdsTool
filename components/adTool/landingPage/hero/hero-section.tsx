@@ -143,7 +143,6 @@ const HeroSection = () => {
                       floatSpeed={image.animation.floatSpeed}
                       delay={image.animation.delay}
                       glass={image.settings.glass}
-                      priority={image.settings.priority}
                     />
                   </div>
                 ))}

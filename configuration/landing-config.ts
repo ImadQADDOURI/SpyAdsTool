@@ -65,7 +65,6 @@ export const heroConfig = {
         glass: true,
         lens: true,
         zoomFactor: 1.3,
-        priority: true,
       },
     },
     {
@@ -83,7 +82,6 @@ export const heroConfig = {
       settings: {
         glass: true,
         lens: true,
-        priority: true,
       },
     },
     {
