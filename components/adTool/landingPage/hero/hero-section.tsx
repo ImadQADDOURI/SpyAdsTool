@@ -1,5 +1,6 @@
 "use client";
 
+import { heroConfig } from "@/configuration/landing-config";
 import {
   BarChart3,
   Bookmark,
@@ -11,8 +12,6 @@ import {
   Download,
   Search,
 } from "lucide-react";
-
-import { heroConfig } from "@/config/landing-config";
 
 import { CTAButton } from "../exploreSection/CTAButton";
 import { AuroraText } from "./AuroraText";
