@@ -9,6 +9,10 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./ui/**/*.{ts,tsx}",
     "./content/**/*.{md,mdx}",
+    // 🚨 ADD THIS LINE - Include your config files
+    "./configuration/**/*.{js,ts,jsx,tsx}",
+    // Or be more specific:
+    "./configuration/landing-config.ts",
   ],
   future: {
     hoverOnlyWhenSupported: true,
