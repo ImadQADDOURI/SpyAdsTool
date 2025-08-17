@@ -10,6 +10,8 @@ const config = {
     "./ui/**/*.{ts,tsx}",
     "./content/**/*.{md,mdx}",
     // 🚨 ADD THIS LINE - Include your config files
+    // 🚀 By adding './configuration/**/*.{js,ts,jsx,tsx}' to your Tailwind config, you've told Tailwind to scan your configuration files during the build process, so those classes won't get purged anymore.
+    // 🪛 If you ever see styles missing again, check the Tailwind content array first
     "./configuration/**/*.{js,ts,jsx,tsx}",
   ],
   future: {
