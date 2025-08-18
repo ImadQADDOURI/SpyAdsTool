@@ -3,15 +3,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { fetchTrendAds } from "@/actions/savedAds";
-import { ArrowRight, ChevronRight, Flame, Sparkles } from "lucide-react";
+import { Flame, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdData } from "@/types/ad";
-import { AdCardGrid } from "@/components/adTool/sharedComponents/AdCardGrid";
-import { Loading } from "@/components/adTool/sharedComponents/Loading";
-import LoadingTrigger from "@/components/adTool/sharedComponents/LoadingTrigger";
 import { ScrollButtons } from "@/components/adTool/sharedComponents/ScrollButtons";
 
+import SearchResults from "../sharedComponents/SearchResults";
 import TitleSection from "../sharedComponents/TitleSection";
 
 // Define pagination response type to avoid TS errors
@@ -34,6 +32,7 @@ type TrendAdsResponse = {
 export default function TrendAds() {
   const [ads, setAds] = useState<AdData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationResponse>({
     total: 0,
     pages: 0,
@@ -45,11 +44,13 @@ export default function TrendAds() {
   const loadAds = useCallback(async (page = 1, reset = false) => {
     try {
       setIsLoading(true);
+      setError(null);
 
       const response = await fetchTrendAds(page, 20);
       const result = response as TrendAdsResponse;
 
       if (result.error) {
+        setError(result.error);
         toast.error(result.error);
         return;
       }
@@ -70,7 +71,9 @@ export default function TrendAds() {
         setHasMore(result.pagination.current < result.pagination.pages);
       }
     } catch (error) {
-      toast.error("Failed to load trending ads");
+      const errorMessage = "Failed to load trending ads";
+      setError(errorMessage);
+      toast.error(errorMessage);
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -89,6 +92,9 @@ export default function TrendAds() {
     }
   }, [isLoading, hasMore, pagination.current, loadAds]);
 
+  // Calculate remaining count
+  const remainingCount = pagination.total - ads.length;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pb-16 dark:from-gray-900 dark:to-gray-800">
       <TitleSection
@@ -104,35 +110,15 @@ export default function TrendAds() {
 
       {/* Content Section */}
       <div className="mx-auto w-full">
-        {/* Show loading for initial load */}
-        {isLoading && ads.length === 0 ? (
-          <div className="flex h-60 items-center justify-center">
-            <Loading size="large" message="Loading trending ads..." />
-          </div>
-        ) : ads.length === 0 ? (
-          <div className="flex h-60 flex-col items-center justify-center space-y-4 text-center">
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              No trending ads available at the moment.
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="space-y-8 p-4">
-              <AdCardGrid ads={ads} />
-
-              {/* Load more trigger */}
-              <LoadingTrigger
-                onIntersect={handleLoadMore}
-                isLoading={isLoading}
-              />
-
-              {/* Loading More indicator */}
-              {isLoading && (
-                <Loading size="medium" message="Loading more ads..." />
-              )}
-            </div>
-          </>
-        )}
+        <SearchResults
+          isLoading={isLoading}
+          error={error}
+          totalCount={pagination.total}
+          searchResults={ads}
+          hasNextPage={hasMore}
+          remainingCount={remainingCount > 0 ? remainingCount : null}
+          handleLoadMore={handleLoadMore}
+        />
 
         {/* Scroll buttons */}
         <ScrollButtons />
