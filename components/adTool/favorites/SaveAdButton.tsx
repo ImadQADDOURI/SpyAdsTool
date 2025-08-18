@@ -1,8 +1,8 @@
 // src/components/SaveAdButton.tsx
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Check, Heart, Plus, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Check, Heart, Loader2, Plus, Search, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdData } from "@/types/ad";
@@ -45,30 +45,28 @@ export default function SaveAdButton({
   const [isOpen, setIsOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newBoardName, setNewBoardName] = useState("");
-  const [checkingSaveStatus, setCheckingSaveStatus] = useState(false);
-  const [savedBoards, setSavedBoards] = useState<string[]>([]);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
-  const { boards } = useSavedAds();
-  const { saveAd, removeAd, isAdSaved, getAdBoards } = useSavedAdsActions();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const { boards, isLoading: contextLoading } = useSavedAds();
+  const { saveAd, removeAd, getAdBoards } = useSavedAdsActions();
 
   const ad_archive_id = ad.ad_archive_id || "";
 
-  // 💾 Check save status only when dropdown opens (optimization)
-  const checkSaveStatus = () => {
-    if (!checkingSaveStatus && ad_archive_id) {
-      setCheckingSaveStatus(true);
-      setSavedBoards(getAdBoards(ad_archive_id));
-    }
-  };
+  // 🎯 Get saved boards from context (real-time)
+  const savedBoards = getAdBoards(ad_archive_id);
 
-  // 🎯 Handle dropdown open/close
-  const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
-    if (open) {
-      checkSaveStatus();
-    }
-  };
+  // ⚡️ Convert to Set for faster membership checks
+  const savedBoardsSet = useMemo(() => new Set(savedBoards), [savedBoards]);
+
+  // 🔍 Filter boards based on search
+  const filteredBoards = boards.filter((board) =>
+    board.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   // ➕ Handle new board creation
   const handleCreateBoard = async () => {
@@ -78,29 +76,34 @@ export default function SaveAdButton({
       return;
     }
 
+    setIsLoading(true);
+    setLoadingAction("create");
+
     const success = await saveAd(ad_archive_id, name, ad);
     if (success) {
-      setSavedBoards([...savedBoards, name]);
       setDialogOpen(false);
       setNewBoardName("");
     }
+
+    setIsLoading(false);
+    setLoadingAction(null);
   };
 
   // 💾 Save to existing board
   const handleSaveToBoard = async (board: string) => {
+    setIsLoading(true);
+    setLoadingAction(board);
+
     if (savedBoards.includes(board)) {
       // Remove from board if already saved
-      const success = await removeAd(ad_archive_id, board);
-      if (success) {
-        setSavedBoards(savedBoards.filter((b) => b !== board));
-      }
+      await removeAd(ad_archive_id, board);
     } else {
       // Save to board
-      const success = await saveAd(ad_archive_id, board, ad);
-      if (success) {
-        setSavedBoards([...savedBoards, board]);
-      }
+      await saveAd(ad_archive_id, board, ad);
     }
+
+    setIsLoading(false);
+    setLoadingAction(null);
     setIsOpen(false);
   };
 
@@ -113,6 +116,15 @@ export default function SaveAdButton({
     }
   }, [dialogOpen]);
 
+  // 🔍 Focus search when dropdown opens (for large lists)
+  useEffect(() => {
+    if (isOpen && boards.length > 10 && searchInputRef.current) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen, boards.length]);
+
   // 🎨 Size classes
   const sizeClasses = {
     sm: "h-8 w-8",
@@ -120,81 +132,118 @@ export default function SaveAdButton({
     lg: "h-12 w-12",
   };
 
-  // 🎯 Check if ad is saved to any board
+  // 🎯 Check if ad is saved to any board (real-time from context)
   const isSaved = savedBoards.length > 0;
+  const isMainLoading = contextLoading || isLoading;
 
   return (
     <div className={className}>
-      <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
+            disabled={isMainLoading}
             className={cn(
               "rounded-full transition-all hover:bg-purple-100 dark:hover:bg-purple-900/30",
               sizeClasses[size],
               isSaved && "text-purple-700 dark:text-purple-400",
+              isMainLoading && "cursor-not-allowed opacity-70",
             )}
             aria-label={isSaved ? "Saved" : "Save ad"}
           >
-            <Heart
-              className={cn(
-                "h-5 w-5 transition-all",
-                isSaved && "fill-purple-600 dark:fill-purple-400",
-              )}
-            />
+            {isMainLoading && !loadingAction ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <Heart
+                className={cn(
+                  "h-5 w-5 transition-all",
+                  isSaved && "fill-purple-600 dark:fill-purple-400",
+                )}
+              />
+            )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <div className="p-2 text-sm font-medium">Save to board</div>
 
+          {/* Search input for large board lists */}
+          {boards.length > 10 && (
+            <div className="p-2">
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  ref={searchInputRef}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search boards..."
+                  className="h-8 pl-8 text-sm"
+                />
+              </div>
+            </div>
+          )}
+
           {/* Existing boards */}
           <div className="max-h-[300px] overflow-y-auto">
-            {boards.map((board) => {
-              const isBoardSaved = savedBoards.includes(board.name);
-              return (
-                <DropdownMenuItem
-                  key={board.name}
-                  className={cn(
-                    "group relative flex cursor-pointer items-center gap-2 py-3 transition-colors",
-                    // Stronger background for saved items
-                    isBoardSaved && "bg-purple-200/70 dark:bg-purple-800/40",
-                    // More vibrant hover states with increased opacity
-                    isBoardSaved
-                      ? "hover:bg-red-300/80 hover:text-red-800 dark:hover:bg-red-800/50 dark:hover:text-red-200"
-                      : "hover:bg-green-300/80 hover:text-green-800 dark:hover:bg-green-800/50 dark:hover:text-green-200",
-                  )}
-                  onClick={() => handleSaveToBoard(board.name)}
-                >
-                  <div
+            {filteredBoards.length === 0 && searchTerm ? (
+              <div className="p-4 text-center text-sm text-muted-foreground">
+                No boards found matching "{searchTerm}"
+              </div>
+            ) : (
+              filteredBoards.map((board) => {
+                const isBoardSaved = savedBoardsSet.has(board.name); // O(1) check
+                const isBoardLoading = loadingAction === board.name;
+
+                return (
+                  <DropdownMenuItem
+                    key={board.name}
                     className={cn(
-                      "flex h-8 w-8 items-center justify-center overflow-hidden rounded-md",
-                      !board.coverImage &&
-                        "bg-purple-300 dark:bg-purple-700/50",
+                      "group relative flex cursor-pointer items-center gap-2 py-3 transition-colors",
+                      // Stronger background for saved items
+                      isBoardSaved && "bg-purple-200/70 dark:bg-purple-800/40",
+                      // More vibrant hover states with increased opacity
+                      isBoardSaved
+                        ? "hover:bg-red-300/80 hover:text-red-800 dark:hover:bg-red-800/50 dark:hover:text-red-200"
+                        : "hover:bg-green-300/80 hover:text-green-800 dark:hover:bg-green-800/50 dark:hover:text-green-200",
+                      isBoardLoading && "opacity-70",
                     )}
+                    disabled={isBoardLoading}
+                    onClick={() =>
+                      !isBoardLoading && handleSaveToBoard(board.name)
+                    }
                   >
-                    {board.coverImage ? (
-                      <img
-                        src={board.coverImage}
-                        alt={board.name}
-                        className="h-full w-full object-cover"
-                      />
+                    <div
+                      className={cn(
+                        "flex h-8 w-8 items-center justify-center overflow-hidden rounded-md",
+                        !board.coverImage &&
+                          "bg-purple-300 dark:bg-purple-700/50",
+                      )}
+                    >
+                      {board.coverImage ? (
+                        <img
+                          src={board.coverImage}
+                          alt={board.name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <Heart className="h-4 w-4 text-purple-800 dark:text-purple-300" />
+                      )}
+                    </div>
+                    <div className="flex-1">{board.name}</div>
+                    {isBoardLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : isBoardSaved ? (
+                      <>
+                        <Check className="h-4 w-4 text-purple-800 group-hover:hidden dark:text-purple-300" />
+                        <X className="hidden h-4 w-4 text-red-800 group-hover:block dark:text-red-300" />
+                      </>
                     ) : (
-                      <Heart className="h-4 w-4 text-purple-800 dark:text-purple-300" />
+                      <Plus className="hidden h-4 w-4 text-green-800 group-hover:block dark:text-green-300" />
                     )}
-                  </div>
-                  <div className="flex-1">{board.name}</div>
-                  {isBoardSaved ? (
-                    <>
-                      <Check className="h-4 w-4 text-purple-800 group-hover:hidden dark:text-purple-300" />
-                      <X className="hidden h-4 w-4 text-red-800 group-hover:block dark:text-red-300" />
-                    </>
-                  ) : (
-                    <Plus className="hidden h-4 w-4 text-green-800 group-hover:block dark:text-green-300" />
-                  )}
-                </DropdownMenuItem>
-              );
-            })}
+                  </DropdownMenuItem>
+                );
+              })
+            )}
           </div>
 
           <DropdownMenuSeparator />
@@ -207,6 +256,7 @@ export default function SaveAdButton({
                 onSelect={(e) => {
                   e.preventDefault();
                   setDialogOpen(true);
+                  setSearchTerm(""); // Clear search when creating new board
                 }}
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-md bg-purple-100 dark:bg-purple-900/30">
@@ -232,15 +282,21 @@ export default function SaveAdButton({
                     onChange={(e) => setNewBoardName(e.target.value)}
                     placeholder="Board name"
                     className="h-10"
+                    disabled={loadingAction === "create"}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") {
+                      if (e.key === "Enter" && loadingAction !== "create") {
                         handleCreateBoard();
                       }
                     }}
                   />
                 </div>
                 <DialogClose asChild>
-                  <Button type="button" variant="outline" size="icon">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    disabled={loadingAction === "create"}
+                  >
                     <X className="h-4 w-4" />
                     <span className="sr-only">Cancel</span>
                   </Button>
@@ -248,9 +304,17 @@ export default function SaveAdButton({
                 <Button
                   type="button"
                   onClick={handleCreateBoard}
-                  className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] hover:opacity-90"
+                  disabled={loadingAction === "create"}
+                  className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] hover:opacity-90 disabled:opacity-50"
                 >
-                  Create
+                  {loadingAction === "create" ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    "Create"
+                  )}
                 </Button>
               </div>
             </DialogContent>
