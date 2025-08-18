@@ -71,7 +71,7 @@ NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID=price_your-yearly-plan-id`}
                   <AlertDescription>
                     <strong>Special Features:</strong> The system includes
                     advanced rotation and access control features using
-                    comma-separated email lists for enhanced functionality and
+                    comma-separated lists for enhanced functionality and
                     reliability.
                   </AlertDescription>
                 </Alert>
@@ -82,9 +82,7 @@ NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID=price_your-yearly-plan-id`}
 # Multiple API keys for load balancing and reliability
 GOOGLE_AI_API_KEY="key1_for_email1@gmail.com,key2_for_email2@gmail.com,key3_for_email3@gmail.com"
 
-# 👑 Admin Access Control
-# Emails that get automatic admin access to admin pages
-ADMIN_EMAILS="admin1@yourcompany.com,admin2@yourcompany.com,ceo@yourcompany.com"
+
 
 # 📈 Trend System Control
 # Emails whose saved ads automatically appear in trending section
@@ -321,8 +319,6 @@ NEXTAUTH_SECRET=your-very-strong-production-nextauth-secret`}
                   {`# 🔄 Production API Key Rotation (Recommended: 5+ keys)
 GOOGLE_AI_API_KEY="prod_key1_account1@company.com,prod_key2_account2@company.com,prod_key3_account3@company.com,prod_key4_account4@company.com,prod_key5_account5@company.com"
 
-# 👑 Production Admin Access (Company emails only)
-ADMIN_EMAILS="ceo@yourcompany.com,cto@yourcompany.com,admin@yourcompany.com"
 
 # 📈 Production Trend Curators (Marketing & Content team)
 TREND_EMAILS="marketing@yourcompany.com,content@yourcompany.com,curator@yourcompany.com"`}
