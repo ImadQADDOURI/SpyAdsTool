@@ -187,7 +187,7 @@ export default function SaveAdButton({
           <div className="max-h-[300px] overflow-y-auto">
             {filteredBoards.length === 0 && searchTerm ? (
               <div className="p-4 text-center text-sm text-muted-foreground">
-                No boards found matching "{searchTerm}"
+                No boards found matching &quot;{searchTerm}&quot;
               </div>
             ) : (
               filteredBoards.map((board) => {
