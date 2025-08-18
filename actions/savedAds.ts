@@ -707,14 +707,14 @@ export async function moveAdsToBoard(sourceBoard: string, targetBoard: string) {
   }
 }
 
-// 🔥 Fetch trending ads from specified admin users
+// 🔥 Fetch trending ads from specified board name with user role admin
 export async function fetchTrendAds(page = 1, pageSize = 10) {
   const ADS_PER_PAGE = pageSize;
-  const AdminEmails = process.env.TREND_EMAILS?.split(",") || [];
+  const trendBoardName = process.env.NEXT_PUBLIC_TREND_BOARD_NAME;
 
   try {
-    // If no admin emails are specified, return empty result
-    if (AdminEmails.length === 0) {
+    // If no trend board name is configured, return empty result
+    if (!trendBoardName) {
       return {
         ads: [],
         pagination: {
@@ -728,22 +728,20 @@ export async function fetchTrendAds(page = 1, pageSize = 10) {
     // 📊 Pagination
     const skip = (page - 1) * ADS_PER_PAGE;
 
-    // 🔍 Get users with matching emails
-    const trendUsers = await prisma.user.findMany({
+    // 🔍 Get admin users
+    const adminUsers = await prisma.user.findMany({
       where: {
-        email: {
-          in: AdminEmails,
-        },
+        role: "ADMIN",
       },
       select: {
         id: true,
       },
     });
 
-    const trendUserIds = trendUsers.map((user) => user.id);
+    const adminUserIds = adminUsers.map((user) => user.id);
 
-    // If no matching users found, return empty result
-    if (trendUserIds.length === 0) {
+    // If no admin users found, return empty result
+    if (adminUserIds.length === 0) {
       return {
         ads: [],
         pagination: {
@@ -754,13 +752,14 @@ export async function fetchTrendAds(page = 1, pageSize = 10) {
       };
     }
 
-    // 🔍 Query saved ads from trend users
+    // 🔍 Query saved ads from admin users with specific board name
     const [trendAds, totalCount] = await Promise.all([
       prisma.savedAd.findMany({
         where: {
           userId: {
-            in: trendUserIds,
+            in: adminUserIds,
           },
+          board: trendBoardName,
         },
         orderBy: {
           updatedAt: "desc",
@@ -771,8 +770,9 @@ export async function fetchTrendAds(page = 1, pageSize = 10) {
       prisma.savedAd.count({
         where: {
           userId: {
-            in: trendUserIds,
+            in: adminUserIds,
           },
+          board: trendBoardName,
         },
       }),
     ]);

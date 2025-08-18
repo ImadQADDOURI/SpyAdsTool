@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { AdDetails } from "./AdDetails";
+import AdminTrendButton from "./favorites/AdminTrendButton";
 import { AdOptions } from "./sharedComponents/AdOptions";
 import DisplayPixelPlatformPayment from "./sharedComponents/DisplayPixelPlatformPayment";
 import PageNameWithPopover from "./sharedComponents/PageNameWithPopover";
@@ -177,15 +178,15 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
           </Tooltip>
         </TooltipProvider>
       )}
-
-      {/* 💾 Save button - */}
-      {
-        <div className="absolute -top-1 right-12 pt-1.5">
+      {/* 💾 Save buttons */}
+      <div className="absolute -top-1 right-12 pt-1.5">
+        <div className="flex gap-1">
+          <AdminTrendButton ad={ad} className="" />
           <SubscriptionAccessGuard>
             <SaveAdButton ad={ad} />
           </SubscriptionAccessGuard>
         </div>
-      }
+      </div>
 
       {/* ⚙️ Options button - hidden in compact mode */}
       {<AdOptions ad={ad} />}
