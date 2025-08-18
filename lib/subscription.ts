@@ -12,10 +12,11 @@ export async function getUserSubscriptionPlan(
 ): Promise<UserSubscriptionPlan> {
   if (!userId) throw new Error("Authentication required");
 
-  // 1️⃣ Fetch base user data from the database
+  // 1️⃣ Fetch base user data from the database (including role)
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
+      role: true,
       stripeSubscriptionId: true,
       stripeCurrentPeriodEnd: true,
       stripeCustomerId: true,
@@ -25,15 +26,18 @@ export async function getUserSubscriptionPlan(
 
   if (!user) throw new Error("User not found");
 
+  // 🔑 Check if user is admin - admins get automatic access
+  const isAdmin = user.role === "ADMIN";
+
   // 2️⃣ Initialize safe defaults
   let stripeSubscription: Stripe.Subscription | null = null;
-  let isPaid = false;
+  let isPaid = isAdmin; // Admins are automatically considered paid
   let isCanceled = false;
   let interval: "month" | "year" | null = null;
 
-  // 3️⃣ Validate with Stripe when possible using a single API call with expanded price details!
+  // 3️⃣ Validate with Stripe when possible (skip for admins unless they have a subscription)
   try {
-    if (user.stripeSubscriptionId) {
+    if (user.stripeSubscriptionId && !isAdmin) {
       // 🎯 Expand the price object to include recurring interval, eliminating extra API calls.
       stripeSubscription = await stripe.subscriptions.retrieve(
         user.stripeSubscriptionId,
@@ -58,8 +62,9 @@ export async function getUserSubscriptionPlan(
     }
   } catch (error) {
     console.error("⚠️ Stripe fetch failed, using DB fallback:", error);
-    // Fallback to database values
-    isPaid = (user.stripeCurrentPeriodEnd?.getTime() ?? 0) > Date.now();
+    // Fallback to database values (admins still get access)
+    isPaid =
+      isAdmin || (user.stripeCurrentPeriodEnd?.getTime() ?? 0) > Date.now();
   }
 
   // 4️⃣ Determine the active plan details from our pricing config
@@ -69,8 +74,10 @@ export async function getUserSubscriptionPlan(
     [p.stripeIds.monthly, p.stripeIds.yearly].includes(activePriceId),
   );
 
-  // 🛡️ Default to free plan if no valid subscription is found
-  const plan = userPlan || pricingData[0];
+  // 🛡️ Default to free plan if no valid subscription is found, but admins get the highest tier
+  const plan =
+    userPlan ||
+    (isAdmin ? pricingData[pricingData.length - 1] : pricingData[0]);
 
   return {
     ...plan,
@@ -81,7 +88,7 @@ export async function getUserSubscriptionPlan(
       ? stripeSubscription.current_period_end * 1000
       : (user.stripeCurrentPeriodEnd?.getTime() ?? 0),
     isPaid,
-    isCanceled,
+    isCanceled: isAdmin ? false : isCanceled, // Admins are never considered canceled
     // 🎉 Determine interval: prioritize fetched interval, otherwise infer from the active price ID.
     interval:
       interval ||
