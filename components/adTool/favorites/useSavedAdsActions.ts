@@ -16,8 +16,7 @@ import { AdData } from "@/types/ad";
 import { useSavedAds } from "./SavedAdsContext";
 
 export const useSavedAdsActions = () => {
-  const { refreshData, refreshBoards, refreshSavedIds, boards, savedAdIds } =
-    useSavedAds();
+  const { refreshData, boards, savedAdIds } = useSavedAds();
 
   // 💾 Save an ad to a board
   const saveAd = useCallback(
@@ -31,15 +30,15 @@ export const useSavedAdsActions = () => {
         }
 
         toast.success(`Saved to ${board}`);
-        // Refresh both the IDs (for immediate UI feedback) and full data
-        await Promise.all([refreshSavedIds(), refreshData()]);
+        // Refresh data for immediate UI feedback
+        await refreshData();
         return true;
       } catch (error) {
         toast.error("Failed to save ad");
         return false;
       }
     },
-    [refreshData, refreshSavedIds],
+    [refreshData],
   );
 
   // 🗑️ Remove an ad from a board
@@ -54,15 +53,15 @@ export const useSavedAdsActions = () => {
         }
 
         toast.success("Ad removed");
-        // Refresh both the IDs (for immediate UI feedback) and full data
-        await Promise.all([refreshSavedIds(), refreshData()]);
+        // Refresh data for immediate UI feedback
+        await refreshData();
         return true;
       } catch (error) {
         toast.error("Failed to remove ad");
         return false;
       }
     },
-    [refreshData, refreshSavedIds],
+    [refreshData],
   );
 
   // ✏️ Rename a board
@@ -77,14 +76,14 @@ export const useSavedAdsActions = () => {
         }
 
         toast.success(`Renamed to ${newName}`);
-        await Promise.all([refreshSavedIds(), refreshData()]);
+        await refreshData();
         return true;
       } catch (error) {
         toast.error("Failed to rename board");
         return false;
       }
     },
-    [refreshData, refreshSavedIds],
+    [refreshData],
   );
 
   // 🗑️ Delete a board
@@ -99,14 +98,14 @@ export const useSavedAdsActions = () => {
         }
 
         toast.success("Board deleted");
-        await Promise.all([refreshSavedIds(), refreshData()]);
+        await refreshData();
         return true;
       } catch (error) {
         toast.error("Failed to delete board");
         return false;
       }
     },
-    [refreshData, refreshSavedIds],
+    [refreshData],
   );
 
   // 📄 Move ads between boards
@@ -121,17 +120,17 @@ export const useSavedAdsActions = () => {
         }
 
         toast.success(`Moved to ${targetBoard}`);
-        await Promise.all([refreshSavedIds(), refreshData()]);
+        await refreshData();
         return true;
       } catch (error) {
         toast.error("Failed to move ads");
         return false;
       }
     },
-    [refreshData, refreshSavedIds],
+    [refreshData],
   );
 
-  // 🔍 Check if an ad is saved to a specific board (now uses lightweight data)
+  // 🔍 Check if an ad is saved to a specific board
   const isAdSaved = useCallback(
     (ad_archive_id: string, board?: string) => {
       if (board) {
@@ -145,7 +144,7 @@ export const useSavedAdsActions = () => {
     [savedAdIds],
   );
 
-  // 📋 Get all boards an ad is saved to (now uses lightweight data)
+  // 📋 Get all boards an ad is saved to
   const getAdBoards = useCallback(
     (ad_archive_id: string) => {
       return savedAdIds

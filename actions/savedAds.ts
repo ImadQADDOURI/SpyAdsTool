@@ -459,8 +459,8 @@ export async function fetchUserSavedAds(page = 1, pageSize = 20) {
   }
 }
 
-// 🆔 Fetch only saved ad IDs for lightweight isAdSaved checks
-export async function fetchUserSavedAdIds() {
+// 🚀 Combined function to fetch both saved ad IDs and boards in one DB call
+export async function fetchUserSavedData() {
   try {
     // 🔐 Authenticate user
     const user = await getCurrentUser();
@@ -468,23 +468,69 @@ export async function fetchUserSavedAdIds() {
       return { error: "Unauthorized" };
     }
 
-    // 🔍 Query only the IDs we need (much faster!)
-    const savedAdIds = await prisma.savedAd.findMany({
+    // 🔍 Single query to get all saved ads with minimal data
+    const savedAds = await prisma.savedAd.findMany({
       where: {
         userId: user.id,
       },
       select: {
         ad_archive_id: true,
         board: true,
+        imageUrl: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
       },
     });
 
+    // 📋 Extract saved ad IDs (lightweight for isAdSaved checks)
+    const savedIds = savedAds.map((ad) => ({
+      ad_archive_id: ad.ad_archive_id,
+      board: ad.board,
+    }));
+
+    // 🏷️ Process boards data
+    const boardsMap = new Map<
+      string,
+      {
+        name: string;
+        count: number;
+        lastUpdated: Date;
+        coverImage: string | null;
+      }
+    >();
+
+    savedAds.forEach((ad) => {
+      const existing = boardsMap.get(ad.board);
+
+      if (!existing) {
+        // First ad for this board
+        boardsMap.set(ad.board, {
+          name: ad.board,
+          count: 1,
+          lastUpdated: ad.updatedAt,
+          coverImage: ad.imageUrl,
+        });
+      } else {
+        // Update count and use latest image if current one is more recent
+        existing.count += 1;
+        if (ad.updatedAt > existing.lastUpdated) {
+          existing.lastUpdated = ad.updatedAt;
+          existing.coverImage = ad.imageUrl;
+        }
+      }
+    });
+
+    const boards = Array.from(boardsMap.values());
+
     return {
-      savedIds: savedAdIds,
+      savedIds,
+      boards,
     };
   } catch (error) {
-    console.error("Failed to fetch saved ad IDs:", error);
-    return { error: "Failed to fetch saved ad IDs" };
+    console.error("Failed to fetch saved data:", error);
+    return { error: "Failed to fetch saved data" };
   }
 }
 
@@ -532,38 +578,6 @@ export async function fetchAdsByBoard(board: string, page = 1, pageSize = 20) {
   } catch (error) {
     console.error("Failed to fetch board ads:", error);
     return { error: "Failed to fetch board ads" };
-  }
-}
-
-// 🏷️ Get all user's board names
-export async function getUserBoards() {
-  try {
-    // 🔐 Authenticate user
-    const user = await getCurrentUser();
-    if (!user || !user.id) {
-      return { error: "Unauthorized" };
-    }
-
-    // 🔍 Query unique board names
-    const boards = await prisma.savedAd.groupBy({
-      by: ["board"],
-      where: {
-        userId: user.id,
-      },
-      _count: {
-        ad_archive_id: true,
-      },
-    });
-
-    return {
-      boards: boards.map((item) => ({
-        name: item.board,
-        count: item._count.ad_archive_id,
-      })),
-    };
-  } catch (error) {
-    console.error("Failed to fetch boards:", error);
-    return { error: "Failed to fetch boards" };
   }
 }
 
