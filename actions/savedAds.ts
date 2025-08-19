@@ -459,6 +459,35 @@ export async function fetchUserSavedAds(page = 1, pageSize = 20) {
   }
 }
 
+// 🆔 Fetch only saved ad IDs for lightweight isAdSaved checks
+export async function fetchUserSavedAdIds() {
+  try {
+    // 🔐 Authenticate user
+    const user = await getCurrentUser();
+    if (!user || !user.id) {
+      return { error: "Unauthorized" };
+    }
+
+    // 🔍 Query only the IDs we need (much faster!)
+    const savedAdIds = await prisma.savedAd.findMany({
+      where: {
+        userId: user.id,
+      },
+      select: {
+        ad_archive_id: true,
+        board: true,
+      },
+    });
+
+    return {
+      savedIds: savedAdIds,
+    };
+  } catch (error) {
+    console.error("Failed to fetch saved ad IDs:", error);
+    return { error: "Failed to fetch saved ad IDs" };
+  }
+}
+
 // 📂 Fetch ads from a specific board
 export async function fetchAdsByBoard(board: string, page = 1, pageSize = 20) {
   try {

@@ -2,7 +2,11 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { fetchUserSavedAds, getUserBoards } from "@/actions/savedAds";
+import {
+  fetchUserSavedAdIds,
+  fetchUserSavedAds,
+  getUserBoards,
+} from "@/actions/savedAds";
 import { toast } from "sonner";
 
 import { AdData } from "@/types/ad";
@@ -32,13 +36,21 @@ export type PaginationInfo = {
   current: number;
 };
 
+// 🎯 Lightweight type for saved ad lookup
+export type SavedAdLookup = {
+  ad_archive_id: string;
+  board: string;
+};
+
 export type SavedAdsContextType = {
   isLoading: boolean;
   boards: Board[];
-  savedAds: SavedAd[];
+  savedAds: SavedAd[]; // Full data for display
+  savedAdIds: SavedAdLookup[]; // Lightweight data for isAdSaved checks
   pagination: PaginationInfo;
   refreshData: () => Promise<void>;
   refreshBoards: () => Promise<void>;
+  refreshSavedIds: () => Promise<void>;
   error: string | null;
 };
 
@@ -47,16 +59,18 @@ const SavedAdsContext = createContext<SavedAdsContextType>({
   isLoading: true,
   boards: [],
   savedAds: [],
+  savedAdIds: [],
   pagination: { total: 0, pages: 0, current: 1 },
   refreshData: async () => {},
   refreshBoards: async () => {},
+  refreshSavedIds: async () => {},
   error: null,
 });
 
 // 🧩 Custom hook to use the context
 export const useSavedAds = () => useContext(SavedAdsContext);
 
-// 🔄 Provider component
+// 📄 Provider component
 export const SavedAdsProvider = ({
   children,
 }: {
@@ -65,6 +79,7 @@ export const SavedAdsProvider = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [savedAds, setSavedAds] = useState<SavedAd[]>([]);
+  const [savedAdIds, setSavedAdIds] = useState<SavedAdLookup[]>([]);
   const [boards, setBoards] = useState<Board[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({
     total: 0,
@@ -72,11 +87,27 @@ export const SavedAdsProvider = ({
     current: 1,
   });
 
-  // 📥 Fetch all saved ads
-  const fetchSavedAds = async (page = 1) => {
+  // 🆔 Fetch only saved ad IDs (lightweight)
+  const fetchSavedIds = async () => {
+    try {
+      const result = await fetchUserSavedAdIds();
+
+      if ("error" in result) {
+        setError(result.error || "An unknown error occurred");
+        return;
+      }
+
+      setSavedAdIds(result.savedIds);
+    } catch (err) {
+      setError("Failed to fetch saved ad IDs");
+    }
+  };
+
+  // 🔥 Fetch paginated saved ads (full data for display)
+  const fetchSavedAds = async (page = 1, pageSize = 20) => {
     try {
       setIsLoading(true);
-      const result = await fetchUserSavedAds(page);
+      const result = await fetchUserSavedAds(page, pageSize);
 
       if ("error" in result) {
         setError(result.error || "An unknown error occurred");
@@ -127,19 +158,27 @@ export const SavedAdsProvider = ({
     }
   };
 
-  // 🔁 Refresh all data
+  // 🔄 Refresh all data
   const refreshData = async () => {
     await fetchSavedAds();
     await fetchBoards();
   };
 
-  // 🔄 Refresh just boards
+  // 📄 Refresh just boards
   const refreshBoards = async () => {
     await fetchBoards();
   };
 
+  // 🆔 Refresh just saved IDs
+  const refreshSavedIds = async () => {
+    await fetchSavedIds();
+  };
+
   // 🚀 Initial data load
   useEffect(() => {
+    // Load saved IDs immediately for isAdSaved checks
+    fetchSavedIds();
+    // Load full data for display
     refreshData();
   }, []);
 
@@ -156,9 +195,11 @@ export const SavedAdsProvider = ({
         isLoading,
         boards,
         savedAds,
+        savedAdIds,
         pagination,
         refreshData,
         refreshBoards,
+        refreshSavedIds,
         error,
       }}
     >

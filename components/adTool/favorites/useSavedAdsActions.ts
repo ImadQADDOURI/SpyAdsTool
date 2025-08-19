@@ -16,13 +16,13 @@ import { AdData } from "@/types/ad";
 import { useSavedAds } from "./SavedAdsContext";
 
 export const useSavedAdsActions = () => {
-  const { refreshData, refreshBoards, boards, savedAds } = useSavedAds();
+  const { refreshData, refreshBoards, refreshSavedIds, boards, savedAdIds } =
+    useSavedAds();
 
   // 💾 Save an ad to a board
   const saveAd = useCallback(
     async (ad_archive_id: string, board: string, adData: AdData) => {
       try {
-        //toast.loading("Saving ad...");
         const result = await saveAdToBoard(ad_archive_id, board, adData);
 
         if ("error" in result) {
@@ -31,21 +31,21 @@ export const useSavedAdsActions = () => {
         }
 
         toast.success(`Saved to ${board}`);
-        await refreshData();
+        // Refresh both the IDs (for immediate UI feedback) and full data
+        await Promise.all([refreshSavedIds(), refreshData()]);
         return true;
       } catch (error) {
         toast.error("Failed to save ad");
         return false;
       }
     },
-    [refreshData],
+    [refreshData, refreshSavedIds],
   );
 
   // 🗑️ Remove an ad from a board
   const removeAd = useCallback(
     async (ad_archive_id: string, board: string) => {
       try {
-        //toast.loading("Removing ad...");
         const result = await removeAdFromBoard(ad_archive_id, board);
 
         if ("error" in result) {
@@ -54,21 +54,21 @@ export const useSavedAdsActions = () => {
         }
 
         toast.success("Ad removed");
-        await refreshData();
+        // Refresh both the IDs (for immediate UI feedback) and full data
+        await Promise.all([refreshSavedIds(), refreshData()]);
         return true;
       } catch (error) {
         toast.error("Failed to remove ad");
         return false;
       }
     },
-    [refreshData],
+    [refreshData, refreshSavedIds],
   );
 
   // ✏️ Rename a board
   const rename = useCallback(
     async (oldName: string, newName: string) => {
       try {
-        //toast.loading("Renaming board...");
         const result = await renameBoard(oldName, newName);
 
         if ("error" in result) {
@@ -77,21 +77,20 @@ export const useSavedAdsActions = () => {
         }
 
         toast.success(`Renamed to ${newName}`);
-        await refreshData();
+        await Promise.all([refreshSavedIds(), refreshData()]);
         return true;
       } catch (error) {
         toast.error("Failed to rename board");
         return false;
       }
     },
-    [refreshData],
+    [refreshData, refreshSavedIds],
   );
 
   // 🗑️ Delete a board
   const deleteABoard = useCallback(
     async (board: string) => {
       try {
-        //toast.loading("Deleting board...");
         const result = await deleteBoard(board);
 
         if ("error" in result) {
@@ -100,21 +99,20 @@ export const useSavedAdsActions = () => {
         }
 
         toast.success("Board deleted");
-        await refreshData();
+        await Promise.all([refreshSavedIds(), refreshData()]);
         return true;
       } catch (error) {
         toast.error("Failed to delete board");
         return false;
       }
     },
-    [refreshData],
+    [refreshData, refreshSavedIds],
   );
 
-  // 🔄 Move ads between boards
+  // 📄 Move ads between boards
   const moveAds = useCallback(
     async (sourceBoard: string, targetBoard: string) => {
       try {
-        //toast.loading("Moving ads...");
         const result = await moveAdsToBoard(sourceBoard, targetBoard);
 
         if ("error" in result) {
@@ -123,37 +121,38 @@ export const useSavedAdsActions = () => {
         }
 
         toast.success(`Moved to ${targetBoard}`);
-        await refreshData();
+        await Promise.all([refreshSavedIds(), refreshData()]);
         return true;
       } catch (error) {
         toast.error("Failed to move ads");
         return false;
       }
     },
-    [refreshData],
+    [refreshData, refreshSavedIds],
   );
 
-  // 🔍 Check if an ad is saved to a specific board
+  // 🔍 Check if an ad is saved to a specific board (now uses lightweight data)
   const isAdSaved = useCallback(
     (ad_archive_id: string, board?: string) => {
       if (board) {
-        return savedAds.some(
-          (ad) => ad.ad_archive_id === ad_archive_id && ad.board === board,
+        return savedAdIds.some(
+          (item) =>
+            item.ad_archive_id === ad_archive_id && item.board === board,
         );
       }
-      return savedAds.some((ad) => ad.ad_archive_id === ad_archive_id);
+      return savedAdIds.some((item) => item.ad_archive_id === ad_archive_id);
     },
-    [savedAds],
+    [savedAdIds],
   );
 
-  // 📋 Get all boards an ad is saved to
+  // 📋 Get all boards an ad is saved to (now uses lightweight data)
   const getAdBoards = useCallback(
     (ad_archive_id: string) => {
-      return savedAds
-        .filter((ad) => ad.ad_archive_id === ad_archive_id)
-        .map((ad) => ad.board);
+      return savedAdIds
+        .filter((item) => item.ad_archive_id === ad_archive_id)
+        .map((item) => item.board);
     },
-    [savedAds],
+    [savedAdIds],
   );
 
   return {
