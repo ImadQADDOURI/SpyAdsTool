@@ -1,7 +1,7 @@
 // src/components/AdminTrendButton.tsx
 "use client";
 
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Loader2, TrendingDown, TrendingUp } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -10,7 +10,6 @@ import { AdData } from "@/types/ad";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-import { useSavedAds } from "./SavedAdsContext";
 import { useSavedAdsActions } from "./useSavedAdsActions";
 
 type AdminTrendButtonProps = {
@@ -24,16 +23,50 @@ export default function AdminTrendButton({
 }: AdminTrendButtonProps) {
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const { saveAd, removeAd, getAdBoards } = useSavedAdsActions();
+
+  // 🎯 Optimized: Direct destructuring from actions hook
+  const { saveAd, removeAd, isAdSaved } = useSavedAdsActions();
 
   const ad_archive_id = ad.ad_archive_id || "";
   const trendBoardName = process.env.NEXT_PUBLIC_TREND_BOARD_NAME;
 
-  // Only show to admins
+  // 🎯 Optimized: Use memoized check instead of getAdBoards + includes
+  const isInTrend = useMemo(
+    () => (trendBoardName ? isAdSaved(ad_archive_id, trendBoardName) : false),
+    [isAdSaved, ad_archive_id, trendBoardName],
+  );
+
+  // 🎯 Optimized: Use useCallback to prevent function recreation
+  const handleTrendToggle = useCallback(async () => {
+    if (!ad_archive_id || !trendBoardName) {
+      toast.error("Invalid ad data or trend board not configured");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const success = isInTrend
+        ? await removeAd(ad_archive_id, trendBoardName)
+        : await saveAd(ad_archive_id, trendBoardName, ad);
+
+      if (success) {
+        toast.success(
+          `${isInTrend ? "Removed from" : "Added to"} ${trendBoardName}`,
+        );
+      }
+    } catch (error) {
+      console.error("Failed to toggle trend board:", error);
+      toast.error("Failed to update trend status");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [ad_archive_id, trendBoardName, isInTrend, removeAd, saveAd, ad]);
+
+  // Early returns for better performance
   if (status === "loading") return null;
   if (!session?.user || session.user.role !== "ADMIN") return null;
 
-  // Don't show if no trend board configured
   if (!trendBoardName) {
     return (
       <div className={className}>
@@ -49,39 +82,6 @@ export default function AdminTrendButton({
       </div>
     );
   }
-
-  // Check if ad is in trend board
-  const savedBoards = getAdBoards(ad_archive_id);
-  const isInTrend = savedBoards.includes(trendBoardName);
-
-  const handleTrendToggle = async () => {
-    if (!ad_archive_id) {
-      toast.error("Invalid ad data");
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      if (isInTrend) {
-        // Remove from trend board
-        const success = await removeAd(ad_archive_id, trendBoardName);
-        if (success) {
-          toast.success(`Removed from ${trendBoardName}`);
-        }
-      } else {
-        // Add to trend board
-        const success = await saveAd(ad_archive_id, trendBoardName, ad);
-        if (success) {
-          toast.success(`Added to ${trendBoardName}`);
-        }
-      }
-    } catch (error) {
-      console.error("Failed to toggle trend board:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className={className}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -16,7 +16,7 @@ import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -50,23 +50,33 @@ export default function BoardCard({ board, onUpdate }: BoardCardProps) {
   const [newName, setNewName] = useState(board.name);
   const [targetBoard, setTargetBoard] = useState("");
 
+  // 🎯 Optimized: Direct destructuring from actions hook
   const { rename, deleteBoard, moveAds, boards } = useSavedAdsActions();
 
-  // Available boards (excluding current)
-  const otherBoards = boards.filter((b) => b.name !== board.name);
+  // 🎯 Optimized: Memoized calculations to prevent re-renders
+  const otherBoards = useMemo(
+    () => boards.filter((b) => b.name !== board.name),
+    [boards, board.name],
+  );
 
-  // Format last updated time - handle both string and Date objects
-  const lastUpdatedText = board.lastUpdated
-    ? formatDistanceToNow(
-        typeof board.lastUpdated === "string"
-          ? new Date(board.lastUpdated)
-          : board.lastUpdated,
-        { addSuffix: true },
-      )
-    : "No ads yet";
+  const lastUpdatedText = useMemo(() => {
+    if (!board.lastUpdated) return "No ads yet";
 
-  // Handle rename board
-  const handleRename = async () => {
+    const date =
+      typeof board.lastUpdated === "string"
+        ? new Date(board.lastUpdated)
+        : board.lastUpdated;
+
+    return formatDistanceToNow(date, { addSuffix: true });
+  }, [board.lastUpdated]);
+
+  const coverImageUrl = useMemo(
+    () => board.coverImage || null,
+    [board.coverImage],
+  );
+
+  // 🎯 Optimized: Use useCallback for all handlers to prevent re-renders
+  const handleRename = useCallback(async () => {
     if (!newName.trim() || newName.trim() === board.name) {
       setRenameOpen(false);
       return;
@@ -74,22 +84,20 @@ export default function BoardCard({ board, onUpdate }: BoardCardProps) {
 
     const success = await rename(board.name, newName.trim());
     if (success) {
-      if (onUpdate) onUpdate();
+      onUpdate?.();
     }
     setRenameOpen(false);
-  };
+  }, [newName, board.name, rename, onUpdate]);
 
-  // Handle delete board
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     const success = await deleteBoard(board.name);
     if (success) {
-      if (onUpdate) onUpdate();
+      onUpdate?.();
     }
     setDeleteOpen(false);
-  };
+  }, [board.name, deleteBoard, onUpdate]);
 
-  // Handle merge boards
-  const handleMerge = async () => {
+  const handleMerge = useCallback(async () => {
     if (!targetBoard) {
       toast.error("Please select a target board");
       return;
@@ -97,13 +105,46 @@ export default function BoardCard({ board, onUpdate }: BoardCardProps) {
 
     const success = await moveAds(board.name, targetBoard);
     if (success) {
-      if (onUpdate) onUpdate();
+      onUpdate?.();
     }
     setMergeOpen(false);
-  };
+  }, [targetBoard, board.name, moveAds, onUpdate]);
 
-  // Safely get cover image URL
-  const coverImageUrl = board.coverImage || null;
+  const handleRenameOpen = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setRenameOpen(true);
+  }, []);
+
+  const handleMergeOpen = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMergeOpen(true);
+  }, []);
+
+  const handleDeleteOpen = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDeleteOpen(true);
+  }, []);
+
+  const handleDropdownClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleTargetBoardSelect = useCallback((boardName: string) => {
+    setTargetBoard(boardName);
+  }, []);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handleRename();
+      }
+    },
+    [handleRename],
+  );
 
   return (
     <>
@@ -148,13 +189,7 @@ export default function BoardCard({ board, onUpdate }: BoardCardProps) {
                   </div>
 
                   <DropdownMenu>
-                    <DropdownMenuTrigger
-                      asChild
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                      }}
-                    >
+                    <DropdownMenuTrigger asChild onClick={handleDropdownClick}>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -170,11 +205,7 @@ export default function BoardCard({ board, onUpdate }: BoardCardProps) {
                     >
                       <DropdownMenuItem
                         className="flex cursor-pointer items-center gap-2.5 px-3 py-2.5 focus:bg-gray-100/80 dark:focus:bg-gray-800/80"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setRenameOpen(true);
-                        }}
+                        onClick={handleRenameOpen}
                       >
                         <Pencil className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                         <div className="flex flex-col gap-0.5">
@@ -188,11 +219,7 @@ export default function BoardCard({ board, onUpdate }: BoardCardProps) {
                       {otherBoards.length > 0 && (
                         <DropdownMenuItem
                           className="flex cursor-pointer items-center gap-2.5 px-3 py-2.5 focus:bg-gray-100/80 dark:focus:bg-gray-800/80"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setMergeOpen(true);
-                          }}
+                          onClick={handleMergeOpen}
                         >
                           <MoveRight className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                           <div className="flex flex-col gap-0.5">
@@ -210,11 +237,7 @@ export default function BoardCard({ board, onUpdate }: BoardCardProps) {
 
                       <DropdownMenuItem
                         className="flex cursor-pointer items-center gap-2.5 px-3 py-2.5 text-red-600 focus:bg-red-50 focus:text-red-700 dark:text-red-400 dark:focus:bg-red-950/50 dark:focus:text-red-300"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setDeleteOpen(true);
-                        }}
+                        onClick={handleDeleteOpen}
                       >
                         <Trash className="h-4 w-4" />
                         <div className="flex flex-col gap-0.5">
@@ -248,7 +271,7 @@ export default function BoardCard({ board, onUpdate }: BoardCardProps) {
               onChange={(e) => setNewName(e.target.value)}
               placeholder="Board name"
               autoFocus
-              onKeyDown={(e) => e.key === "Enter" && handleRename()}
+              onKeyDown={handleKeyDown}
             />
           </div>
           <DialogFooter>
@@ -306,7 +329,7 @@ export default function BoardCard({ board, onUpdate }: BoardCardProps) {
                     "flex cursor-pointer items-center gap-3 border-b border-gray-100 px-4 py-3 transition-colors hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50",
                     targetBoard === b.name && "bg-gray-50 dark:bg-gray-800/50",
                   )}
-                  onClick={() => setTargetBoard(b.name)}
+                  onClick={() => handleTargetBoardSelect(b.name)}
                 >
                   <div
                     className={cn(

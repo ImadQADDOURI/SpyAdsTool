@@ -1,7 +1,7 @@
 // src/components/SaveAdButton.tsx
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Check, Heart, Loader2, Plus, Search, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -52,24 +52,34 @@ export default function SaveAdButton({
   const inputRef = useRef<HTMLInputElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // 🚀 Optimized: Use direct data from context (no redundant calls)
   const { boards, isLoading: contextLoading } = useSavedAds();
-  const { saveAd, removeAd, getAdBoards } = useSavedAdsActions();
+  const { saveAd, removeAd, isAdSaved, getAdBoards } = useSavedAdsActions();
 
   const ad_archive_id = ad.ad_archive_id || "";
 
-  // 🎯 Get saved boards from context (real-time)
-  const savedBoards = getAdBoards(ad_archive_id);
-
-  // ⚡️ Convert to Set for faster membership checks
+  // 🎯 Optimized: Use memoized calculations to prevent re-renders
+  const savedBoards = useMemo(
+    () => getAdBoards(ad_archive_id),
+    [getAdBoards, ad_archive_id],
+  );
+  const isSaved = useMemo(
+    () => isAdSaved(ad_archive_id),
+    [isAdSaved, ad_archive_id],
+  );
   const savedBoardsSet = useMemo(() => new Set(savedBoards), [savedBoards]);
 
-  // 🔍 Filter boards based on search
-  const filteredBoards = boards.filter((board) =>
-    board.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  // 🔍 Optimized: Memoized filtered boards to prevent recalculation
+  const filteredBoards = useMemo(
+    () =>
+      boards.filter((board) =>
+        board.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
+    [boards, searchTerm],
   );
 
-  // ➕ Handle new board creation
-  const handleCreateBoard = async () => {
+  // 🎯 Optimized: Use useCallback to prevent function recreation
+  const handleCreateBoard = useCallback(async () => {
     const name = newBoardName.trim();
     if (!name) {
       toast.error("Please enter a board name");
@@ -87,53 +97,50 @@ export default function SaveAdButton({
 
     setIsLoading(false);
     setLoadingAction(null);
-  };
+  }, [newBoardName, saveAd, ad_archive_id, ad]);
 
-  // 💾 Save to existing board
-  const handleSaveToBoard = async (board: string) => {
-    setIsLoading(true);
-    setLoadingAction(board);
+  // 🎯 Optimized: Use useCallback for board actions
+  const handleSaveToBoard = useCallback(
+    async (boardName: string) => {
+      setIsLoading(true);
+      setLoadingAction(boardName);
 
-    if (savedBoards.includes(board)) {
-      // Remove from board if already saved
-      await removeAd(ad_archive_id, board);
-    } else {
-      // Save to board
-      await saveAd(ad_archive_id, board, ad);
-    }
+      const success = savedBoardsSet.has(boardName)
+        ? await removeAd(ad_archive_id, boardName)
+        : await saveAd(ad_archive_id, boardName, ad);
 
-    setIsLoading(false);
-    setLoadingAction(null);
-    setIsOpen(false);
-  };
+      setIsLoading(false);
+      setLoadingAction(null);
+      if (success) setIsOpen(false);
+    },
+    [savedBoardsSet, removeAd, saveAd, ad_archive_id, ad],
+  );
 
-  // 🎮 Focus input when dialog opens
+  // 🎮 Focus management (unchanged but optimized)
   useEffect(() => {
     if (dialogOpen && inputRef.current) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
+      const timer = setTimeout(() => inputRef.current?.focus(), 100);
+      return () => clearTimeout(timer);
     }
   }, [dialogOpen]);
 
-  // 🔍 Focus search when dropdown opens (for large lists)
   useEffect(() => {
     if (isOpen && boards.length > 10 && searchInputRef.current) {
-      setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 100);
+      const timer = setTimeout(() => searchInputRef.current?.focus(), 100);
+      return () => clearTimeout(timer);
     }
   }, [isOpen, boards.length]);
 
-  // 🎨 Size classes
-  const sizeClasses = {
-    sm: "h-8 w-8",
-    md: "h-10 w-10",
-    lg: "h-12 w-12",
-  };
+  // 🎨 Size classes (memoized)
+  const sizeClasses = useMemo(
+    () => ({
+      sm: "h-8 w-8",
+      md: "h-10 w-10",
+      lg: "h-12 w-12",
+    }),
+    [],
+  );
 
-  // 🎯 Check if ad is saved to any board (real-time from context)
-  const isSaved = savedBoards.length > 0;
   const isMainLoading = contextLoading || isLoading;
 
   return (
@@ -165,10 +172,12 @@ export default function SaveAdButton({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <div className="p-2 text-sm font-medium">Save to board</div>
+          <div className="p-2 text-sm font-medium">
+            Save to board {savedBoards.length > 0 && `(${savedBoards.length})`}
+          </div>
 
-          {/* Search input for large board lists */}
-          {boards.length > 10 && (
+          {/* 🔍 Search optimization: Only show for large lists */}
+          {boards.length > 8 && (
             <div className="p-2">
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -183,7 +192,7 @@ export default function SaveAdButton({
             </div>
           )}
 
-          {/* Existing boards */}
+          {/* 📋 Optimized board list */}
           <div className="max-h-[300px] overflow-y-auto">
             {filteredBoards.length === 0 && searchTerm ? (
               <div className="p-4 text-center text-sm text-muted-foreground">
@@ -191,7 +200,7 @@ export default function SaveAdButton({
               </div>
             ) : (
               filteredBoards.map((board) => {
-                const isBoardSaved = savedBoardsSet.has(board.name); // O(1) check
+                const isBoardSaved = savedBoardsSet.has(board.name);
                 const isBoardLoading = loadingAction === board.name;
 
                 return (
@@ -199,9 +208,7 @@ export default function SaveAdButton({
                     key={board.name}
                     className={cn(
                       "group relative flex cursor-pointer items-center gap-2 py-3 transition-colors",
-                      // Stronger background for saved items
                       isBoardSaved && "bg-purple-200/70 dark:bg-purple-800/40",
-                      // More vibrant hover states with increased opacity
                       isBoardSaved
                         ? "hover:bg-red-300/80 hover:text-red-800 dark:hover:bg-red-800/50 dark:hover:text-red-200"
                         : "hover:bg-green-300/80 hover:text-green-800 dark:hover:bg-green-800/50 dark:hover:text-green-200",
@@ -229,7 +236,8 @@ export default function SaveAdButton({
                         <Heart className="h-4 w-4 text-purple-800 dark:text-purple-300" />
                       )}
                     </div>
-                    <div className="flex-1">{board.name}</div>
+                    <div className="flex-1 truncate">{board.name}</div>
+                    <div className="text-xs text-gray-500">{board.count}</div>
                     {isBoardLoading ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : isBoardSaved ? (
@@ -256,7 +264,7 @@ export default function SaveAdButton({
                 onSelect={(e) => {
                   e.preventDefault();
                   setDialogOpen(true);
-                  setSearchTerm(""); // Clear search when creating new board
+                  setSearchTerm("");
                 }}
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-md bg-purple-100 dark:bg-purple-900/30">
