@@ -414,51 +414,6 @@ export async function removeAdFromBoard(ad_archive_id: string, board: string) {
   }
 }
 
-// 📋 Fetch all saved ads for a user
-export async function fetchUserSavedAds(page = 1, pageSize = 20) {
-  try {
-    // 🔐 Authenticate user
-    const user = await getCurrentUser();
-    if (!user || !user.id) {
-      return { error: "Unauthorized" };
-    }
-
-    // 📊 Pagination
-    const skip = (page - 1) * pageSize;
-
-    // 🔍 Query saved ads
-    const [savedAds, totalCount] = await Promise.all([
-      prisma.savedAd.findMany({
-        where: {
-          userId: user.id,
-        },
-        orderBy: {
-          updatedAt: "desc",
-        },
-        skip,
-        take: pageSize,
-      }),
-      prisma.savedAd.count({
-        where: {
-          userId: user.id,
-        },
-      }),
-    ]);
-
-    return {
-      ads: savedAds,
-      pagination: {
-        total: totalCount,
-        pages: Math.ceil(totalCount / pageSize),
-        current: page,
-      },
-    };
-  } catch (error) {
-    console.error("Failed to fetch saved ads:", error);
-    return { error: "Failed to fetch saved ads" };
-  }
-}
-
 // 🚀 Combined function to fetch both saved ad IDs and boards in one DB call
 export async function fetchUserSavedData() {
   try {
@@ -845,48 +800,6 @@ export async function fetchTrendAds(page = 1, pageSize = 10) {
     return { error: "Failed to fetch trend ads" };
   }
 }
-
-// * 🎣 Fetches the ad_archive_ids for all ads saved by a specific user.
-// *
-// * @param userId - The ID of the user whose saved ads are to be fetched.
-// * @returns {Promise<string[]>} A promise that resolves to an array of ad_archive_id strings.
-// * Returns an empty array if the user has no saved ads or if an error occurs.
-// */
-export const getUserSavedAdIds = async (userId: string): Promise<string[]> => {
-  // 🛡️ Basic validation for userId
-  if (!userId) {
-    console.warn("⚠️ [getUserSavedAdIds] No userId provided.");
-    return [];
-  }
-
-  try {
-    // 🔍 Query the database for SavedAd records matching the userId
-    const savedAds = await prisma.savedAd.findMany({
-      where: {
-        userId: userId,
-      },
-      // 👉 Select only the ad_archive_id field for efficiency
-      select: {
-        ad_archive_id: true,
-      },
-    });
-
-    // ✨ Map the results to an array of strings
-    const adIds = savedAds.map((ad) => ad.ad_archive_id);
-    console.log(
-      `📊 [getUserSavedAdIds] Found ${adIds.length} saved ad IDs for user ${userId}.`,
-    );
-    return adIds;
-  } catch (error) {
-    // 🚨 Handle potential database errors
-    console.error(
-      `🚨 [getUserSavedAdIds] Error fetching saved ads for user ${userId}:`,
-      error,
-    );
-    // Return an empty array in case of error to avoid breaking the API response
-    return [];
-  }
-};
 
 /**
  * 🎣 Fetches saved ads from the "Extension Saves" board for a specific user.

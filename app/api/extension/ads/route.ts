@@ -3,7 +3,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import {
   getExtensionSavedAds,
-  getUserSavedAdIds,
   removeAdFromBoard,
   saveAdToBoard,
 } from "@/actions/savedAds";
