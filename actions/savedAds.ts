@@ -254,7 +254,7 @@ function extractR2KeysFromAdData(adData: AdData): string[] {
   return uniqueKeys;
 }
 
-// 💾 Save ad to a user's board (Updated Logic)
+// 💾 Save ad to a user's board
 export async function saveAdToBoard(
   ad_archive_id: string,
   board: string,
@@ -266,22 +266,11 @@ export async function saveAdToBoard(
     if (!user || !user.id) {
       return { error: "Unauthorized" };
     }
-
     // 📝 Validate inputs
     if (!ad_archive_id || !board || !adDataInput) {
       // Check adDataInput
       return { error: "Missing required fields" };
     }
-
-    // 📄 Deep copy the adData to avoid modifying the original object passed to the function
-    const adDataToProcess = JSON.parse(JSON.stringify(adDataInput));
-
-    // ✨ Process media: Download from FB, Upload to R2, Replace/Nullify URLs ✨
-    await processAdMediaForR2(adDataToProcess, ad_archive_id);
-
-    // 🖼️ Extract image URL (using the processed adDataToProcess)
-    // This will return an R2 URL if available, or null
-    const imageUrl = extractImageFromAd(adDataToProcess);
 
     // 🔍 Check if ad already exists in the board
     const existingAd = await prisma.savedAd.findFirst({
@@ -291,6 +280,31 @@ export async function saveAdToBoard(
         board,
       },
     });
+
+    // 📊 Check saved ads limit for new ads only (skip for ADMIN users)
+    if (!existingAd && user.role !== "ADMIN") {
+      const maxSavedAds = parseInt(process.env.MAX_SAVED_ADS_PER_USER || "100");
+
+      const userSavedAdsCount = await prisma.savedAd.count({
+        where: {
+          userId: user.id,
+        },
+      });
+
+      if (userSavedAdsCount >= maxSavedAds) {
+        return {
+          error: `Maximum saved ads limit reached (${maxSavedAds}). Please remove some ads before saving new ones.`,
+        };
+      }
+    }
+
+    // 📄 Deep copy the adData to avoid modifying the original object passed to the function
+    const adDataToProcess = JSON.parse(JSON.stringify(adDataInput));
+    // ✨ Process media: Download from FB, Upload to R2, Replace/Nullify URLs ✨
+    await processAdMediaForR2(adDataToProcess, ad_archive_id);
+    // 🖼️ Extract image URL (using the processed adDataToProcess)
+    // This will return an R2 URL if available, or null
+    const imageUrl = extractImageFromAd(adDataToProcess);
 
     const dataPayload = {
       adData: adDataToProcess, // Store the processed adData
@@ -320,10 +334,9 @@ export async function saveAdToBoard(
         },
       });
       console.log(
-        `✅ 🔽 _ Ad ${ad_archive_id} saved to board ${board} with processed R2/nullified URLs.`,
+        `✅ 🔽  Ad ${ad_archive_id} saved to board ${board} with processed R2/nullified URLs.`,
       );
     }
-
     revalidatePath("/favorites"); // Or the relevant path
     return { success: true };
   } catch (error) {
@@ -335,7 +348,6 @@ export async function saveAdToBoard(
     return { error: "An unknown error occurred while saving the ad" };
   }
 }
-
 // 🗑️ Unsave/remove ad from board (Updated with R2 Deletion)
 export async function removeAdFromBoard(ad_archive_id: string, board: string) {
   try {
