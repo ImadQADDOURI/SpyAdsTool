@@ -165,7 +165,9 @@ export default function SaveAdButton({
               <Heart
                 className={cn(
                   "h-5 w-5 transition-all",
-                  isSaved && "fill-purple-600 dark:fill-purple-400",
+                  isSaved
+                    ? "fill-pink-600 stroke-none dark:fill-pink-400"
+                    : "stroke-current",
                 )}
               />
             )}
