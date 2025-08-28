@@ -107,7 +107,7 @@ export function Navbar() {
       className={cn(
         "fixed left-0 right-0 top-0 z-50 transition-colors duration-300",
         scrolled
-          ? "border-b bg-background/60 backdrop-blur-md"
+          ? "border-b bg-background/80 backdrop-blur-md"
           : "bg-background",
       )}
     >
