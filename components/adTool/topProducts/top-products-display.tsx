@@ -367,7 +367,7 @@ export default function TopProductsDisplay() {
         imageColor="text-indigo-500 dark:text-indigo-400"
         highlightedText="Winning Products"
         remainingTitle="Driving Results"
-        auroraColors={["#6366F1", "#818CF8", "#A5B4FC", "#C7D2FE"]}
+        auroraColors={["#4F46E5", "#6366F1", "#818CF8", "#A5B4FC"]}
         description="Uncover leading products fueling growth with robust metrics."
       />
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
