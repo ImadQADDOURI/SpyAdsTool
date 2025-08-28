@@ -5,6 +5,7 @@ import { testimonials } from "@/configuration/landing-config";
 
 import { AnalyticsSection } from "@/components/adTool/landingPage/analyticsSection/AnalyticsSection";
 import { CTASection } from "@/components/adTool/landingPage/CTASection";
+import Demo from "@/components/adTool/landingPage/demo";
 import ExtensionSection from "@/components/adTool/landingPage/exploreSection/ExtensionSection";
 import TrendingSection from "@/components/adTool/landingPage/exploreSection/TrendingSection";
 import FeaturesSection from "@/components/adTool/landingPage/featuresSection/features-section";
@@ -47,6 +48,7 @@ export default function IndexPage() {
         description="Real feedback from our community—see how they're scaling faster with our platform."
         testimonials={testimonials}
       />
+      <Demo />
       <CTASection />
       {/* Footer Section in layout */}
     </div>
