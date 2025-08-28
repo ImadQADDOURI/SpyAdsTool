@@ -76,7 +76,8 @@ export const Deals = [
     description: "Exclusive 30% discount on Shopify plans",
     icon: ShoppingBag,
     discountCode: "Free",
-    gradient: "bg-gradient-to-r from-green-400 to-green-500 text-white",
+    gradient:
+      "bg-gradient-to-r from-green-400 to-green-500 text-white dark:text-black",
     titleClass: "font-semibold tracking-tight",
   },
   {
