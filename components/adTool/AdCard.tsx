@@ -147,19 +147,19 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="absolute left-0 top-0 flex items-center gap-1 rounded-br-3xl rounded-tr-lg border border-[#BCA8FF] bg-[#F4EEFF]/60 px-3 py-1.5 text-[#5D4BD3] shadow-md ring-1 ring-inset ring-white/30 backdrop-blur-lg transition-all duration-300 hover:border-[#A592FF] hover:bg-[#ECE3FF]/70 dark:border-[#7D6BFF] dark:bg-[#2E2455]/70 dark:ring-[#4B3C88]/50">
+              <div className="absolute left-0 top-0 flex items-center gap-1 rounded-br-3xl rounded-tr-lg border border-[#3B82F6] bg-[#3B82F6]/10 px-3 py-1.5 text-[#3B82F6] shadow-md ring-1 ring-inset ring-white/20 backdrop-blur-lg transition-all duration-300 hover:border-[#3B82F6]/80 hover:bg-[#3B82F6]/20 dark:border-[#3B82F6]/70 dark:bg-[#3B82F6]/15 dark:ring-[#3B82F6]/30">
                 <span
                   className={clsx(
                     "text-sm font-semibold tracking-tight",
                     isHotAd
                       ? "text-[#FF5252] dark:text-red-400"
-                      : "text-[#5D4BD3] dark:text-[#CABEFF]",
+                      : "text-[#3B82F6] dark:text-[#3B82F6]",
                   )}
                 >
                   {collation_count || 0}
                 </span>
 
-                <span className="text-xs font-medium text-[#7D6BFF] dark:text-[#AFA2FF]">
+                <span className="text-xs font-medium text-[#3B82F6] dark:text-[#3B82F6]">
                   ADS
                 </span>
 
