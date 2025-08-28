@@ -149,17 +149,16 @@ export function Navbar() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={cn(
-                  "relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white shadow-sm",
-                  "bg-gradient-to-r",
+                  "relative flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium shadow-sm",
                   deal.gradient,
                 )}
               >
                 <deal.icon className="size-3.5" />
-                <span>{deal.title}</span>
+                <span className={deal.titleClass}>{deal.title}</span>
                 {deal.discountCode && (
                   <Badge
                     variant="outline"
-                    className="ml-1 border-white/30 bg-white/20 px-1.5 py-0 text-[10px] font-semibold text-white"
+                    className="border-white/30 bg-white/20 px-1.5 py-0 text-[10px] font-semibold text-white dark:border-black/30 dark:bg-black/10 dark:text-black"
                   >
                     {deal.discountCode}
                   </Badge>

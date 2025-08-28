@@ -75,16 +75,18 @@ export const Deals = [
     url: "https://example.com/shopify",
     description: "Exclusive 30% discount on Shopify plans",
     icon: ShoppingBag,
-    discountCode: "SHOP30",
-    gradient: "from-pink-500 to-purple-500",
+    discountCode: "Free",
+    gradient: "bg-gradient-to-r from-green-400 to-green-500 text-white",
+    titleClass: "font-semibold tracking-tight",
   },
   {
-    title: "TikTok",
+    title: "TikTok Ads",
     url: "https://example.com/tiktok",
     description: "Grab a special 20% discount on TikTok ads",
     icon: TrendingUp,
-    discountCode: "TIKTOK20",
-    gradient: "from-blue-500 to-green-500",
+    discountCode: "Gift",
+    gradient: "bg-black text-white dark:bg-white dark:text-black",
+    titleClass: "font-semibold tracking-tight",
   },
 ];
 
