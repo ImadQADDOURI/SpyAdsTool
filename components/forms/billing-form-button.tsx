@@ -4,6 +4,7 @@ import { useTransition } from "react";
 import { generateUserStripe } from "@/actions/generate-user-stripe";
 import type { SubscriptionPlan, UserSubscriptionPlan } from "@/types";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/shared/icons";
 
@@ -38,7 +39,11 @@ export function BillingFormButton({
   return (
     <Button
       variant={isCurrentPlan ? "default" : "outline"}
-      className="flex w-full items-center justify-center gap-2"
+      className={cn(
+        "flex h-12 w-full items-center justify-center gap-2 font-semibold transition-all duration-200 hover:scale-105",
+        !isCurrentPlan &&
+          "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg hover:from-pink-600 hover:to-rose-600 hover:text-white hover:shadow-xl",
+      )}
       disabled={isPending}
       onClick={handleClick}
       aria-label={isCurrentPlan ? "Manage subscription" : "Upgrade plan"}
