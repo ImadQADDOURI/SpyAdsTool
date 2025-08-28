@@ -139,7 +139,7 @@ const AdCard: React.FC<AdCardProps> = memo(({ ad, compact = false }) => {
     <Card
       className={`relative flex h-fit w-full max-w-lg flex-col overflow-hidden transition-shadow duration-300 ${
         isHotAd
-          ? "shadow-[0_0_10px_2px_rgba(148,0,211,0.5)] dark:shadow-[0_0_10px_2px_rgba(148,0,211,0.85)]"
+          ? "shadow-[0_0_10px_1px_rgba(148,0,211,0.5)] dark:shadow-[0_0_10px_1px_rgba(148,0,211,0.85)]"
           : "shadow-lg hover:shadow-xl"
       }`}
     >
