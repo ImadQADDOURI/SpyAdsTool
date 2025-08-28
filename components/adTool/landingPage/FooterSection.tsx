@@ -84,7 +84,7 @@ export function FooterSection() {
 
               <Link
                 href={FOOTER_CONFIG.contact.button.href}
-                className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 px-6 py-3 font-medium text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-pink-500/25 active:scale-95 sm:w-auto sm:justify-start"
+                className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-green-500 to-green-600 px-6 py-3 font-medium text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-pink-500/25 active:scale-95 sm:w-auto sm:justify-start"
               >
                 <svg
                   className="mr-2 h-5 w-5 flex-shrink-0"
