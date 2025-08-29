@@ -279,9 +279,8 @@ export const featuresConfig = [
     description:
       "Find profitable products with AI-powered discovery. Access millions of active campaigns.",
     image: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
-    background:
-      "linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 30%, #16213e 70%, #0f1419 100%)",
-    accentColor: "#3b82f6",
+    accentColor: "#3b82f6", // blue-500
+    auroraColors: ["#3b82f6", "#60a5fa", "#2563eb", "#0ea5e9"], // blue -> sky
     stats: [
       { label: "Active Ads", value: "10M+" },
       { label: "Success", value: "94%" },
@@ -296,9 +295,8 @@ export const featuresConfig = [
     description:
       "Search with 15+ filter types. Find exactly what you need with precision targeting.",
     image: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
-    background:
-      "linear-gradient(135deg, #0f0a0f 0%, #1a0f1a 30%, #2d1b3d 70%, #1a0f1a 100%)",
-    accentColor: "#8b5cf6",
+    accentColor: "#8b5cf6", // violet-500
+    auroraColors: ["#8b5cf6", "#a78bfa", "#7c3aed", "#ec4899"], // violet -> pink mix
     stats: [
       { label: "Filters", value: "15+" },
       { label: "Database", value: "50M+" },
@@ -313,9 +311,8 @@ export const featuresConfig = [
     description:
       "Get insights with visual dashboard. Track performance and identify trends.",
     image: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
-    background:
-      "linear-gradient(135deg, #0a0f0a 0%, #1a1a0f 30%, #2d2d1b 70%, #1a1a0f 100%)",
-    accentColor: "#10b981",
+    accentColor: "#10b981", // emerald-500
+    auroraColors: ["#10b981", "#34d399", "#059669", "#14b8a6"], // emerald -> teal
     stats: [
       { label: "Data Points", value: "1B+" },
       { label: "Accuracy", value: "99.9%" },
@@ -330,9 +327,8 @@ export const featuresConfig = [
     description:
       "Leverage AI-powered tools and calculators. Get instant recommendations.",
     image: "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
-    background:
-      "linear-gradient(135deg, #0f0a0f 0%, #1a0f1a 30%, #3d1b2d 70%, #1a0f1a 100%)",
-    accentColor: "#f59e0b",
+    accentColor: "#f59e0b", // amber-500
+    auroraColors: ["#f59e0b", "#fbbf24", "#d97706", "#ef4444"], // amber -> orange/red hint
     stats: [
       { label: "AI Models", value: "8+" },
       { label: "Accuracy", value: "96%" },
@@ -347,9 +343,8 @@ export const featuresConfig = [
     description:
       "Download media and organize findings. Keep track of strategies with cloud storage.",
     image: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
-    background:
-      "linear-gradient(135deg, #0f0f0f 0%, #0f1a1a 30%, #1b2d3d 70%, #0f1a1a 100%)",
-    accentColor: "#06b6d4",
+    accentColor: "#06b6d4", // cyan-500
+    auroraColors: ["#06b6d4", "#22d3ee", "#0891b2", "#3b82f6"], // cyan -> blue mix
     stats: [
       { label: "Downloads", value: "∞" },
       { label: "Storage", value: "Cloud" },

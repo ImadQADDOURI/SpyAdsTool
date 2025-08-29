@@ -5,16 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 import {
   ArrowRight,
-  BarChart,
   ChevronLeft,
   ChevronRight,
-  Cpu,
-  Filter,
-  Folder,
   Pause,
   Play,
-  Search,
-  TypeIcon as type,
   type LucideIcon,
 } from "lucide-react";
 
@@ -35,32 +29,24 @@ interface Feature {
   description: string;
   image: string;
   darkImage?: string;
-  background: string;
   accentColor: string;
+  auroraColors: string[];
   stats?: Stat[];
   Icon: LucideIcon;
 }
 
-interface FeatureSConfiglideProps {
+interface FeatureSlideProps {
   feature: Feature;
   index: number;
   isActive: boolean;
 }
 
-function FeatureSConfiglide({
-  feature,
-  index,
-  isActive,
-}: FeatureSConfiglideProps) {
+function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: false, margin: "-20%" });
 
   return (
-    <div
-      ref={ref}
-      className="w-full flex-shrink-0 overflow-hidden"
-      style={{ background: feature.background }}
-    >
+    <div ref={ref} className="w-full flex-shrink-0 overflow-hidden">
       <div className="relative py-16 sm:py-20 lg:py-24">
         {/* 🌟 Background effects */}
         <div className="absolute inset-0 overflow-hidden">
@@ -85,35 +71,30 @@ function FeatureSConfiglide({
               } ${isActive && isInView ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
             >
               {/* 🏷️ Feature Badge */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-100 px-4 py-2 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
                 <div
-                  className="flex h-6 w-6 items-center justify-center rounded-full"
+                  className="flex h-7 w-7 items-center justify-center rounded-full"
                   style={{ backgroundColor: `${feature.accentColor}20` }}
                 >
                   <feature.Icon
-                    size={14}
+                    size={16}
                     style={{ color: feature.accentColor }}
                   />
                 </div>
-                <span className="text-xs font-semibold tracking-wide text-white/80">
+                <span className="text-xs font-semibold tracking-wide text-gray-700 dark:text-white/80">
                   Feature {String(index + 1).padStart(2, "0")}
                 </span>
               </div>
 
               {/* 🎯 Title & Highlight */}
               <div>
-                <h2 className="text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl">
+                <h2 className="text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white sm:text-5xl">
                   {feature.title}
                 </h2>
                 <div className="mt-1">
                   <AuroraText
-                    className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl"
-                    colors={[
-                      feature.accentColor,
-                      "#ffffff",
-                      feature.accentColor,
-                      "#ffffff",
-                    ]}
+                    className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl"
+                    colors={feature.auroraColors}
                     speed={1.5}
                   >
                     {feature.highlightText}
@@ -122,7 +103,7 @@ function FeatureSConfiglide({
               </div>
 
               {/* 📄 Description */}
-              <p className="mx-auto max-w-lg text-base leading-relaxed text-white/70 lg:mx-0">
+              <p className="mx-auto max-w-lg text-lg leading-relaxed text-gray-600 dark:text-white/70 lg:mx-0">
                 {feature.description}
               </p>
 
@@ -132,12 +113,12 @@ function FeatureSConfiglide({
                   {feature.stats.map((stat, statIndex) => (
                     <div key={statIndex} className="text-center">
                       <div
-                        className="mb-1 text-lg font-bold sm:text-xl"
+                        className="mb-1 text-xl font-bold sm:text-2xl"
                         style={{ color: feature.accentColor }}
                       >
                         {stat.value}
                       </div>
-                      <div className="text-xs font-medium uppercase tracking-wider text-white/50">
+                      <div className="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-white/50">
                         {stat.label}
                       </div>
                     </div>
@@ -153,7 +134,6 @@ function FeatureSConfiglide({
                   size="sm"
                   iconPosition="right"
                   icon={ArrowRight}
-                  forceMode="dark"
                 >
                   Explore Feature
                 </CTAButton>
@@ -185,7 +165,7 @@ function FeatureSConfiglide({
   );
 }
 
-export default function FeaturesConfigSection() {
+export default function FeaturesSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -279,11 +259,7 @@ export default function FeaturesConfigSection() {
   }, [currentSlide]);
 
   return (
-    <section
-      ref={sectionRef}
-      id="featuresConfig"
-      className="relative bg-[#0a0a0f]"
-    >
+    <section ref={sectionRef} id="featuresConfig" className="relative">
       {/* 🎠 Slideshow Container */}
       <div
         className="relative overflow-hidden"
@@ -299,7 +275,7 @@ export default function FeaturesConfigSection() {
           }}
         >
           {featuresConfig.map((feature, index) => (
-            <FeatureSConfiglide
+            <FeatureSlide
               key={feature.id}
               feature={feature}
               index={index}
@@ -314,7 +290,7 @@ export default function FeaturesConfigSection() {
         {/* ⏯️ Play/Pause Button */}
         <button
           onClick={toggleAutoPlay}
-          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95"
+          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 dark:border-white/20 dark:bg-black/40 dark:hover:border-white/40 dark:hover:bg-black/60"
           aria-label={isAutoPlaying ? "Pause slideshow" : "Play slideshow"}
         >
           {isAutoPlaying ? (
@@ -334,7 +310,7 @@ export default function FeaturesConfigSection() {
         <button
           onClick={prevSlide}
           disabled={isTransitioning}
-          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 disabled:opacity-50"
+          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 disabled:opacity-50 dark:border-white/20 dark:bg-black/40 dark:hover:border-white/40 dark:hover:bg-black/60"
           aria-label="Previous feature"
         >
           <ChevronLeft
@@ -355,7 +331,7 @@ export default function FeaturesConfigSection() {
                 backgroundColor:
                   index === currentSlide
                     ? feature.accentColor
-                    : "rgba(255,255,255,0.2)",
+                    : "rgba(107, 114, 128, 0.4)",
               }}
               aria-label={`Go to ${feature.title} feature`}
             >
@@ -371,7 +347,7 @@ export default function FeaturesConfigSection() {
         <button
           onClick={nextSlide}
           disabled={isTransitioning}
-          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 disabled:opacity-50"
+          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 disabled:opacity-50 dark:border-white/20 dark:bg-black/40 dark:hover:border-white/40 dark:hover:bg-black/60"
           aria-label="Next feature"
         >
           <ChevronRight
