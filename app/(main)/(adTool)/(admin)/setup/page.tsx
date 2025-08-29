@@ -1072,7 +1072,7 @@ GRANT ALL PRIVILEGES ON DATABASE your_app_database TO your_app_user;`}
                       configuration/
                     </code>{" "}
                     folder contains various configuration files that you can
-                    customize to match your application's needs.
+                    customize to match your application&apos;s needs.
                   </p>
                 </div>
 
@@ -1331,7 +1331,9 @@ GRANT ALL PRIVILEGES ON DATABASE your_app_database TO your_app_user;`}
                         <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
                           <li>• App icon and theme colors</li>
                           <li>• Display mode (standalone, fullscreen)</li>
-                          <li>• "Add to Home Screen" functionality</li>
+                          <li>
+                            • &quot;Add to Home Screen&quot; functionality
+                          </li>
                           <li>• Splash screen configuration</li>
                         </ul>
                       </div>
