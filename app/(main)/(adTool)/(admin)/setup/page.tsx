@@ -9,6 +9,7 @@ import {
   CreditCard,
   Database,
   ExternalLink,
+  FileSliders,
   Key,
   Mail,
   Settings,
@@ -39,13 +40,14 @@ export default function SetupDocumentationPage() {
     { id: "email", title: "Email Service", icon: Mail },
     { id: "chrome", title: "Chrome Extension", icon: Settings },
     { id: "admin", title: "Admin System", icon: Shield },
+    { id: "config-files", title: "Configuration Files", icon: FileSliders },
     { id: "deployment", title: "Deployment", icon: CheckCircle },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       {/* 🎨 Header Section */}
-      <div className="top-0 z-10 border-b bg-white/80 backdrop-blur-sm dark:bg-slate-950/80">
+      <div className="sticky top-0 z-10 border-b bg-white/80 backdrop-blur-sm dark:bg-slate-950/80">
         <div className="container mx-auto px-4 py-6">
           <div className="mb-4 flex items-center gap-4">
             <Button variant="ghost" size="sm" asChild>
@@ -1048,6 +1050,353 @@ GRANT ALL PRIVILEGES ON DATABASE your_app_database TO your_app_user;`}
                       visible to all users for inspiration
                     </li>
                   </ul>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* ⚙️ Configuration Files */}
+            <Card id="config-files">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <Settings className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                  <CardTitle className="text-2xl">
+                    Configuration Files
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <p className="mb-6 text-slate-700 dark:text-slate-300">
+                    The{" "}
+                    <code className="rounded bg-slate-100 px-2 py-1 text-sm dark:bg-slate-800">
+                      configuration/
+                    </code>{" "}
+                    folder contains various configuration files that you can
+                    customize to match your application's needs.
+                  </p>
+                </div>
+
+                <div className="grid gap-6">
+                  {/* Site Config */}
+                  <div className="rounded-lg border border-slate-200 p-6 dark:border-slate-700">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
+                        <Settings className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                          site-config.ts
+                        </h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          📌 configuration/site-config.ts
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <p className="text-sm text-slate-700 dark:text-slate-300">
+                        Manages site-wide settings like name, description, URL,
+                        and social links.
+                      </p>
+                      <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                        <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Exports:
+                        </p>
+                        <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                          <li>
+                            • <code>siteConfig</code> - Basic site information
+                          </li>
+                          <li>
+                            • <code>NavbarConfig</code> - Navigation menu
+                            structure
+                          </li>
+                          <li>
+                            • <code>AvatarMenuConfig</code> - User dropdown menu
+                          </li>
+                          <li>
+                            • <code>FOOTER_CONFIG</code> - Footer links and
+                            content
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pricing Config */}
+                  <div className="rounded-lg border border-slate-200 p-6 dark:border-slate-700">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
+                        <CreditCard className="h-5 w-5 text-green-600 dark:text-green-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                          pricing-config.ts
+                        </h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          📌 configuration/pricing-config.ts
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <p className="text-sm text-slate-700 dark:text-slate-300">
+                        Contains all pricing plans and subscription
+                        configurations.
+                      </p>
+                      <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                        <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Exports:
+                        </p>
+                        <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                          <li>
+                            • <code>pricingData</code> - Plan details and
+                            features
+                          </li>
+                          <li>
+                            • <code>plansColumns</code> - Pricing table
+                            structure
+                          </li>
+                          <li>
+                            • <code>comparePlans</code> - Feature comparison
+                            data
+                          </li>
+                          <li>
+                            • <code>paymentMethods</code> - Accepted payment
+                            options
+                          </li>
+                          <li>
+                            • <code>pricingFaqData</code> - Pricing FAQ content
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Landing Config */}
+                  <div className="rounded-lg border border-slate-200 p-6 dark:border-slate-700">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="rounded-lg bg-purple-100 p-2 dark:bg-purple-900/30">
+                        <Shield className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                          landing-config.ts
+                        </h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          📌 configuration/landing-config.ts
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <p className="text-sm text-slate-700 dark:text-slate-300">
+                        Configuration for homepage sections, hero content, and
+                        features.
+                      </p>
+                      <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                        <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Exports:
+                        </p>
+                        <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                          <li>
+                            • <code>heroConfig</code> - Hero section content
+                          </li>
+                          <li>
+                            • <code>trustedBySectionConfig</code> - Company
+                            logos/testimonials
+                          </li>
+                          <li>
+                            • <code>featuresConfig</code> - Feature highlights
+                          </li>
+                          <li>
+                            • <code>TrendingConfig</code> - Trending ads section
+                          </li>
+                          <li>
+                            • <code>EXTENSION_CONFIG</code> - Chrome extension
+                            promotion
+                          </li>
+                          <li>
+                            • <code>analyticsConfig</code> - Analytics dashboard
+                            preview
+                          </li>
+                          <li>
+                            • <code>testimonials</code> - Customer testimonials
+                          </li>
+                          <li>
+                            • <code>CTA_CONFIG</code> - Call-to-action sections
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Navigation Config */}
+                  <div className="rounded-lg border border-slate-200 p-6 dark:border-slate-700">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="rounded-lg bg-orange-100 p-2 dark:bg-orange-900/30">
+                        <Settings className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                          navigation-config.ts
+                        </h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          📌 configuration/navigation-config.ts
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <p className="text-sm text-slate-700 dark:text-slate-300">
+                        Configuration for navigation menus and routing.
+                      </p>
+                      <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                        <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Exports:
+                        </p>
+                        <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                          <li>
+                            • <code>Links</code> - Main navigation links
+                          </li>
+                          <li>
+                            • <code>Tools</code> - Tools dropdown menu
+                          </li>
+                          <li>
+                            • <code>Deals</code> - Deals and promotions links
+                          </li>
+                          <li>
+                            • <code>AdminLinks</code> - Admin-only navigation
+                            items
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Metadata Config */}
+                  <div className="rounded-lg border border-slate-200 p-6 dark:border-slate-700">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="rounded-lg bg-indigo-100 p-2 dark:bg-indigo-900/30">
+                        <Database className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                          metadata-config.ts
+                        </h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          📌 configuration/metadata-config.ts
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <p className="text-sm text-slate-700 dark:text-slate-300">
+                        Provides page-level information for SEO, social sharing,
+                        browser tabs, and PWA hints.
+                      </p>
+                      <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                        <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Used by:
+                        </p>
+                        <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                          <li>• Next.js layouts and components</li>
+                          <li>• SEO optimization and meta tags</li>
+                          <li>• Open Graph and Twitter cards</li>
+                          <li>• Browser tab titles and favicons</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* PWA Manifest */}
+                  <div className="rounded-lg border border-slate-200 p-6 dark:border-slate-700">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="rounded-lg bg-teal-100 p-2 dark:bg-teal-900/30">
+                        <Cloud className="h-5 w-5 text-teal-600 dark:text-teal-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                          site.webmanifest
+                        </h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          📌 public/site.webmanifest
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <p className="text-sm text-slate-700 dark:text-slate-300">
+                        Enables Progressive Web App (PWA) behavior. Tells the
+                        browser how your app should appear when installed on a
+                        device.
+                      </p>
+                      <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                        <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Features:
+                        </p>
+                        <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                          <li>• App icon and theme colors</li>
+                          <li>• Display mode (standalone, fullscreen)</li>
+                          <li>• "Add to Home Screen" functionality</li>
+                          <li>• Splash screen configuration</li>
+                        </ul>
+                      </div>
+                      <Alert className="mt-3">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertDescription className="text-sm">
+                          <strong>Location Important:</strong> Must be in the{" "}
+                          <code>public/</code> folder so browsers can fetch it
+                          as a static file via <code>/site.webmanifest</code>.
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    Customization Tips
+                  </h3>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
+                      <h4 className="mb-2 font-semibold text-blue-800 dark:text-blue-300">
+                        🎨 Branding
+                      </h4>
+                      <ul className="space-y-1 text-sm text-blue-700 dark:text-blue-300">
+                        <li>
+                          • Update site name and description in site-config.ts
+                        </li>
+                        <li>
+                          • Customize colors and themes in metadata-config.ts
+                        </li>
+                        <li>• Replace app icons in site.webmanifest</li>
+                      </ul>
+                    </div>
+                    <div className="rounded-lg bg-green-50 p-4 dark:bg-green-900/20">
+                      <h4 className="mb-2 font-semibold text-green-800 dark:text-green-300">
+                        💰 Pricing
+                      </h4>
+                      <ul className="space-y-1 text-sm text-green-700 dark:text-green-300">
+                        <li>• Update plan features in pricing-config.ts</li>
+                        <li>• Match Stripe price IDs to your products</li>
+                        <li>• Customize FAQ content for your service</li>
+                      </ul>
+                    </div>
+                    <div className="rounded-lg bg-purple-50 p-4 dark:bg-purple-900/20">
+                      <h4 className="mb-2 font-semibold text-purple-800 dark:text-purple-300">
+                        🏠 Landing Page
+                      </h4>
+                      <ul className="space-y-1 text-sm text-purple-700 dark:text-purple-300">
+                        <li>• Customize hero content and CTAs</li>
+                        <li>• Update feature highlights and benefits</li>
+                        <li>• Add your customer testimonials</li>
+                      </ul>
+                    </div>
+                    <div className="rounded-lg bg-orange-50 p-4 dark:bg-orange-900/20">
+                      <h4 className="mb-2 font-semibold text-orange-800 dark:text-orange-300">
+                        🧭 Navigation
+                      </h4>
+                      <ul className="space-y-1 text-sm text-orange-700 dark:text-orange-300">
+                        <li>• Add or remove navigation items</li>
+                        <li>• Customize admin-only menu items</li>
+                        <li>• Update footer links and social media</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
