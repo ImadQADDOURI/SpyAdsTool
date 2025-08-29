@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import { featuresConfig } from "@/configuration/landing-config";
 import { useInView } from "framer-motion";
 import {
   ArrowRight,
@@ -12,10 +13,9 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { featuresConfig } from "../../../../configuration/landing-config";
-import { CTAButton } from "../exploreSection/CTAButton";
-import { AuroraText } from "../hero/AuroraText";
-import FloatingGlassImage from "../hero/FloatingGlassImage";
+import { CTAButton } from "./exploreSection/CTAButton";
+import { AuroraText } from "./hero/AuroraText";
+import FloatingGlassImage from "./hero/FloatingGlassImage";
 
 interface Stat {
   label: string;

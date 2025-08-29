@@ -8,7 +8,7 @@ import { CTASection } from "@/components/adTool/landingPage/CTASection";
 import Demo from "@/components/adTool/landingPage/demo";
 import ExtensionSection from "@/components/adTool/landingPage/exploreSection/ExtensionSection";
 import TrendingSection from "@/components/adTool/landingPage/exploreSection/TrendingSection";
-import FeaturesSection from "@/components/adTool/landingPage/featuresSection/features-section";
+import FeaturesSection from "@/components/adTool/landingPage/features-section";
 import GradientBackground from "@/components/adTool/landingPage/hero/gradient-background";
 import HeroSection from "@/components/adTool/landingPage/hero/hero-section";
 import TrustedBySection from "@/components/adTool/landingPage/hero/TrustedBySection";
