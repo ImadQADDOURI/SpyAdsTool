@@ -31,7 +31,7 @@ export function CTASection() {
 
   return (
     <section
-      className={`relative w-full ${CTA_CONFIG.styling.section.padding} overflow-hidden bg-white dark:bg-black`}
+      className={`relative w-full ${CTA_CONFIG.styling.section.padding} overflow-hidden`}
     >
       {/* 🌟 Background Effects - Compact */}
       <div className="absolute inset-0 opacity-15">

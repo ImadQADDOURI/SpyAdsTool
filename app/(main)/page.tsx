@@ -13,6 +13,7 @@ import GradientBackground from "@/components/adTool/landingPage/hero/gradient-ba
 import HeroSection from "@/components/adTool/landingPage/hero/hero-section";
 import TrustedBySection from "@/components/adTool/landingPage/hero/TrustedBySection";
 import { TestimonialsSection } from "@/components/adTool/landingPage/reviewSection/testimonials-with-marquee";
+import { SeparatorLine } from "@/components/adTool/landingPage/separator-line";
 import { Loading } from "@/components/adTool/sharedComponents/Loading";
 
 export default function IndexPage() {
@@ -34,23 +35,26 @@ export default function IndexPage() {
     );
   }
   return (
-    <div>
-      <GradientBackground intensity={"vibrant"}>
+    <div className="space-y-8 sm:space-y-16">
+      <GradientBackground intensity="vibrant">
         <HeroSection />
         <TrustedBySection />
       </GradientBackground>
-
       <FeaturesSection />
-      <TrendingSection className="pt-8 sm:pt-12" />
-      <ExtensionSection className="pt-8 sm:pt-12" />
+      <SeparatorLine className="my-8 sm:my-16" />
+      <TrendingSection />
+      <ExtensionSection />
+      <SeparatorLine className="my-8 sm:my-16" />
       <AnalyticsSection />
-      {/* <ReviewSection /> */}
+      <SeparatorLine className="my-8 sm:my-16" />
       <TestimonialsSection
         title="What Our Users Are Saying"
         description="Real feedback from our community—see how they're scaling faster with our platform."
         testimonials={testimonials}
       />
+      <SeparatorLine className="my-8 sm:my-16" />
       <Demo />
+      <SeparatorLine className="my-8 sm:my-16" />
       <CTASection />
       {/* Footer Section in layout */}
     </div>

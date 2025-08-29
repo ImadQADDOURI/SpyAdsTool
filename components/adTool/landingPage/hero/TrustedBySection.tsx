@@ -7,7 +7,7 @@ import { trustedBySectionConfig } from "../../../../configuration/landing-config
 
 export default function TrustedBySection() {
   return (
-    <div className="relative py-8">
+    <div className="relative">
       {/* 📝 Section title */}
       <div className="mb-4 animate-fade-in text-center">
         <div className="mb-2 flex items-center justify-center gap-2">

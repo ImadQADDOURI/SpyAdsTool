@@ -47,7 +47,7 @@ function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
 
   return (
     <div ref={ref} className="w-full flex-shrink-0 overflow-hidden">
-      <div className="relative py-16 sm:py-20 lg:py-24">
+      <div className="relative pb-8 sm:pb-16 lg:pb-20">
         {/* 🌟 Background effects */}
         <div className="absolute inset-0 overflow-hidden">
           <div
@@ -286,7 +286,7 @@ export default function FeaturesSection() {
       </div>
 
       {/* 🎮 Navigation Controls */}
-      <div className="flex justify-center pb-8">
+      <div className="flex justify-center">
         <div className="flex items-center gap-3 px-4">
           {/* ⏯️ Play/Pause Button */}
           <button

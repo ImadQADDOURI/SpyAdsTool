@@ -37,7 +37,7 @@ export function AnalyticsSection({ className }: AnalyticsSectionProps) {
   return (
     <section
       ref={sectionRef}
-      className={cn("relative py-12 lg:py-16", className)} // 📏 Reduced padding for compact view
+      className={cn("relative", className)} // 📏 Reduced padding for compact view
     >
       {/* 🌟 Subtle background enhancement */}
       <div className="via-white/2 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-transparent" />
