@@ -286,75 +286,77 @@ export default function FeaturesSection() {
       </div>
 
       {/* 🎮 Navigation Controls */}
-      <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 px-4">
-        {/* ⏯️ Play/Pause Button */}
-        <button
-          onClick={toggleAutoPlay}
-          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 dark:border-white/20 dark:bg-black/40 dark:hover:border-white/40 dark:hover:bg-black/60"
-          aria-label={isAutoPlaying ? "Pause slideshow" : "Play slideshow"}
-        >
-          {isAutoPlaying ? (
-            <Pause
-              size={14}
-              className="text-white/80 transition-colors group-hover:text-white"
-            />
-          ) : (
-            <Play
-              size={14}
-              className="ml-0.5 text-white/80 transition-colors group-hover:text-white"
-            />
-          )}
-        </button>
-
-        {/* ⬅️ Previous Button */}
-        <button
-          onClick={prevSlide}
-          disabled={isTransitioning}
-          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 disabled:opacity-50 dark:border-white/20 dark:bg-black/40 dark:hover:border-white/40 dark:hover:bg-black/60"
-          aria-label="Previous feature"
-        >
-          <ChevronLeft
-            size={16}
-            className="text-white/80 transition-colors group-hover:text-white"
-          />
-        </button>
-
-        {/* 🔘 Slide Indicators */}
-        <div className="flex items-center gap-1.5 overflow-hidden">
-          {featuresConfig.map((feature, index) => (
-            <button
-              key={feature.id}
-              onClick={() => goToSlide(index)}
-              disabled={isTransitioning}
-              className="group relative h-2 w-6 flex-shrink-0 rounded-full transition-all duration-300 active:scale-95 disabled:opacity-50"
-              style={{
-                backgroundColor:
-                  index === currentSlide
-                    ? feature.accentColor
-                    : "rgba(107, 114, 128, 0.4)",
-              }}
-              aria-label={`Go to ${feature.title} feature`}
-            >
-              <div
-                className="absolute inset-0 rounded-full opacity-0 transition-opacity group-hover:opacity-30"
-                style={{ backgroundColor: feature.accentColor }}
+      <div className="flex justify-center pb-8">
+        <div className="flex items-center gap-3 px-4">
+          {/* ⏯️ Play/Pause Button */}
+          <button
+            onClick={toggleAutoPlay}
+            className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 backdrop-blur-xl transition-all hover:border-gray-300 hover:bg-gray-200 active:scale-95 dark:border-white/20 dark:bg-black/40 dark:hover:border-white/40 dark:hover:bg-black/60"
+            aria-label={isAutoPlaying ? "Pause slideshow" : "Play slideshow"}
+          >
+            {isAutoPlaying ? (
+              <Pause
+                size={14}
+                className="text-gray-700 transition-colors group-hover:text-gray-900 dark:text-white/80 dark:group-hover:text-white"
               />
-            </button>
-          ))}
-        </div>
+            ) : (
+              <Play
+                size={14}
+                className="ml-0.5 text-gray-700 transition-colors group-hover:text-gray-900 dark:text-white/80 dark:group-hover:text-white"
+              />
+            )}
+          </button>
 
-        {/* ➡️ Next Button */}
-        <button
-          onClick={nextSlide}
-          disabled={isTransitioning}
-          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-xl transition-all hover:border-white/40 hover:bg-black/60 active:scale-95 disabled:opacity-50 dark:border-white/20 dark:bg-black/40 dark:hover:border-white/40 dark:hover:bg-black/60"
-          aria-label="Next feature"
-        >
-          <ChevronRight
-            size={16}
-            className="text-white/80 transition-colors group-hover:text-white"
-          />
-        </button>
+          {/* ⬅️ Previous Button */}
+          <button
+            onClick={prevSlide}
+            disabled={isTransitioning}
+            className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 backdrop-blur-xl transition-all hover:border-gray-300 hover:bg-gray-200 active:scale-95 disabled:opacity-50 dark:border-white/20 dark:bg-black/40 dark:hover:border-white/40 dark:hover:bg-black/60"
+            aria-label="Previous feature"
+          >
+            <ChevronLeft
+              size={16}
+              className="text-gray-700 transition-colors group-hover:text-gray-900 dark:text-white/80 dark:group-hover:text-white"
+            />
+          </button>
+
+          {/* 🔘 Slide Indicators */}
+          <div className="flex items-center gap-1.5 overflow-hidden">
+            {featuresConfig.map((feature, index) => (
+              <button
+                key={feature.id}
+                onClick={() => goToSlide(index)}
+                disabled={isTransitioning}
+                className="group relative h-2 w-6 flex-shrink-0 rounded-full transition-all duration-300 active:scale-95 disabled:opacity-50"
+                style={{
+                  backgroundColor:
+                    index === currentSlide
+                      ? feature.accentColor
+                      : "rgba(107, 114, 128, 0.4)",
+                }}
+                aria-label={`Go to ${feature.title} feature`}
+              >
+                <div
+                  className="absolute inset-0 rounded-full opacity-0 transition-opacity group-hover:opacity-30"
+                  style={{ backgroundColor: feature.accentColor }}
+                />
+              </button>
+            ))}
+          </div>
+
+          {/* ➡️ Next Button */}
+          <button
+            onClick={nextSlide}
+            disabled={isTransitioning}
+            className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 backdrop-blur-xl transition-all hover:border-gray-300 hover:bg-gray-200 active:scale-95 disabled:opacity-50 dark:border-white/20 dark:bg-black/40 dark:hover:border-white/40 dark:hover:bg-black/60"
+            aria-label="Next feature"
+          >
+            <ChevronRight
+              size={16}
+              className="text-gray-700 transition-colors group-hover:text-gray-900 dark:text-white/80 dark:group-hover:text-white"
+            />
+          </button>
+        </div>
       </div>
 
       <style jsx>{`
