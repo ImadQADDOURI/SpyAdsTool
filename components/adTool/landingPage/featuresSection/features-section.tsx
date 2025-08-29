@@ -88,12 +88,12 @@ function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
 
               {/* 🎯 Title & Highlight */}
               <div>
-                <h2 className="text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white sm:text-5xl">
+                <h2 className="text-3xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white sm:text-5xl">
                   {feature.title}
                 </h2>
                 <div className="mt-1">
                   <AuroraText
-                    className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl"
+                    className="text-3xl font-bold leading-tight tracking-tight sm:text-5xl"
                     colors={feature.auroraColors}
                     speed={1.5}
                   >
@@ -103,7 +103,7 @@ function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
               </div>
 
               {/* 📄 Description */}
-              <p className="mx-auto max-w-lg text-lg leading-relaxed text-gray-600 dark:text-white/70 lg:mx-0">
+              <p className="mx-auto max-w-lg text-base leading-relaxed text-gray-600 dark:text-white/70 sm:text-lg lg:mx-0">
                 {feature.description}
               </p>
 
@@ -113,12 +113,12 @@ function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
                   {feature.stats.map((stat, statIndex) => (
                     <div key={statIndex} className="text-center">
                       <div
-                        className="mb-1 text-xl font-bold sm:text-2xl"
+                        className="mb-1 text-lg font-bold sm:text-2xl"
                         style={{ color: feature.accentColor }}
                       >
                         {stat.value}
                       </div>
-                      <div className="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-white/50">
+                      <div className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-white/50 sm:text-sm">
                         {stat.label}
                       </div>
                     </div>
