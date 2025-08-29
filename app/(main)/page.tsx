@@ -11,7 +11,7 @@ import TrendingSection from "@/components/adTool/landingPage/exploreSection/Tren
 import FeaturesSection from "@/components/adTool/landingPage/featuresSection/features-section";
 import GradientBackground from "@/components/adTool/landingPage/hero/gradient-background";
 import HeroSection from "@/components/adTool/landingPage/hero/hero-section";
-import { ReviewSection } from "@/components/adTool/landingPage/reviewSection/review-v0/ReviewSection";
+import TrustedBySection from "@/components/adTool/landingPage/hero/TrustedBySection";
 import { TestimonialsSection } from "@/components/adTool/landingPage/reviewSection/testimonials-with-marquee";
 import { Loading } from "@/components/adTool/sharedComponents/Loading";
 
@@ -35,13 +35,15 @@ export default function IndexPage() {
   }
   return (
     <div>
-      <HeroSection />
+      <GradientBackground intensity={"vibrant"}>
+        <HeroSection />
+        <TrustedBySection />
+      </GradientBackground>
+
       <FeaturesSection />
-      {/* <GradientBackground intensity={"vibrant"}> */}
       <TrendingSection className="pt-8 sm:pt-12" />
       <ExtensionSection className="pt-8 sm:pt-12" />
       <AnalyticsSection />
-      {/* </GradientBackground> */}
       {/* <ReviewSection /> */}
       <TestimonialsSection
         title="What Our Users Are Saying"
