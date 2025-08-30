@@ -101,9 +101,15 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
         key={offer.title}
       >
         {isPro && (
-          <div className="absolute -top-3 left-1/2 z-50 flex -translate-x-1/2 transform items-center space-x-1 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-4 py-1 text-xs font-bold uppercase text-white shadow-lg">
-            <Crown className="h-4 w-4" />
-            <span>Most Popular</span>
+          <div
+            className={`absolute -top-3 left-1/2 z-10 flex -translate-x-1/2 transform items-center space-x-1 rounded-full px-3 py-1 text-xs font-bold uppercase text-white shadow-lg ${
+              isYearly
+                ? "bg-gradient-to-r from-blue-500 to-blue-600"
+                : "bg-gradient-to-r from-pink-500 to-rose-500"
+            }`}
+          >
+            <Crown className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span>{isYearly ? "Recommended" : "Most Popular"}</span>
           </div>
         )}
         <div
@@ -268,14 +274,14 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
           >
             <ToggleGroupItem
               value="yearly"
-              className="rounded-full px-6 font-semibold transition-all duration-200 data-[state=on]:!bg-gradient-to-r data-[state=on]:!from-pink-500 data-[state=on]:!to-rose-500 data-[state=on]:!text-white data-[state=on]:shadow-md"
+              className="rounded-full px-6 font-semibold transition-all duration-200 data-[state=on]:!bg-gradient-to-r data-[state=on]:!from-blue-500 data-[state=on]:!to-blue-600 data-[state=on]:!text-white data-[state=on]:shadow-md"
               aria-label="Toggle yearly billing"
             >
               Yearly (-20%)
             </ToggleGroupItem>
             <ToggleGroupItem
               value="monthly"
-              className="rounded-full px-6 font-semibold transition-all duration-200 data-[state=on]:!bg-gradient-to-r data-[state=on]:!from-blue-500 data-[state=on]:!to-blue-600 data-[state=on]:!text-white data-[state=on]:shadow-md"
+              className="rounded-full px-6 font-semibold transition-all duration-200 data-[state=on]:!bg-gradient-to-r data-[state=on]:!from-pink-500 data-[state=on]:!to-rose-500 data-[state=on]:!text-white data-[state=on]:shadow-md"
               aria-label="Toggle monthly billing"
             >
               Monthly
