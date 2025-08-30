@@ -138,9 +138,6 @@ export function PricingCTA() {
 
                 <div className="bg-gradient-to-br from-gray-50/50 to-white p-3 dark:from-gray-900/50 dark:to-gray-950 sm:p-5 lg:w-2/3">
                   <h4 className="mb-3 flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-gray-100 sm:mb-4 sm:text-lg">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500 sm:h-8 sm:w-8">
-                      <Check className="h-3 w-3 text-white sm:h-4 sm:w-4" />
-                    </div>
                     Everything you get with Pro
                   </h4>
 
