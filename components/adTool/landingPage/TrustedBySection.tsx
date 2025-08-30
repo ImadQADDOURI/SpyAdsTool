@@ -21,7 +21,7 @@ export default function TrustedBySection() {
 
       {/* Marquee container */}
       <div className="relative flex w-full overflow-hidden">
-        <div className="group flex [--duration:40s] [--gap:3rem] [gap:var(--gap)]">
+        <div className="group flex flex-row overflow-hidden p-2 [--duration:25s] [--gap:1.5rem] [gap:var(--gap)] sm:[--duration:35s] sm:[--gap:2rem]">
           {/* Track 1 */}
           <div className="animate-marquee flex shrink-0 flex-row items-center [gap:var(--gap)] group-hover:[animation-play-state:paused]">
             {trustedBySectionConfig.map((company, index) => (
