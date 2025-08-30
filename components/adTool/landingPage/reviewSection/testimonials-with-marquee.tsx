@@ -19,8 +19,8 @@ export function TestimonialsSection() {
             Are Saying
           </h2>
           <p className="mx-auto max-w-2xl text-sm text-muted-foreground sm:text-base lg:text-lg">
-            Real feedback from our community—see how they're scaling faster with
-            our platform.
+            Real feedback from our community—see how they&apos;re scaling faster
+            with our platform.
           </p>
         </div>
 
