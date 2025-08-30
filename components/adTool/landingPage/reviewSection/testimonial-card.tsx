@@ -68,7 +68,7 @@ export function TestimonialCard({
       {/* ⭐ Star rating display */}
       <div className="mt-3 flex gap-1">{renderStars(rating)}</div>
 
-      <p className="sm:text-md mt-4 text-sm text-gray-300">{text}</p>
+      <p className="sm:text-md mt-4 text-sm text-gray-500">{text}</p>
     </Card>
   );
 }

@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { testimonials } from "@/configuration/landing-config";
 
 import { AnalyticsSection } from "@/components/adTool/landingPage/analyticsSection/AnalyticsSection";
 import { CTASection } from "@/components/adTool/landingPage/CTASection";
-import Demo from "@/components/adTool/landingPage/demo";
 import ExtensionSection from "@/components/adTool/landingPage/exploreSection/ExtensionSection";
 import TrendingSection from "@/components/adTool/landingPage/exploreSection/TrendingSection";
 import FeaturesSection from "@/components/adTool/landingPage/features-section";
@@ -50,11 +48,7 @@ export default function IndexPage() {
       <SeparatorLine className="my-8 sm:my-16" />
       <PricingCTA />
       <SeparatorLine className="my-8 sm:my-16" />
-      <TestimonialsSection
-        title="What Our Users Are Saying"
-        description="Real feedback from our community—see how they're scaling faster with our platform."
-        testimonials={testimonials}
-      />
+      <TestimonialsSection />
       <SeparatorLine className="my-8 sm:my-16" />
 
       <CTASection />

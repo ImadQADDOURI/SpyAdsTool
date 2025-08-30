@@ -1,34 +1,26 @@
-import { cn } from "@/lib/utils";
+import { testimonials } from "@/configuration/landing-config";
 
-import { TestimonialAuthor, TestimonialCard } from "./testimonial-card";
+import { AuroraText } from "../hero/AuroraText";
+import { TestimonialCard } from "./testimonial-card";
 
-interface TestimonialsSectionProps {
-  title: string;
-  description: string;
-  testimonials: Array<{
-    author: TestimonialAuthor;
-    text: string;
-    rating: number; // ⭐ Add rating property to testimonials
-    href?: string;
-  }>;
-  className?: string;
-}
-
-export function TestimonialsSection({
-  title,
-  description,
-  testimonials,
-  className,
-}: TestimonialsSectionProps) {
+export function TestimonialsSection() {
   return (
-    <section className={cn("px-0", className)}>
+    <section className="px-0">
       <div className="max-w-container mx-auto flex flex-col items-center gap-4 text-center sm:gap-16">
-        <div className="flex flex-col items-center gap-4 px-4 sm:gap-8">
-          <h2 className="max-w-[720px] text-3xl font-semibold leading-tight sm:text-5xl sm:leading-tight">
-            {title}
+        <div className="mb-6 space-y-4 text-center">
+          <h2 className="mb-1 text-balance text-2xl font-bold sm:text-3xl lg:text-5xl">
+            What Our{" "}
+            <AuroraText
+              colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
+              className="inline-block"
+            >
+              Users
+            </AuroraText>{" "}
+            Are Saying
           </h2>
-          <p className="text-md max-w-[600px] font-medium text-muted-foreground sm:text-xl">
-            {description}
+          <p className="mx-auto max-w-2xl text-sm text-muted-foreground sm:text-base lg:text-lg">
+            Real feedback from our community—see how they're scaling faster with
+            our platform.
           </p>
         </div>
 
