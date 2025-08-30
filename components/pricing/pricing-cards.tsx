@@ -4,14 +4,7 @@ import { useContext, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { UserSubscriptionPlan } from "@/types";
-import {
-  CircleCheckBig,
-  CreditCard,
-  Crown,
-  Rocket,
-  Star,
-  Zap,
-} from "lucide-react";
+import { CircleCheckBig, Crown, Rocket, Star, Zap } from "lucide-react";
 
 import type { SubscriptionPlan } from "@/types/index";
 import { cn } from "@/lib/utils";
@@ -48,38 +41,38 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
       case "starter":
         return {
           border:
-            "border-blue-200 dark:border-blue-800 hover:border-blue-300 dark:hover:border-blue-700",
+            "border-blue-400 dark:border-blue-500 hover:border-blue-300 dark:hover:border-blue-400",
           background:
             "bg-gradient-to-br from-blue-50/50 to-blue-100/30 dark:from-blue-950/20 dark:to-blue-900/10",
-          headerBg:
-            "bg-gradient-to-r from-blue-500/10 to-blue-600/10 dark:from-blue-500/20 dark:to-blue-600/20",
+          headerBg: "bg-gradient-to-r from-blue-500 to-blue-600",
           accent: "text-blue-600 dark:text-blue-400",
+          headerText: "text-white",
           icon: Zap,
-          shadow: "shadow-blue-100 dark:shadow-blue-900/20",
+          shadow: "shadow-blue-200 dark:shadow-blue-900/30",
         };
       case "pro":
         return {
           border:
-            "border-pink-300 dark:border-pink-700 hover:border-pink-400 dark:hover:border-pink-600 ring-2 ring-pink-200 dark:ring-pink-800",
+            "border-pink-400 dark:border-pink-500 hover:border-pink-300 dark:hover:border-pink-400 ring-2 ring-pink-300 dark:ring-pink-600",
           background:
             "bg-gradient-to-br from-pink-50/50 to-rose-100/30 dark:from-pink-950/20 dark:to-rose-900/10",
-          headerBg:
-            "bg-gradient-to-r from-pink-500/10 to-rose-500/10 dark:from-pink-500/20 dark:to-rose-500/20",
+          headerBg: "bg-gradient-to-r from-pink-500 to-rose-500",
           accent: "text-pink-600 dark:text-pink-400",
+          headerText: "text-white",
           icon: Crown,
           shadow: "shadow-pink-200 dark:shadow-pink-900/30",
         };
       default:
         return {
           border:
-            "border-green-200 dark:border-green-800 hover:border-green-300 dark:hover:border-green-700",
+            "border-green-400 dark:border-green-500 hover:border-green-300 dark:hover:border-green-400",
           background:
             "bg-gradient-to-br from-green-50/50 to-green-100/30 dark:from-green-950/20 dark:to-green-900/10",
-          headerBg:
-            "bg-gradient-to-r from-green-500/10 to-green-600/10 dark:from-green-500/20 dark:to-green-600/20",
+          headerBg: "bg-gradient-to-r from-green-500 to-green-600",
           accent: "text-green-600 dark:text-green-400",
+          headerText: "text-white",
           icon: Star,
-          shadow: "shadow-green-100 dark:shadow-green-900/20",
+          shadow: "shadow-green-200 dark:shadow-green-900/30",
         };
     }
   };
@@ -104,7 +97,7 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
           <div
             className={`absolute -top-3 left-1/2 z-10 flex -translate-x-1/2 transform items-center space-x-1 rounded-full px-3 py-1 text-xs font-bold uppercase text-white shadow-lg ${
               isYearly
-                ? "bg-gradient-to-r from-blue-500 to-blue-600"
+                ? "bg-gradient-to-r from-emerald-400 to-emerald-600"
                 : "bg-gradient-to-r from-pink-500 to-rose-500"
             }`}
           >
@@ -114,14 +107,14 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
         )}
         <div
           className={cn(
-            "min-h-[180px] items-start space-y-4 p-6",
+            "min-h-[180px] items-start space-y-4 rounded-t-xl p-6",
             styles.headerBg,
           )}
         >
           <div className="flex items-center gap-3">
             <div
               className={cn(
-                "rounded-lg bg-white/80 p-2 dark:bg-gray-800/80",
+                "rounded-xl bg-white/95 p-2.5 shadow-md backdrop-blur-sm",
                 styles.accent,
               )}
             >
@@ -130,13 +123,12 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
             <div>
               <p
                 className={cn(
-                  "font-urban text-lg font-bold uppercase tracking-wider",
-                  styles.accent,
+                  "font-urban text-lg font-bold uppercase tracking-wider text-white drop-shadow-sm",
                 )}
               >
                 {offer.title}
               </p>
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-sm font-medium text-white/90 drop-shadow-sm">
                 {offer.description}
               </p>
             </div>
@@ -147,30 +139,32 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
               <div className="flex text-left text-4xl font-bold leading-6">
                 {isYearly && offer.prices.monthly > 0 ? (
                   <>
-                    <span className="mr-2 text-2xl text-muted-foreground/60 line-through">
+                    <span className="mr-2 text-2xl text-white/60 line-through drop-shadow-sm">
                       ${offer.prices.monthly}
                     </span>
-                    <span className={styles.accent}>
+                    <span className="text-white drop-shadow-sm">
                       ${offer.prices.yearly / 12}
                     </span>
                   </>
                 ) : (
-                  <span className={styles.accent}>${offer.prices.monthly}</span>
+                  <span className="text-white drop-shadow-sm">
+                    ${offer.prices.monthly}
+                  </span>
                 )}
               </div>
-              <div className="-mb-1 ml-2 text-left text-sm font-medium text-muted-foreground">
+              <div className="-mb-1 ml-2 text-left text-sm font-medium text-white/80 drop-shadow-sm">
                 <div>/month</div>
               </div>
             </div>
           </div>
           {offer.prices.monthly > 0 ? (
-            <div className="text-left text-sm font-medium text-muted-foreground">
+            <div className="text-left text-sm font-medium text-white/80 drop-shadow-sm">
               {isYearly
                 ? `$${offer.prices.yearly} billed annually`
                 : "billed monthly"}
             </div>
           ) : (
-            <div className="text-left text-sm font-medium text-green-600 dark:text-green-400">
+            <div className="text-left text-sm font-medium text-white drop-shadow-sm">
               Forever free
             </div>
           )}
@@ -274,7 +268,7 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
           >
             <ToggleGroupItem
               value="yearly"
-              className="rounded-full px-6 font-semibold transition-all duration-200 data-[state=on]:!bg-gradient-to-r data-[state=on]:!from-blue-500 data-[state=on]:!to-blue-600 data-[state=on]:!text-white data-[state=on]:shadow-md"
+              className="rounded-full px-6 font-semibold transition-all duration-200 data-[state=on]:!bg-gradient-to-r data-[state=on]:!from-emerald-400 data-[state=on]:!to-emerald-600 data-[state=on]:!text-white data-[state=on]:shadow-md"
               aria-label="Toggle yearly billing"
             >
               Yearly (-20%)
@@ -303,15 +297,6 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
         <div className="mt-12 w-full max-w-5xl">
           <div className="rounded-2xl border bg-gradient-to-br from-gray-50/50 to-gray-100/30 p-8 dark:from-gray-950/20 dark:to-gray-900/10">
             <div className="text-center">
-              {/* <div className="mb-4 flex items-center justify-center gap-3">
-                <div className="rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 p-3">
-                  <CreditCard className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <h3 className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-2xl font-bold text-transparent dark:from-gray-100 dark:via-gray-200 dark:to-gray-100">
-                  Secure Payment Methods
-                </h3>
-              </div> */}
-
               <p className="mb-12 text-lg text-gray-600/90 dark:text-gray-400/90">
                 Powered by Stripe with support for{" "}
                 <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text font-semibold text-transparent dark:from-purple-400 dark:to-pink-400">
@@ -320,7 +305,6 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
                 worldwide
               </p>
 
-              {/* Payment methods with no containers - cleaner look */}
               <div className="flex flex-wrap items-center justify-center gap-8">
                 {paymentMethods.map((method) => (
                   <div
@@ -338,22 +322,6 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
                   </div>
                 ))}
               </div>
-
-              {/* Trust indicators */}
-              {/* <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500 dark:text-gray-400">
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-green-500" />
-                  <span>256-bit SSL encryption</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-blue-500" />
-                  <span>PCI DSS compliant</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-purple-500" />
-                  <span>Global coverage</span>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>

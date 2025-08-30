@@ -67,7 +67,7 @@ export function PricingCTA() {
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="yearly"
-                className="rounded-full px-4 text-sm font-semibold transition-all duration-200 data-[state=on]:!bg-gradient-to-r data-[state=on]:!from-blue-500 data-[state=on]:!to-blue-600 data-[state=on]:!text-white data-[state=on]:shadow-md sm:px-6 sm:text-base"
+                className="rounded-full px-4 text-sm font-semibold transition-all duration-200 data-[state=on]:!bg-gradient-to-r data-[state=on]:!from-emerald-400 data-[state=on]:!to-emerald-600 data-[state=on]:!text-white data-[state=on]:shadow-md sm:px-6 sm:text-base"
                 aria-label="Toggle yearly billing"
               >
                 Yearly
@@ -80,7 +80,7 @@ export function PricingCTA() {
           <div
             className={`absolute -top-3 left-1/2 z-50 flex -translate-x-1/2 transform items-center space-x-1 rounded-full px-3 py-1 text-xs font-bold uppercase text-white shadow-lg sm:left-6 sm:translate-x-0 sm:px-4 sm:text-xs lg:left-8 ${
               isYearly
-                ? "bg-gradient-to-r from-blue-500 to-blue-600"
+                ? "bg-gradient-to-r from-emerald-400 to-emerald-600"
                 : "bg-gradient-to-r from-pink-500 to-rose-500"
             }`}
           >
