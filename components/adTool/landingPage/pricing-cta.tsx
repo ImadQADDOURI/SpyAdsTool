@@ -234,12 +234,15 @@ export function PricingCTA() {
           </div>
 
           <div className="text-center">
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-2.5 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:from-pink-600 hover:to-rose-600 hover:shadow-xl sm:px-8 sm:py-3 sm:text-lg"
-            >
-              {starterPlan?.title} for ${starterPlan?.prices.monthly} - Try Free
-            </Button>
+            <Link href="/pricing">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-2.5 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:from-pink-600 hover:to-rose-600 hover:shadow-xl sm:px-8 sm:py-3 sm:text-lg"
+              >
+                {starterPlan?.title} for ${starterPlan?.prices.monthly} - Try
+                Free
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
