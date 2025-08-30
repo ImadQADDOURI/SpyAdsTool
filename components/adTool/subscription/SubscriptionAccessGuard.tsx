@@ -95,11 +95,11 @@ export default function SubscriptionAccessGuard({
           {children}
         </div>
 
-        {/* Light purple overlay when hideContent is enabled */}
+        {/* Light pink overlay when hideContent is enabled */}
         {hideContent && (
           <div
             className={cn(
-              "absolute inset-0 bg-purple-200/30 backdrop-blur-sm transition-opacity duration-200",
+              "absolute inset-0 bg-pink-200/30 backdrop-blur-sm transition-opacity duration-200",
               isHovering ? "opacity-60" : "opacity-40",
             )}
           />
@@ -117,7 +117,7 @@ export default function SubscriptionAccessGuard({
                   : "scale-100",
               )}
             >
-              <LockIcon className="h-full w-full text-[#6566F1] opacity-80" />
+              <LockIcon className="h-full w-full text-pink-500 opacity-80" />
             </div>
           </div>
         )}
@@ -127,7 +127,7 @@ export default function SubscriptionAccessGuard({
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-md bg-white p-6 dark:bg-gray-900">
           <DialogHeader>
-            <DialogTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-center text-xl font-bold text-transparent">
+            <DialogTitle className="bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-center text-xl font-bold text-transparent">
               Premium Feature
             </DialogTitle>
             <DialogDescription className="pt-2 text-center">
@@ -137,14 +137,14 @@ export default function SubscriptionAccessGuard({
           </DialogHeader>
 
           <div className="mt-4 flex flex-col items-center">
-            <div className="mb-4 rounded-full bg-gradient-to-br from-[#6566F1]/10 to-[#B977F8]/10 p-4">
-              <LockIcon className="h-10 w-10 text-[#6566F1]" />
+            <div className="mb-4 rounded-full bg-gradient-to-br from-pink-500/10 to-rose-500/10 p-4">
+              <LockIcon className="h-10 w-10 text-pink-500" />
             </div>
 
             <div className="mt-2 w-full space-y-4">
               <Button
                 onClick={handleUpgradeClick}
-                className="w-full bg-gradient-to-r from-[#6566F1] to-[#B977F8] text-white transition-all hover:opacity-90"
+                className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white transition-all hover:opacity-90"
               >
                 Upgrade Now
               </Button>

@@ -25,7 +25,7 @@ export function ComparePlans() {
       case "starter":
         return "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800";
       case "pro":
-        return "bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800 relative";
+        return "bg-pink-50 dark:bg-pink-950/20 border-pink-200 dark:border-pink-800 relative";
       default:
         return "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800";
     }
@@ -36,7 +36,7 @@ export function ComparePlans() {
       case "starter":
         return "text-blue-700 dark:text-blue-300";
       case "pro":
-        return "text-purple-700 dark:text-purple-300";
+        return "text-pink-700 dark:text-pink-300";
       default:
         return "text-green-700 dark:text-green-300";
     }
@@ -50,7 +50,7 @@ export function ComparePlans() {
         col.toLowerCase() === "starter"
           ? "text-blue-500"
           : col.toLowerCase() === "pro"
-            ? "text-purple-500"
+            ? "text-pink-500"
             : "text-green-500";
       return value ? (
         <CircleCheck className={`mx-auto size-[22px] ${iconColor}`} />
@@ -88,13 +88,6 @@ export function ComparePlans() {
                         col.toLowerCase() === "pro" ? "relative" : ""
                       }`}
                     >
-                      {/* {col.toLowerCase() === "pro" && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 transform">
-                          <span className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-3 py-1 text-xs font-bold text-white shadow-lg">
-                            POPULAR
-                          </span>
-                        </div>
-                      )} */}
                       {col}
                     </th>
                   ))}
@@ -131,7 +124,7 @@ export function ComparePlans() {
                         key={col}
                         className={`border-b border-border p-4 text-center text-[15px] transition-colors lg:text-base ${getColumnStyles(col)} ${
                           col.toLowerCase() === "pro"
-                            ? "border-l-2 border-r-2 border-purple-200 dark:border-purple-800"
+                            ? "border-l-2 border-r-2 border-pink-200 dark:border-pink-800"
                             : ""
                         }`}
                       >

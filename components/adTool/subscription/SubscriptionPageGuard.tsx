@@ -37,7 +37,7 @@ const UpgradeDialog: React.FC = () => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
       <div className="max-w-md rounded-lg bg-white p-6 shadow-xl dark:bg-gray-900">
         <div>
-          <h2 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-center text-xl font-bold text-transparent">
+          <h2 className="bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-center text-xl font-bold text-transparent">
             Premium Feature
           </h2>
           <p className="pt-2 text-center text-gray-700 dark:text-gray-300">
@@ -46,13 +46,13 @@ const UpgradeDialog: React.FC = () => {
           </p>
         </div>
         <div className="mt-4 flex flex-col items-center">
-          <div className="mb-4 rounded-full bg-gradient-to-br from-[#6566F1]/10 to-[#B977F8]/10 p-4">
-            <Lock className="h-10 w-10 text-[#6566F1]" />
+          <div className="mb-4 rounded-full bg-gradient-to-br from-pink-500/10 to-rose-500/10 p-4">
+            <Lock className="h-10 w-10 text-pink-500" />
           </div>
           <div className="mt-2 w-full space-y-4">
             <button
               onClick={handleUpgradeClick}
-              className="w-full rounded bg-gradient-to-r from-[#6566F1] to-[#B977F8] px-4 py-2 font-bold text-white shadow transition-all hover:opacity-90"
+              className="w-full rounded bg-gradient-to-r from-pink-500 to-rose-500 px-4 py-2 font-bold text-white shadow transition-all hover:opacity-90"
             >
               Upgrade Now
             </button>
