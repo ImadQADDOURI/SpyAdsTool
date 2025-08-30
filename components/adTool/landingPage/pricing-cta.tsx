@@ -77,7 +77,7 @@ export function PricingCTA() {
         </div>
 
         <div className="relative">
-          <div className="absolute -top-3 left-4 z-50 flex items-center space-x-1 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-3 py-1 text-xs font-bold uppercase text-white shadow-lg sm:left-6 sm:px-4 sm:text-xs lg:left-8">
+          <div className="absolute -top-3 left-4 z-10 flex items-center space-x-1 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-3 py-1 text-xs font-bold uppercase text-white shadow-lg sm:left-6 sm:px-4 sm:text-xs lg:left-8">
             <Crown className="h-3 w-3 sm:h-4 sm:w-4" />
             <span>Most Popular</span>
           </div>
