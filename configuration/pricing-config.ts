@@ -34,6 +34,9 @@ export const pricingData: SubscriptionPlan[] = [
       "Access to business templates",
       "Priority customer support",
       "Exclusive webinars and training.",
+      "Custom branding (up to 500 posts/month)",
+      "Standard API access",
+      "Monthly webinars",
     ],
     limitations: [
       "No custom branding",
