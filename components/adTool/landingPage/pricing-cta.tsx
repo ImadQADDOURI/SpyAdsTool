@@ -189,7 +189,7 @@ export function PricingCTA() {
         <div className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
           <div className="mx-auto max-w-4xl">
             <div className="grid gap-2 sm:gap-3 md:grid-cols-3">
-              <div className="flex flex-col items-center gap-2 rounded-xl bg-gradient-to-br from-green-50 to-green-100/50 p-2.5 text-center shadow-sm transition-all duration-200 hover:shadow-md dark:from-green-900/20 dark:to-green-800/10 sm:flex-row sm:gap-3 sm:p-3 sm:text-left">
+              <div className="flex flex-row items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-green-50 to-green-100/50 p-2.5 text-center shadow-sm transition-all duration-200 hover:shadow-md dark:from-green-900/20 dark:to-green-800/10 sm:gap-3 sm:p-3 sm:text-left">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-green-600 shadow-sm sm:h-10 sm:w-10">
                   <Shield className="h-4 w-4 text-white sm:h-5 sm:w-5" />
                 </div>
@@ -203,7 +203,7 @@ export function PricingCTA() {
                 </div>
               </div>
 
-              <div className="flex flex-col items-center gap-2 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 p-2.5 text-center shadow-sm transition-all duration-200 hover:shadow-md dark:from-blue-900/20 dark:to-blue-800/10 sm:flex-row sm:gap-3 sm:p-3 sm:text-left">
+              <div className="flex flex-row items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 p-2.5 text-center shadow-sm transition-all duration-200 hover:shadow-md dark:from-blue-900/20 dark:to-blue-800/10 sm:gap-3 sm:p-3 sm:text-left">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-blue-600 shadow-sm sm:h-10 sm:w-10">
                   <Check className="h-4 w-4 text-white sm:h-5 sm:w-5" />
                 </div>
@@ -217,7 +217,7 @@ export function PricingCTA() {
                 </div>
               </div>
 
-              <div className="flex flex-col items-center gap-2 rounded-xl bg-gradient-to-br from-red-50 to-red-100/50 p-2.5 text-center shadow-sm transition-all duration-200 hover:shadow-md dark:from-red-900/20 dark:to-red-800/10 sm:flex-row sm:gap-3 sm:p-3 sm:text-left">
+              <div className="flex flex-row items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-red-50 to-red-100/50 p-2.5 text-center shadow-sm transition-all duration-200 hover:shadow-md dark:from-red-900/20 dark:to-red-800/10 sm:gap-3 sm:p-3 sm:text-left">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-red-600 shadow-sm sm:h-10 sm:w-10">
                   <X className="h-4 w-4 text-white sm:h-5 sm:w-5" />
                 </div>
