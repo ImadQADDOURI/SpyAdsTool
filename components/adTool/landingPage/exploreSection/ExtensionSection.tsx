@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Chrome, Download } from "lucide-react";
 
 import { EXTENSION_CONFIG } from "../../../../configuration/landing-config";
+import { Header } from "../header";
 import { AuroraText } from "../hero/AuroraText";
 import { CTAButton } from "./CTAButton";
 
@@ -70,23 +71,17 @@ export default function ExtensionSection({
                 </span>
               </div>
 
-              <h1 className="mb-4 text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
-                {EXTENSION_CONFIG.headline.prefix}{" "}
-                <AuroraText
-                  colors={EXTENSION_CONFIG.gradientColors}
-                  className="inline-block"
-                >
-                  {EXTENSION_CONFIG.headline.highlight}
-                </AuroraText>
-                <br className="hidden sm:block" />
-                <span className="text-white/90">
-                  {EXTENSION_CONFIG.headline.suffix}
-                </span>
-              </h1>
-
-              <p className="mx-auto mb-6 max-w-3xl text-base leading-relaxed text-white/75 sm:text-lg">
-                {EXTENSION_CONFIG.subtitle}
-              </p>
+              {/* 📝Header */}
+              <Header
+                gradientColors={EXTENSION_CONFIG.gradientColors}
+                headline={EXTENSION_CONFIG.headline}
+                subtitle={EXTENSION_CONFIG.subtitle}
+                className="px-4"
+                // headlineClassName="text-6xl"
+                // subtitleClassName="text-xl"
+                // containerClassName="max-w-4xl"
+                forceDarkMode={true}
+              />
 
               <CTAButton
                 href={EXTENSION_CONFIG.ctaLink}

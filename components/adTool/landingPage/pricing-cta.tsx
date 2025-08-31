@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { pricing_CTA_Config } from "@/configuration/landing-config";
 import { pricingData } from "@/configuration/pricing-config";
 import { Check, Crown, Shield, Sparkles, X } from "lucide-react";
 
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
+import { Header } from "./header";
 import { AuroraText } from "./hero/AuroraText";
 
 export function PricingCTA() {
@@ -35,19 +37,17 @@ export function PricingCTA() {
     <section className="w-full overflow-hidden px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 space-y-4 text-center">
-          <h2 className="mb-1 text-balance text-2xl font-bold sm:text-3xl lg:text-5xl">
-            Simple{" "}
-            <AuroraText
-              colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
-              className="inline-block"
-            >
-              Pricing
-            </AuroraText>{" "}
-            for your business
-          </h2>
-          <p className="mx-auto max-w-2xl text-sm text-muted-foreground sm:text-base lg:text-lg">
-            Plans that are carefully crafted to suit your business.
-          </p>
+          {/* 📝Header */}
+          <Header
+            gradientColors={pricing_CTA_Config.gradientColors}
+            headline={pricing_CTA_Config.headline}
+            subtitle={pricing_CTA_Config.subtitle}
+            className="px-4"
+            // headlineClassName="text-6xl"
+            // subtitleClassName="text-xl"
+            // containerClassName="max-w-4xl"
+            // forceDarkMode={true}
+          />
 
           <div className="mb-6 flex items-center justify-center">
             <ToggleGroup

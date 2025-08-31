@@ -9,6 +9,7 @@ import TrendingSection from "@/components/adTool/landingPage/exploreSection/Tren
 import FeaturesSection from "@/components/adTool/landingPage/features-section";
 import GradientBackground from "@/components/adTool/landingPage/hero/gradient-background";
 import HeroSection from "@/components/adTool/landingPage/hero/hero-section";
+import WorldMap from "@/components/adTool/landingPage/map";
 import { PricingCTA } from "@/components/adTool/landingPage/pricing-cta";
 import { TestimonialsSection } from "@/components/adTool/landingPage/reviewSection/testimonials-with-marquee";
 import { SeparatorLine } from "@/components/adTool/landingPage/separator-line";
@@ -50,7 +51,7 @@ export default function IndexPage() {
       <SeparatorLine className="my-8 sm:my-16" />
       <TestimonialsSection />
       <SeparatorLine className="my-8 sm:my-16" />
-
+      {/* <WorldMap /> */}
       <CTASection />
       {/* Footer Section in layout */}
     </div>

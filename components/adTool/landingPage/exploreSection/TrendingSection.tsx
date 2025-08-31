@@ -3,6 +3,7 @@
 import { Flame, Package, Store, TrendingUp } from "lucide-react";
 
 import { TrendingConfig } from "../../../../configuration/landing-config";
+import { Header } from "../header";
 import { AuroraText } from "../hero/AuroraText";
 import { CTAButton } from "./CTAButton";
 import { MarqueeColumn } from "./MarqueeColumn";
@@ -44,23 +45,17 @@ export default function TrendingSection({
                 </span>
               </div>
 
-              <h1 className="mb-4 text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
-                {TrendingConfig.headline.prefix}{" "}
-                <AuroraText
-                  colors={TrendingConfig.gradientColors}
-                  className="inline-block"
-                >
-                  {TrendingConfig.headline.highlight}
-                </AuroraText>
-                <br className="hidden sm:block" />
-                <span className="text-white/90">
-                  {TrendingConfig.headline.suffix}
-                </span>
-              </h1>
-
-              <p className="mx-auto mb-6 max-w-3xl text-base leading-relaxed text-white/75 sm:text-lg">
-                {TrendingConfig.subtitle}
-              </p>
+              {/* 📝Header */}
+              <Header
+                gradientColors={TrendingConfig.gradientColors}
+                headline={TrendingConfig.headline}
+                subtitle={TrendingConfig.subtitle}
+                className="px-4"
+                // headlineClassName="text-6xl"
+                // subtitleClassName="text-xl"
+                // containerClassName="max-w-4xl"
+                forceDarkMode={true}
+              />
 
               {/* 🚀 Horizontal Three-Column Layout - Always Side by Side */}
               <div className="grid grid-cols-3 gap-1 sm:gap-2">

@@ -471,6 +471,7 @@ export const EXTENSION_CONFIG = {
 };
 
 export const analyticsConfig = {
+  gradientColors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
   headline: {
     prefix: "Powerful",
     highlight: "Analytics",
@@ -526,108 +527,100 @@ export const analyticsConfig = {
   },
 };
 
-export const testimonials = [
-  {
-    author: {
-      name: "Emma Thompson",
-      handle: "@emmaai",
-      avatar:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
-    },
-    text: "Using this AI platform has transformed how we handle data analysis. The speed and accuracy are unprecedented.",
-    rating: 5, // ⭐ rating
-    href: "https://twitter.com/emmaai",
+export const pricing_CTA_Config = {
+  gradientColors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
+  headline: {
+    prefix: "Simple",
+    highlight: "Pricing",
+    suffix: "for your business",
   },
-  {
-    author: {
-      name: "David Park",
-      handle: "@davidtech",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-    },
-    text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
-    rating: 5,
-    href: "https://twitter.com/davidtech",
+  subtitle: "Plans that are carefully crafted to suit your business.",
+};
+
+export const testimonials = {
+  gradientColors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
+
+  headline: {
+    prefix: "What Our",
+    highlight: "Users",
+    suffix: "Are Saying",
   },
-  {
-    author: {
-      name: "Sofia Rodriguez",
-      handle: "@sofiaml",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
+  subtitle:
+    "Real feedback from our community—see how they're scaling faster with our platform.",
+  reviews: [
+    {
+      author: {
+        name: "Emma Thompson",
+        handle: "@emmaai",
+        avatar:
+          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
+      },
+      text: "Using this AI platform has transformed how we handle data analysis. The speed and accuracy are unprecedented.",
+      rating: 5, // ⭐ rating
+      href: "https://twitter.com/emmaai",
     },
-    text: "Finally, an AI tool that actually understands context! The accuracy in natural language processing is impressive.",
-    rating: 4,
-  },
-  {
-    author: {
-      name: "Emma Thompson",
-      handle: "@emmaai",
-      avatar:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
+    {
+      author: {
+        name: "David Park",
+        handle: "@davidtech",
+        avatar:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+      },
+      text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
+      rating: 5,
+      href: "https://twitter.com/davidtech",
     },
-    text: "Using this AI platform has transformed how we handle data analysis. The speed and accuracy are unprecedented.",
-    rating: 5,
-    href: "https://twitter.com/emmaai",
-  },
-  {
-    author: {
-      name: "David Park",
-      handle: "@davidtech",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+    {
+      author: {
+        name: "Sofia Rodriguez",
+        handle: "@sofiaml",
+        avatar:
+          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
+      },
+      text: "Finally, an AI tool that actually understands context! The accuracy in natural language processing is impressive.",
+      rating: 4,
     },
-    text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
-    rating: 5,
-    href: "https://twitter.com/davidtech",
-  },
-];
+    {
+      author: {
+        name: "Emma Thompson",
+        handle: "@emmaai",
+        avatar:
+          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
+      },
+      text: "Using this AI platform has transformed how we handle data analysis. The speed and accuracy are unprecedented.",
+      rating: 5,
+      href: "https://twitter.com/emmaai",
+    },
+    {
+      author: {
+        name: "David Park",
+        handle: "@davidtech",
+        avatar:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+      },
+      text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
+      rating: 5,
+      href: "https://twitter.com/davidtech",
+    },
+  ],
+};
 
 export const CTA_CONFIG = {
-  content: {
-    headline: {
-      beforeText: "Start",
-      highlightText: "Winning",
-      highlightColors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
-    },
-    button: {
-      text: "Get Started Free",
-      href: "/signup",
-      external: false,
-    },
-    pills: [
-      { text: "No credit card", icon: "credit-card" }, // 💳 Added credit card pill
-      { text: "Cancel anytime", icon: "check" },
-      { text: "No setup fees", icon: "check" },
-    ],
+  gradientColors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
+  headline: {
+    prefix: "Start",
+    highlight: "Winning",
+    suffix: "",
   },
-  styling: {
-    section: {
-      padding: "py-16 md:py-20 lg:py-24", // 📏 Reduced from py-32/40/48
-    },
-    headline: {
-      sizes: "text-4xl md:text-6xl lg:text-7xl xl:text-8xl", // 📏 Significantly reduced from text-6xl/8xl/9xl/10rem
-      spacing: "mb-8", // 📏 Reduced from mb-12
-    },
-    button: {
-      padding: "px-8 py-4", // 📏 Reduced from px-16 py-8
-      textSize: "text-lg", // 📏 Reduced from text-2xl
-      borderRadius: "rounded-full",
-    },
-    pills: {
-      spacing: "mt-6", // 📏 Reduced from mt-10
-      gap: "gap-3", // 📏 Reduced from gap-4
-      padding: "px-4 py-2", // 📏 Reduced from px-5 py-3
-      textSize: "text-xs", // 📏 Reduced from text-sm
-    },
+  subtitle: "",
+  button: {
+    text: "Get Started Free",
+    href: "/signup",
+    external: false,
   },
-  animation: {
-    backgroundBlur: "blur-3xl",
-    pulseSpeed: "4s",
-    delays: {
-      button: "0.2s", // 📏 Reduced delays
-      pills: "0.3s",
-      pillStagger: "0.08s",
-    },
-  },
+  pills: [
+    { text: "No credit card", icon: "credit-card" },
+    { text: "Cancel anytime", icon: "check" },
+    { text: "No setup fees", icon: "check" },
+  ],
 };

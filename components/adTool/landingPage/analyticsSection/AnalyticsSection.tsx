@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 import { analyticsConfig } from "../../../../configuration/landing-config";
+import { Header } from "../header";
 import { AuroraText } from "../hero/AuroraText";
 import { AnalyticsTab } from "./AnalyticsTab";
 
@@ -43,43 +44,17 @@ export function AnalyticsSection({ className }: AnalyticsSectionProps) {
       <div className="via-white/2 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-transparent" />
 
       <div className="container relative z-10 mx-auto max-w-7xl px-4">
-        {/* 📝 Header - Compact Design */}
-        <div className="mb-8 text-center lg:mb-12">
-          <div
-            className={cn(
-              "transform transition-all duration-700",
-              isVisible
-                ? "translate-y-0 opacity-100"
-                : "translate-y-8 opacity-0",
-            )}
-          >
-            {/* 🎯 Enhanced headline with subtle text shadow */}
-            <h2 className="mb-4 text-3xl font-bold leading-tight tracking-tight drop-shadow-sm sm:text-5xl">
-              {analyticsConfig.headline.prefix}{" "}
-              <AuroraText
-                colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
-                className="inline-block"
-              >
-                {analyticsConfig.headline.highlight}
-              </AuroraText>{" "}
-              {analyticsConfig.headline.suffix}
-            </h2>
-          </div>
-
-          <div
-            className={cn(
-              "transform transition-all delay-200 duration-700",
-              isVisible
-                ? "translate-y-0 opacity-100"
-                : "translate-y-8 opacity-0",
-            )}
-          >
-            {/* 🎯 Enhanced subtitle with better contrast */}
-            <p className="mx-auto max-w-3xl text-base leading-relaxed text-gray-600/90 drop-shadow-sm dark:text-gray-400/90 sm:text-lg">
-              {analyticsConfig.subtitle}
-            </p>
-          </div>
-        </div>
+        {/* 📝Header */}
+        <Header
+          gradientColors={analyticsConfig.gradientColors}
+          headline={analyticsConfig.headline}
+          subtitle={analyticsConfig.subtitle}
+          className="px-4"
+          // headlineClassName="text-6xl"
+          // subtitleClassName="text-xl"
+          // containerClassName="max-w-4xl"
+          // forceDarkMode={true}
+        />
 
         {/* 📊 Analytics Tabs */}
         <div
