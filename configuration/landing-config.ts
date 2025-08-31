@@ -615,7 +615,7 @@ export const CTA_CONFIG = {
   subtitle: "",
   button: {
     text: "Get Started Free",
-    href: "/signup",
+    href: "/pricing",
     external: false,
   },
   pills: [
