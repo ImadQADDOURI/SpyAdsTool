@@ -8,7 +8,7 @@ export function TestimonialsSection() {
     <section className="px-0">
       <div className="max-w-container mx-auto flex flex-col items-center gap-4 text-center sm:gap-16">
         {/* Section heading */}
-        <div className="mb-6 space-y-4 text-center">
+        <div className="mx-auto mb-6 space-y-4 px-4 text-center">
           <h2 className="mb-1 text-balance text-2xl font-bold sm:text-3xl lg:text-5xl">
             What Our{" "}
             <AuroraText
