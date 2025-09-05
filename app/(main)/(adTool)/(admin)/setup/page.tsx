@@ -1217,6 +1217,10 @@ GRANT ALL PRIVILEGES ON DATABASE your_app_database TO your_app_user;`}
                             preview
                           </li>
                           <li>
+                            • <code>pricing_CTA_Config</code> - Pricing
+                            call-to-action
+                          </li>
+                          <li>
                             • <code>testimonials</code> - Customer testimonials
                           </li>
                           <li>

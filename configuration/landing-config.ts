@@ -49,27 +49,27 @@ export const heroConfig = {
 
   // 🖼️ Floating Images heroConfiguration - Centralized positioning and settings
   heroImages: [
-    {
-      id: "main-center",
-      src: "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
-      alt: "Main hero banner",
-      position: {
-        className: "relative z-20",
-      },
-      animation: {
-        floatAmplitude: 8,
-        floatSpeed: 6,
-        delay: 0,
-      },
-      settings: {
-        glass: true,
-        lens: true,
-        zoomFactor: 1.3,
-      },
-    },
+    // {
+    //   id: "main-center",
+    //   src: "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
+    //   alt: "Main hero banner",
+    //   position: {
+    //     className: "relative z-20",
+    //   },
+    //   animation: {
+    //     floatAmplitude: 8,
+    //     floatSpeed: 6,
+    //     delay: 0,
+    //   },
+    //   settings: {
+    //     glass: true,
+    //     lens: true,
+    //     zoomFactor: 1.3,
+    //   },
+    // },
     {
       id: "top-left",
-      src: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
       alt: "Hero banner 1",
       position: {
         className: "absolute left-0 top-0 z-10",
@@ -86,7 +86,7 @@ export const heroConfig = {
     },
     {
       id: "top-right",
-      src: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
       alt: "Hero banner 2",
       position: {
         className: "absolute right-0 top-8 z-10",
@@ -120,7 +120,7 @@ export const heroConfig = {
     },
     {
       id: "bottom-right",
-      src: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
+      src: "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
       alt: "Hero banner 5",
       position: {
         className: "absolute bottom-0 right-8 z-10",
