@@ -494,10 +494,10 @@ export default function TopProductsDisplay() {
             )}
           </div>
 
-          <div className="relative w-full max-w-xs sm:w-auto">
+          <div className="relative w-full max-w-xs sm:max-w-md">
             <Input
               className="h-10 pl-4 pr-10"
-              placeholder="Search products..."
+              placeholder="Search by Name, Category ..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
