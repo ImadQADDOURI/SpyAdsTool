@@ -45,11 +45,11 @@ const useResponsiveColumns = () => {
 
   useEffect(() => {
     const getColumns = (width: number) => {
-      if (width < 640) return 1; // sm
-      if (width < 768) return 2; // md
-      if (width < 1024) return 3; // lg
-      if (width < 1280) return 4; // xl
-      return 5; // 2xl
+      if (width < 700) return 1; // sm
+      if (width < 1000) return 2; // md
+      if (width < 1200) return 3; // lg
+      if (width < 1600) return 4; // 2xl
+      return 5; // >2xl
     };
 
     const handleResize = () => {
