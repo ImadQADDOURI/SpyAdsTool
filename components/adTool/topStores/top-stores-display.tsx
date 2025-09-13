@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { getTopStores } from "@/actions/top-stores";
 import type { TopStore } from "@prisma/client";
 import {
@@ -55,7 +56,7 @@ function StoreCard({ store }: { store: TopStore }) {
   return (
     <Card className="h-full overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
       {/* 🖼️ Store Image - Fits within container, preserves aspect ratio */}
-      <div className="relative h-48 w-full overflow-hidden rounded-t-xl bg-gray-100 dark:bg-gray-800">
+      <div className="relative h-64 w-full overflow-hidden rounded-t-xl bg-gray-100 dark:bg-gray-800">
         <Image
           src={store.image || "/placeholder.svg"}
           alt={store.name}
@@ -76,6 +77,17 @@ function StoreCard({ store }: { store: TopStore }) {
           <LocateFixed className="mr-1 inline-block h-3 w-3" />
           {store.niche}
         </div>
+
+        {/* 🔗 View Product Badge */}
+        <Link
+          href={store.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute bottom-2 right-2 flex items-center rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-blue-700"
+        >
+          View
+          <ExternalLink className="ml-1.5 h-3 w-3" />
+        </Link>
       </div>
 
       <CardContent className="p-4">
@@ -121,18 +133,6 @@ function StoreCard({ store }: { store: TopStore }) {
           <div className="text-right font-medium">${metrics.aov}</div>
         </div>
       </CardContent>
-
-      <CardFooter className="border-t bg-gray-50/50 p-1 dark:border-gray-800 dark:bg-gray-800/50">
-        <a
-          href={store.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-        >
-          {store.CTA}
-          <ExternalLink className="ml-1.5 h-3 w-3" />
-        </a>
-      </CardFooter>
     </Card>
   );
 }

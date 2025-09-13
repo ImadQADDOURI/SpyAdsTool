@@ -79,7 +79,7 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <Card className="h-full overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
       {/* 🖼️ Image Container - Fits within container, preserves aspect ratio */}
-      <div className="relative h-48 w-full overflow-hidden rounded-t-xl bg-gray-100 dark:bg-gray-800">
+      <div className="relative h-64 w-full overflow-hidden rounded-t-xl bg-gray-100 dark:bg-gray-800">
         <Image
           src={product.image || "/placeholder.svg"}
           alt={product.title}
@@ -103,6 +103,17 @@ function ProductCard({ product }: { product: Product }) {
             {product.niche}
           </div>
         )}
+
+        {/* 🔗 View Product Badge */}
+        <Link
+          href={product.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute bottom-2 right-2 flex items-center rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-blue-700"
+        >
+          View
+          <ExternalLink className="ml-1.5 h-3 w-3" />
+        </Link>
       </div>
 
       <CardContent className="p-4">
@@ -210,18 +221,6 @@ function ProductCard({ product }: { product: Product }) {
           )}
         </div>
       </CardContent>
-
-      <CardFooter className="border-t bg-gray-50/50 p-1 dark:border-gray-800 dark:bg-gray-800/50">
-        <Link
-          href={product.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-        >
-          View Product
-          <ExternalLink className="ml-1.5 h-3 w-3" />
-        </Link>
-      </CardFooter>
     </Card>
   );
 }
