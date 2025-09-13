@@ -162,14 +162,14 @@ function ProductCard({ product }: { product: Product }) {
         </div>
 
         {/* 📊 Product Info Grid */}
-        <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+        <div className="grid grid-cols-2 text-sm">
           {(product.buyPrice !== null || product.sellPrice !== null) && (
             <>
-              <div className="flex items-center text-gray-500 dark:text-gray-400">
+              <div className="flex items-center border-b border-gray-200 py-1 text-gray-500 dark:border-gray-700 dark:text-gray-400">
                 <DollarSign className="mr-1.5 h-3.5 w-3.5" />
                 <span>Price</span>
               </div>
-              <div className="text-right font-medium">
+              <div className="border-b border-gray-200 py-1 text-right font-medium dark:border-gray-700">
                 {product.sellPrice !== null && (
                   <span className="text-gray-900 dark:text-gray-100">
                     ${product.sellPrice.toFixed(2)}
@@ -186,11 +186,11 @@ function ProductCard({ product }: { product: Product }) {
 
           {profit !== null && (
             <>
-              <div className="flex items-center text-gray-500 dark:text-gray-400">
+              <div className="flex items-center border-b border-gray-200 py-1 text-gray-500 dark:border-gray-700 dark:text-gray-400">
                 <DollarSign className="mr-1.5 h-3.5 w-3.5" />
                 <span>Profit</span>
               </div>
-              <div className="text-right font-medium text-emerald-600 dark:text-emerald-400">
+              <div className="border-b border-gray-200 py-1 text-right font-medium text-emerald-600 dark:border-gray-700 dark:text-emerald-400">
                 ${profit.toFixed(2)}
               </div>
             </>
@@ -198,11 +198,11 @@ function ProductCard({ product }: { product: Product }) {
 
           {product.totalSales !== null && (
             <>
-              <div className="flex items-center text-gray-500 dark:text-gray-400">
+              <div className="flex items-center border-b border-gray-200 py-1 text-gray-500 dark:border-gray-700 dark:text-gray-400">
                 <BarChart3 className="mr-1.5 h-3.5 w-3.5" />
                 <span>Sales</span>
               </div>
-              <div className="text-right font-medium text-blue-600 dark:text-blue-400">
+              <div className="border-b border-gray-200 py-1 text-right font-medium text-blue-600 dark:border-gray-700 dark:text-blue-400">
                 {product.totalSales.toLocaleString()}
               </div>
             </>
@@ -210,11 +210,11 @@ function ProductCard({ product }: { product: Product }) {
 
           {product.uploadDate && (
             <>
-              <div className="flex items-center text-gray-500 dark:text-gray-400">
+              <div className="flex items-center py-1 text-gray-500 dark:text-gray-400">
                 <Calendar className="mr-1.5 h-3.5 w-3.5" />
                 <span>Added</span>
               </div>
-              <div className="text-right text-sm font-medium">
+              <div className="py-1 text-right text-sm font-medium">
                 {format(new Date(product.uploadDate), "MMM d, yyyy")}
               </div>
             </>

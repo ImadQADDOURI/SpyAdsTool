@@ -56,7 +56,7 @@ function StoreCard({ store }: { store: TopStore }) {
   return (
     <Card className="h-full overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
       {/* 🖼️ Store Image - Fits within container, preserves aspect ratio */}
-      <div className="relative h-64 w-full overflow-hidden rounded-t-xl bg-gray-100 dark:bg-gray-800">
+      <div className="relative h-52 w-full overflow-hidden rounded-t-xl bg-gray-100 dark:bg-gray-800">
         <Image
           src={store.image || "/placeholder.svg"}
           alt={store.name}
@@ -97,40 +97,40 @@ function StoreCard({ store }: { store: TopStore }) {
         </h3>
 
         {/* 📊 Store Metrics Grid */}
-        <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+        <div className="grid grid-cols-2 text-sm">
           {/* Revenue */}
-          <div className="flex items-center text-gray-500 dark:text-gray-400">
+          <div className="flex items-center border-b border-gray-200 py-1 text-gray-500 dark:border-gray-700 dark:text-gray-400">
             <DollarSign className="mr-1.5 h-3.5 w-3.5" />
             <span>Revenue</span>
           </div>
-          <div className="text-right font-medium text-blue-600 dark:text-blue-400">
+          <div className="border-b border-gray-200 py-1 text-right font-medium text-blue-600 dark:border-gray-700 dark:text-blue-400">
             ${(store.revenue / 1000).toFixed(1)}K
           </div>
 
           {/* Sales */}
-          <div className="flex items-center text-gray-500 dark:text-gray-400">
+          <div className="flex items-center border-b border-gray-200 py-1 text-gray-500 dark:border-gray-700 dark:text-gray-400">
             <ShoppingBag className="mr-1.5 h-3.5 w-3.5" />
             <span>Sales</span>
           </div>
-          <div className="text-right font-medium">
+          <div className="border-b border-gray-200 py-1 text-right font-medium dark:border-gray-700">
             {store.sales.toLocaleString()}
           </div>
 
           {/* Conversion Rate */}
-          <div className="flex items-center text-gray-500 dark:text-gray-400">
+          <div className="flex items-center border-b border-gray-200 py-1 text-gray-500 dark:border-gray-700 dark:text-gray-400">
             <TrendingUp className="mr-1.5 h-3.5 w-3.5" />
             <span>Conv. Rate</span>
           </div>
-          <div className="text-right font-medium text-emerald-600 dark:text-emerald-400">
+          <div className="border-b border-gray-200 py-1 text-right font-medium text-emerald-600 dark:border-gray-700 dark:text-emerald-400">
             {metrics.conversionRate}%
           </div>
 
           {/* AOV */}
-          <div className="flex items-center text-gray-500 dark:text-gray-400">
+          <div className="flex items-center py-1 text-gray-500 dark:text-gray-400">
             <ArrowUpRight className="mr-1.5 h-3.5 w-3.5" />
             <span>Avg. Order</span>
           </div>
-          <div className="text-right font-medium">${metrics.aov}</div>
+          <div className="py-1 text-right font-medium">${metrics.aov}</div>
         </div>
       </CardContent>
     </Card>
