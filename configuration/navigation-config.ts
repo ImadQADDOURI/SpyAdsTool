@@ -25,7 +25,7 @@ export const Links = [
   { title: "Favorites", href: "/favorites", icon: Heart },
   { title: "Trend", href: "/trend", icon: TrendingUp },
   { title: "Top Stores", href: "/top-stores", icon: Store },
-  { title: "Top Products", href: "/top-products", icon: PackageOpen },
+  { title: "Hot Products", href: "/top-products", icon: PackageOpen },
 ];
 
 export const Tools = [
