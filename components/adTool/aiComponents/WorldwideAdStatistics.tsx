@@ -87,50 +87,57 @@ const WorldwideAdStatistics: React.FC<WorldwideAdStatisticsProps> = ({
         </TooltipProvider>
       </div>
       {/* Insights Grid Container */}
-      <div className="grid grid-cols-3 gap-0.5 sm:gap-1 md:grid-cols-6">
-        {/* Demographics Insights */}
+      <div className="grid grid-cols-3 gap-2 md:grid-cols-[1fr_1fr_1fr_1.5fr_1.5fr_1.5fr]">
+        {/* First 3 → row on small, normal cols on md+ */}
         <InsightItem
           label="Gender"
           value={data.genderTarget}
           description="Target audience gender distribution"
           icon={VenusAndMars}
+          className="col-span-1 md:col-span-1"
         />
         <InsightItem
           label="Age"
           value={data.ageTarget}
           description="Primary age groups for targeting"
           icon={Baby}
+          className="col-span-1 md:col-span-1"
         />
         <InsightItem
           label="Season"
           value={data.seasonTarget}
           description="Optimal seasonal timing"
           icon={Snowflake}
-        />
-        {/* Additional Insights */}
-
-        <InsightItem
-          label="Target"
-          value={data.targetAudience}
-          description="Target audience characteristics and preferences"
-          icon={UserRound}
+          className="col-span-1 md:col-span-1"
         />
 
-        <InsightItem
-          label="Category"
-          value={data.adCategories}
-          description="Primary advertising categories"
-          icon={Tags}
-        />
+        {/* These stack on small screens (col-span-3), grid-based on md+ */}
+        <div className="col-span-3 shadow-lg md:col-span-1">
+          <InsightItem
+            label="Target"
+            value={data.targetAudience}
+            description="Target audience characteristics and preferences"
+            icon={UserRound}
+          />
+        </div>
+        <div className="col-span-3 shadow-lg md:col-span-1">
+          <InsightItem
+            label="Category"
+            value={data.adCategories}
+            description="Primary advertising categories"
+            icon={Tags}
+          />
+        </div>
+        <div className="col-span-3 shadow-lg md:col-span-1">
+          <InsightItem
+            label="Marketing"
+            value={data.marketingStrategies}
+            description="Recommended marketing approaches"
+            icon={Megaphone}
+          />
+        </div>
 
-        <InsightItem
-          label="Marketing"
-          value={data.marketingStrategies}
-          description="Recommended marketing approaches"
-          icon={Megaphone}
-        />
-
-        {/* Performance Metrics */}
+        {/* Performance row → 3 items split equally on md+, stacked on small */}
         <div className="col-span-3 shadow-lg md:col-span-2">
           <CompetitionRadialChart competition={data.competition} />
         </div>

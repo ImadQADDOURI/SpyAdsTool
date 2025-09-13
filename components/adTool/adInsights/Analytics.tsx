@@ -346,14 +346,14 @@ const Analytics: React.FC<AnalyticsProps> = ({
                     x2="0"
                     y2="1"
                   >
-                    <stop offset="5%" stopColor="#6566F1" stopOpacity={0.6} />
-                    <stop offset="95%" stopColor="#B977F8" stopOpacity={0.1} />
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.6} />
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
                   </linearGradient>
                 </defs>
                 <Area
                   type="monotone"
                   dataKey="activeVersions"
-                  stroke="#6566F1"
+                  stroke="#3b82f6"
                   strokeWidth={2}
                   fill="url(#colorGradient)"
                   dot={false}
@@ -361,7 +361,7 @@ const Analytics: React.FC<AnalyticsProps> = ({
                     r: 4,
                     strokeWidth: 2,
                     stroke: theme === "dark" ? "#fff" : "#333",
-                    fill: "#6566F1",
+                    fill: "#3b82f6",
                   }}
                 />
               </AreaChart>
