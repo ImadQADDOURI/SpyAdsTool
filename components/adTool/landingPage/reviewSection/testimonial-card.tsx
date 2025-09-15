@@ -12,7 +12,8 @@ export interface TestimonialAuthor {
 export interface TestimonialCardProps {
   author: TestimonialAuthor;
   text: string;
-  rating: number; // ⭐ Add rating property
+  rating: number;
+  screenshot?: string;
   href?: string;
   className?: string;
 }
@@ -21,12 +22,13 @@ export function TestimonialCard({
   author,
   text,
   rating,
+  screenshot,
   href,
   className,
 }: TestimonialCardProps) {
   const Card = href ? "a" : "div";
 
-  // ⭐ Render star rating
+  // Render star rating
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
@@ -69,6 +71,18 @@ export function TestimonialCard({
       <div className="mt-3 flex gap-1">{renderStars(rating)}</div>
 
       <p className="sm:text-md mt-4 text-sm text-gray-500">{text}</p>
+
+      {/* Screenshot */}
+      {screenshot && (
+        <div className="-mx-4 mt-4 overflow-hidden rounded-md border border-gray-200 dark:border-gray-600">
+          <img
+            src={screenshot}
+            alt="Shopify store screenshot"
+            className="h-auto w-full object-contain"
+            style={{ maxHeight: "200px" }}
+          />
+        </div>
+      )}
     </Card>
   );
 }

@@ -558,6 +558,8 @@ export const testimonials = {
       text: "Using this AI platform has transformed how we handle data analysis. The speed and accuracy are unprecedented.",
       rating: 5, // ⭐ rating
       href: "https://twitter.com/emmaai",
+      screenshot:
+        "https://innaartwork.com/wp-content/uploads/2022/02/Main3.jpg",
     },
     {
       author: {
@@ -569,6 +571,8 @@ export const testimonials = {
       text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
       rating: 5,
       href: "https://twitter.com/davidtech",
+      screenshot:
+        "https://innaartwork.com/wp-content/uploads/2022/02/Main3.jpg",
     },
     {
       author: {
@@ -578,7 +582,11 @@ export const testimonials = {
           "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
       },
       text: "Finally, an AI tool that actually understands context! The accuracy in natural language processing is impressive.",
+      href: "https://twitter.com/emmaai",
+
       rating: 4,
+      screenshot:
+        "https://innaartwork.com/wp-content/uploads/2022/02/Main3.jpg",
     },
     {
       author: {
@@ -590,6 +598,8 @@ export const testimonials = {
       text: "Using this AI platform has transformed how we handle data analysis. The speed and accuracy are unprecedented.",
       rating: 5,
       href: "https://twitter.com/emmaai",
+      screenshot:
+        "https://innaartwork.com/wp-content/uploads/2022/02/Main3.jpg",
     },
     {
       author: {
@@ -601,6 +611,8 @@ export const testimonials = {
       text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
       rating: 5,
       href: "https://twitter.com/davidtech",
+      screenshot:
+        "https://innaartwork.com/wp-content/uploads/2022/02/Main3.jpg",
     },
   ],
 };
