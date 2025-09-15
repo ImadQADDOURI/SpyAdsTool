@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { FOOTER_CONFIG } from "@/configuration/site-config";
 
@@ -14,11 +15,20 @@ export function FooterSection() {
         <div className="mb-12 flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between lg:gap-12">
           {/* Brand Section */}
           <div className="flex-1 lg:max-w-md">
-            <div className="mb-6 flex items-center">
-              <div className="mr-4 h-10 w-10 flex-shrink-0 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600"></div>
-              <span className="text-2xl font-bold text-white">
+            <div className="flex items-center">
+              <Image
+                src={FOOTER_CONFIG.brand.logo as string}
+                alt={FOOTER_CONFIG.brand.name}
+                height={80}
+                width={0}
+                sizes="auto" // ensures correct responsive behavior
+                priority
+                className="h-20 w-auto flex-shrink-0"
+              />
+
+              {/* <span className="text-2xl font-bold text-white">
                 {FOOTER_CONFIG.brand.name}
-              </span>
+              </span> */}
             </div>
             <p className="mb-8 text-base leading-relaxed text-gray-400">
               {FOOTER_CONFIG.brand.description}

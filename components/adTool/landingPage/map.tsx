@@ -95,7 +95,7 @@ const defaultDots = [
   },
 ];
 
-export default function WorldMap({
+export function WorldMap({
   title = "Global Network",
   description = "Connect with teams and clients worldwide. Our platform enables seamless collaboration across continents, bringing the world to your workspace.",
   dots = defaultDots,

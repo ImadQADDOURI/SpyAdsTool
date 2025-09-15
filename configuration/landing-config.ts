@@ -290,7 +290,7 @@ export const featuresConfig = [
   },
   {
     id: "search",
-    title: "Advanced",
+    title: "FB AdSpy",
     highlightText: "Search & Filters",
     description:
       "Search with 15+ filter types. Find exactly what you need with precision targeting.",

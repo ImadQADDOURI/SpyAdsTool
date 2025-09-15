@@ -28,20 +28,14 @@ export interface NavbarConfig {
   name: string;
   colors: string[];
   url: string;
-  logo: {
-    type: "icon" | "image";
-    value: LucideIcon | string;
-  };
+  logo: string;
 }
 
 export const NavbarConfig: NavbarConfig = {
-  name: siteConfig.name,
+  name: "",
   colors: ["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"],
   url: siteConfig.url,
-  logo: {
-    type: "icon",
-    value: Search,
-  },
+  logo: "/logo.png",
 };
 
 export const AvatarMenuConfig = [
@@ -50,20 +44,10 @@ export const AvatarMenuConfig = [
   { title: "Account", href: "/settings/account", icon: Settings },
 ];
 
-// Example of how to use with image logo:
-// export const Config: NavbarConfig = {
-//   name: "Spy Tool",
-//   colors: ["#FF0080", "#7928CA", "#0070F3", "#38bdf8"],
-//   url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-//   logo: {
-//     type: "image",
-//     value: "/logo.png",
-//   },
-// };
-
 export const FOOTER_CONFIG = {
   brand: {
     name: siteConfig.name,
+    logo: NavbarConfig.logo,
     description:
       "Discover winning products & ads instantly with our all-in-one tool for scaling sales & boosting eCom profits.",
   },

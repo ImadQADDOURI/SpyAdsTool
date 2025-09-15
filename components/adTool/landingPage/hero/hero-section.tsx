@@ -38,7 +38,7 @@ const HeroSection = () => {
                       colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
                       className="inline-block"
                     >
-                      Dominate
+                      Winning
                     </AuroraText>{" "}
                     <FlipWords
                       words={heroConfig.flipWords}
@@ -48,7 +48,7 @@ const HeroSection = () => {
                   </div>
 
                   <div>
-                    With{" "}
+                    Smart{" "}
                     <AuroraText
                       colors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
                       className="inline-block"
@@ -62,7 +62,8 @@ const HeroSection = () => {
                     >
                       AI
                     </AuroraText>{" "}
-                    Slice &amp; Dice Instantly.
+                    <br />
+                    for Instant Insights.
                   </div>
                 </div>
               </div>

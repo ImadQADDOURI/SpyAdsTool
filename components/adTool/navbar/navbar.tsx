@@ -37,28 +37,19 @@ import { NavbarLinks } from "./navbar-links";
 import { NavbarMobileMenu } from "./navbar-mobile-menu";
 import { useNavbarVisibility } from "./navbar-visibility-context";
 
-// Logo Component
 const NavbarLogo = () => {
-  const LogoIcon =
-    NavbarConfig.logo.type === "icon" ? (NavbarConfig.logo.value as any) : null;
-
-  if (NavbarConfig.logo.type === "image") {
-    return (
-      <Image
-        src={NavbarConfig.logo.value as string}
-        alt={`${NavbarConfig.name} logo`}
-        width={24}
-        height={24}
-        className="h-6 w-6 flex-shrink-0"
-      />
-    );
-  }
-
   return (
-    <LogoIcon className="h-6 w-6 flex-shrink-0 text-purple-500 dark:text-purple-400" />
+    <Image
+      src={NavbarConfig.logo as string}
+      alt={NavbarConfig.name}
+      height={80}
+      width={0}
+      sizes="auto" // ensures correct responsive behavior
+      priority
+      className="h-20 w-auto flex-shrink-0"
+    />
   );
 };
-
 export function Navbar() {
   const scrolled = useScroll(50);
   const { data: session, status } = useSession();
@@ -132,12 +123,12 @@ export function Navbar() {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex md:flex-1 md:items-center md:justify-center">
+        <div className="hidden xl:flex xl:flex-1 xl:items-center xl:justify-center">
           <NavbarLinks pathname={pathname} />
         </div>
 
         {/* Deal Buttons - Desktop */}
-        <div className="mr-2 hidden items-center gap-2 md:flex">
+        <div className="ml-auto mr-2 hidden items-center gap-2 md:flex">
           {Deals.map((deal) => (
             <Link
               key={deal.title}
@@ -149,7 +140,7 @@ export function Navbar() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={cn(
-                  "relative flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium shadow-sm",
+                  "relative flex items-center gap-1 rounded-full px-2 py-1.5 text-xs font-medium shadow-sm",
                   deal.gradient,
                 )}
               >
@@ -274,7 +265,7 @@ export function Navbar() {
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="md:hidden"
+            className="xl:hidden"
           >
             <Button
               variant="ghost"

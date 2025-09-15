@@ -34,12 +34,12 @@ export interface CollapsibleDropdownProps {
 
 export function NavbarLinks({ pathname }: NavbarLinksProps) {
   return (
-    <nav className="flex items-center gap-1 md:gap-2">
+    <nav className="flex items-center gap-1">
       {Links.map((link) => (
         <Link
           key={link.href}
           href={link.href}
-          className="group relative px-2 py-1.5"
+          className="group relative px-1 py-1.5"
         >
           <motion.div
             className={cn(
