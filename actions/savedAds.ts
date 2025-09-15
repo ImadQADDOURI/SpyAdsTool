@@ -717,87 +717,123 @@ export async function moveAdsToBoard(sourceBoard: string, targetBoard: string) {
   }
 }
 
-// 🔥 Fetch trending ads from specified board name with user role admin
-export async function fetchTrendAds(page = 1, pageSize = 10) {
-  const ADS_PER_PAGE = pageSize;
-  const trendBoardName = process.env.NEXT_PUBLIC_TREND_BOARD_NAME;
+// Helper function to get trend admin user IDs
+async function getTrendAdminUserIds() {
+  const trendAdminEmailsEnv = process.env.TREND_ADMIN_EMAILS;
+  if (!trendAdminEmailsEnv) return [];
 
+  const trendAdminEmails = trendAdminEmailsEnv
+    .split(",")
+    .map((email) => email.trim());
+
+  const users = await prisma.user.findMany({
+    where: { email: { in: trendAdminEmails } },
+    select: { id: true },
+  });
+
+  return users.map((user) => user.id);
+}
+
+// 🔥 Fetch trending ads from specified board name with trend admin emails
+export async function fetchTrendAds(
+  page = 1,
+  pageSize = 10,
+  boardName?: string,
+) {
   try {
-    // If no trend board name is configured, return empty result
-    if (!trendBoardName) {
-      return {
-        ads: [],
-        pagination: {
-          total: 0,
-          pages: 0,
-          current: page,
-        },
-      };
+    const trendAdminUserIds = await getTrendAdminUserIds();
+    if (trendAdminUserIds.length === 0) {
+      return { ads: [], pagination: { total: 0, pages: 0, current: page } };
     }
 
-    // 📊 Pagination
-    const skip = (page - 1) * ADS_PER_PAGE;
+    const skip = (page - 1) * pageSize;
+    const whereClause = {
+      userId: { in: trendAdminUserIds },
+      ...(boardName && { board: boardName }),
+    };
 
-    // 🔍 Get admin users
-    const adminUsers = await prisma.user.findMany({
-      where: {
-        role: "ADMIN",
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    const adminUserIds = adminUsers.map((user) => user.id);
-
-    // If no admin users found, return empty result
-    if (adminUserIds.length === 0) {
-      return {
-        ads: [],
-        pagination: {
-          total: 0,
-          pages: 0,
-          current: page,
-        },
-      };
-    }
-
-    // 🔍 Query saved ads from admin users with specific board name
     const [trendAds, totalCount] = await Promise.all([
       prisma.savedAd.findMany({
-        where: {
-          userId: {
-            in: adminUserIds,
-          },
-          board: trendBoardName,
-        },
-        orderBy: {
-          updatedAt: "desc",
-        },
+        where: whereClause,
+        orderBy: { updatedAt: "desc" },
         skip,
-        take: ADS_PER_PAGE,
+        take: pageSize,
       }),
-      prisma.savedAd.count({
-        where: {
-          userId: {
-            in: adminUserIds,
-          },
-          board: trendBoardName,
-        },
-      }),
+      prisma.savedAd.count({ where: whereClause }),
     ]);
 
     return {
       ads: trendAds,
       pagination: {
         total: totalCount,
-        pages: Math.ceil(totalCount / ADS_PER_PAGE),
+        pages: Math.ceil(totalCount / pageSize),
         current: page,
       },
     };
   } catch (error) {
     console.error("Failed to fetch trend ads:", error);
     return { error: "Failed to fetch trend ads" };
+  }
+}
+
+// 🔥 Fetch all trend boards (distinct board names from trend admins)
+export async function fetchTrendBoards() {
+  try {
+    // Get trend admin emails from environment
+    const trendAdminEmailsEnv = process.env.TREND_ADMIN_EMAILS;
+    if (!trendAdminEmailsEnv) {
+      return {
+        boards: [],
+      };
+    }
+
+    // Parse comma-separated emails
+    const trendAdminEmails = trendAdminEmailsEnv
+      .split(",")
+      .map((email) => email.trim());
+
+    // 🔍 Get trend admin users by email
+    const trendAdminUsers = await prisma.user.findMany({
+      where: {
+        email: {
+          in: trendAdminEmails,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const trendAdminUserIds = trendAdminUsers.map((user) => user.id);
+
+    if (trendAdminUserIds.length === 0) {
+      return {
+        boards: [],
+      };
+    }
+
+    // Get distinct board names from trend admins' ads
+    const boards = await prisma.savedAd.findMany({
+      where: {
+        userId: {
+          in: trendAdminUserIds,
+        },
+      },
+      select: {
+        board: true,
+      },
+      distinct: ["board"],
+      orderBy: {
+        board: "asc",
+      },
+    });
+
+    return {
+      boards: boards.map((item) => item.board),
+    };
+  } catch (error) {
+    console.error("Failed to fetch trend boards:", error);
+    return { error: "Failed to fetch trend boards" };
   }
 }
 

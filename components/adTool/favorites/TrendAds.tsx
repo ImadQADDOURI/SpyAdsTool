@@ -11,6 +11,7 @@ import { ScrollButtons } from "@/components/adTool/sharedComponents/ScrollButton
 
 import SearchResults from "../sharedComponents/SearchResults";
 import TitleSection from "../sharedComponents/TitleSection";
+import BoardSelector from "./BoardSelector";
 
 // Define pagination response type to avoid TS errors
 type PaginationResponse = {
@@ -39,48 +40,62 @@ export default function TrendAds() {
     current: 1,
   });
   const [hasMore, setHasMore] = useState(true);
+  const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
 
-  // Load initial ads
-  const loadAds = useCallback(async (page = 1, reset = false) => {
-    try {
-      setIsLoading(true);
-      setError(null);
+  // Load ads with optional board filter
+  const loadAds = useCallback(
+    async (page = 1, reset = false, boardName?: string) => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-      const response = await fetchTrendAds(page, 20);
-      const result = response as TrendAdsResponse;
+        const response = await fetchTrendAds(page, 20, boardName || undefined);
+        const result = response as TrendAdsResponse;
 
-      if (result.error) {
-        setError(result.error);
-        toast.error(result.error);
-        return;
+        if (result.error) {
+          setError(result.error);
+          toast.error(result.error);
+          return;
+        }
+
+        if (result.ads && result.pagination) {
+          // Extract only the adData from each saved ad
+          const extractedAds = result.ads.map(
+            (savedAd) => savedAd.adData as AdData,
+          );
+
+          // Update state based on whether we're resetting or adding more ads
+          setAds((prevAds) =>
+            reset ? extractedAds : [...prevAds, ...extractedAds],
+          );
+          setPagination(result.pagination);
+
+          // Check if there are more ads to load
+          setHasMore(result.pagination.current < result.pagination.pages);
+        }
+      } catch (error) {
+        const errorMessage = "Failed to load trending ads";
+        setError(errorMessage);
+        toast.error(errorMessage);
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [],
+  );
 
-      if (result.ads && result.pagination) {
-        // Extract only the adData from each saved ad
-        const extractedAds = result.ads.map(
-          (savedAd) => savedAd.adData as AdData,
-        );
+  // Handle board selection change
+  const handleBoardSelect = useCallback(
+    (board: string | null) => {
+      setSelectedBoard(board);
+      // Reset ads and load from page 1 with new board filter
+      loadAds(1, true, board || undefined);
+    },
+    [loadAds],
+  );
 
-        // Update state based on whether we're resetting or adding more ads
-        setAds((prevAds) =>
-          reset ? extractedAds : [...prevAds, ...extractedAds],
-        );
-        setPagination(result.pagination);
-
-        // Check if there are more ads to load
-        setHasMore(result.pagination.current < result.pagination.pages);
-      }
-    } catch (error) {
-      const errorMessage = "Failed to load trending ads";
-      setError(errorMessage);
-      toast.error(errorMessage);
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  // Initial load
+  // Initial load - load all boards
   useEffect(() => {
     loadAds(1, true);
   }, [loadAds]);
@@ -88,9 +103,9 @@ export default function TrendAds() {
   // Handle load more
   const handleLoadMore = useCallback(() => {
     if (!isLoading && hasMore) {
-      loadAds(pagination.current + 1);
+      loadAds(pagination.current + 1, false, selectedBoard || undefined);
     }
-  }, [isLoading, hasMore, pagination.current, loadAds]);
+  }, [isLoading, hasMore, pagination.current, loadAds, selectedBoard]);
 
   // Calculate remaining count
   const remainingCount = pagination.total - ads.length;
@@ -106,6 +121,12 @@ export default function TrendAds() {
         remainingTitle="For Your Market"
         auroraColors={["#f97316", "#f59e0b", "#fbbf24", "#fde047"]}
         description="Explore the hottest ads selected for your niche."
+      />
+
+      {/* Board Selector */}
+      <BoardSelector
+        selectedBoard={selectedBoard}
+        onBoardSelect={handleBoardSelect}
       />
 
       {/* Content Section */}

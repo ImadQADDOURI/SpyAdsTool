@@ -353,8 +353,8 @@ SUPPORT_EMAIL_FROM=Your App Name <support@your-domain.com>`}
                         {`# WhatsApp Integration
 WHATSAPP_NUMBER=+1234567890
 
-# Trend Board Configuration
-NEXT_PUBLIC_TREND_BOARD_NAME=trending-ads
+# Trend Configuration
+TREND_ADMIN_EMAILS="imad.qaddouri@ump.ac.ma,chafiq.allah@gmail.com"
 
 # User Limits
 MAX_SAVED_ADS_PER_USER=100`}
@@ -1023,9 +1023,7 @@ GRANT ALL PRIVILEGES ON DATABASE your_app_database TO your_app_user;`}
                       • Unlimited saved ads (not subject to
                       MAX_SAVED_ADS_PER_USER limit)
                     </p>
-                    <p className="text-sm text-slate-700 dark:text-slate-300">
-                      • Can save ads to the trend board
-                    </p>
+
                     <p className="text-sm text-slate-700 dark:text-slate-300">
                       • Access to admin-only features and pages
                     </p>
@@ -1034,17 +1032,15 @@ GRANT ALL PRIVILEGES ON DATABASE your_app_database TO your_app_user;`}
 
                 <div>
                   <h3 className="mb-3 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                    Trend Board System
+                    Trend Configuration
                   </h3>
                   <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
                     <li>
-                      • <strong>Trending Ads:</strong> Ads saved with board name
-                      matching NEXT_PUBLIC_TREND_BOARD_NAME
+                      • <strong>Trending Ads:</strong> Ads saved by
+                      TREND_ADMIN_EMAILS are automatically added to the trend
+                      board
                     </li>
-                    <li>
-                      • <strong>Admin Control:</strong> Only admin users can
-                      save ads to the trend board
-                    </li>
+
                     <li>
                       • <strong>Public Display:</strong> Trend board ads are
                       visible to all users for inspiration
