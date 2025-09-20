@@ -162,25 +162,36 @@ async function executeGraphQLRequest(
       `✅✅✅✅ Fetch successful ✅✅✅✅\n` + rawResponse.slice(0, 3000),
     );
 
-    // 🚫 Check for specific Meta login error *before* parsing JSON
+    // 🚫 Check for Meta login error *before* parsing JSON
     const metaLoginErrorPattern =
       'for (;;);{"__ar":1,"error":1357001,"errorSummary":"Log in to continue"';
+
+    // 🚫 More global pattern for Meta rate limit errors
+    const metaRateLimitErrorPattern =
+      '{"errors":[{"message":"Rate limit exceeded"';
+
     if (rawResponse.startsWith(metaLoginErrorPattern)) {
       const configIdToDeactivate = configResult.id;
       if (configIdToDeactivate) {
         console.warn(
           `🚨 Meta login error detected for config ID: ${configIdToDeactivate}. Signaling deactivation.`,
         );
-        // 🔥 Throw custom error to signal deactivation needed
         throw new ConfigDeactivationError(
           configIdToDeactivate,
           new Error("Authentication required - Config needs deactivation"),
         );
       } else {
-        // Should not happen if rotation works, but handle defensively
         console.error("🚨 Meta login error detected but no config ID found!");
         throw new Error("Authentication required, but config ID unknown.");
       }
+    }
+
+    // 🚫 Check for any rate limit exceeded errors (global detection)
+    if (rawResponse.startsWith(metaRateLimitErrorPattern)) {
+      console.warn(
+        `🚨 Meta rate limit error detected for config ID: ${configResult?.id}`,
+      );
+      throw new Error("Rate limit exceeded - try again later.");
     }
 
     // --- Existing JSON parsing logic ---
