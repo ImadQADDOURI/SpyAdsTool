@@ -158,6 +158,10 @@ async function executeGraphQLRequest(
     // ⚡ Fetch raw response using the obtained config
     rawResponse = await fetchGraphQL(params, configResult);
 
+    console.log(
+      `✅✅✅✅ Fetch successful ✅✅✅✅\n` + rawResponse.slice(0, 3000),
+    );
+
     // 🚫 Check for specific Meta login error *before* parsing JSON
     const metaLoginErrorPattern =
       'for (;;);{"__ar":1,"error":1357001,"errorSummary":"Log in to continue"';
