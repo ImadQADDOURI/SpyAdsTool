@@ -393,6 +393,31 @@ MAX_SAVED_ADS_PER_USER=100`}
               <CardContent className="space-y-6">
                 <div>
                   <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    Overview
+                  </h3>
+                  <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                    The <strong>Meta Requests System</strong> is a lightweight,
+                    database-driven layer designed to{" "}
+                    <strong>
+                      replicate Meta&apos;s Ad Library GraphQL XHR requests
+                    </strong>
+                    . It&apos;s built through{" "}
+                    <strong>reverse engineering</strong> of Meta&apos;s request
+                    structure, allowing you to reproduce the same network calls
+                    programmatically — without depending on browser tools or
+                    manual copying.
+                    <br />
+                    <br />
+                    This system lets you manage, test, and execute Meta GraphQL
+                    calls dynamically, directly from your app&apos;s backend.
+                    Everything — including headers, variables, and extraction
+                    paths — can be modified and versioned in your database for
+                    total flexibility.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
                     How It Works
                   </h3>
 
@@ -404,14 +429,14 @@ MAX_SAVED_ADS_PER_USER=100`}
                       </div>
                       <div>
                         <h4 className="font-semibold text-slate-900 dark:text-slate-100">
-                          Define Your Requests
+                          Define XHR-Based Requests
                         </h4>
                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                          Create <strong>Meta Requests</strong> in your
-                          dashboard to store GraphQL or REST request
-                          configurations, including endpoint, body, headers, and
-                          status. Each entry can be enabled or disabled for
-                          rotation.
+                          Each entry in the database represents a{" "}
+                          <strong>captured Meta GraphQL request</strong> —
+                          including its URL, method, headers, and body. You can
+                          paste raw XHR data from your browser&apos;s Network
+                          tab directly into the dashboard to save it.
                         </p>
                       </div>
                     </div>
@@ -423,13 +448,15 @@ MAX_SAVED_ADS_PER_USER=100`}
                       </div>
                       <div>
                         <h4 className="font-semibold text-slate-900 dark:text-slate-100">
-                          Request Selection
+                          Request Selection & Rotation
                         </h4>
                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                          When executing, you can select a specific request by{" "}
-                          <strong>ID</strong>, or rotate randomly among all
+                          You can execute a specific request by{" "}
+                          <strong>ID</strong>, or let the system{" "}
+                          <strong>randomly rotate</strong> between multiple
                           active requests sharing the same <strong>name</strong>
-                          .
+                          . This enables load balancing and proxy rotation for
+                          more stable scraping.
                         </p>
                       </div>
                     </div>
@@ -444,9 +471,10 @@ MAX_SAVED_ADS_PER_USER=100`}
                           Variable Injection
                         </h4>
                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                          Optionally override variables inside the request body
-                          before execution. Only provided keys are replaced; all
-                          other variables remain unchanged for consistency.
+                          Before execution, you can override variables inside
+                          the GraphQL body. Only the provided keys are replaced
+                          — the rest remain intact, ensuring the request
+                          structure mirrors Meta&apos;s original format.
                         </p>
                       </div>
                     </div>
@@ -458,19 +486,19 @@ MAX_SAVED_ADS_PER_USER=100`}
                       </div>
                       <div>
                         <h4 className="font-semibold text-slate-900 dark:text-slate-100">
-                          Response Handling
+                          Response Parsing & Extraction
                         </h4>
                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                          The system uses{" "}
+                          Meta often returns multiple concatenated JSON objects
+                          in a single response. The system uses{" "}
                           <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">
                             parseResponse
                           </code>{" "}
-                          to safely normalize multi-JSON responses, then
-                          extracts specific data using{" "}
+                          to normalize them, then extracts key values with{" "}
                           <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">
                             jsonpath-plus
                           </code>{" "}
-                          via <code>extractFields</code>.
+                          for consistent data retrieval.
                         </p>
                       </div>
                     </div>
@@ -482,13 +510,14 @@ MAX_SAVED_ADS_PER_USER=100`}
                       </div>
                       <div>
                         <h4 className="font-semibold text-slate-900 dark:text-slate-100">
-                          Testing & Validation
+                          Testing & Debugging
                         </h4>
                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                          You can test any Meta Request directly via server
-                          actions. The result preview includes both the{" "}
-                          <strong>parsed</strong> and <strong>raw</strong>{" "}
-                          responses for easy debugging.
+                          Use the <strong>Test Request</strong> action to run a
+                          specific configuration by ID, optionally with custom
+                          variables. You&apos;ll get both <strong>raw</strong>{" "}
+                          and <strong>parsed</strong> output for easy debugging
+                          and validation.
                         </p>
                       </div>
                     </div>
@@ -498,10 +527,11 @@ MAX_SAVED_ADS_PER_USER=100`}
                 <Alert className="border-purple-200 bg-purple-50 dark:border-purple-800 dark:bg-purple-900/20">
                   <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                   <AlertDescription className="text-purple-700 dark:text-purple-300">
-                    <strong>Tip:</strong> You can maintain multiple active
-                    requests for the same <code>name</code> to automatically
-                    rotate between different base configurations (useful for
-                    load balancing or proxy rotation).
+                    <strong>Note:</strong> This system is a controlled,
+                    educational implementation intended to demonstrate
+                    Meta&apos;s GraphQL request structure and automation
+                    concepts. It reproduces XHR calls for legitimate use cases
+                    like research and data aggregation.
                   </AlertDescription>
                 </Alert>
 
@@ -516,20 +546,20 @@ MAX_SAVED_ADS_PER_USER=100`}
                     </p>
                     <p>
                       • <strong>createMetaRequest()</strong> /{" "}
-                      <strong>updateMetaRequest()</strong> — Manage request
-                      configs.
+                      <strong>updateMetaRequest()</strong> — Manage stored XHR
+                      configurations.
                     </p>
                     <p>
-                      • <strong>deleteMetaRequest()</strong> — Remove a specific
-                      request.
+                      • <strong>deleteMetaRequest()</strong> — Permanently
+                      remove an entry.
                     </p>
                     <p>
                       • <strong>toggleMetaRequest()</strong> — Enable or disable
                       a request.
                     </p>
                     <p>
-                      • <strong>testMetaRequest()</strong> — Execute and preview
-                      results instantly with optional variables.
+                      • <strong>testMetaRequest()</strong> — Execute a request
+                      by ID and preview results (raw + parsed).
                     </p>
                   </div>
                 </div>
