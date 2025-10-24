@@ -15,6 +15,7 @@ import { TestimonialsSection } from "@/components/adTool/landingPage/reviewSecti
 import { SeparatorLine } from "@/components/adTool/landingPage/separator-line";
 import TrustedBySection from "@/components/adTool/landingPage/TrustedBySection";
 import { Loading } from "@/components/adTool/sharedComponents/Loading";
+import { ScrollButtons } from "@/components/adTool/sharedComponents/ScrollButtons";
 
 export default function IndexPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -54,6 +55,9 @@ export default function IndexPage() {
       {/* <WorldMap /> */}
       <CTASection />
       {/* Footer Section in layout */}
+
+      {/* Scroll Buttons */}
+      <ScrollButtons />
     </div>
   );
 }

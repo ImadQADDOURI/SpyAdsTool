@@ -26,7 +26,7 @@ const HeroSection = () => {
       {/* 🎯 Main Hero Content */}
       <div className="relative z-10">
         {/* Main Grid Container */}
-        <div className="container mx-auto mb-4 px-6 lg:px-8">
+        <div className="mx-auto mb-4 max-w-[90vw] px-6 lg:px-8">
           <div className="grid min-h-[70vh] grid-cols-1 items-center gap-12 pt-16 lg:grid-cols-2 lg:gap-16">
             {/* 📝 Left Column - Content */}
             <div className="animate-fade-in-up space-y-8">
@@ -127,21 +127,20 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* 🖼️ Right Column - Floating Images with Feature Pills */}
-            <div className="animate-fade-in-scale relative flex h-[250px] items-center justify-center lg:h-[500px]">
-              {/* 🖼️ Render Floating Images from heroConfiguration */}
-              {heroConfig.heroImages.map((image) => (
-                <div key={image.id} className={image.position.className}>
-                  <FloatingGlassImage
-                    src={image.src}
-                    alt={image.alt}
-                    floatAmplitude={image.animation.floatAmplitude}
-                    floatSpeed={image.animation.floatSpeed}
-                    delay={image.animation.delay}
-                    glass={image.settings.glass}
-                  />
-                </div>
-              ))}
+            {/* 🖼️ Right Column - Centered Floating Image with Feature Pills */}
+            <div className="animate-fade-in-scale relative flex items-center justify-center">
+              {/* 🖼️ Floating Image */}
+              {heroConfig.heroImage && (
+                <FloatingGlassImage
+                  src={heroConfig.heroImage.src}
+                  alt={heroConfig.heroImage.alt}
+                  floatAmplitude={heroConfig.heroImage.animation.floatAmplitude}
+                  floatSpeed={heroConfig.heroImage.animation.floatSpeed}
+                  delay={heroConfig.heroImage.animation.delay}
+                  glass={heroConfig.heroImage.settings.glass}
+                  className="w-full object-contain"
+                />
+              )}
 
               {/* 🏷️ Render Feature Pills from heroConfiguration */}
               {heroConfig.featurePills.map((pill) => (

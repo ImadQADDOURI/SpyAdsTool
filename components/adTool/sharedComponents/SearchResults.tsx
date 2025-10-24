@@ -223,7 +223,7 @@ export const SearchResults = memo(
 
     const formattedTotalCount = useMemo(() => {
       if (totalCount === null) return null;
-      return totalCount > 50000 ? "50,000+" : totalCount.toLocaleString();
+      return totalCount > 50000 ? "50,000+" : totalCount?.toLocaleString();
     }, [totalCount]);
 
     // 💡 Memoize the callback to prevent EmptyState from re-rendering unnecessarily.

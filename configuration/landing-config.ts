@@ -47,95 +47,20 @@ export const heroConfig = {
   videoUrl:
     "https://assets-static.invideo.io/files/Invideo_Demo_HP_18_10_2024_V001_1921f1aee3.mp4",
 
-  // 🖼️ Floating Images heroConfiguration - Centralized positioning and settings
-  heroImages: [
-    // {
-    //   id: "main-center",
-    //   src: "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
-    //   alt: "Main hero banner",
-    //   position: {
-    //     className: "relative z-20",
-    //   },
-    //   animation: {
-    //     floatAmplitude: 8,
-    //     floatSpeed: 6,
-    //     delay: 0,
-    //   },
-    //   settings: {
-    //     glass: true,
-    //     lens: true,
-    //     zoomFactor: 1.3,
-    //   },
-    // },
-    {
-      id: "top-left",
-      src: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
-      alt: "Hero banner 1",
-      position: {
-        className: "absolute left-0 top-0 z-10",
-      },
-      animation: {
-        floatAmplitude: 6,
-        floatSpeed: 8,
-        delay: 0.5,
-      },
-      settings: {
-        glass: true,
-        lens: true,
-      },
+  // 🖼️ Floating Image heroConfiguration - Centralized positioning and settings
+  heroImage: {
+    id: "main",
+    src: "/hero.png",
+    alt: "Hero banner 1",
+    animation: {
+      floatAmplitude: 20,
+      floatSpeed: 10,
+      delay: 0.5,
     },
-    {
-      id: "top-right",
-      src: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
-      alt: "Hero banner 2",
-      position: {
-        className: "absolute right-0 top-8 z-10",
-      },
-      animation: {
-        floatAmplitude: 7,
-        floatSpeed: 7,
-        delay: 1,
-      },
-      settings: {
-        glass: true,
-        lens: true,
-      },
+    settings: {
+      glass: false,
     },
-    {
-      id: "bottom-left",
-      src: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
-      alt: "Hero banner 4",
-      position: {
-        className: "absolute bottom-8 left-8 z-10",
-      },
-      animation: {
-        floatAmplitude: 5,
-        floatSpeed: 9,
-        delay: 1.5,
-      },
-      settings: {
-        glass: true,
-        lens: true,
-      },
-    },
-    {
-      id: "bottom-right",
-      src: "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
-      alt: "Hero banner 5",
-      position: {
-        className: "absolute bottom-0 right-8 z-10",
-      },
-      animation: {
-        floatAmplitude: 6,
-        floatSpeed: 8,
-        delay: 2,
-      },
-      settings: {
-        glass: true,
-        lens: true,
-      },
-    },
-  ],
+  },
 
   // 🏷️ Feature Pills heroConfiguration - Centralized positioning and styling
   featurePills: [
