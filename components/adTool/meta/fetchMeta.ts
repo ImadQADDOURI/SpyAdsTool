@@ -7,17 +7,44 @@ import { JSONPath } from "jsonpath-plus";
 import { prisma } from "@/lib/db";
 
 /**
- * Override `variables` inside a URL-encoded GraphQL body.
+ * Override or merge `variables` inside a URL-encoded GraphQL body.
+ * - Only allows overriding existing keys (logs if key doesn’t exist).
+ * Ensures correct encoding and logs the final variables.
  */
 function overrideVariables(body: string, newVars: Record<string, any>) {
   try {
     const params = new URLSearchParams(body);
-    const vars = params.get("variables");
-    if (!vars) return body;
+    const existingVarsRaw = params.get("variables");
 
-    const decoded = JSON.parse(decodeURIComponent(vars));
-    const merged = { ...decoded, ...newVars };
-    params.set("variables", encodeURIComponent(JSON.stringify(merged)));
+    let existingVars: Record<string, any> = {};
+    if (existingVarsRaw) {
+      try {
+        existingVars = JSON.parse(existingVarsRaw);
+      } catch {
+        // if it's encoded (like %7B...), decode first
+        existingVars = JSON.parse(decodeURIComponent(existingVarsRaw));
+      }
+    }
+
+    // Merge only provided vars
+    const invalidKeys: string[] = [];
+    const merged = { ...existingVars };
+    for (const [key, value] of Object.entries(newVars)) {
+      if (key in existingVars) merged[key] = value;
+      else invalidKeys.push(key);
+    }
+
+    if (invalidKeys.length > 0) {
+      console.warn(
+        `⚠️ Tried to override non-existing variables: ${invalidKeys.join(", ")}`,
+      );
+    }
+
+    console.log("🧩 Final variables used in fetch:", merged);
+
+    // Set back the merged variables (no double encoding)
+    params.set("variables", JSON.stringify(merged));
+
     return params.toString();
   } catch (err) {
     console.error("❌ Failed to override variables:", err);
