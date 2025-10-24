@@ -389,144 +389,149 @@ MAX_SAVED_ADS_PER_USER=100`}
                   </CardTitle>
                 </div>
               </CardHeader>
+
               <CardContent className="space-y-6">
-                <Alert>
+                <div>
+                  <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    How It Works
+                  </h3>
+
+                  <div className="space-y-4">
+                    {/* Step 1 */}
+                    <div className="flex gap-4">
+                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 text-sm font-semibold text-purple-600 dark:bg-purple-900 dark:text-purple-400">
+                        1
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900 dark:text-slate-100">
+                          Define Your Requests
+                        </h4>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          Create <strong>Meta Requests</strong> in your
+                          dashboard to store GraphQL or REST request
+                          configurations, including endpoint, body, headers, and
+                          status. Each entry can be enabled or disabled for
+                          rotation.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Step 2 */}
+                    <div className="flex gap-4">
+                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 text-sm font-semibold text-purple-600 dark:bg-purple-900 dark:text-purple-400">
+                        2
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900 dark:text-slate-100">
+                          Request Selection
+                        </h4>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          When executing, you can select a specific request by{" "}
+                          <strong>ID</strong>, or rotate randomly among all
+                          active requests sharing the same <strong>name</strong>
+                          .
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Step 3 */}
+                    <div className="flex gap-4">
+                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 text-sm font-semibold text-purple-600 dark:bg-purple-900 dark:text-purple-400">
+                        3
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900 dark:text-slate-100">
+                          Variable Injection
+                        </h4>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          Optionally override variables inside the request body
+                          before execution. Only provided keys are replaced; all
+                          other variables remain unchanged for consistency.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Step 4 */}
+                    <div className="flex gap-4">
+                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 text-sm font-semibold text-purple-600 dark:bg-purple-900 dark:text-purple-400">
+                        4
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900 dark:text-slate-100">
+                          Response Handling
+                        </h4>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          The system uses{" "}
+                          <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">
+                            parseResponse
+                          </code>{" "}
+                          to safely normalize multi-JSON responses, then
+                          extracts specific data using{" "}
+                          <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">
+                            jsonpath-plus
+                          </code>{" "}
+                          via <code>extractFields</code>.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Step 5 */}
+                    <div className="flex gap-4">
+                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 text-sm font-semibold text-purple-600 dark:bg-purple-900 dark:text-purple-400">
+                        5
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900 dark:text-slate-100">
+                          Testing & Validation
+                        </h4>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          You can test any Meta Request directly via server
+                          actions. The result preview includes both the{" "}
+                          <strong>parsed</strong> and <strong>raw</strong>{" "}
+                          responses for easy debugging.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Alert className="border-purple-200 bg-purple-50 dark:border-purple-800 dark:bg-purple-900/20">
                   <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                  <AlertDescription>
-                    The <strong>Meta Requests System</strong> is a flexible
-                    engine that allows you to define, manage, and test multiple
-                    GraphQL or REST requests directly from the database. It
-                    enables <strong>request rotation</strong>,{" "}
-                    <strong>dynamic variable injection</strong>, and
-                    <strong>structured response parsing</strong> — all without
-                    modifying code.
+                  <AlertDescription className="text-purple-700 dark:text-purple-300">
+                    <strong>Tip:</strong> You can maintain multiple active
+                    requests for the same <code>name</code> to automatically
+                    rotate between different base configurations (useful for
+                    load balancing or proxy rotation).
                   </AlertDescription>
                 </Alert>
 
                 <div>
-                  <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                    🧩 Core Components
+                  <h3 className="mb-3 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    Server Actions Overview
                   </h3>
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-2">
-                      <Settings className="mt-0.5 h-5 w-5 text-purple-500" />
-                      <div>
-                        <strong>MetaRequest Model</strong> — Stores each
-                        request&apos;s config:
-                        <code className="mx-1 rounded bg-slate-100 px-1 dark:bg-slate-800">
-                          name
-                        </code>
-                        ,
-                        <code className="mx-1 rounded bg-slate-100 px-1 dark:bg-slate-800">
-                          endpoint
-                        </code>
-                        ,
-                        <code className="mx-1 rounded bg-slate-100 px-1 dark:bg-slate-800">
-                          body
-                        </code>
-                        , headers, and status.
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Shuffle className="mt-0.5 h-5 w-5 text-purple-500" />
-                      <div>
-                        <strong>Dynamic Selection</strong> — When performing a
-                        request, if you specify a <strong>name</strong>, one of
-                        the active entries is randomly chosen. If you specify an{" "}
-                        <strong>ID</strong>, that exact entry is used.
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Replace className="mt-0.5 h-5 w-5 text-purple-500" />
-                      <div>
-                        <strong>Variable Overrides</strong> — You can provide
-                        optional variables to dynamically replace existing ones
-                        inside the base request body. Only specified variables
-                        are updated; others remain untouched.
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Code2 className="mt-0.5 h-5 w-5 text-purple-500" />
-                      <div>
-                        <strong>Response Parsing</strong> — Responses are
-                        normalized using
-                        <code className="mx-1 rounded bg-slate-100 px-1 dark:bg-slate-800">
-                          parseResponse
-                        </code>{" "}
-                        to handle multiple concatenated JSONs, ensuring a clean
-                        and structured output.
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <SearchCheck className="mt-0.5 h-5 w-5 text-purple-500" />
-                      <div>
-                        <strong>Field Extraction</strong> — Specific fields are
-                        extracted using <code>jsonpath-plus</code> for flexible
-                        and precise data selection across complex responses.
-                      </div>
-                    </div>
+                  <div className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                    <p>
+                      • <strong>listMetaRequests()</strong> — Retrieve all saved
+                      entries.
+                    </p>
+                    <p>
+                      • <strong>createMetaRequest()</strong> /{" "}
+                      <strong>updateMetaRequest()</strong> — Manage request
+                      configs.
+                    </p>
+                    <p>
+                      • <strong>deleteMetaRequest()</strong> — Remove a specific
+                      request.
+                    </p>
+                    <p>
+                      • <strong>toggleMetaRequest()</strong> — Enable or disable
+                      a request.
+                    </p>
+                    <p>
+                      • <strong>testMetaRequest()</strong> — Execute and preview
+                      results instantly with optional variables.
+                    </p>
                   </div>
-                </div>
-
-                <div>
-                  <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                    ⚙️ Server Actions
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Database className="h-5 w-5 text-purple-500" />
-                      <span>
-                        <strong>CRUD Operations</strong> — Create, edit, delete,
-                        and list Meta Requests directly from the dashboard.
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ToggleLeft className="h-5 w-5 text-purple-500" />
-                      <span>
-                        <strong>Toggle Active/Inactive</strong> — Easily enable
-                        or disable a request to control rotation behavior.
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Beaker className="h-5 w-5 text-purple-500" />
-                      <span>
-                        <strong>Test Requests</strong> — Instantly test any Meta
-                        Request with optional variables and preview both parsed
-                        and raw results.
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                    🚀 Usage Flow
-                  </h3>
-                  <ol className="list-decimal space-y-2 pl-6 text-slate-700 dark:text-slate-300">
-                    <li>
-                      Create one or more <strong>Meta Requests</strong> in the
-                      dashboard.
-                    </li>
-                    <li>
-                      Call <code>fetchMeta()</code> using either a request
-                      <strong>name</strong> (rotates randomly) or{" "}
-                      <strong>id</strong>
-                      (specific request).
-                    </li>
-                    <li>
-                      Optionally provide <strong>variables</strong> to override
-                      base request values.
-                    </li>
-                    <li>
-                      The system performs the request, parses multi-JSON
-                      responses, and extracts fields via{" "}
-                      <code>extractFields()</code>.
-                    </li>
-                    <li>
-                      If testing, you can view both <strong>parsed</strong> and
-                      <strong>raw</strong> response data.
-                    </li>
-                  </ol>
                 </div>
               </CardContent>
             </Card>
