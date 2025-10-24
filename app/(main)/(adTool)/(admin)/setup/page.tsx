@@ -3,17 +3,30 @@ import Link from "next/link";
 import {
   AlertTriangle,
   ArrowLeft,
+  Beaker,
   Book,
   CheckCircle,
   Cloud,
+  Code2,
   CreditCard,
   Database,
   ExternalLink,
+  Facebook,
+  FileJson,
   FileSliders,
   Key,
   Mail,
+  Network,
+  Replace,
+  Rocket,
+  SearchCheck,
   Settings,
+  Settings2,
   Shield,
+  Shuffle,
+  TestTube,
+  ToggleLeft,
+  Zap,
 } from "lucide-react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -33,6 +46,7 @@ export default function SetupDocumentationPage() {
   const sections = [
     { id: "overview", title: "Overview", icon: Book },
     { id: "environment", title: "Environment Variables", icon: Key },
+    { id: "meta-requests", title: "Meta Request System", icon: Facebook },
     { id: "authentication", title: "Authentication Setup", icon: Shield },
     { id: "database", title: "Database Configuration", icon: Database },
     { id: "stripe", title: "Stripe Integration", icon: CreditCard },
@@ -361,6 +375,158 @@ MAX_SAVED_ADS_PER_USER=100`}
                       </pre>
                     </div>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 🏢 meta-system */}
+            <Card id="meta-requests">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <Network className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                  <CardTitle className="text-2xl">
+                    Meta Requests System
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <Alert>
+                  <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                  <AlertDescription>
+                    The <strong>Meta Requests System</strong> is a flexible
+                    engine that allows you to define, manage, and test multiple
+                    GraphQL or REST requests directly from the database. It
+                    enables <strong>request rotation</strong>,{" "}
+                    <strong>dynamic variable injection</strong>, and
+                    <strong>structured response parsing</strong> — all without
+                    modifying code.
+                  </AlertDescription>
+                </Alert>
+
+                <div>
+                  <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    🧩 Core Components
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <Settings className="mt-0.5 h-5 w-5 text-purple-500" />
+                      <div>
+                        <strong>MetaRequest Model</strong> — Stores each
+                        request&apos;s config:
+                        <code className="mx-1 rounded bg-slate-100 px-1 dark:bg-slate-800">
+                          name
+                        </code>
+                        ,
+                        <code className="mx-1 rounded bg-slate-100 px-1 dark:bg-slate-800">
+                          endpoint
+                        </code>
+                        ,
+                        <code className="mx-1 rounded bg-slate-100 px-1 dark:bg-slate-800">
+                          body
+                        </code>
+                        , headers, and status.
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Shuffle className="mt-0.5 h-5 w-5 text-purple-500" />
+                      <div>
+                        <strong>Dynamic Selection</strong> — When performing a
+                        request, if you specify a <strong>name</strong>, one of
+                        the active entries is randomly chosen. If you specify an{" "}
+                        <strong>ID</strong>, that exact entry is used.
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Replace className="mt-0.5 h-5 w-5 text-purple-500" />
+                      <div>
+                        <strong>Variable Overrides</strong> — You can provide
+                        optional variables to dynamically replace existing ones
+                        inside the base request body. Only specified variables
+                        are updated; others remain untouched.
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Code2 className="mt-0.5 h-5 w-5 text-purple-500" />
+                      <div>
+                        <strong>Response Parsing</strong> — Responses are
+                        normalized using
+                        <code className="mx-1 rounded bg-slate-100 px-1 dark:bg-slate-800">
+                          parseResponse
+                        </code>{" "}
+                        to handle multiple concatenated JSONs, ensuring a clean
+                        and structured output.
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <SearchCheck className="mt-0.5 h-5 w-5 text-purple-500" />
+                      <div>
+                        <strong>Field Extraction</strong> — Specific fields are
+                        extracted using <code>jsonpath-plus</code> for flexible
+                        and precise data selection across complex responses.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    ⚙️ Server Actions
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Database className="h-5 w-5 text-purple-500" />
+                      <span>
+                        <strong>CRUD Operations</strong> — Create, edit, delete,
+                        and list Meta Requests directly from the dashboard.
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ToggleLeft className="h-5 w-5 text-purple-500" />
+                      <span>
+                        <strong>Toggle Active/Inactive</strong> — Easily enable
+                        or disable a request to control rotation behavior.
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Beaker className="h-5 w-5 text-purple-500" />
+                      <span>
+                        <strong>Test Requests</strong> — Instantly test any Meta
+                        Request with optional variables and preview both parsed
+                        and raw results.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    🚀 Usage Flow
+                  </h3>
+                  <ol className="list-decimal space-y-2 pl-6 text-slate-700 dark:text-slate-300">
+                    <li>
+                      Create one or more <strong>Meta Requests</strong> in the
+                      dashboard.
+                    </li>
+                    <li>
+                      Call <code>fetchMeta()</code> using either a request
+                      <strong>name</strong> (rotates randomly) or{" "}
+                      <strong>id</strong>
+                      (specific request).
+                    </li>
+                    <li>
+                      Optionally provide <strong>variables</strong> to override
+                      base request values.
+                    </li>
+                    <li>
+                      The system performs the request, parses multi-JSON
+                      responses, and extracts fields via{" "}
+                      <code>extractFields()</code>.
+                    </li>
+                    <li>
+                      If testing, you can view both <strong>parsed</strong> and
+                      <strong>raw</strong> response data.
+                    </li>
+                  </ol>
                 </div>
               </CardContent>
             </Card>
