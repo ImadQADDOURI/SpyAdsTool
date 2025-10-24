@@ -93,6 +93,15 @@ export const Deals = [
 
 export const AdminLinks = [
   {
+    id: "meta-graphql",
+    title: "Meta Graphql Configs +",
+    href: "/meta",
+    description: "",
+    icon: Facebook,
+    isFree: false,
+    color: "purple",
+  },
+  {
     id: "meta-graphql-configs",
     title: "Meta Graphql Configs",
     href: "/meta-graphql-configs",

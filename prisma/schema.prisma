@@ -172,3 +172,28 @@ model Product {
   @@index([createdAt])  // 🕒 Index for sorting by creation date
 
 }
+
+
+
+
+model MetaGraphQLRequest {
+  id              String   @id @default(cuid())
+
+  // General Identification
+  name            String                       // e.g. "ad_search", can have duplicates
+  friendly_name   String?                      // Optional human-friendly label
+  doc_id          String?                      // Meta GraphQL doc_id (if available)
+
+  // The copied raw XHR structure (url, headers, method, body, etc.)
+  base_request    Json                         // Full request configuration as JSON
+
+  // Map of "alias → JSONPath" to extract values from Meta response
+  fields_to_extract Json                       // Example: {"ad_id": "$.data.viewer.ads[*].id"}
+
+  // Activation / Status
+  is_active       Boolean   @default(true)
+
+  // Timestamps
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+}
