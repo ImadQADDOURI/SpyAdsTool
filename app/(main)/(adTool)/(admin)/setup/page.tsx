@@ -527,11 +527,10 @@ MAX_SAVED_ADS_PER_USER=100`}
                 <Alert className="border-purple-200 bg-purple-50 dark:border-purple-800 dark:bg-purple-900/20">
                   <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                   <AlertDescription className="text-purple-700 dark:text-purple-300">
-                    <strong>Note:</strong> This system is a controlled,
-                    educational implementation intended to demonstrate
-                    Meta&apos;s GraphQL request structure and automation
-                    concepts. It reproduces XHR calls for legitimate use cases
-                    like research and data aggregation.
+                    <strong>Tip:</strong> You can maintain multiple active
+                    requests for the same <code>name</code> to automatically
+                    rotate between different base configurations (useful for
+                    load balancing or proxy rotation).
                   </AlertDescription>
                 </Alert>
 
