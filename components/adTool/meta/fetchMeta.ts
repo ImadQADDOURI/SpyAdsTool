@@ -1,3 +1,5 @@
+"use server";
+
 /**
  * Extracts specific fields from an array of responses.
  * Keeps nested structure for each response.
@@ -40,7 +42,7 @@ function overrideVariables(body: string, newVars: Record<string, any>) {
       );
     }
 
-    console.log("🧩 Final variables used in fetch:", merged);
+    console.log("🧩 Final Variables used in fetch:", merged);
 
     // Set back the merged variables (no double encoding)
     params.set("variables", JSON.stringify(merged));
@@ -88,17 +90,20 @@ export async function fetchMeta(
 
     // 4️⃣ Parse Meta’s multi-JSON response
     const parsedResponses = parseResponse(text);
+
     // 5️⃣ Extract requested fields
     const extractedResults = parsedResponses.map((json) =>
       extractFields(json, fields_to_extract),
     );
 
-    // 6️⃣ Return structured result
+    // 6️⃣ Merges multiple extracted field results into one clean object
+    const merged = mergeExtractedResults(extractedResults);
+
     return {
       success: true,
       id: config.id,
       name: config.name,
-      extracted: extractedResults,
+      extracted: merged,
       raw: options?.includeRaw ? parsedResponses : undefined,
     };
   } catch (error: any) {
@@ -116,7 +121,7 @@ export async function fetchMeta(
  *
  * This function splits them efficiently and parses them safely.
  */
-export function parseResponse(raw: string): any[] {
+function parseResponse(raw: string): any[] {
   const results: any[] = [];
   const regex = /{[\s\S]*?}(?=\s*{|$)/g; // Match each complete {...} block
 
@@ -141,7 +146,7 @@ export function parseResponse(raw: string): any[] {
  * @param fields Map of fieldName -> JSONPath
  * @returns Extracted fields in same structure as input keys
  */
-export function extractFields(
+function extractFields(
   json: any,
   fields: Record<string, string>,
 ): Record<string, any> {
@@ -157,8 +162,47 @@ export function extractFields(
       extracted[key] = { error: (err as Error).message };
     }
   }
-
   return extracted;
+}
+
+/**
+ * Efficiently merges multiple extracted results into one clean object.
+ * - Keeps only non-empty, non-null values.
+ * - Combines unique values for repeated fields.
+ * - Simplifies arrays with one unique value to a single item.
+ */
+function mergeExtractedResults(
+  results: Record<string, any>[],
+): Record<string, any> {
+  if (!results || results.length === 0) return {};
+
+  const merged: Record<string, Set<any>> = {};
+
+  for (const result of results) {
+    for (const [key, value] of Object.entries(result)) {
+      if (!merged[key]) merged[key] = new Set();
+
+      const values = Array.isArray(value) ? value : [value];
+      for (const v of values) {
+        if (
+          v !== undefined &&
+          v !== null &&
+          v !== "" &&
+          !(Array.isArray(v) && v.length === 0)
+        ) {
+          merged[key].add(JSON.stringify(v)); // use JSON for deep equality
+        }
+      }
+    }
+  }
+
+  const final: Record<string, any> = {};
+  for (const [key, set] of Object.entries(merged)) {
+    const parsed = Array.from(set).map((v) => JSON.parse(v));
+    final[key] = parsed.length === 1 ? parsed[0] : parsed;
+  }
+
+  return final;
 }
 
 // Utility: Pick a random element from an array
@@ -170,10 +214,7 @@ function getRandomItem<T>(arr: T[]): T {
  * Loads a Meta GraphQL config by ID or randomly by name.
  * @param identifier Either the request ID or name (for rotation)
  */
-export async function loadMetaConfig(identifier: {
-  id?: string;
-  name?: string;
-}) {
+async function loadMetaConfig(identifier: { id?: string; name?: string }) {
   if (identifier.id) {
     const config = await prisma.metaGraphQLRequest.findUnique({
       where: { id: identifier.id },

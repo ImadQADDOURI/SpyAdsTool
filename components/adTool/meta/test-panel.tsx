@@ -203,104 +203,103 @@ export function TestPanel({ request }: TestPanelProps) {
 
               {/* Extracted Results */}
               <TabsContent value="extracted" className="space-y-2">
-                {result.extracted && result.extracted.length > 0 ? (
-                  result.extracted.map(
-                    (responseItem: any, responseIdx: number) => (
-                      <div key={responseIdx} className="space-y-2">
-                        {Object.entries(responseItem).map(
-                          ([fieldName, fieldValue]: [string, any]) => {
-                            const fieldId = `${responseIdx}-${fieldName}`;
-                            const isError =
-                              fieldValue &&
-                              typeof fieldValue === "object" &&
-                              "error" in fieldValue;
-                            const displayValue = isError
-                              ? fieldValue.error
-                              : fieldValue;
+                {result.extracted &&
+                Object.keys(result.extracted).length > 0 ? (
+                  <div className="space-y-2">
+                    {Object.entries(result.extracted).map(
+                      ([fieldName, fieldValue]: [string, any]) => {
+                        const fieldId = fieldName;
+                        const isError =
+                          fieldValue &&
+                          typeof fieldValue === "object" &&
+                          "error" in fieldValue;
+                        const displayValue = isError
+                          ? fieldValue.error
+                          : fieldValue;
 
-                            return (
-                              <Collapsible key={fieldId} defaultOpen={false}>
-                                <CollapsibleTrigger
-                                  className={`flex w-full items-center justify-between gap-2 rounded-lg p-3 text-left transition-colors hover:bg-muted/80 ${
-                                    isError ? "bg-destructive/10" : "bg-muted"
-                                  }`}
-                                >
-                                  <div className="flex min-w-0 items-center gap-2">
-                                    <ChevronDown className="h-4 w-4 flex-shrink-0" />
-                                    <span className="truncate text-sm font-medium">
-                                      {fieldName}
-                                    </span>
-                                    {isError && (
-                                      <Badge
-                                        variant="destructive"
-                                        className="text-xs"
-                                      >
-                                        Error
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <div className="max-w-xs truncate text-xs text-muted-foreground">
-                                      {typeof displayValue === "string"
-                                        ? displayValue
-                                        : JSON.stringify(
-                                            displayValue,
-                                          ).substring(0, 50)}
-                                    </div>
-                                    <Button
-                                      size="sm"
-                                      variant="ghost"
-                                      className="h-8 flex-shrink-0 gap-1"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        copyToClipboard(
-                                          typeof displayValue === "string"
-                                            ? displayValue
-                                            : JSON.stringify(
-                                                displayValue,
-                                                null,
-                                                2,
-                                              ),
-                                          fieldId,
-                                        );
-                                      }}
-                                    >
-                                      {copiedField === fieldId ? (
-                                        <Check className="h-3 w-3" />
-                                      ) : (
-                                        <Copy className="h-3 w-3" />
-                                      )}
-                                    </Button>
-                                  </div>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="ml-4 mt-2">
-                                  <div
-                                    className={`max-h-64 overflow-x-auto overflow-y-auto rounded-lg border p-3 ${isError ? "border-destructive/30 bg-destructive/5" : "border-muted bg-muted/50"}`}
+                        return (
+                          <Collapsible key={fieldId} defaultOpen={false}>
+                            <CollapsibleTrigger
+                              className={`flex w-full items-center justify-between gap-2 rounded-lg p-3 text-left transition-colors hover:bg-muted/80 ${
+                                isError ? "bg-destructive/10" : "bg-muted"
+                              }`}
+                            >
+                              <div className="flex min-w-0 items-center gap-2">
+                                <ChevronDown className="h-4 w-4 flex-shrink-0" />
+                                <span className="truncate text-sm font-medium">
+                                  {fieldName}
+                                </span>
+                                {isError && (
+                                  <Badge
+                                    variant="destructive"
+                                    className="text-xs"
                                   >
-                                    <JsonView
-                                      src={
-                                        typeof displayValue === "string"
-                                          ? { value: displayValue }
-                                          : displayValue
-                                      }
-                                      theme={isDark ? "monokai" : "rjv-default"}
-                                      collapsed={false}
-                                      displayDataTypes={false}
-                                      enableClipboard={false}
-                                      style={{
-                                        fontSize: "12px",
-                                        fontFamily: "monospace",
-                                      }}
-                                    />
-                                  </div>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            );
-                          },
-                        )}
-                      </div>
-                    ),
-                  )
+                                    Error
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <div className="max-w-xs truncate text-xs text-muted-foreground">
+                                  {typeof displayValue === "string"
+                                    ? displayValue
+                                    : JSON.stringify(displayValue).substring(
+                                        0,
+                                        50,
+                                      )}
+                                </div>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-8 flex-shrink-0 gap-1"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    copyToClipboard(
+                                      typeof displayValue === "string"
+                                        ? displayValue
+                                        : JSON.stringify(displayValue, null, 2),
+                                      fieldId,
+                                    );
+                                  }}
+                                >
+                                  {copiedField === fieldId ? (
+                                    <Check className="h-3 w-3" />
+                                  ) : (
+                                    <Copy className="h-3 w-3" />
+                                  )}
+                                </Button>
+                              </div>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent className="ml-4 mt-2">
+                              <div
+                                className={`max-h-64 overflow-x-auto overflow-y-auto rounded-lg border p-3 ${
+                                  isError
+                                    ? "border-destructive/30 bg-destructive/5"
+                                    : "border-muted bg-muted/50"
+                                }`}
+                              >
+                                <JsonView
+                                  src={
+                                    displayValue !== null &&
+                                    typeof displayValue === "object"
+                                      ? displayValue
+                                      : { value: displayValue }
+                                  }
+                                  theme={isDark ? "monokai" : "rjv-default"}
+                                  collapsed={false}
+                                  displayDataTypes={false}
+                                  enableClipboard={false}
+                                  style={{
+                                    fontSize: "12px",
+                                    fontFamily: "monospace",
+                                  }}
+                                />
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        );
+                      },
+                    )}
+                  </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">
                     No extracted data
