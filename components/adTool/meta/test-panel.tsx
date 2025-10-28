@@ -110,75 +110,79 @@ export function TestPanel({ request }: TestPanelProps) {
         </CardHeader>
       </Card>
 
-      {/* Base Request Body Variables */}
-      {Object.keys(bodyVariables).length > 0 && (
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {/* Base Request Body Variables */}
+        {Object.keys(bodyVariables).length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">
+                Base Request Variables
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="max-h-[500px] overflow-x-auto overflow-y-auto rounded-lg border border-muted bg-muted p-3">
+                <JsonView
+                  src={bodyVariables}
+                  theme={isDark ? "monokai" : "rjv-default"}
+                  collapsed={false}
+                  displayDataTypes={false}
+                  enableClipboard={false}
+                  style={{
+                    fontSize: "12px",
+                    fontFamily: "monospace",
+                  }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Test Configuration */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Base Request Variables</CardTitle>
+            <CardTitle className="text-base">Test Configuration</CardTitle>
+            <CardDescription>Override variables or test as-is</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="max-h-64 overflow-x-auto overflow-y-auto rounded-lg border border-muted bg-muted p-3">
-              <JsonView
-                src={bodyVariables}
-                theme={isDark ? "monokai" : "rjv-default"}
-                collapsed={false}
-                displayDataTypes={false}
-                enableClipboard={false}
-                style={{
-                  fontSize: "12px",
-                  fontFamily: "monospace",
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="variables">Variables (JSON)</Label>
+              <Textarea
+                id="variables"
+                value={variables}
+                onChange={(e) => {
+                  setVariables(e.target.value);
+                  setVariablesError(null);
                 }}
+                placeholder='{"variable_name": "value"}'
+                className={`h-[300px] font-mono text-xs ${variablesError ? "border-destructive" : ""}`}
               />
+              {variablesError && (
+                <p className="text-xs text-destructive">{variablesError}</p>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <Button
+                onClick={() => handleTest(true)}
+                disabled={loading}
+                className="flex-1 gap-2"
+              >
+                {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                Test with Variables
+              </Button>
+              <Button
+                onClick={() => handleTest(true)}
+                disabled={loading}
+                variant="outline"
+                className="flex-1 gap-2"
+              >
+                {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                Test As-Is
+              </Button>
             </div>
           </CardContent>
         </Card>
-      )}
-
-      {/* Test Configuration */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Test Configuration</CardTitle>
-          <CardDescription>Override variables or test as-is</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="variables">Variables (JSON)</Label>
-            <Textarea
-              id="variables"
-              value={variables}
-              onChange={(e) => {
-                setVariables(e.target.value);
-                setVariablesError(null);
-              }}
-              placeholder='{"variable_name": "value"}'
-              className={`h-32 font-mono text-xs ${variablesError ? "border-destructive" : ""}`}
-            />
-            {variablesError && (
-              <p className="text-xs text-destructive">{variablesError}</p>
-            )}
-          </div>
-
-          <div className="flex gap-2">
-            <Button
-              onClick={() => handleTest(true)}
-              disabled={loading}
-              className="flex-1 gap-2"
-            >
-              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              Test with Variables
-            </Button>
-            <Button
-              onClick={() => handleTest(true)}
-              disabled={loading}
-              variant="outline"
-              className="flex-1 gap-2"
-            >
-              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              Test As-Is
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      </div>
 
       {/* Results */}
       {error && (
@@ -203,103 +207,104 @@ export function TestPanel({ request }: TestPanelProps) {
 
               {/* Extracted Results */}
               <TabsContent value="extracted" className="space-y-2">
-                {result.extracted &&
-                Object.keys(result.extracted).length > 0 ? (
-                  <div className="space-y-2">
-                    {Object.entries(result.extracted).map(
-                      ([fieldName, fieldValue]: [string, any]) => {
-                        const fieldId = fieldName;
-                        const isError =
-                          fieldValue &&
-                          typeof fieldValue === "object" &&
-                          "error" in fieldValue;
-                        const displayValue = isError
-                          ? fieldValue.error
-                          : fieldValue;
+                {result.extracted && result.extracted.length > 0 ? (
+                  result.extracted.map(
+                    (responseItem: any, responseIdx: number) => (
+                      <div key={responseIdx} className="space-y-2">
+                        {Object.entries(responseItem).map(
+                          ([fieldName, fieldValue]: [string, any]) => {
+                            const fieldId = `${responseIdx}-${fieldName}`;
+                            const isError =
+                              fieldValue &&
+                              typeof fieldValue === "object" &&
+                              "error" in fieldValue;
+                            const displayValue = isError
+                              ? fieldValue.error
+                              : fieldValue;
 
-                        return (
-                          <Collapsible key={fieldId} defaultOpen={false}>
-                            <CollapsibleTrigger
-                              className={`flex w-full items-center justify-between gap-2 rounded-lg p-3 text-left transition-colors hover:bg-muted/80 ${
-                                isError ? "bg-destructive/10" : "bg-muted"
-                              }`}
-                            >
-                              <div className="flex min-w-0 items-center gap-2">
-                                <ChevronDown className="h-4 w-4 flex-shrink-0" />
-                                <span className="truncate text-sm font-medium">
-                                  {fieldName}
-                                </span>
-                                {isError && (
-                                  <Badge
-                                    variant="destructive"
-                                    className="text-xs"
-                                  >
-                                    Error
-                                  </Badge>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <div className="max-w-xs truncate text-xs text-muted-foreground">
-                                  {typeof displayValue === "string"
-                                    ? displayValue
-                                    : JSON.stringify(displayValue).substring(
-                                        0,
-                                        50,
-                                      )}
-                                </div>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-8 flex-shrink-0 gap-1"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    copyToClipboard(
-                                      typeof displayValue === "string"
-                                        ? displayValue
-                                        : JSON.stringify(displayValue, null, 2),
-                                      fieldId,
-                                    );
-                                  }}
+                            return (
+                              <Collapsible key={fieldId} defaultOpen={false}>
+                                <CollapsibleTrigger
+                                  className={`flex w-full items-center justify-between gap-2 rounded-lg p-3 text-left transition-colors hover:bg-muted/80 ${
+                                    isError ? "bg-destructive/10" : "bg-muted"
+                                  }`}
                                 >
-                                  {copiedField === fieldId ? (
-                                    <Check className="h-3 w-3" />
-                                  ) : (
-                                    <Copy className="h-3 w-3" />
-                                  )}
-                                </Button>
-                              </div>
-                            </CollapsibleTrigger>
-                            <CollapsibleContent className="ml-4 mt-2">
-                              <div
-                                className={`max-h-64 overflow-x-auto overflow-y-auto rounded-lg border p-3 ${
-                                  isError
-                                    ? "border-destructive/30 bg-destructive/5"
-                                    : "border-muted bg-muted/50"
-                                }`}
-                              >
-                                <JsonView
-                                  src={
-                                    displayValue !== null &&
-                                    typeof displayValue === "object"
-                                      ? displayValue
-                                      : { value: displayValue }
-                                  }
-                                  theme={isDark ? "monokai" : "rjv-default"}
-                                  collapsed={false}
-                                  displayDataTypes={false}
-                                  enableClipboard={false}
-                                  style={{
-                                    fontSize: "12px",
-                                    fontFamily: "monospace",
-                                  }}
-                                />
-                              </div>
-                            </CollapsibleContent>
-                          </Collapsible>
-                        );
-                      },
-                    )}
-                  </div>
+                                  <div className="flex min-w-0 items-center gap-2">
+                                    <ChevronDown className="h-4 w-4 flex-shrink-0" />
+                                    <span className="truncate text-sm font-medium">
+                                      {fieldName}
+                                    </span>
+                                    {isError && (
+                                      <Badge
+                                        variant="destructive"
+                                        className="text-xs"
+                                      >
+                                        Error
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <div className="max-w-xs truncate text-xs text-muted-foreground">
+                                      {typeof displayValue === "string"
+                                        ? displayValue
+                                        : JSON.stringify(
+                                            displayValue,
+                                          ).substring(0, 50)}
+                                    </div>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      className="h-8 flex-shrink-0 gap-1"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        copyToClipboard(
+                                          typeof displayValue === "string"
+                                            ? displayValue
+                                            : JSON.stringify(
+                                                displayValue,
+                                                null,
+                                                2,
+                                              ),
+                                          fieldId,
+                                        );
+                                      }}
+                                    >
+                                      {copiedField === fieldId ? (
+                                        <Check className="h-3 w-3" />
+                                      ) : (
+                                        <Copy className="h-3 w-3" />
+                                      )}
+                                    </Button>
+                                  </div>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent className="ml-4 mt-2">
+                                  <div
+                                    className={`max-h-[500px] overflow-x-auto overflow-y-auto rounded-lg border p-3 ${isError ? "border-destructive/30 bg-destructive/5" : "border-muted bg-muted/50"}`}
+                                  >
+                                    <JsonView
+                                      src={
+                                        typeof displayValue === "string"
+                                          ? { value: displayValue }
+                                          : displayValue
+                                      }
+                                      theme={isDark ? "monokai" : "rjv-default"}
+                                      collapsed={false}
+                                      displayDataTypes={false}
+                                      enableClipboard={false}
+                                      style={{
+                                        fontSize: "12px",
+                                        fontFamily: "monospace",
+                                      }}
+                                    />
+                                  </div>
+                                </CollapsibleContent>
+                              </Collapsible>
+                            );
+                          },
+                        )}
+                      </div>
+                    ),
+                  )
                 ) : (
                   <p className="text-sm text-muted-foreground">
                     No extracted data
@@ -339,7 +344,7 @@ export function TestPanel({ request }: TestPanelProps) {
                         </Button>
                       </CollapsibleTrigger>
                       <CollapsibleContent className="mt-2">
-                        <div className="max-h-96 overflow-x-auto overflow-y-auto rounded-lg border border-muted bg-muted p-3">
+                        <div className="max-h-[500px] overflow-x-auto overflow-y-auto rounded-lg border border-muted bg-muted p-3">
                           <JsonView
                             src={item}
                             theme={isDark ? "monokai" : "rjv-default"}
