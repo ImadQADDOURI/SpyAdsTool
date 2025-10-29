@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import { testMetaRequest } from "@/actions/metaRequests";
-import { AlertCircle, Check, ChevronDown, Copy, Loader2 } from "lucide-react";
+import {
+  AlertCircle,
+  Check,
+  ChevronDown,
+  Copy,
+  Loader2,
+  RotateCcw,
+} from "lucide-react";
 import { useTheme } from "next-themes";
 import JsonView from "react-json-view";
 
@@ -114,19 +121,41 @@ export function TestPanel({ request }: TestPanelProps) {
         {/* Base Request Body Variables */}
         {Object.keys(bodyVariables).length > 0 && (
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base">
-                Base Request Variables
-              </CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <div>
+                <CardTitle className="text-base">
+                  Base Request Variables
+                </CardTitle>
+              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-8 gap-1"
+                onClick={() =>
+                  copyToClipboard(
+                    JSON.stringify(bodyVariables, null, 2),
+                    "base-request",
+                  )
+                }
+              >
+                {copiedField === "base-request" ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </Button>
             </CardHeader>
             <CardContent>
-              <div className="max-h-[500px] overflow-x-auto overflow-y-auto rounded-lg border border-muted bg-muted p-3">
+              <div className="max-h-96 overflow-x-auto overflow-y-auto rounded-lg border border-muted bg-muted p-3">
                 <JsonView
                   src={bodyVariables}
                   theme={isDark ? "monokai" : "rjv-default"}
                   collapsed={false}
+                  collapseStringsAfterLength={100}
                   displayDataTypes={false}
-                  enableClipboard={false}
+                  displayObjectSize={false}
+                  name={false}
+                  enableClipboard={true}
                   style={{
                     fontSize: "12px",
                     fontFamily: "monospace",
@@ -145,7 +174,36 @@ export function TestPanel({ request }: TestPanelProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="variables">Variables (JSON)</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="variables">Variables (JSON)</Label>
+                <div className="flex gap-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 gap-1 px-2"
+                    onClick={() => copyToClipboard(variables, "test-config")}
+                    title="Copy variables"
+                  >
+                    {copiedField === "test-config" ? (
+                      <Check className="h-3 w-3" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 gap-1 px-2"
+                    onClick={() => {
+                      setVariables("{}");
+                      setVariablesError(null);
+                    }}
+                    title="Reset variables"
+                  >
+                    <RotateCcw className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
               <Textarea
                 id="variables"
                 value={variables}
@@ -154,7 +212,7 @@ export function TestPanel({ request }: TestPanelProps) {
                   setVariablesError(null);
                 }}
                 placeholder='{"variable_name": "value"}'
-                className={`h-[300px] font-mono text-xs ${variablesError ? "border-destructive" : ""}`}
+                className={`h-48 font-mono text-xs ${variablesError ? "border-destructive" : ""}`}
               />
               {variablesError && (
                 <p className="text-xs text-destructive">{variablesError}</p>
@@ -279,7 +337,7 @@ export function TestPanel({ request }: TestPanelProps) {
                                 </CollapsibleTrigger>
                                 <CollapsibleContent className="ml-4 mt-2">
                                   <div
-                                    className={`max-h-[500px] overflow-x-auto overflow-y-auto rounded-lg border p-3 ${isError ? "border-destructive/30 bg-destructive/5" : "border-muted bg-muted/50"}`}
+                                    className={`max-h-96 overflow-x-auto overflow-y-auto rounded-lg border p-3 ${isError ? "border-destructive/30 bg-destructive/5" : "border-muted bg-muted/50"}`}
                                   >
                                     <JsonView
                                       src={
@@ -288,9 +346,12 @@ export function TestPanel({ request }: TestPanelProps) {
                                           : displayValue
                                       }
                                       theme={isDark ? "monokai" : "rjv-default"}
-                                      collapsed={false}
+                                      collapsed={5}
+                                      collapseStringsAfterLength={100}
                                       displayDataTypes={false}
-                                      enableClipboard={false}
+                                      displayObjectSize={true}
+                                      name={false}
+                                      enableClipboard={true}
                                       style={{
                                         fontSize: "12px",
                                         fontFamily: "monospace",
@@ -344,13 +405,16 @@ export function TestPanel({ request }: TestPanelProps) {
                         </Button>
                       </CollapsibleTrigger>
                       <CollapsibleContent className="mt-2">
-                        <div className="max-h-[500px] overflow-x-auto overflow-y-auto rounded-lg border border-muted bg-muted p-3">
+                        <div className="max-h-[600px] overflow-x-auto overflow-y-auto rounded-lg border border-muted bg-muted p-3">
                           <JsonView
                             src={item}
                             theme={isDark ? "monokai" : "rjv-default"}
-                            collapsed={false}
+                            collapsed={5}
+                            collapseStringsAfterLength={100}
                             displayDataTypes={false}
-                            enableClipboard={false}
+                            displayObjectSize={true}
+                            name={false}
+                            enableClipboard={true}
                             style={{
                               fontSize: "12px",
                               fontFamily: "monospace",
