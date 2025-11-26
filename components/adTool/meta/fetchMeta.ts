@@ -1,61 +1,13 @@
 "use server";
 
-/**
- * Extracts specific fields from an array of responses.
- * Keeps nested structure for each response.
- */
 import { JSONPath } from "jsonpath-plus";
+import { ProxyAgent, fetch as undiciFetch } from "undici";
 
 import { prisma } from "@/lib/db";
 
 /**
- * Override or merge `variables` inside a URL-encoded GraphQL body.
- * - Only allows overriding existing keys (logs if key doesn’t exist).
- * Ensures correct encoding and logs the final variables.
- */
-function overrideVariables(body: string, newVars: Record<string, any>) {
-  try {
-    const params = new URLSearchParams(body);
-    const existingVarsRaw = params.get("variables");
-
-    let existingVars: Record<string, any> = {};
-    if (existingVarsRaw) {
-      try {
-        existingVars = JSON.parse(existingVarsRaw);
-      } catch {
-        // if it's encoded (like %7B...), decode first
-        existingVars = JSON.parse(decodeURIComponent(existingVarsRaw));
-      }
-    }
-
-    // Merge only provided vars
-    const invalidKeys: string[] = [];
-    const merged = { ...existingVars };
-    for (const [key, value] of Object.entries(newVars)) {
-      if (key in existingVars) merged[key] = value;
-      else invalidKeys.push(key);
-    }
-
-    if (invalidKeys.length > 0) {
-      console.warn(
-        `⚠️ Tried to override non-existing variables: ${invalidKeys.join(", ")}`,
-      );
-    }
-
-    console.log("🧩 Final Variables used in fetch:", merged);
-
-    // Set back the merged variables (no double encoding)
-    params.set("variables", JSON.stringify(merged));
-
-    return params.toString();
-  } catch (err) {
-    console.error("❌ Failed to override variables:", err);
-    return body;
-  }
-}
-
-/**
  * Executes a Meta GraphQL request using either ID or name.
+ * Returns extracted fields based on JSONPath configuration.
  */
 export async function fetchMeta(
   identifier: { id?: string; name?: string },
@@ -65,20 +17,21 @@ export async function fetchMeta(
   },
 ) {
   try {
-    // 1️⃣ Load config
+    // 1️⃣ Load configuration from database
     const config = await loadMetaConfig(identifier);
     const { base_request, fields_to_extract } = config as any;
 
     if (!base_request?.url) throw new Error("Invalid base_request");
 
-    // 2️⃣ Prepare request
+    // 2️⃣ Prepare request with optional variable overrides
     const { url, method, headers, body } = base_request;
     const finalBody = options?.variables
       ? overrideVariables(body, options.variables)
       : body;
 
-    // 3️⃣ Fetch from Meta
-    const response = await fetch(url, {
+    // 3️⃣ Execute request (with proxy support if configured)
+    const proxyFetch = createProxyFetch();
+    const response = await proxyFetch(url, {
       method: method || "POST",
       headers,
       body: finalBody,
@@ -88,22 +41,17 @@ export async function fetchMeta(
     if (!response.ok)
       throw new Error(`Meta request failed: ${response.status}`);
 
-    // 4️⃣ Parse Meta’s multi-JSON response
-    const parsedResponses = parseResponse(text);
+    // 4️⃣ Parse Meta's response (handles multiple concatenated JSON objects)
+    const parsedResponses = parseMultiJsonResponse(text);
 
-    // 5️⃣ Extract requested fields
-    const extractedResults = parsedResponses.map((json) =>
-      extractFields(json, fields_to_extract),
-    );
-
-    // 6️⃣ Merges multiple extracted field results into one clean object
-    const merged = mergeExtractedResults(extractedResults);
+    // 5️⃣ Extract fields using JSONPath and return clean result
+    const extracted = extractFields(parsedResponses, fields_to_extract);
 
     return {
       success: true,
       id: config.id,
       name: config.name,
-      extracted: merged,
+      extracted,
       raw: options?.includeRaw ? parsedResponses : undefined,
     };
   } catch (error: any) {
@@ -116,24 +64,97 @@ export async function fetchMeta(
 }
 
 /**
- * Meta sometimes returns multiple JSON objects concatenated together like:
- * {"data": {...}}{"data": {...}}
- *
- * This function splits them efficiently and parses them safely.
+ * Override or merge variables in a URL-encoded GraphQL body.
+ * Only updates existing keys in the base request variables.
  */
-function parseResponse(raw: string): any[] {
-  const results: any[] = [];
-  const regex = /{[\s\S]*?}(?=\s*{|$)/g; // Match each complete {...} block
+function overrideVariables(body: string, newVars: Record<string, any>): string {
+  try {
+    const params = new URLSearchParams(body);
+    const existingVarsRaw = params.get("variables");
 
-  const matches = raw.match(regex);
-  if (!matches) return [];
+    // If no existing variables, just set new ones
+    if (!existingVarsRaw) {
+      params.set("variables", JSON.stringify(newVars));
+      return params.toString();
+    }
 
-  for (const match of matches) {
+    // Parse existing variables (handle both encoded and plain JSON)
+    let existingVars: Record<string, any> = {};
     try {
-      results.push(JSON.parse(match));
+      // If it's encoded (like %7B...), decode first
+      existingVars = JSON.parse(
+        existingVarsRaw.startsWith("%7B")
+          ? decodeURIComponent(existingVarsRaw)
+          : existingVarsRaw,
+      );
     } catch {
-      // Skip invalid fragments
+      existingVars = {};
+    }
+
+    // Merge new variables into existing ones
+    const merged = { ...existingVars, ...newVars };
+
+    console.log("🧩 Final Variables used in fetch:", merged);
+
+    // Update the variables parameter
+    params.set("variables", JSON.stringify(merged));
+
+    return params.toString();
+  } catch (err) {
+    console.error("❌ Failed to override variables:", err);
+    return body;
+  }
+}
+
+/**
+ * Parses Meta's response which may contain multiple JSON objects
+ * concatenated together like: {"data": {...}}{"data": {...}}
+ *
+ * Uses bracket counting for efficient O(n) parsing instead of regex.
+ */
+function parseMultiJsonResponse(raw: string): any[] {
+  const results: any[] = [];
+  let depth = 0;
+  let start = -1;
+  let inString = false;
+  let escapeNext = false;
+
+  for (let i = 0; i < raw.length; i++) {
+    const char = raw[i];
+
+    // Handle escape sequences in strings
+    if (escapeNext) {
+      escapeNext = false;
       continue;
+    }
+    if (char === "\\") {
+      escapeNext = true;
+      continue;
+    }
+
+    // Track string boundaries (don't count brackets inside strings)
+    if (char === '"') {
+      inString = !inString;
+      continue;
+    }
+
+    // Count brackets only outside of strings
+    if (!inString) {
+      if (char === "{") {
+        if (depth === 0) start = i;
+        depth++;
+      } else if (char === "}") {
+        depth--;
+        // When we close a top-level object, parse it
+        if (depth === 0 && start !== -1) {
+          try {
+            results.push(JSON.parse(raw.substring(start, i + 1)));
+          } catch {
+            // Skip invalid JSON fragments
+          }
+          start = -1;
+        }
+      }
     }
   }
 
@@ -141,78 +162,85 @@ function parseResponse(raw: string): any[] {
 }
 
 /**
- * Extracts fields from a JSON object using JSONPath expressions.
- * @param json The JSON response to extract data from
- * @param fields Map of fieldName -> JSONPath
- * @returns Extracted fields in same structure as input keys
+ * Extracts fields from multiple JSON responses using JSONPath expressions.
+ * Combines results from all responses into a single clean object.
+ *
+ * - Deduplicates values across responses
+ * - Returns single value if only one unique result found
+ * - Returns array if multiple unique values exist
  */
 function extractFields(
-  json: any,
-  fields: Record<string, string>,
+  responses: any[],
+  fieldPaths: Record<string, string>,
 ): Record<string, any> {
-  const extracted: Record<string, any> = {};
+  // Use Sets to automatically handle deduplication
+  const fieldSets: Record<string, Set<string>> = {};
 
-  for (const [key, path] of Object.entries(fields)) {
-    try {
-      // JSONPath returns an array of matches
-      const result = JSONPath({ path, json });
-      // If single value, return first match, else full array
-      extracted[key] = result.length === 1 ? result[0] : result;
-    } catch (err) {
-      extracted[key] = { error: (err as Error).message };
-    }
+  // Initialize a Set for each field
+  for (const fieldName of Object.keys(fieldPaths)) {
+    fieldSets[fieldName] = new Set();
   }
-  return extracted;
-}
 
-/**
- * Efficiently merges multiple extracted results into one clean object.
- * - Keeps only non-empty, non-null values.
- * - Combines unique values for repeated fields.
- * - Simplifies arrays with one unique value to a single item.
- */
-function mergeExtractedResults(
-  results: Record<string, any>[],
-): Record<string, any> {
-  if (!results || results.length === 0) return {};
+  // Process all responses and extract fields
+  for (const json of responses) {
+    for (const [fieldName, jsonPath] of Object.entries(fieldPaths)) {
+      try {
+        // Extract values using JSONPath (wrap: false avoids extra array nesting)
+        const result = JSONPath({ path: jsonPath, json, wrap: false });
 
-  const merged: Record<string, Set<any>> = {};
+        if (result === undefined || result === null) continue;
 
-  for (const result of results) {
-    for (const [key, value] of Object.entries(result)) {
-      if (!merged[key]) merged[key] = new Set();
+        // Handle both single values and arrays
+        const values = Array.isArray(result) ? result : [result];
 
-      const values = Array.isArray(value) ? value : [value];
-      for (const v of values) {
-        if (
-          v !== undefined &&
-          v !== null &&
-          v !== "" &&
-          !(Array.isArray(v) && v.length === 0)
-        ) {
-          merged[key].add(JSON.stringify(v)); // use JSON for deep equality
+        for (const value of values) {
+          // Skip empty values
+          if (value === undefined || value === null || value === "") continue;
+          if (Array.isArray(value) && value.length === 0) continue;
+
+          // Store as JSON string for complex objects, direct string for primitives
+          const serialized =
+            typeof value === "object" ? JSON.stringify(value) : String(value);
+          fieldSets[fieldName].add(serialized);
         }
+      } catch (err) {
+        // Store error info for this field
+        fieldSets[fieldName].add(
+          JSON.stringify({ error: (err as Error).message }),
+        );
       }
     }
   }
 
-  const final: Record<string, any> = {};
-  for (const [key, set] of Object.entries(merged)) {
-    const parsed = Array.from(set).map((v) => JSON.parse(v));
-    final[key] = parsed.length === 1 ? parsed[0] : parsed;
+  // Convert Sets back to final values
+  const result: Record<string, any> = {};
+
+  for (const [fieldName, valueSet] of Object.entries(fieldSets)) {
+    if (valueSet.size === 0) continue;
+
+    // Deserialize values
+    const deserializedValues = Array.from(valueSet).map((serialized) => {
+      try {
+        return JSON.parse(serialized);
+      } catch {
+        // Keep as string if it wasn't valid JSON
+        return serialized;
+      }
+    });
+
+    // Return single value if only one, otherwise return array
+    result[fieldName] =
+      deserializedValues.length === 1
+        ? deserializedValues[0]
+        : deserializedValues;
   }
 
-  return final;
-}
-
-// Utility: Pick a random element from an array
-function getRandomItem<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
+  return result;
 }
 
 /**
  * Loads a Meta GraphQL config by ID or randomly by name.
- * @param identifier Either the request ID or name (for rotation)
+ * When using name, randomly selects from active configs for rotation.
  */
 async function loadMetaConfig(identifier: { id?: string; name?: string }) {
   if (identifier.id) {
@@ -232,8 +260,44 @@ async function loadMetaConfig(identifier: { id?: string; name?: string }) {
       throw new Error(
         `No active MetaGraphQLRequest found for name=${identifier.name}`,
       );
-    return getRandomItem(configs);
+    // Pick a random config for rotation/load balancing
+    return configs[Math.floor(Math.random() * configs.length)];
   }
 
   throw new Error("Invalid identifier: must provide either id or name");
+}
+
+// Singleton proxy agent (reused across requests to avoid overhead)
+let proxyAgent: ProxyAgent | null = null;
+
+/**
+ * Creates a fetch function with optional proxy support.
+ * Uses singleton ProxyAgent to avoid creating new connections.
+ * Falls back to native fetch if no proxy is configured.
+ */
+function createProxyFetch() {
+  const proxyUrl = process.env.PROXY_URL;
+
+  // Use native fetch if proxy not configured
+  if (!proxyUrl) {
+    return fetch;
+  }
+
+  // Initialize proxy agent once (singleton pattern for performance)
+  if (!proxyAgent) {
+    proxyAgent = new ProxyAgent(proxyUrl);
+  }
+
+  // Return proxy-enabled fetch function
+  return async (url: string, options?: RequestInit): Promise<Response> => {
+    const undiciOptions: any = {
+      method: options?.method,
+      headers: options?.headers,
+      body: options?.body,
+      dispatcher: proxyAgent,
+    };
+
+    const response = await undiciFetch(url, undiciOptions);
+    return response as unknown as Response;
+  };
 }

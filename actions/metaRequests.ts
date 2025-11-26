@@ -116,6 +116,18 @@ export async function testMetaRequest(
 ) {
   try {
     const result = await fetchMeta({ id }, { variables, includeRaw });
+    {
+      /*
+      
+    console.log("🔍 Result structure:", {
+      hasExtracted: !!result.extracted,
+      extractedType: typeof result.extracted,
+      isArray: Array.isArray(result.extracted),
+      extractedKeys: result.extracted ? Object.keys(result.extracted) : [],
+      extractedValue: result.extracted,
+    }); 
+    */
+    }
     return { success: true, result };
   } catch (error: any) {
     console.error("❌ testMetaRequest error:", error);

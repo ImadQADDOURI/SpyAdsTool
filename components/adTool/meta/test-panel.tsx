@@ -4,9 +4,11 @@ import { useState } from "react";
 import { testMetaRequest } from "@/actions/metaRequests";
 import {
   AlertCircle,
+  AlertTriangle,
   Check,
   ChevronDown,
   Copy,
+  FileJson,
   Loader2,
   RotateCcw,
 } from "lucide-react";
@@ -45,7 +47,8 @@ export function TestPanel({ request }: TestPanelProps) {
   const [variablesError, setVariablesError] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const handleTest = async (includeRaw = true) => {
+  // FIX: Separate handlers for different test modes
+  const handleTestWithVariables = async () => {
     setVariablesError(null);
     setError(null);
 
@@ -62,7 +65,30 @@ export function TestPanel({ request }: TestPanelProps) {
       const res = await testMetaRequest(
         request.id,
         Object.keys(parsedVars).length > 0 ? parsedVars : undefined,
-        includeRaw,
+        true, // includeRaw
+      );
+
+      if (res.success) {
+        setResult(res.result);
+      } else {
+        setError(res.error || "Test failed");
+      }
+    } catch (err: any) {
+      setError(err.message || "Test failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // FIX: Test without any variable overrides
+  const handleTestAsIs = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await testMetaRequest(
+        request.id,
+        undefined, // No variable overrides
+        true,
       );
 
       if (res.success) {
@@ -100,6 +126,16 @@ export function TestPanel({ request }: TestPanelProps) {
 
   const isDark = theme === "dark";
 
+  // ENHANCEMENT: Count extracted fields and errors
+  const extractedFieldsCount = result?.extracted
+    ? Object.keys(result.extracted).length
+    : 0;
+  const errorCount = result?.extracted
+    ? Object.values(result.extracted).filter(
+        (v: any) => v && typeof v === "object" && "error" in v,
+      ).length
+    : 0;
+
   return (
     <div className="space-y-4">
       {/* Request Info */}
@@ -126,6 +162,9 @@ export function TestPanel({ request }: TestPanelProps) {
                 <CardTitle className="text-base">
                   Base Request Variables
                 </CardTitle>
+                <CardDescription className="mt-1">
+                  {Object.keys(bodyVariables).length} variables defined
+                </CardDescription>
               </div>
               <Button
                 size="sm"
@@ -175,7 +214,7 @@ export function TestPanel({ request }: TestPanelProps) {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="variables">Variables (JSON)</Label>
+                <Label htmlFor="variables">Variables Override (JSON)</Label>
                 <div className="flex gap-1">
                   <Button
                     size="sm"
@@ -219,9 +258,10 @@ export function TestPanel({ request }: TestPanelProps) {
               )}
             </div>
 
+            {/* FIX: Properly differentiated buttons */}
             <div className="flex gap-2">
               <Button
-                onClick={() => handleTest(true)}
+                onClick={handleTestWithVariables}
                 disabled={loading}
                 className="flex-1 gap-2"
               >
@@ -229,7 +269,7 @@ export function TestPanel({ request }: TestPanelProps) {
                 Test with Variables
               </Button>
               <Button
-                onClick={() => handleTest(true)}
+                onClick={handleTestAsIs}
                 disabled={loading}
                 variant="outline"
                 className="flex-1 gap-2"
@@ -253,122 +293,250 @@ export function TestPanel({ request }: TestPanelProps) {
       {result && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Test Results</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base">Test Results</CardTitle>
+              {/* ENHANCEMENT: Quick stats */}
+              <div className="flex gap-2">
+                <Badge variant="outline" className="gap-1">
+                  <FileJson className="h-3 w-3" />
+                  {extractedFieldsCount} fields
+                </Badge>
+                {errorCount > 0 && (
+                  <Badge variant="destructive" className="gap-1">
+                    <AlertTriangle className="h-3 w-3" />
+                    {errorCount} errors
+                  </Badge>
+                )}
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="extracted" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="extracted">Extracted Fields</TabsTrigger>
-                <TabsTrigger value="raw">Raw Response</TabsTrigger>
-                <TabsTrigger value="errors">Errors</TabsTrigger>
+                <TabsTrigger value="extracted">
+                  Extracted Fields
+                  {extractedFieldsCount > 0 && (
+                    <Badge variant="secondary" className="ml-2">
+                      {extractedFieldsCount}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="raw">
+                  Raw Response
+                  {result.raw && (
+                    <Badge variant="secondary" className="ml-2">
+                      {result.raw.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="errors">
+                  Errors
+                  {errorCount > 0 && (
+                    <Badge variant="destructive" className="ml-2">
+                      {errorCount}
+                    </Badge>
+                  )}
+                </TabsTrigger>
               </TabsList>
 
               {/* Extracted Results */}
               <TabsContent value="extracted" className="space-y-2">
-                {result.extracted && result.extracted.length > 0 ? (
-                  result.extracted.map(
-                    (responseItem: any, responseIdx: number) => (
-                      <div key={responseIdx} className="space-y-2">
-                        {Object.entries(responseItem).map(
-                          ([fieldName, fieldValue]: [string, any]) => {
-                            const fieldId = `${responseIdx}-${fieldName}`;
-                            const isError =
-                              fieldValue &&
-                              typeof fieldValue === "object" &&
-                              "error" in fieldValue;
-                            const displayValue = isError
-                              ? fieldValue.error
-                              : fieldValue;
+                {result.extracted || request.fields_to_extract ? (
+                  <div className="space-y-2">
+                    {/* Get all expected fields from config */}
+                    {(() => {
+                      const expectedFields = request.fields_to_extract || {};
+                      const extractedFields = result.extracted || {};
+                      const allFieldNames = Object.keys(expectedFields);
 
-                            return (
-                              <Collapsible key={fieldId} defaultOpen={false}>
-                                <CollapsibleTrigger
-                                  className={`flex w-full items-center justify-between gap-2 rounded-lg p-3 text-left transition-colors hover:bg-muted/80 ${
-                                    isError ? "bg-destructive/10" : "bg-muted"
-                                  }`}
+                      return allFieldNames.map((fieldName) => {
+                        const fieldValue = extractedFields[fieldName];
+                        const hasValue = fieldValue !== undefined;
+
+                        return { fieldName, fieldValue, hasValue };
+                      });
+                    })().map(({ fieldName, fieldValue, hasValue }) => {
+                      const fieldId = `extracted-${fieldName}`;
+                      const isError =
+                        fieldValue &&
+                        typeof fieldValue === "object" &&
+                        "error" in fieldValue;
+                      const isMissing = !hasValue;
+                      const displayValue = isError
+                        ? fieldValue.error
+                        : fieldValue;
+
+                      // Show array length and type indicators
+                      const valueType = !hasValue
+                        ? "missing"
+                        : Array.isArray(fieldValue)
+                          ? `array[${fieldValue.length}]`
+                          : typeof fieldValue;
+
+                      return (
+                        <Collapsible key={fieldId} defaultOpen={false}>
+                          <CollapsibleTrigger
+                            className={`flex w-full items-center justify-between gap-2 rounded-lg p-3 text-left transition-colors hover:bg-muted/80 ${
+                              isMissing
+                                ? "border border-yellow-500/30 bg-yellow-500/10"
+                                : isError
+                                  ? "bg-destructive/10"
+                                  : "bg-muted"
+                            }`}
+                          >
+                            <div className="flex min-w-0 items-center gap-2">
+                              <ChevronDown className="h-4 w-4 flex-shrink-0" />
+                              <span
+                                className={`truncate text-sm font-medium ${
+                                  isMissing
+                                    ? "text-yellow-600 dark:text-yellow-500"
+                                    : ""
+                                }`}
+                              >
+                                {fieldName}
+                              </span>
+                              {/* Type badge */}
+                              <Badge
+                                variant="outline"
+                                className={`font-mono text-[10px] ${
+                                  isMissing
+                                    ? "border-yellow-500/50 text-yellow-600 dark:text-yellow-500"
+                                    : ""
+                                }`}
+                              >
+                                {valueType}
+                              </Badge>
+                              {/* Status badges */}
+                              {isMissing && (
+                                <Badge
+                                  variant="outline"
+                                  className="gap-1 border-yellow-500/50 text-xs text-yellow-600 dark:text-yellow-500"
                                 >
-                                  <div className="flex min-w-0 items-center gap-2">
-                                    <ChevronDown className="h-4 w-4 flex-shrink-0" />
-                                    <span className="truncate text-sm font-medium">
-                                      {fieldName}
-                                    </span>
-                                    {isError && (
-                                      <Badge
-                                        variant="destructive"
-                                        className="text-xs"
-                                      >
-                                        Error
-                                      </Badge>
-                                    )}
+                                  <AlertTriangle className="h-3 w-3" />
+                                  Not Found
+                                </Badge>
+                              )}
+                              {isError && (
+                                <Badge
+                                  variant="destructive"
+                                  className="text-xs"
+                                >
+                                  Error
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {!isMissing && (
+                                <>
+                                  <div className="max-w-xs truncate text-xs text-muted-foreground">
+                                    {typeof displayValue === "string"
+                                      ? displayValue
+                                      : JSON.stringify(displayValue).substring(
+                                          0,
+                                          50,
+                                        )}
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    <div className="max-w-xs truncate text-xs text-muted-foreground">
-                                      {typeof displayValue === "string"
-                                        ? displayValue
-                                        : JSON.stringify(
-                                            displayValue,
-                                          ).substring(0, 50)}
-                                    </div>
-                                    <Button
-                                      size="sm"
-                                      variant="ghost"
-                                      className="h-8 flex-shrink-0 gap-1"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        copyToClipboard(
-                                          typeof displayValue === "string"
-                                            ? displayValue
-                                            : JSON.stringify(
-                                                displayValue,
-                                                null,
-                                                2,
-                                              ),
-                                          fieldId,
-                                        );
-                                      }}
-                                    >
-                                      {copiedField === fieldId ? (
-                                        <Check className="h-3 w-3" />
-                                      ) : (
-                                        <Copy className="h-3 w-3" />
-                                      )}
-                                    </Button>
-                                  </div>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="ml-4 mt-2">
-                                  <div
-                                    className={`max-h-96 overflow-x-auto overflow-y-auto rounded-lg border p-3 ${isError ? "border-destructive/30 bg-destructive/5" : "border-muted bg-muted/50"}`}
-                                  >
-                                    <JsonView
-                                      src={
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-8 flex-shrink-0 gap-1"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      copyToClipboard(
                                         typeof displayValue === "string"
-                                          ? { value: displayValue }
-                                          : displayValue
-                                      }
-                                      theme={isDark ? "monokai" : "rjv-default"}
-                                      collapsed={5}
-                                      collapseStringsAfterLength={100}
-                                      displayDataTypes={false}
-                                      displayObjectSize={true}
-                                      name={false}
-                                      enableClipboard={true}
-                                      style={{
-                                        fontSize: "12px",
-                                        fontFamily: "monospace",
-                                      }}
-                                    />
-                                  </div>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            );
-                          },
-                        )}
-                      </div>
-                    ),
-                  )
+                                          ? displayValue
+                                          : JSON.stringify(
+                                              displayValue,
+                                              null,
+                                              2,
+                                            ),
+                                        fieldId,
+                                      );
+                                    }}
+                                  >
+                                    {copiedField === fieldId ? (
+                                      <Check className="h-3 w-3" />
+                                    ) : (
+                                      <Copy className="h-3 w-3" />
+                                    )}
+                                  </Button>
+                                </>
+                              )}
+                              {isMissing && (
+                                <span className="text-xs font-medium text-yellow-600 dark:text-yellow-500">
+                                  No value extracted
+                                </span>
+                              )}
+                            </div>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="ml-4 mt-2">
+                            {isMissing ? (
+                              <Alert className="border-yellow-500/30 bg-yellow-500/5">
+                                <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-500" />
+                                <AlertDescription className="text-yellow-700 dark:text-yellow-400">
+                                  <strong>Field not found in response.</strong>
+                                  <br />
+                                  <span className="mt-1 block font-mono text-xs">
+                                    JSONPath:{" "}
+                                    {request.fields_to_extract[fieldName]}
+                                  </span>
+                                  <ul className="mt-2 list-inside list-disc space-y-1 text-xs">
+                                    <li>
+                                      Check if the JSONPath expression is
+                                      correct
+                                    </li>
+                                    <li>
+                                      Verify the response structure matches
+                                      expectations
+                                    </li>
+                                    <li>
+                                      Field may not exist in this particular
+                                      response
+                                    </li>
+                                  </ul>
+                                </AlertDescription>
+                              </Alert>
+                            ) : (
+                              <div
+                                className={`max-h-96 overflow-x-auto overflow-y-auto rounded-lg border p-3 ${
+                                  isError
+                                    ? "border-destructive/30 bg-destructive/5"
+                                    : "border-muted bg-muted/50"
+                                }`}
+                              >
+                                {/* Render primitives as text, objects/arrays with JsonView */}
+                                {typeof displayValue === "string" ||
+                                typeof displayValue === "number" ||
+                                typeof displayValue === "boolean" ? (
+                                  <pre className="whitespace-pre-wrap break-words font-mono text-xs">
+                                    {String(displayValue)}
+                                  </pre>
+                                ) : (
+                                  <JsonView
+                                    src={displayValue}
+                                    theme={isDark ? "monokai" : "rjv-default"}
+                                    collapsed={5}
+                                    collapseStringsAfterLength={100}
+                                    displayDataTypes={false}
+                                    displayObjectSize={true}
+                                    name={false}
+                                    enableClipboard={true}
+                                    style={{
+                                      fontSize: "12px",
+                                      fontFamily: "monospace",
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            )}
+                          </CollapsibleContent>
+                        </Collapsible>
+                      );
+                    })}
+                  </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    No extracted data
+                    No fields configured for extraction
                   </p>
                 )}
               </TabsContent>
@@ -377,13 +545,19 @@ export function TestPanel({ request }: TestPanelProps) {
               <TabsContent value="raw" className="space-y-3">
                 {result.raw && result.raw.length > 0 ? (
                   result.raw.map((item: any, idx: number) => (
-                    <Collapsible key={idx} defaultOpen={false}>
+                    <Collapsible key={idx} defaultOpen={idx === 0}>
                       <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 rounded-lg bg-muted p-3 text-left hover:bg-muted/80">
                         <div className="flex items-center gap-2">
                           <ChevronDown className="h-4 w-4" />
                           <span className="text-sm font-medium">
                             Raw Response {idx + 1}
                           </span>
+                          {/* ENHANCEMENT: Show if response has errors */}
+                          {item.errors && (
+                            <Badge variant="destructive" className="text-xs">
+                              Has Errors
+                            </Badge>
+                          )}
                         </div>
                         <Button
                           size="sm"
@@ -431,51 +605,47 @@ export function TestPanel({ request }: TestPanelProps) {
                 )}
               </TabsContent>
 
-              {/* Errors */}
+              {/* FIX: Errors Tab - Fixed to work with object structure */}
               <TabsContent value="errors" className="space-y-3">
-                {result.extracted && result.extracted.length > 0 ? (
-                  result.extracted.map((item: any, idx: number) => {
-                    const hasErrors = Object.values(item).some(
-                      (v: any) => v && typeof v === "object" && "error" in v,
+                {result.extracted &&
+                Object.keys(result.extracted).length > 0 ? (
+                  (() => {
+                    const errorEntries = Object.entries(
+                      result.extracted,
+                    ).filter(
+                      ([_, value]: [string, any]) =>
+                        value && typeof value === "object" && "error" in value,
                     );
-                    if (!hasErrors) return null;
+
+                    if (errorEntries.length === 0) {
+                      return (
+                        <Alert>
+                          <Check className="h-4 w-4" />
+                          <AlertDescription>
+                            No errors found in extracted fields
+                          </AlertDescription>
+                        </Alert>
+                      );
+                    }
 
                     return (
-                      <Collapsible key={idx}>
-                        <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-lg bg-destructive/10 p-3 text-left hover:bg-destructive/20">
-                          <ChevronDown className="h-4 w-4" />
-                          <span className="text-sm font-medium">
-                            Response {idx + 1} Errors
-                          </span>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-2">
-                          <div className="space-y-2">
-                            {Object.entries(item).map(
-                              ([key, value]: [string, any]) => {
-                                if (
-                                  value &&
-                                  typeof value === "object" &&
-                                  "error" in value
-                                ) {
-                                  return (
-                                    <Alert key={key} variant="destructive">
-                                      <AlertCircle className="h-4 w-4" />
-                                      <AlertDescription>
-                                        <strong>{key}:</strong> {value.error}
-                                      </AlertDescription>
-                                    </Alert>
-                                  );
-                                }
-                                return null;
-                              },
-                            )}
-                          </div>
-                        </CollapsibleContent>
-                      </Collapsible>
+                      <div className="space-y-2">
+                        {errorEntries.map(([key, value]: [string, any]) => (
+                          <Alert key={key} variant="destructive">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertDescription>
+                              <strong className="font-semibold">{key}:</strong>{" "}
+                              {value.error}
+                            </AlertDescription>
+                          </Alert>
+                        ))}
+                      </div>
                     );
-                  })
+                  })()
                 ) : (
-                  <p className="text-sm text-muted-foreground">No errors</p>
+                  <p className="text-sm text-muted-foreground">
+                    No extracted data to check for errors
+                  </p>
                 )}
               </TabsContent>
             </Tabs>
