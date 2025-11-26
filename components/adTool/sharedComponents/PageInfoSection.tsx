@@ -30,7 +30,14 @@ export const PageInfoSection: React.FC<any> = ({
   page_info,
   count,
 }) => {
-  const creationDate = history_items?.find(
+  // Normalize history_items to always be an array
+  const historyItemsArray: (typeof history_items)[] = history_items
+    ? Array.isArray(history_items)
+      ? history_items
+      : [history_items]
+    : [];
+  // extract the Creation date
+  const creationDate = historyItemsArray.find(
     (item) => item?.item_type === "CREATION",
   )?.event_time;
 
