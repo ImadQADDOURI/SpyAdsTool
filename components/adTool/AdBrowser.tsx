@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AdLibrarySearchPaginationQuery } from "@/actions/Meta-GraphQL-Queries";
 import { Facebook, Star } from "lucide-react";
 
 import type { AdData } from "@/types/ad";
 
+import { fetchMeta } from "./meta/fetchMeta";
 import {
   SearchFilterProvider,
   useSearchFilters,
@@ -14,6 +14,38 @@ import SearchFilters from "./search/search-filters";
 import { ScrollButtons } from "./sharedComponents/ScrollButtons";
 import SearchResults from "./sharedComponents/SearchResults";
 import TitleSection from "./sharedComponents/TitleSection";
+
+// 🗂️ Define the shape of the GraphQL edge
+interface Edge {
+  node: {
+    collated_results?: AdData[];
+  };
+}
+
+// ✨ Helper: Extract and collate Ads from edges
+const extractCollatedAds = (
+  edges: Edge[],
+): { ads: AdData[]; searchCount: number } => {
+  let totalOriginalAds = 0;
+
+  const ads = edges
+    .map((edge) => edge.node.collated_results ?? [])
+    .filter((group) => group.length > 0)
+    .map((group) => {
+      const groupCount = group.length;
+      totalOriginalAds += groupCount; // Count all original ads
+
+      const maxOriginal = group.reduce(
+        (max, ad) => Math.max(max, ad.collation_count ?? 0),
+        0,
+      );
+      const collation_count = Math.max(maxOriginal, groupCount, 1);
+      const [firstAd] = group;
+      return { ...firstAd, collation_count };
+    });
+
+  return { ads, searchCount: totalOriginalAds };
+};
 
 /**
  * Inner component that uses the search filter context
@@ -32,10 +64,10 @@ const AdBrowserContent = () => {
   const [endCursor, setEndCursor] = useState<string | null>(null);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
 
-  // 🎯  Track actual loaded ads count using search_count
-  const [totalLoadedAds, setTotalLoadedAds] = useState<number>(0);
+  // Track last search count
+  const [lastSearchCount, setLastSearchCount] = useState<number>(0);
 
-  // 🎯  Current search params state for synchronization
+  // Current search params state for synchronization
   const [currentSearchParams, setCurrentSearchParams] = useState<any>(null);
 
   // Prevent concurrent searches
@@ -46,10 +78,9 @@ const AdBrowserContent = () => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
-  // 🎯  Handle sync issues
+  // Handle sync issues
   const handleSyncIssue = useCallback((issue: string) => {
     console.warn("🔄 Sync Issue:", issue);
-    // You can add toast notifications or other UI feedback here
   }, []);
 
   const executeSearch = useCallback(
@@ -63,84 +94,148 @@ const AdBrowserContent = () => {
       try {
         const searchParams = getSearchParams();
 
-        // 🎯  Store current search params for synchronization
+        // Store current search params for synchronization
         if (!isLoadingMore) {
           setCurrentSearchParams(searchParams);
         }
 
-        const results = await AdLibrarySearchPaginationQuery(
-          searchParams.q,
-          searchParams.category_as_keyword,
-          searchParams.search_type,
-          searchParams.active_status,
-          searchParams.ad_type,
-          searchParams.content_languages,
-          searchParams.countries,
-          searchParams.media_type,
-          searchParams.publisher_platforms,
-          searchParams.sort_data,
-          searchParams.start_date,
-          searchParams.end_date,
-          isLoadingMore ? endCursor : null,
+        // Build query string
+        let queryString = searchParams.q || "";
+        const categoryAsKeyword = searchParams.category_as_keyword || "";
+        queryString = [queryString, categoryAsKeyword]
+          .filter(Boolean)
+          .join(", ");
+
+        // Process date range
+        const startDate = (() => {
+          const startDateParam = searchParams.start_date;
+          let endDateParam = searchParams.end_date;
+
+          if (endDateParam) {
+            const updatedDate = new Date(endDateParam);
+            updatedDate.setDate(updatedDate.getDate() + 1);
+            endDateParam = updatedDate.toISOString().split("T")[0];
+          }
+
+          return startDateParam || endDateParam
+            ? { min: startDateParam || null, max: endDateParam || null }
+            : null;
+        })();
+
+        // Choose fetch method based on whether loading more
+        const fetchName = isLoadingMore ? "ad-pagination" : "ad-refetch";
+
+        const baseVariables = {
+          activeStatus: searchParams.active_status || "ACTIVE",
+          adType: searchParams.ad_type || "ALL",
+          bylines: [],
+          collationToken: null,
+          contentLanguages: searchParams.content_languages || [],
+          countries: searchParams.countries || ["ALL"],
+          excludedIDs: isLoadingMore ? null : [],
+          isTargetedCountry: false,
+          location: null,
+          mediaType: searchParams.media_type || "ALL",
+          multiCountryFilterMode: null,
+          pageIDs: [],
+          potentialReachInput: isLoadingMore ? null : [],
+          publisherPlatforms: searchParams.publisher_platforms || [],
+          queryString,
+          regions: isLoadingMore ? null : [],
+          searchType: searchParams.search_type || "KEYWORD_UNORDERED",
+          sortData: searchParams.sort_data || null,
+          source: null,
+          startDate,
+          viewAllPageID: "0",
+        };
+
+        // Add specific variables based on fetch type
+        const variables = isLoadingMore
+          ? {
+              ...baseVariables,
+              cursor: endCursor,
+              first: 30,
+            }
+          : {
+              ...baseVariables,
+              audienceTimeframe: "LAST_7_DAYS",
+              country: "ALL",
+              deeplinkAdID: null,
+              fetchPageInfo: false,
+              fetchSharedDisclaimers: false,
+              hasDeeplinkAdID: false,
+              isAboutTab: false,
+              isAudienceTab: false,
+              isLandingPage: false,
+              shouldFetchCount: true,
+            };
+
+        const result = await fetchMeta(
+          { name: fetchName },
+          {
+            variables,
+            includeRaw: false,
+          },
         );
+
+        if (!result.success || !result.extracted) {
+          console.error("❌ FetchMeta failed or no data extracted");
+          throw new Error("Failed to fetch ads");
+        }
+
+        const { edges, end_cursor, has_next_page, count } = result.extracted;
+
+        // Extract ads from edges and get search count
+        const { ads: newAds, searchCount } = extractCollatedAds(edges || []);
 
         // Update results
         if (isLoadingMore && searchResults) {
           setSearchResults((prevResults) => [
             ...(prevResults ?? []),
-            ...results.ads,
+            ...newAds,
           ]);
         } else {
-          setSearchResults(results.ads);
-          setTotalCount(results.total_count);
+          setSearchResults(newAds);
+          setTotalCount(count || 0);
         }
 
-        // 🎯  Update loaded ads count using search_count
-        if (isLoadingMore) {
-          // Add the new search_count to existing total
-          setTotalLoadedAds(
-            (prevTotal) => prevTotal + (results.search_count || 0),
-          );
-        } else {
-          // Reset for new search
-          setTotalLoadedAds(results.search_count || 0);
-        }
+        // Update last search count
+        setLastSearchCount(searchCount);
 
         // Update pagination state
-        setEndCursor(results.end_cursor);
-        setHasNextPage(results.has_next_page);
+        setEndCursor(end_cursor || null);
+        setHasNextPage(has_next_page || false);
 
-        // 🎯  Calculate remaining count correctly
-        const newTotalLoadedAds = isLoadingMore
-          ? totalLoadedAds + (results.search_count || 0)
-          : results.search_count || 0;
-
-        const newRemainingCount = Math.max(
-          0,
-          (results.total_count || 0) - newTotalLoadedAds,
-        );
-        setRemainingCount(newRemainingCount);
+        // Calculate remaining count
+        if (isLoadingMore) {
+          // Subtract last search count from remaining
+          setRemainingCount((prev) => Math.max(0, (prev || 0) - searchCount));
+        } else {
+          // Initial remaining count = total - first batch
+          setRemainingCount(Math.max(0, (count || 0) - searchCount));
+        }
 
         console.log("📊 Load Stats:", {
-          total_count: results.total_count,
-          search_count: results.search_count,
-          total_loaded: newTotalLoadedAds,
-          remaining: newRemainingCount,
-          has_next_page: results.has_next_page,
+          total_count: count,
+          search_count: searchCount,
+          remaining: isLoadingMore
+            ? Math.max(0, (remainingCount || 0) - searchCount)
+            : Math.max(0, (count || 0) - searchCount),
+          has_next_page: has_next_page,
         });
       } catch (searchError) {
         console.error("Search error:", searchError);
         setError("An error occurred while searching. Please try again.");
         if (!isLoadingMore) {
           setSearchResults(null);
-          setTotalLoadedAds(0); // Reset on error
+          setLastSearchCount(0);
         }
       } finally {
         setIsLoading(false);
         isSearchInProgress.current = false;
       }
     },
-    [getSearchParams, searchResults, endCursor, totalLoadedAds], // Added totalLoadedAds to dependencies
+    [getSearchParams, searchResults, endCursor, remainingCount],
   );
 
   const handleLoadMore = useCallback(() => {
@@ -165,7 +260,6 @@ const AdBrowserContent = () => {
 
       <SearchFilters onSearch={executeSearch} isLoading={isLoading} />
 
-      {/* 🎯  Pass search params to SearchResults for synchronization */}
       <SearchResults
         isLoading={isLoading}
         error={error}
@@ -178,7 +272,6 @@ const AdBrowserContent = () => {
         onSyncIssue={handleSyncIssue}
       />
 
-      {/* Scroll Buttons */}
       <ScrollButtons />
     </div>
   );

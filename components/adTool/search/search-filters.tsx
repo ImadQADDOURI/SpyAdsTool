@@ -23,16 +23,18 @@ import { SearchFilterItem } from "./search-filter-item";
 interface SearchFiltersProps {
   onSearch: () => void;
   isLoading: boolean;
+  defaultExpanded?: boolean; // <---
 }
 
 export default function SearchFilters({
   onSearch,
   isLoading,
+  defaultExpanded = true, // DEFAULT VALUE
 }: SearchFiltersProps) {
   const { getValue, clearAllValues, subscribeToCount } = useSearchFilters();
 
-  // Local UI state
-  const [areFiltersExpanded, setAreFiltersExpanded] = useState(true);
+  const [areFiltersExpanded, setAreFiltersExpanded] = useState(defaultExpanded);
+
   const [appliedFiltersCount, setAppliedFiltersCount] = useState(0);
 
   // Navbar visibility from context

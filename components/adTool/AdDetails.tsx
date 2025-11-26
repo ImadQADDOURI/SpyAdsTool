@@ -8,12 +8,7 @@
  * @package components/adLibrary
  */
 import React, { useCallback, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { analyzeKeywords } from "@/actions/geminiAiService";
-import {
-  AdLibraryAdCollationDetailsQuery,
-  AdLibraryAdDetailsV2Query,
-} from "@/actions/Meta-GraphQL-Queries";
 import {
   BarChart3,
   CheckCircle,
@@ -43,6 +38,7 @@ import { EuAdStatistic } from "./adInsights/EuAdStatistic";
 import AdCreativeGenerator from "./aiComponents/AdCreativeGenerator";
 import KeywordAnalysisTable from "./aiComponents/KeywordAnalysisTable";
 import WorldwideAdStatistics from "./aiComponents/WorldwideAdStatistics";
+import { fetchMeta } from "./meta/fetchMeta";
 import AdOptionsCard from "./sharedComponents/AdOptionsCard";
 
 interface AdDetailsProps {
@@ -95,18 +91,44 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
         return;
       }
 
-      const results = await AdLibraryAdCollationDetailsQuery(
-        ad.collation_id,
-        forwardCursor,
+      const result = await fetchMeta(
+        { name: "ad-collation" },
+        {
+          variables: {
+            collationGroupID: ad.collation_id,
+            forwardCursor: forwardCursor,
+            backwardCursor: null,
+            activeStatus: "ALL",
+            adType: "ALL",
+
+            bylines: [],
+            countries: ["ALL"],
+            location: null,
+            potentialReach: [],
+            publisherPlatforms: [],
+            regions: [],
+            // sessionID: "bbd54e31-9c73-49d2-a611-40e566fb4eae",
+            startDate: null,
+          },
+          includeRaw: false,
+        },
       );
 
-      setDetailedAds((prev) => [...prev, ...results.ads]);
+      if (!result.success || !result.extracted) {
+        console.error("❌ FetchMeta failed or no data extracted");
+        return;
+      }
+
+      // ✅ Access the extracted object
+      const results = result.extracted;
+
+      setDetailedAds((prev) => [...prev, ...results.ad_cards]);
       setForwardCursor(results.forward_cursor);
       setIsComplete(results.is_complete);
       setTotalCount((prev) => prev || results.total_count);
       setRemainingCount((prev) =>
-        (prev || results.total_count) - results.ads.length > 0
-          ? (prev || results.total_count) - results.ads.length
+        (prev || results.total_count) - results.ad_cards.length > 0
+          ? (prev || results.total_count) - results.ad_cards.length
           : 0,
       );
     } catch (error) {
@@ -127,12 +149,32 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
     setEuStatsError(null);
 
     try {
-      const result = await AdLibraryAdDetailsV2Query(
-        ad.ad_archive_id,
-        ad.page_id,
-        ad.is_aaa_eligible,
+      const result = await fetchMeta(
+        { name: "ad-details" },
+        {
+          variables: {
+            adArchiveID: ad.ad_archive_id,
+            pageID: ad.page_id,
+            country: "ALL",
+
+            isAdNonPolitical: true,
+            isAdNotAAAEligible: false,
+            // sessionID: "bbd54e31-9c73-49d2-a611-40e566fb4eae",
+            source: null,
+          },
+          includeRaw: false,
+        },
       );
-      setAdDetails(result);
+
+      if (!result.success || !result.extracted) {
+        console.error("❌ FetchMeta failed or no data extracted");
+        return;
+      }
+
+      // ✅ Access the extracted object
+      const data = result.extracted.transparency_by_location.eu_transparency;
+
+      setAdDetails(data);
     } catch (err) {
       console.error("❌ Error fetching EU ad stats:", err);
       setEuStatsError("Failed to fetch EU ad statistics.");

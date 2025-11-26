@@ -22,53 +22,19 @@ import FirefliesWrapper from "@/components/adTool/sharedComponents/FirefliesWrap
 
 import { countryCodesAlpha2Flag } from "../search/filter-config";
 
-interface TransparencyInfo {
-  history_items?: Array<{
-    item_type: string;
-    event_time: number;
-  }>;
-  admin_locations?: {
-    admin_country_counts?: Array<{
-      country: {
-        iso_name: string;
-      };
-      count: number;
-    }>;
-  };
-}
-
-interface PageType {
-  name?: string;
-  pages_transparency_info?: TransparencyInfo;
-  about?: {
-    text?: string;
-  };
-  ad_library_page_targeting_insight?: {
-    ad_library_page_targeting_summary?: {
-      total_spend_formatted?: string;
-    };
-  };
-}
-
-interface PageInfoSectionProps {
-  page: PageType | null;
-  pageInfo: any;
-  profilePictureUrl: string | null;
-  totalAds: number;
-}
-
-export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
-  page,
-  pageInfo,
-  profilePictureUrl,
-  totalAds,
+export const PageInfoSection: React.FC<any> = ({
+  about_text,
+  admin_country_counts,
+  history_items,
+  total_spend,
+  page_info,
+  count,
 }) => {
-  const creationDate = page?.pages_transparency_info?.history_items?.find(
+  const creationDate = history_items?.find(
     (item) => item?.item_type === "CREATION",
   )?.event_time;
 
-  const adminLocations =
-    page?.pages_transparency_info?.admin_locations?.admin_country_counts ?? [];
+  const adminLocations = admin_country_counts ?? [];
 
   const MetricItem = ({
     icon: Icon,
@@ -167,8 +133,8 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
                 <div className="absolute -inset-1 animate-pulse rounded-full bg-gradient-to-r from-[#6566F1]/20 to-[#B977F8]/20 blur-md" />
                 <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-white/90 bg-gray-100 shadow-lg dark:bg-gray-800">
                   <Image
-                    src={profilePictureUrl || "/icons/user.png"}
-                    alt={pageInfo.page_name || page?.name || "Profile"}
+                    src={page_info?.[0]?.profile_photo || "/icons/user.png"}
+                    alt={page_info?.[0]?.page_name || "Profile"}
                     fill
                     style={{ objectFit: "contain" }}
                     className="transition-transform duration-300 hover:scale-105"
@@ -182,9 +148,9 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
               <div className="flex-1 text-center sm:text-left">
                 <div className="flex items-center justify-center space-x-2 sm:justify-start">
                   <h1 className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-2xl font-bold text-transparent">
-                    {pageInfo.page_name || page?.name || "Unnamed Page"}
+                    {page_info?.[0]?.page_name || "Unnamed Page"}
                   </h1>
-                  {pageInfo.page_verification !== "NOT_VERIFIED" && (
+                  {page_info?.[1]?.page_verification !== "NOT_VERIFIED" && (
                     <Image
                       src="/icons/verified-badge.png"
                       alt="Facebook Verified"
@@ -196,11 +162,11 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
                   )}
                 </div>
                 <div className="mt-1 text-sm font-medium text-[#6566F1] dark:text-[#B977F8]">
-                  {pageInfo.page_category || "Uncategorized"}
+                  {page_info?.[1]?.page_category || "Uncategorized"}
                 </div>
-                {page?.about?.text && (
+                {about_text && (
                   <p className="mt-1 line-clamp-2 max-w-2xl text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-                    {page.about.text}
+                    {about_text}
                   </p>
                 )}
               </div>
@@ -211,16 +177,18 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
               <div className="flex flex-wrap justify-center gap-2">
                 <MetricItem
                   icon={ThumbsUp}
-                  value={pageInfo.likes?.toLocaleString() || "0"}
+                  value={page_info?.[1]?.likes?.toLocaleString() || "0"}
                   tooltip="Facebook Likes"
                 />
-                {pageInfo.ig_username && (
+                {page_info?.[1]?.ig_username && (
                   <MetricItem
                     icon={Instagram}
-                    value={pageInfo.ig_followers?.toLocaleString() || "0"}
+                    value={
+                      page_info?.[1]?.ig_followers?.toLocaleString() || "0"
+                    }
                     tooltip="Instagram Followers"
                     badge={
-                      pageInfo.ig_verification
+                      page_info?.[1]?.ig_verification
                         ? "/icons/verified-badge.png"
                         : undefined
                     }
@@ -228,20 +196,12 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
                 )}
                 <MetricItem
                   icon={Target}
-                  value={totalAds.toString()}
+                  value={count?.toString()}
                   tooltip="Total Ads"
                 />
                 <MetricItem
                   icon={DollarSign}
-                  value={
-                    page?.ad_library_page_targeting_insight
-                      ?.ad_library_page_targeting_summary
-                      ?.total_spend_formatted === "0"
-                      ? "Unknown"
-                      : page?.ad_library_page_targeting_insight
-                          ?.ad_library_page_targeting_summary
-                          ?.total_spend_formatted || "Unknown"
-                  }
+                  value={total_spend || "Unknown"}
                   tooltip="Total Ad Spend"
                 />
                 {creationDate && (
@@ -256,7 +216,7 @@ export const PageInfoSection: React.FC<PageInfoSectionProps> = ({
 
               {/* Visit Button */}
               <a
-                href={pageInfo.page_profile_uri}
+                href={page_info?.[1]?.page_profile_uri}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group relative inline-flex items-center space-x-2 rounded-full bg-gradient-to-r from-[#6566F1] to-[#B977F8] p-[1px] shadow-md transition-all duration-300 hover:shadow-lg"
