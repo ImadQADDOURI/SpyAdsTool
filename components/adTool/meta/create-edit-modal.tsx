@@ -1,3 +1,4 @@
+// components\adTool\meta\create-edit-modal.tsx
 "use client";
 
 import type React from "react";
@@ -73,12 +74,24 @@ export function CreateEditModal({
       newErrors.name = "Name is required";
     }
 
+    // Validate base_request JSON and required fields
     try {
-      JSON.parse(formData.base_request);
+      const baseRequest = JSON.parse(formData.base_request);
+
+      // Check for required fields
+      const requiredFields = ["url", "method", "requestHeaders", "requestBody"];
+      const missingFields = requiredFields.filter(
+        (field) => !baseRequest[field],
+      );
+
+      if (missingFields.length > 0) {
+        newErrors.base_request = `Missing required fields: ${missingFields.join(", ")}`;
+      }
     } catch {
       newErrors.base_request = "Invalid JSON";
     }
 
+    // Validate fields_to_extract JSON
     try {
       JSON.parse(formData.fields_to_extract);
     } catch {
@@ -195,7 +208,7 @@ export function CreateEditModal({
                 onChange={(e) =>
                   setFormData({ ...formData, base_request: e.target.value })
                 }
-                placeholder='{"url": "...", "method": "POST", "headers": {...}, "body": "..."}'
+                placeholder='{"url": "...", "method": "POST", "requestHeaders": {...}, "requestBody": "..."}'
                 className={`h-64 font-mono text-xs ${errors.base_request ? "border-destructive" : ""}`}
               />
               {errors.base_request && (
@@ -204,7 +217,7 @@ export function CreateEditModal({
                 </p>
               )}
               <p className="text-xs text-muted-foreground">
-                Paste the full XHR request structure from your browser
+                Required fields: url, method, requestHeaders, requestBody
               </p>
             </TabsContent>
 

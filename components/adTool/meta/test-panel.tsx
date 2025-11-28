@@ -1,3 +1,4 @@
+// components\adTool\meta\test-panel.tsx
 "use client";
 
 import { useState } from "react";
@@ -47,7 +48,6 @@ export function TestPanel({ request }: TestPanelProps) {
   const [variablesError, setVariablesError] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  // FIX: Separate handlers for different test modes
   const handleTestWithVariables = async () => {
     setVariablesError(null);
     setError(null);
@@ -65,7 +65,7 @@ export function TestPanel({ request }: TestPanelProps) {
       const res = await testMetaRequest(
         request.id,
         Object.keys(parsedVars).length > 0 ? parsedVars : undefined,
-        true, // includeRaw
+        true,
       );
 
       if (res.success) {
@@ -80,16 +80,11 @@ export function TestPanel({ request }: TestPanelProps) {
     }
   };
 
-  // FIX: Test without any variable overrides
   const handleTestAsIs = async () => {
     setError(null);
     setLoading(true);
     try {
-      const res = await testMetaRequest(
-        request.id,
-        undefined, // No variable overrides
-        true,
-      );
+      const res = await testMetaRequest(request.id, undefined, true);
 
       if (res.success) {
         setResult(res.result);
@@ -109,8 +104,8 @@ export function TestPanel({ request }: TestPanelProps) {
     setTimeout(() => setCopiedField(null), 2000);
   };
 
-  // Extract body variables from base_request
-  const baseRequestBody = request.base_request?.body || "";
+  // Extract body variables from base_request (now using requestBody)
+  const baseRequestBody = request.base_request?.requestBody || "";
   let bodyVariables: Record<string, string> = {};
   try {
     if (baseRequestBody) {
@@ -126,7 +121,6 @@ export function TestPanel({ request }: TestPanelProps) {
 
   const isDark = theme === "dark";
 
-  // ENHANCEMENT: Count extracted fields and errors
   const extractedFieldsCount = result?.extracted
     ? Object.keys(result.extracted).length
     : 0;
@@ -160,7 +154,7 @@ export function TestPanel({ request }: TestPanelProps) {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <div>
                 <CardTitle className="text-base">
-                  Base Request Variables
+                  Request Body Variables
                 </CardTitle>
                 <CardDescription className="mt-1">
                   {Object.keys(bodyVariables).length} variables defined
@@ -258,7 +252,6 @@ export function TestPanel({ request }: TestPanelProps) {
               )}
             </div>
 
-            {/* FIX: Properly differentiated buttons */}
             <div className="flex gap-2">
               <Button
                 onClick={handleTestWithVariables}
@@ -295,7 +288,6 @@ export function TestPanel({ request }: TestPanelProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-base">Test Results</CardTitle>
-              {/* ENHANCEMENT: Quick stats */}
               <div className="flex gap-2">
                 <Badge variant="outline" className="gap-1">
                   <FileJson className="h-3 w-3" />
@@ -343,7 +335,6 @@ export function TestPanel({ request }: TestPanelProps) {
               <TabsContent value="extracted" className="space-y-2">
                 {result.extracted || request.fields_to_extract ? (
                   <div className="space-y-2">
-                    {/* Get all expected fields from config */}
                     {(() => {
                       const expectedFields = request.fields_to_extract || {};
                       const extractedFields = result.extracted || {};
@@ -366,7 +357,6 @@ export function TestPanel({ request }: TestPanelProps) {
                         ? fieldValue.error
                         : fieldValue;
 
-                      // Show array length and type indicators
                       const valueType = !hasValue
                         ? "missing"
                         : Array.isArray(fieldValue)
@@ -395,7 +385,6 @@ export function TestPanel({ request }: TestPanelProps) {
                               >
                                 {fieldName}
                               </span>
-                              {/* Type badge */}
                               <Badge
                                 variant="outline"
                                 className={`font-mono text-[10px] ${
@@ -406,7 +395,6 @@ export function TestPanel({ request }: TestPanelProps) {
                               >
                                 {valueType}
                               </Badge>
-                              {/* Status badges */}
                               {isMissing && (
                                 <Badge
                                   variant="outline"
@@ -504,7 +492,6 @@ export function TestPanel({ request }: TestPanelProps) {
                                     : "border-muted bg-muted/50"
                                 }`}
                               >
-                                {/* Render primitives as text, objects/arrays with JsonView */}
                                 {typeof displayValue === "string" ||
                                 typeof displayValue === "number" ||
                                 typeof displayValue === "boolean" ? (
@@ -552,7 +539,6 @@ export function TestPanel({ request }: TestPanelProps) {
                           <span className="text-sm font-medium">
                             Raw Response {idx + 1}
                           </span>
-                          {/* ENHANCEMENT: Show if response has errors */}
                           {item.errors && (
                             <Badge variant="destructive" className="text-xs">
                               Has Errors
@@ -605,7 +591,7 @@ export function TestPanel({ request }: TestPanelProps) {
                 )}
               </TabsContent>
 
-              {/* FIX: Errors Tab - Fixed to work with object structure */}
+              {/* Errors Tab */}
               <TabsContent value="errors" className="space-y-3">
                 {result.extracted &&
                 Object.keys(result.extracted).length > 0 ? (

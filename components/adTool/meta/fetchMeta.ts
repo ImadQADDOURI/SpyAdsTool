@@ -1,3 +1,4 @@
+// components\adTool\meta\fetchMeta.ts
 "use server";
 
 import { JSONPath } from "jsonpath-plus";
@@ -21,19 +22,20 @@ export async function fetchMeta(
     const config = await loadMetaConfig(identifier);
     const { base_request, fields_to_extract } = config as any;
 
-    if (!base_request?.url) throw new Error("Invalid base_request");
+    if (!base_request?.url)
+      throw new Error("Invalid base_request: missing url");
 
     // 2️⃣ Prepare request with optional variable overrides
-    const { url, method, headers, body } = base_request;
+    const { url, method, requestHeaders, requestBody } = base_request;
     const finalBody = options?.variables
-      ? overrideVariables(body, options.variables)
-      : body;
+      ? overrideVariables(requestBody, options.variables)
+      : requestBody;
 
     // 3️⃣ Execute request (with proxy support if configured)
     const proxyFetch = createProxyFetch();
     const response = await proxyFetch(url, {
       method: method || "POST",
-      headers,
+      headers: sanitizeHeaders(requestHeaders),
       body: finalBody,
     });
 
@@ -104,6 +106,33 @@ function overrideVariables(body: string, newVars: Record<string, any>): string {
     console.error("❌ Failed to override variables:", err);
     return body;
   }
+}
+
+/**
+ * Sanitizes headers for use with standard fetch API.
+ * Removes HTTP/2 pseudo-headers and headers that fetch handles automatically.
+ */
+function sanitizeHeaders(
+  headers: Record<string, string>,
+): Record<string, string> {
+  const sanitized: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(headers)) {
+    const lowerKey = key.toLowerCase();
+
+    // Skip HTTP/2 pseudo-headers (start with ':')
+    if (lowerKey.startsWith(":")) continue;
+
+    // Skip headers that fetch/browser handles automatically
+    if (lowerKey === "accept-encoding" || lowerKey === "content-length") {
+      continue;
+    }
+
+    // Keep everything else as-is
+    sanitized[key] = value;
+  }
+
+  return sanitized;
 }
 
 /**

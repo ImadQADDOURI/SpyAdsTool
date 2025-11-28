@@ -106,3 +106,9 @@ backend :
 https://chatgpt.com/share/68fb2a0d-55e4-8010-8327-a3fee4e0bb1a
 fronend :
 https://v0.app/chat/meta-graph-ql-admin-ui-tFZuAFXvoJ0#EXXWU8aJ4GuApHE9Jd07REolJFYEqVqe
+
+
+
+# Network Spy Chrome Extension 
+Universal Request Capture
+https://claude.ai/share/2fa367eb-9015-4636-8f32-b1a5cd757e0e

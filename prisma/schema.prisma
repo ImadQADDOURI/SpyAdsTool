@@ -184,7 +184,7 @@ model MetaGraphQLRequest {
   friendly_name   String?                      // Optional human-friendly label
   doc_id          String?                      // Meta GraphQL doc_id (if available)
 
-  // The copied raw XHR structure (url, headers, method, body, etc.)
+  // The copied raw request structure (url, method, requestHeaders, requestBody, etc.)
   base_request    Json                         // Full request configuration as JSON
 
   // Map of "alias → JSONPath" to extract values from Meta response
