@@ -24,9 +24,12 @@ interface Edge {
 
 // ✨ Helper: Extract and collate Ads from edges
 const extractCollatedAds = (
-  edges: Edge[],
+  rawEdges: Edge[] | Edge | null | undefined,
 ): { ads: AdData[]; searchCount: number } => {
   let totalOriginalAds = 0;
+
+  // Normalize edges into an array
+  const edges = Array.isArray(rawEdges) ? rawEdges : rawEdges ? [rawEdges] : [];
 
   const ads = edges
     .map((edge) => edge.node.collated_results ?? [])
@@ -39,8 +42,10 @@ const extractCollatedAds = (
         (max, ad) => Math.max(max, ad.collation_count ?? 0),
         0,
       );
+
       const collation_count = Math.max(maxOriginal, groupCount, 1);
       const [firstAd] = group;
+
       return { ...firstAd, collation_count };
     });
 
