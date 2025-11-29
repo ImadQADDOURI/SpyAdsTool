@@ -203,6 +203,10 @@ const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
             includeRaw: false,
           },
         );
+        // Log diagnostics in browser console
+        console.log("🩺 Diagnostic:", result.diagnostics, "\n", {
+          name: result.name,
+        });
 
         if (!result.success || !result.extracted) {
           console.error("❌ FetchMeta failed or no data extracted");

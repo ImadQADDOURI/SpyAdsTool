@@ -1,10 +1,18 @@
 // components\adTool\meta\fetchMeta.ts
 "use server";
 
+import { toggleMetaRequest } from "@/actions/metaRequests";
 import { JSONPath } from "jsonpath-plus";
 import { ProxyAgent, fetch as undiciFetch } from "undici";
 
 import { prisma } from "@/lib/db";
+
+// Can add/remove codes or summaries here as needed
+const AUTO_TOGGLE_ERRORS: Array<{ error?: number; errorSummary?: string }> = [
+  { error: 1357001, errorSummary: "Log in to continue" }, // login required
+  // { error: 1357010 }, // example: banned account
+  // { errorSummary: "Rate limit exceeded" }, // example: throttling
+];
 
 /**
  * Executes a Meta GraphQL request using either ID or name.
@@ -49,18 +57,32 @@ export async function fetchMeta(
     // 5️⃣ Extract fields using JSONPath and return clean result
     const extracted = extractFields(parsedResponses, fields_to_extract);
 
+    // Analyze the first response
+    const diagnostics = await analyzeResponse(
+      parsedResponses,
+      config.id,
+      config.is_active,
+    );
+    console.log("🩺 Diagnostic:", diagnostics, "\n", {
+      id: config.id,
+      name: config.name,
+    });
+
     return {
-      success: true,
+      success: true, // request executed successfully
       id: config.id,
       name: config.name,
       extracted,
+      diagnostics,
       raw: options?.includeRaw ? parsedResponses : undefined,
     };
   } catch (error: any) {
     console.error("❌ fetchMeta error:", error);
     return {
       success: false,
-      error: error.message || "Unknown error",
+      diagnostics: {
+        message: error.message || "Unknown error",
+      },
     };
   }
 }
@@ -329,4 +351,51 @@ function createProxyFetch() {
     const response = await undiciFetch(url, undiciOptions);
     return response as unknown as Response;
   };
+}
+
+/**
+ * Analyze Meta response, minimal diagnostics,
+ * and automatically toggle inactive if matches configured errors.
+ */
+async function analyzeResponse(
+  parsedResponses: any[],
+  requestId: string,
+  isActive: boolean,
+) {
+  if (!parsedResponses.length) {
+    return { message: "Empty response from server" };
+  }
+
+  const first = parsedResponses[0];
+
+  // minimal & flat diagnostic object
+  const diagnostics =
+    first.error || first.errorSummary || first.errorDescription
+      ? {
+          error: first.error,
+          errorSummary: first.errorSummary,
+          errorDescription: first.errorDescription,
+        }
+      : { message: "Request succeeded" };
+
+  // auto-toggle only if request is currently active
+  if (isActive) {
+    const shouldToggle = AUTO_TOGGLE_ERRORS.some((err) => {
+      if (err.error && err.error === first.error) return true;
+      if (err.errorSummary && first.errorSummary?.includes(err.errorSummary))
+        return true;
+      return false;
+    });
+
+    if (shouldToggle && requestId) {
+      try {
+        await toggleMetaRequest(requestId);
+        console.log(`⚠️ Auto-toggled request ${requestId} to inactive`);
+      } catch (err) {
+        console.error("❌ Failed to auto-toggle request:", err);
+      }
+    }
+  }
+
+  return diagnostics;
 }
