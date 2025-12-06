@@ -78,7 +78,7 @@ export default function TrendingSection({
                   </div>
 
                   <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-sm">
-                    <div className="h-64 sm:h-80 lg:h-96">
+                    <div className="h-64 sm:h-80 lg:h-[27rem]">
                       <MarqueeColumn
                         items={stores}
                         direction="down"
@@ -107,7 +107,7 @@ export default function TrendingSection({
                   </div>
 
                   <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-sm">
-                    <div className="h-64 sm:h-80 lg:h-96">
+                    <div className="h-64 sm:h-80 lg:h-[27rem]">
                       <MarqueeColumn items={ads} direction="up" duration={25} />
                     </div>
                   </div>
@@ -132,7 +132,7 @@ export default function TrendingSection({
                   </div>
 
                   <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-sm">
-                    <div className="h-64 sm:h-80 lg:h-96">
+                    <div className="h-64 sm:h-80 lg:h-[27rem]">
                       <MarqueeColumn
                         items={products}
                         direction="down"

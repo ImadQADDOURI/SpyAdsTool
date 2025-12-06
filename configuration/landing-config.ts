@@ -341,6 +341,11 @@ export const TrendingConfig = {
       image: "/landing images/trending/ads/5.png",
       name: "Brand Awareness Campaign",
     },
+    {
+      id: 6,
+      image: "/landing images/trending/ads/6.png",
+      name: "Brand Awareness Campaign",
+    },
   ],
   sampleProducts: [
     {

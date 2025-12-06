@@ -18,11 +18,11 @@ interface MarqueeColumnProps {
 
 // Add default props
 const DEFAULT_DURATION = 20;
-const DEFAULT_HEIGHT = 500;
+const DEFAULT_HEIGHT = 800;
 
 // Memoized MarqueeItem component
 const MarqueeItem = memo(({ item }: { item: Item }) => (
-  <div className="relative pb-1.5">
+  <div className="relative py-0.5">
     <div className="group relative overflow-hidden rounded-lg">
       <img
         src={item.image || "/placeholder.svg"}
