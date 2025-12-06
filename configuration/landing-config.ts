@@ -89,7 +89,7 @@ export const heroConfig = {
       text: "10M+ Ads",
       icon: Database,
       position: {
-        className: "absolute -right-8 top-4 z-30 hidden lg:block",
+        className: "absolute -right-4 top-10 z-30 hidden lg:block",
       },
       animation: {
         floatAmplitude: 5,
@@ -101,29 +101,29 @@ export const heroConfig = {
         iconClass: "w-4 h-4 text-purple-600 dark:text-purple-400",
       },
     },
-    // {
-    //   id: "visual-analytics",
-    //   text: "Analytics",
-    //   icon: BarChart3,
-    //   position: {
-    //     className: "absolute -left-12 top-1/2 z-30 hidden lg:block",
-    //   },
-    //   animation: {
-    //     floatAmplitude: 6,
-    //     floatSpeed: 8,
-    //     delay: 1.6,
-    //   },
-    //   styling: {
-    //     textClass: "text-pink-700 dark:text-pink-300 font-semibold text-sm",
-    //     iconClass: "w-4 h-4 text-pink-600 dark:text-pink-400",
-    //   },
-    // },
+    {
+      id: "visual-analytics",
+      text: "Analytics",
+      icon: BarChart3,
+      position: {
+        className: "absolute -left-10 bottom-1/3 z-30 hidden lg:block",
+      },
+      animation: {
+        floatAmplitude: 6,
+        floatSpeed: 8,
+        delay: 1.6,
+      },
+      styling: {
+        textClass: "text-pink-700 dark:text-pink-300 font-semibold text-sm",
+        iconClass: "w-4 h-4 text-pink-600 dark:text-pink-400",
+      },
+    },
     {
       id: "download-media",
       text: "Media",
       icon: Download,
       position: {
-        className: "absolute -right-12 top-1/2 z-30 hidden lg:block",
+        className: "absolute right-6 -bottom-1 z-30 hidden lg:block",
       },
       animation: {
         floatAmplitude: 4,
@@ -140,7 +140,7 @@ export const heroConfig = {
       text: "Boards",
       icon: Bookmark,
       position: {
-        className: "absolute -left-8 bottom-4 z-30 hidden lg:block",
+        className: "absolute left-8 -bottom-2 z-30 hidden lg:block",
       },
       animation: {
         floatAmplitude: 5,
@@ -158,7 +158,7 @@ export const heroConfig = {
       text: "Calculator",
       icon: Calculator,
       position: {
-        className: "absolute -right-8 bottom-16 z-30 hidden lg:block",
+        className: "absolute -right-14 bottom-3/5 z-30 hidden lg:block",
       },
       animation: {
         floatAmplitude: 6,
