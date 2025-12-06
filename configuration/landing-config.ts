@@ -5,9 +5,12 @@ import {
   Bot,
   Brain,
   Calculator,
+  ChartPie,
   Cpu,
   Database,
   Download,
+  Earth,
+  Euro,
   FileText,
   Filter,
   Folder,
@@ -50,7 +53,7 @@ export const heroConfig = {
   // 🖼️ Floating Image heroConfiguration - Centralized positioning and settings
   heroImage: {
     id: "main",
-    src: "/hero.png",
+    src: "/landing images/hero.png",
     alt: "Hero banner 1",
     animation: {
       floatAmplitude: 20,
@@ -171,39 +174,57 @@ export const heroConfig = {
 };
 
 export const trustedBySectionConfig = [
-  { name: "Google", logo: "https://cdn.magicui.design/companies/Google.svg" },
+  {
+    name: "Shopify",
+    logo: "/landing images/trusted/Shopify.svg",
+  },
+  {
+    name: "TikTok",
+    logo: "/landing images/trusted/TikTok.svg",
+  },
+  { name: "Google", logo: "/landing images/trusted/Google.svg" },
+  {
+    name: "woocommerce",
+    logo: "/landing images/trusted/woocommerce.svg",
+  },
   {
     name: "Microsoft",
-    logo: "https://cdn.magicui.design/companies/Microsoft.svg",
-  },
-  { name: "Amazon", logo: "https://cdn.magicui.design/companies/Amazon.svg" },
-  {
-    name: "Netflix",
-    logo: "https://cdn.magicui.design/companies/Netflix.svg",
-  },
-  {
-    name: "YouTube",
-    logo: "https://cdn.magicui.design/companies/YouTube.svg",
+    logo: "/landing images/trusted/Microsoft.svg",
   },
   {
     name: "Instagram",
-    logo: "https://cdn.magicui.design/companies/Instagram.svg",
+    logo: "/landing images/trusted/Instagram.svg",
   },
-  { name: "Uber", logo: "https://cdn.magicui.design/companies/Uber.svg" },
   {
-    name: "Spotify",
-    logo: "https://cdn.magicui.design/companies/Spotify.svg",
+    name: "aliexpress",
+    logo: "/landing images/trusted/aliexpress.svg",
+  },
+  {
+    name: "Gemini",
+    logo: "/landing images/trusted/Gemini.svg",
+  },
+  {
+    name: "trustpilot",
+    logo: "/landing images/trusted/trustpilot.svg",
+  },
+  {
+    name: "stripe",
+    logo: "/landing images/trusted/stripe.svg",
+  },
+  {
+    name: "wise",
+    logo: "/landing images/trusted/wise.svg",
   },
 ];
 
 export const featuresConfig = [
   {
-    id: "discover",
-    title: "Discover",
-    highlightText: "Winning Products",
+    id: "1",
+    title: "Facebook AdSpy",
+    highlightText: "Search & Filters",
     description:
       "Find profitable products with AI-powered discovery. Access millions of active campaigns.",
-    image: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
+    image: "/landing images/feutures/f1.png",
     accentColor: "#3b82f6", // blue-500
     auroraColors: ["#3b82f6", "#60a5fa", "#2563eb", "#0ea5e9"], // blue -> sky
     stats: [
@@ -214,12 +235,12 @@ export const featuresConfig = [
     Icon: Search,
   },
   {
-    id: "search",
-    title: "FB AdSpy",
-    highlightText: "Search & Filters",
+    id: "2",
+    title: "Visual",
+    highlightText: "Analytics",
     description:
       "Search with 15+ filter types. Find exactly what you need with precision targeting.",
-    image: "https://adsparo.com/home/assets/svg/hero-banner/1.svg",
+    image: "/landing images/feutures/f3.png",
     accentColor: "#8b5cf6", // violet-500
     auroraColors: ["#8b5cf6", "#a78bfa", "#7c3aed", "#ec4899"], // violet -> pink mix
     stats: [
@@ -230,12 +251,12 @@ export const featuresConfig = [
     Icon: Filter,
   },
   {
-    id: "analytics",
-    title: "Visual",
-    highlightText: "Analytics",
+    id: "3",
+    title: "Hot",
+    highlightText: "Product",
     description:
       "Get insights with visual dashboard. Track performance and identify trends.",
-    image: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
+    image: "/landing images/feutures/f2.png",
     accentColor: "#10b981", // emerald-500
     auroraColors: ["#10b981", "#34d399", "#059669", "#14b8a6"], // emerald -> teal
     stats: [
@@ -246,12 +267,12 @@ export const featuresConfig = [
     Icon: BarChart,
   },
   {
-    id: "ai-tools",
-    title: "Built-in",
-    highlightText: "AI Tools",
+    id: "4",
+    title: "Powerful",
+    highlightText: "Calculator",
     description:
       "Leverage AI-powered tools and calculators. Get instant recommendations.",
-    image: "https://adsparo.com/home/assets/svg/hero-banner/2.svg",
+    image: "/landing images/feutures/f5.png",
     accentColor: "#f59e0b", // amber-500
     auroraColors: ["#f59e0b", "#fbbf24", "#d97706", "#ef4444"], // amber -> orange/red hint
     stats: [
@@ -261,22 +282,22 @@ export const featuresConfig = [
     ],
     Icon: Cpu,
   },
-  {
-    id: "organize",
-    title: "Save &",
-    highlightText: "Organize",
-    description:
-      "Download media and organize findings. Keep track of strategies with cloud storage.",
-    image: "https://adsparo.com/home/assets/svg/hero-banner/3.svg",
-    accentColor: "#06b6d4", // cyan-500
-    auroraColors: ["#06b6d4", "#22d3ee", "#0891b2", "#3b82f6"], // cyan -> blue mix
-    stats: [
-      { label: "Downloads", value: "∞" },
-      { label: "Storage", value: "Cloud" },
-      { label: "Boards", value: "Custom" },
-    ],
-    Icon: Folder,
-  },
+  // {
+  //   id: "organize",
+  //   title: "Save &",
+  //   highlightText: "Organize",
+  //   description:
+  //     "Download media and organize findings. Keep track of strategies with cloud storage.",
+  //   image: "/landing images/feutures/f2.png",
+  //   accentColor: "#06b6d4", // cyan-500
+  //   auroraColors: ["#06b6d4", "#22d3ee", "#0891b2", "#3b82f6"], // cyan -> blue mix
+  //   stats: [
+  //     { label: "Downloads", value: "∞" },
+  //     { label: "Storage", value: "Cloud" },
+  //     { label: "Boards", value: "Custom" },
+  //   ],
+  //   Icon: Folder,
+  // },
 ];
 
 export const TrendingConfig = {
@@ -297,66 +318,86 @@ export const TrendingConfig = {
   sampleAds: [
     {
       id: 1,
-      image: "/placeholder.svg?height=280&width=180",
+      image: "/landing images/trending/ads/1.png",
       name: "Viral Product Launch Ad",
     },
     {
       id: 2,
-      image: "/placeholder.svg?height=280&width=180",
+      image: "/landing images/trending/ads/2.png",
       name: "Social Media Campaign",
     },
     {
       id: 3,
-      image: "/placeholder.svg?height=280&width=180",
+      image: "/landing images/trending/ads/3.png",
       name: "E-commerce Promo Ad",
     },
     {
       id: 4,
-      image: "/placeholder.svg?height=280&width=180",
+      image: "/landing images/trending/ads/4.png",
+      name: "Brand Awareness Campaign",
+    },
+    {
+      id: 5,
+      image: "/landing images/trending/ads/5.png",
       name: "Brand Awareness Campaign",
     },
   ],
   sampleProducts: [
     {
       id: 1,
-      image: "/placeholder.svg?height=280&width=180",
+      image: "/landing images/trending/product/1.png",
       name: "Wireless Earbuds Pro",
     },
     {
       id: 2,
-      image: "/placeholder.svg?height=280&width=180",
+      image: "/landing images/trending/product/2.png",
       name: "Smart Fitness Watch",
     },
     {
       id: 3,
-      image: "/placeholder.svg?height=280&width=180",
+      image: "/landing images/trending/product/3.png",
       name: "Portable Phone Charger",
     },
     {
       id: 4,
-      image: "/placeholder.svg?height=280&width=180",
+      image: "/landing images/trending/product/4.png",
+      name: "LED Strip Lights",
+    },
+    {
+      id: 5,
+      image: "/landing images/trending/product/5.png",
+      name: "LED Strip Lights",
+    },
+    {
+      id: 6,
+      image: "/landing images/trending/product/6.png",
       name: "LED Strip Lights",
     },
   ],
   sampleStores: [
     {
       id: 1,
-      image: "/placeholder.svg?height=280&width=180",
+      image: "/landing images/trending/store/1.png",
       name: "TechGadgets Pro",
     },
     {
       id: 2,
-      image: "/placeholder.svg?height=280&width=180",
+      image: "/landing images/trending/store/2.png",
       name: "Fashion Forward",
     },
     {
       id: 3,
-      image: "/placeholder.svg?height=280&width=180",
+      image: "/landing images/trending/store/3.png",
       name: "Home & Living",
     },
     {
       id: 4,
-      image: "/placeholder.svg?height=280&width=180",
+      image: "/landing images/trending/store/4.png",
+      name: "Sports Central",
+    },
+    {
+      id: 5,
+      image: "/landing images/trending/store/5.png",
       name: "Sports Central",
     },
   ],
@@ -376,21 +417,23 @@ export const EXTENSION_CONFIG = {
   screenshots: [
     {
       id: 1,
-      image:
-        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
-      alt: "Extension Dashboard",
+      image: "landing images/extension/1.png",
+      alt: "",
     },
     {
       id: 2,
-      image:
-        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
-      alt: "Ad Analysis Feature",
+      image: "landing images/extension/2.png",
+      alt: "",
     },
     {
       id: 3,
-      image:
-        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
-      alt: "Quick Save Feature",
+      image: "landing images/extension/3.png",
+      alt: "",
+    },
+    {
+      id: 4,
+      image: "landing images/extension/4.png",
+      alt: "",
     },
   ],
 };
@@ -406,37 +449,35 @@ export const analyticsConfig = {
     "Get deep insights into your ad performance with our comprehensive analytics suite. Track metrics, analyze trends, and make data-driven decisions.",
   tabs: [
     {
-      id: "overview",
-      label: "Overview",
+      id: "1",
+      label: "Analytics",
       icon: BarChart3,
       color: "from-blue-500 to-cyan-500", // 🎨 Custom color for Overview
-      image:
-        "https://static.wixstatic.com/media/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png/v1/fill/w_980,h_735,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c746c3_ae71f0f45ecf49d2a75d0c8d0b3ede9c~mv2.png",
+      image: "/landing images/analytics/1.png",
       alt: "Analytics Overview Dashboard",
     },
     {
-      id: "performance",
-      label: "Performance",
-      icon: TrendingUp,
+      id: "2",
+      label: "Eu Stats",
+      icon: ChartPie,
       color: "from-green-500 to-emerald-500", // 🎨 Custom color for Performance
-      image:
-        "https://cdn-useast1.kapwing.com/static/templates/blank-iphone-x-and-11-frame-mockup-template-full-4521e68d.webp?height=600&width=800",
+      image: "/landing images/analytics/2.png",
       alt: "Performance Analytics",
     },
     {
-      id: "insights",
-      label: "Insights",
-      icon: Brain,
+      id: "3",
+      label: "World Stats",
+      icon: Earth,
       color: "from-purple-500 to-violet-500", // 🎨 Custom color for Insights
-      image: "/placeholder.svg?height=540&width=960",
+      image: "/landing images/analytics/3.png",
       alt: "AI-Powered Insights",
     },
     {
-      id: "reports",
-      label: "Reports",
-      icon: FileText,
+      id: "4",
+      label: "AI Creative",
+      icon: Bot,
       color: "from-orange-500 to-red-500", // 🎨 Custom color for Reports
-      image: "/placeholder.svg?height=540&width=960",
+      image: "/landing images/analytics/4.png",
       alt: "Custom Reports",
     },
   ],
@@ -483,8 +524,7 @@ export const testimonials = {
       text: "Using this AI platform has transformed how we handle data analysis. The speed and accuracy are unprecedented.",
       rating: 5, // ⭐ rating
       href: "https://twitter.com/emmaai",
-      screenshot:
-        "https://innaartwork.com/wp-content/uploads/2022/02/Main3.jpg",
+      screenshot: "/landing images/review/1.png",
     },
     {
       author: {
@@ -496,8 +536,7 @@ export const testimonials = {
       text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
       rating: 5,
       href: "https://twitter.com/davidtech",
-      screenshot:
-        "https://innaartwork.com/wp-content/uploads/2022/02/Main3.jpg",
+      screenshot: "/landing images/review/2.png",
     },
     {
       author: {
@@ -510,8 +549,7 @@ export const testimonials = {
       href: "https://twitter.com/emmaai",
 
       rating: 4,
-      screenshot:
-        "https://innaartwork.com/wp-content/uploads/2022/02/Main3.jpg",
+      screenshot: "/landing images/review/3.png",
     },
     {
       author: {
@@ -523,8 +561,7 @@ export const testimonials = {
       text: "Using this AI platform has transformed how we handle data analysis. The speed and accuracy are unprecedented.",
       rating: 5,
       href: "https://twitter.com/emmaai",
-      screenshot:
-        "https://innaartwork.com/wp-content/uploads/2022/02/Main3.jpg",
+      screenshot: "/landing images/review/4.png",
     },
     {
       author: {
@@ -536,8 +573,31 @@ export const testimonials = {
       text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
       rating: 5,
       href: "https://twitter.com/davidtech",
-      screenshot:
-        "https://innaartwork.com/wp-content/uploads/2022/02/Main3.jpg",
+      screenshot: "/landing images/review/5.png",
+    },
+    {
+      author: {
+        name: "David Park",
+        handle: "@davidtech",
+        avatar:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+      },
+      text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
+      rating: 4,
+      href: "https://twitter.com/davidtech",
+      screenshot: "/landing images/review/6.png",
+    },
+    {
+      author: {
+        name: "David Park",
+        handle: "@davidtech",
+        avatar:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+      },
+      text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
+      rating: 5,
+      href: "https://twitter.com/davidtech",
+      screenshot: "/landing images/review/7.png",
     },
   ],
 };
@@ -550,6 +610,7 @@ export const CTA_CONFIG = {
     suffix: "",
   },
   subtitle: "",
+  bg_image: "/landing images/World_map_with_points.svg",
   button: {
     text: "Get Started Free",
     href: "/pricing",

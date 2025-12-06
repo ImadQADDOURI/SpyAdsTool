@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Check } from "lucide-react";
 
@@ -8,8 +9,20 @@ import { Header } from "./header";
 
 export function CTASection() {
   return (
-    <section className="relative py-24">
-      <div className="container mx-auto max-w-4xl px-6 text-center">
+    <section className="relative overflow-hidden py-32">
+      {/* Background Map */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={CTA_CONFIG.bg_image}
+          alt=""
+          fill
+          className="object-contain opacity-30 dark:invert"
+          priority={false}
+        />
+      </div>
+
+      {/* Content */}
+      <div className="container relative z-10 mx-auto max-w-4xl px-6 text-center">
         {/* Header - Made Big */}
         <Header
           gradientColors={CTA_CONFIG.gradientColors}

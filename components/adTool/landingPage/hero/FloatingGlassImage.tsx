@@ -78,7 +78,7 @@ const FloatingGlassImage: React.FC<FloatingGlassImageProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`group relative inline-block ${className}`}
+      className={`group relative inline-block p-3 ${className}`}
       style={{
         animation: isVisible
           ? `float-${floatSpeed}-${floatAmplitude} ${floatSpeed}s ease-in-out ${delay}s infinite`

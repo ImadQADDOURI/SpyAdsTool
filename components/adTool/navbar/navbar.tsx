@@ -46,7 +46,7 @@ const NavbarLogo = () => {
       width={0}
       sizes="auto" // ensures correct responsive behavior
       priority
-      className="h-20 w-auto flex-shrink-0"
+      className="h-12 w-auto flex-shrink-0"
     />
   );
 };

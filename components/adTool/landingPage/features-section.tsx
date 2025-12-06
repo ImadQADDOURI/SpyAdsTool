@@ -47,7 +47,7 @@ function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
 
   return (
     <div ref={ref} className="w-full flex-shrink-0 overflow-hidden">
-      <div className="relative pb-8 sm:pb-16 lg:pb-20">
+      <div className="relative">
         {/* 🌟 Background effects */}
         <div className="absolute inset-0 overflow-hidden">
           <div
@@ -154,7 +154,7 @@ function FeatureSlide({ feature, index, isActive }: FeatureSlideProps) {
                   delay={0.6}
                   floatAmplitude={8}
                   floatSpeed={6}
-                  glass
+                  glass={false}
                 />
               </div>
             </div>
@@ -259,7 +259,11 @@ export default function FeaturesSection() {
   }, [currentSlide]);
 
   return (
-    <section ref={sectionRef} id="featuresConfig" className="relative">
+    <section
+      ref={sectionRef}
+      id="featuresConfig"
+      className="relative flex flex-col justify-between"
+    >
       {/* 🎠 Slideshow Container */}
       <div
         className="relative overflow-hidden"
@@ -284,7 +288,6 @@ export default function FeaturesSection() {
           ))}
         </div>
       </div>
-
       {/* 🎮 Navigation Controls */}
       <div className="flex justify-center">
         <div className="flex items-center gap-3 px-4">
@@ -358,7 +361,6 @@ export default function FeaturesSection() {
           </button>
         </div>
       </div>
-
       <style jsx>{`
         .container {
           max-width: 1200px;

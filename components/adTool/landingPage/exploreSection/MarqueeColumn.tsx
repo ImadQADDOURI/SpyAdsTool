@@ -22,7 +22,7 @@ const DEFAULT_HEIGHT = 500;
 
 // Memoized MarqueeItem component
 const MarqueeItem = memo(({ item }: { item: Item }) => (
-  <div className="relative mb-4 p-2">
+  <div className="relative pb-1.5">
     <div className="group relative overflow-hidden rounded-lg">
       <img
         src={item.image || "/placeholder.svg"}

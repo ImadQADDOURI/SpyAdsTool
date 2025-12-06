@@ -54,6 +54,7 @@ export default function IndexPage() {
       <SeparatorLine className="my-8 sm:my-16" />
       {/* <WorldMap /> */}
       <CTASection />
+      <SeparatorLine className="my-8 sm:my-16" />
       {/* Footer Section in layout */}
 
       {/* Scroll Buttons */}

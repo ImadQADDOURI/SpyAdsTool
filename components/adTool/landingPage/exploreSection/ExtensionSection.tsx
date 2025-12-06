@@ -31,7 +31,7 @@ export default function ExtensionSection({
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % totalSlides);
-    }, 4000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [autoPlay, totalSlides]);
