@@ -10,7 +10,7 @@ import { prisma } from "@/lib/db";
 // Can add/remove codes or summaries here as needed
 const AUTO_TOGGLE_ERRORS: Array<{ error?: number; errorSummary?: string }> = [
   { error: 1357001, errorSummary: "Log in to continue" }, // login required
-  // { error: 1357010 }, // example: banned account
+  { error: 1357004, errorSummary: "Sorry, something went wrong" }, //  "errorDescription": "Please try closing and re-opening your browser window."
   // { errorSummary: "Rate limit exceeded" }, // example: throttling
 ];
 
