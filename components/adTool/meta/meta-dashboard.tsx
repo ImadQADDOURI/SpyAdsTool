@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { listMetaRequests } from "@/actions/metaRequests";
-import { Plus, RefreshCw } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { importMetaRequests, listMetaRequests } from "@/actions/metaRequests";
+import { Import, Plus, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,6 +16,7 @@ export function MetaDashboardClient() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
   const [editingRequest, setEditingRequest] = useState<any>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadRequests = async () => {
     setLoading(true);
@@ -46,6 +47,36 @@ export function MetaDashboardClient() {
     setIsCreateModalOpen(true);
   };
 
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+    try {
+      const text = await file.text();
+      const jsonData = JSON.parse(text);
+
+      const result = await importMetaRequests(jsonData);
+
+      if (result.success) {
+        // alert(`${result.data?.count || 0} requests imported successfully!`);
+        loadRequests();
+      } else {
+        console.error("Import failed:", result.error);
+        alert(`Import failed: ${result.error}`);
+      }
+    } catch (error: any) {
+      console.error("Failed to process file:", error);
+      alert(`Failed to process file: ${error.message}`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-7xl space-y-6">
@@ -70,6 +101,25 @@ export function MetaDashboardClient() {
               <RefreshCw className="h-4 w-4" />
               Refresh
             </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleImportClick}
+              disabled={loading}
+              className="gap-2 bg-transparent"
+            >
+              <Import className="h-4 w-4" />
+              Import Requests
+            </Button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept=".json"
+              className="hidden"
+            />
+
             <Button
               onClick={() => {
                 setEditingRequest(null);

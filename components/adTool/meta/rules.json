@@ -1,0 +1,163 @@
+{
+  "version": "2.0",
+  "exportDate": "2025-12-08T12:02:20.348Z",
+  "rules": [
+    {
+      "capture": {
+        "queryParams": false,
+        "requestBody": true,
+        "requestHeaders": true,
+        "responseBody": false,
+        "responseHeaders": false,
+        "timing": false
+      },
+      "enabled": true,
+      "headerFiltering": {
+        "excludeCacheHeaders": false,
+        "excludeCommonHeaders": false,
+        "excludeCookies": false,
+        "excludeHeadersCustom": [],
+        "excludePseudoHeaders": true,
+        "excludeSecurityHeaders": false,
+        "includeHeadersCustom": [],
+        "mode": "exclude"
+      },
+      "id": "0b70f981-ea4a-4550-a798-4d8509c1d8d6",
+      "keepLastOnly": true,
+      "matchDomain": [],
+      "matchField": "any",
+      "matchMethod": [],
+      "matchText": "AdLibraryMobileFocusedStateProviderRefetchQuery",
+      "maxMatches": null,
+      "maxResponseSize": 0,
+      "name": "ad-refetch",
+      "notes": {
+        "fields_to_extract": {
+          "about_text": "$.data.page.about.text",
+          "admin_country_counts": "$.data.page.pages_transparency_info.admin_locations.admin_country_counts",
+          "count": "$.data.ad_library_main.search_results_connection.count",
+          "edges": "$.data.ad_library_main.search_results_connection.edges",
+          "end_cursor": "$.data.ad_library_main.search_results_connection.page_info.end_cursor",
+          "has_next_page": "$.data.ad_library_main.search_results_connection.page_info.has_next_page",
+          "history_items": "$.data.page.pages_transparency_info.history_items",
+          "page_info": "$.data.ad_library_page_info.page_info",
+          "total_spend": "$.data.page.ad_library_page_targeting_insight.ad_library_page_targeting_summary.total_spend_formatted"
+        },
+        "friendly_name": "AdLibraryMobileFocusedStateProviderRefetchQuery"
+      }
+    },
+    {
+      "capture": {
+        "queryParams": false,
+        "requestBody": true,
+        "requestHeaders": true,
+        "responseBody": false,
+        "responseHeaders": false,
+        "timing": false
+      },
+      "enabled": true,
+      "headerFiltering": {
+        "excludeCacheHeaders": false,
+        "excludeCommonHeaders": false,
+        "excludeCookies": false,
+        "excludeHeadersCustom": [],
+        "excludePseudoHeaders": true,
+        "excludeSecurityHeaders": false,
+        "includeHeadersCustom": [],
+        "mode": "exclude"
+      },
+      "id": "20de80c0-37d6-4e46-8f76-d9bf77335151",
+      "keepLastOnly": true,
+      "matchDomain": [],
+      "matchField": "any",
+      "matchMethod": [],
+      "matchText": "AdLibraryV3AdDetailsQuery",
+      "maxMatches": null,
+      "maxResponseSize": 0,
+      "name": "ad-details",
+      "notes": {
+        "fields_to_extract": {
+          "transparency_by_location": "$.data.ad_library_main.ad_details.transparency_by_location"
+        },
+        "friendly_name": "AdLibraryV3AdDetailsQuery"
+      }
+    },
+    {
+      "capture": {
+        "queryParams": false,
+        "requestBody": true,
+        "requestHeaders": true,
+        "responseBody": false,
+        "responseHeaders": false,
+        "timing": false
+      },
+      "enabled": true,
+      "headerFiltering": {
+        "excludeCacheHeaders": false,
+        "excludeCommonHeaders": false,
+        "excludeCookies": false,
+        "excludeHeadersCustom": [],
+        "excludePseudoHeaders": true,
+        "excludeSecurityHeaders": false,
+        "includeHeadersCustom": [],
+        "mode": "exclude"
+      },
+      "id": "c7523297-27ff-47c5-9b0f-bb8ddc1574c5",
+      "keepLastOnly": true,
+      "matchDomain": [],
+      "matchField": "any",
+      "matchMethod": [],
+      "matchText": "AdLibraryV3AdCollationDetailsQuery",
+      "maxMatches": null,
+      "maxResponseSize": 0,
+      "name": "ad-collation",
+      "notes": {
+        "fields_to_extract": {
+          "ad_cards": "$.data.ad_library_main.collation_results.ad_cards",
+          "forward_cursor": "$.data.ad_library_main.collation_results.forward_cursor",
+          "is_complete": "$.data.ad_library_main.collation_results.is_complete",
+          "total_count": "$.data.ad_library_main.collation_results.total_count"
+        },
+        "friendly_name": "AdLibraryV3AdCollationDetailsQuery"
+      }
+    },
+    {
+      "capture": {
+        "queryParams": false,
+        "requestBody": true,
+        "requestHeaders": true,
+        "responseBody": false,
+        "responseHeaders": false,
+        "timing": false
+      },
+      "enabled": true,
+      "headerFiltering": {
+        "excludeCacheHeaders": false,
+        "excludeCommonHeaders": false,
+        "excludeCookies": false,
+        "excludeHeadersCustom": [],
+        "excludePseudoHeaders": true,
+        "excludeSecurityHeaders": false,
+        "includeHeadersCustom": [],
+        "mode": "none"
+      },
+      "id": "ad75f9a3-c5c2-4414-844e-d8d5f5c0cc09",
+      "keepLastOnly": true,
+      "matchDomain": [],
+      "matchField": "any",
+      "matchMethod": [],
+      "matchText": "AdLibrarySearchPaginationQuery",
+      "maxMatches": null,
+      "maxResponseSize": 0,
+      "name": "ad-pagination",
+      "notes": {
+        "fields_to_extract": {
+          "edges": "$.data.ad_library_main.search_results_connection.edges",
+          "end_cursor": "$.data.ad_library_main.search_results_connection.page_info.end_cursor",
+          "has_next_page": "$.data.ad_library_main.search_results_connection.page_info.has_next_page"
+        },
+        "friendly_name": "AdLibrarySearchPaginationQuery"
+      }
+    }
+  ]
+}

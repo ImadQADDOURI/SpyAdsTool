@@ -135,3 +135,36 @@ export async function testMetaRequest(
     return { success: false, error: error.message };
   }
 }
+
+export async function importMetaRequests(importedData: { requests: any[] }) {
+  try {
+    if (!importedData || !Array.isArray(importedData.requests)) {
+      throw new Error("Invalid import format: 'requests' array not found.");
+    }
+
+    const requestsToCreate = importedData.requests.map((req) => {
+      const notes = req.notes || {};
+      return {
+        name: req.ruleMatched || "imported_request",
+        friendly_name: notes.friendly_name || null,
+        doc_id: notes.doc_id || null,
+        base_request: req,
+        fields_to_extract: notes.fields_to_extract || {},
+      };
+    });
+
+    if (requestsToCreate.length === 0) {
+      return { success: true, data: { count: 0 } };
+    }
+
+    const result = await prisma.metaGraphQLRequest.createMany({
+      data: requestsToCreate,
+    });
+
+    revalidatePath("/dashboard/meta");
+    return { success: true, data: result };
+  } catch (error: any) {
+    console.error("❌ importMetaRequests error:", error);
+    return { success: false, error: error.message };
+  }
+}
