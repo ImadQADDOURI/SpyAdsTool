@@ -126,13 +126,18 @@ export const AdDetails = ({ ad, trigger }: AdDetailsProps) => {
       // ✅ Access the extracted object
       const results = result.extracted;
 
-      setDetailedAds((prev) => [...prev, ...results.ad_cards]);
+      // Normalize the Data
+      const adCardsToAdd = Array.isArray(results.ad_cards)
+        ? results.ad_cards
+        : [results.ad_cards];
+
+      setDetailedAds((prev) => [...prev, ...adCardsToAdd]);
       setForwardCursor(results.forward_cursor);
       setIsComplete(results.is_complete);
       setTotalCount((prev) => prev || results.total_count);
       setRemainingCount((prev) =>
-        (prev || results.total_count) - results.ad_cards.length > 0
-          ? (prev || results.total_count) - results.ad_cards.length
+        (prev || results.total_count) - adCardsToAdd.length > 0
+          ? (prev || results.total_count) - adCardsToAdd.length
           : 0,
       );
     } catch (error) {

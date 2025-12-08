@@ -26,9 +26,10 @@ interface Snapshot {
 }
 
 export function AdOptions({ ad }: { ad: AdData }) {
-  const { ad_archive_id, snapshot } = ad;
+  const { ad_archive_id, snapshot, collation_id } = ad;
   const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copiedId, setCopiedId] = useState(false);
+  const [copiedCollation, setCopiedCollation] = useState(false);
 
   const getDomain = (): string | null => {
     try {
@@ -43,10 +44,18 @@ export function AdOptions({ ad }: { ad: AdData }) {
 
   const domain = getDomain();
 
-  const handleCopy = async () => {
+  const handleCopyId = async () => {
     await navigator.clipboard.writeText(ad_archive_id);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setCopiedId(true);
+    setTimeout(() => setCopiedId(false), 2000);
+  };
+
+  const handleCopyCollation = async () => {
+    if (collation_id) {
+      await navigator.clipboard.writeText(collation_id.toString());
+      setCopiedCollation(true);
+      setTimeout(() => setCopiedCollation(false), 2000);
+    }
   };
 
   const OptionItem = ({
@@ -158,9 +167,31 @@ export function AdOptions({ ad }: { ad: AdData }) {
             variant="ghost"
             size="sm"
             className="ml-auto h-6 w-6 p-0 transition-colors duration-150 hover:bg-accent/50"
-            onClick={handleCopy}
+            onClick={handleCopyId}
           >
-            {copied ? (
+            {copiedId ? (
+              <Check className="h-3.5 w-3.5 text-green-500" />
+            ) : (
+              <Copy className="h-3.5 w-3.5" />
+            )}
+          </Button>
+        </DropdownMenuLabel>
+
+        <DropdownMenuLabel className="flex items-center gap-2 px-3 py-2.5">
+          <span className="text-xs font-medium text-muted-foreground">
+            Collation ID:
+          </span>
+          <code className="rounded bg-muted px-2 py-1 font-mono text-xs text-muted-foreground/70">
+            {collation_id}
+          </code>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="ml-auto h-6 w-6 p-0 transition-colors duration-150 hover:bg-accent/50"
+            onClick={handleCopyCollation}
+            disabled={!collation_id}
+          >
+            {copiedCollation ? (
               <Check className="h-3.5 w-3.5 text-green-500" />
             ) : (
               <Copy className="h-3.5 w-3.5" />
