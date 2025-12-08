@@ -106,7 +106,7 @@ export async function analyzeKeywords(ad: AdData): Promise<AdAnalysis> {
   const genAI = geminiKeyManager.getNextModel();
 
   const model = genAI.getGenerativeModel({
-    model: process.env.GEMINI_AI_MODEL || "gemini-2.0-flash-lite",
+    model: process.env.GOOGLE_AI_API_MODEL || "",
   });
 
   const prompt = `
@@ -197,7 +197,7 @@ export async function generateAdCreative(
   const genAI = geminiKeyManager.getNextModel();
 
   const model = genAI.getGenerativeModel({
-    model: process.env.GOOGLE_AI_API_MODEL || "gemini-2.0-flash-lite",
+    model: process.env.GOOGLE_AI_API_MODEL || "",
   });
 
   const prompt = `
