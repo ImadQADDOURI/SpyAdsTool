@@ -590,7 +590,7 @@ export const testimonials = {
         avatar:
           "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
       },
-      text: "I’ve used adspy tools for years, and Adlofy is easily the best I’ve come across. The insights are next-level. My store crossed $2,71.247 this period thanks to the strategies I discovered here.",
+      text: "I’ve used adspy tools for years, and Adlofy is easily the best I’ve come across. The insights are next-level. My store crossed $2,571.247 this period thanks to the strategies I discovered here.",
       rating: 5,
       href: "#",
       screenshot: "/landing images/review/7.png",
