@@ -84,7 +84,7 @@ export function AnalyticsTab({ tabs, className }: AnalyticsTabProps) {
                   src={tab.image || "/placeholder.svg"}
                   alt={tab.alt}
                   fill
-                  className="object-contain p-6 transition-transform duration-700 ease-out"
+                  className="object-contain transition-transform duration-700 ease-out"
                   priority={activeTab === tab.id}
                 />
 
