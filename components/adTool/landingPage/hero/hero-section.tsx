@@ -117,7 +117,7 @@ const HeroSection = () => {
 
               {/* 👥 Trusted By Avatars */}
               <div className="flex items-center gap-6">
-                <AvatarTrustedby />
+                <AvatarTrustedby avatars={heroConfig.avatarImages} />
               </div>
 
               {/* 💳 No Credit Card Required */}

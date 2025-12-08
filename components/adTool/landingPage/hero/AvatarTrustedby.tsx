@@ -2,14 +2,10 @@ import React from "react";
 
 import { cn } from "@/lib/utils"; // Optional: For merging classnames if you use Shadcn
 
-function AvatarTrustedby() {
-  const avatars = [
-    "https://originui.com/avatar-80-03.jpg",
-    "https://originui.com/avatar-80-04.jpg",
-    "https://originui.com/avatar-80-05.jpg",
-    "https://originui.com/avatar-80-06.jpg",
-  ];
-
+interface AvatarTrustedbyProps {
+  avatars: string[];
+}
+function AvatarTrustedby({ avatars }: AvatarTrustedbyProps) {
   return (
     <div
       className={cn(
@@ -40,7 +36,7 @@ function AvatarTrustedby() {
 
       {/* 📝 Text */}
       <p className="animate-fade-in text-xs text-muted-foreground">
-        Trusted by <span className="font-medium text-foreground">10K+</span>{" "}
+        Trusted by <span className="font-medium text-foreground">1K+</span>{" "}
         Users
       </p>
     </div>

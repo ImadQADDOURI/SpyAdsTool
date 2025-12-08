@@ -13,7 +13,9 @@ import {
   Euro,
   FileText,
   Filter,
+  Flame,
   Folder,
+  Globe,
   Search,
   TrendingUp,
 } from "lucide-react";
@@ -171,6 +173,13 @@ export const heroConfig = {
       },
     },
   ],
+  avatarImages: [
+    "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=50&h=50&fit=crop&crop=face",
+    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50&h=50&fit=crop&crop=face",
+    "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=50&h=50&fit=crop&crop=face",
+    "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=50&h=50&fit=crop&crop=face",
+    "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=50&h=50&fit=crop&crop=face",
+  ],
 };
 
 export const trustedBySectionConfig = [
@@ -216,88 +225,71 @@ export const trustedBySectionConfig = [
     logo: "/landing images/trusted/wise.svg",
   },
 ];
-
 export const featuresConfig = [
   {
     id: "1",
     title: "Facebook AdSpy",
     highlightText: "Search & Filters",
     description:
-      "Find profitable products with AI-powered discovery. Access millions of active campaigns.",
+      "Lightning-fast ad discovery with explosive filter power. Uncover winning creatives in seconds.",
     image: "/landing images/feutures/f1.png",
-    accentColor: "#3b82f6", // blue-500
-    auroraColors: ["#3b82f6", "#60a5fa", "#2563eb", "#0ea5e9"], // blue -> sky
+    accentColor: "#3b82f6",
+    auroraColors: ["#3b82f6", "#60a5fa", "#2563eb", "#0ea5e9"],
     stats: [
-      { label: "Active Ads", value: "10M+" },
-      { label: "Success", value: "94%" },
-      { label: "Updates", value: "24/7" },
+      { label: "Ad Library", value: "10M+" },
+      { label: "History Depth", value: "2018 → Now" },
+      { label: "Filters", value: "10+ PRO" },
     ],
-    Icon: Search,
+    Icon: Globe,
   },
   {
     id: "2",
-    title: "Visual",
+    title: "Breakdown & Insights",
     highlightText: "Analytics",
     description:
-      "Search with 15+ filter types. Find exactly what you need with precision targeting.",
+      "Instant deep-dive analytics. Track countries, scale patterns, and growth signals effortlessly.",
     image: "/landing images/feutures/f3.png",
-    accentColor: "#8b5cf6", // violet-500
-    auroraColors: ["#8b5cf6", "#a78bfa", "#7c3aed", "#ec4899"], // violet -> pink mix
+    accentColor: "#8b5cf6",
+    auroraColors: ["#8b5cf6", "#a78bfa", "#7c3aed", "#ec4899"],
     stats: [
-      { label: "Filters", value: "15+" },
-      { label: "Database", value: "50M+" },
-      { label: "Speed", value: "<0.1s" },
-    ],
-    Icon: Filter,
-  },
-  {
-    id: "3",
-    title: "Hot",
-    highlightText: "Product",
-    description:
-      "Get insights with visual dashboard. Track performance and identify trends.",
-    image: "/landing images/feutures/f2.png",
-    accentColor: "#10b981", // emerald-500
-    auroraColors: ["#10b981", "#34d399", "#059669", "#14b8a6"], // emerald -> teal
-    stats: [
-      { label: "Data Points", value: "1B+" },
-      { label: "Accuracy", value: "99.9%" },
-      { label: "Real-time", value: "Live" },
+      { label: "Coverage", value: "EU + Worldwide" },
+      { label: "Metrics", value: "20+ KPIs" },
+      { label: "History", value: "Scale Path" },
     ],
     Icon: BarChart,
   },
   {
-    id: "4",
-    title: "Powerful",
-    highlightText: "Calculator",
+    id: "3",
+    title: "Winning Dropshipping",
+    highlightText: "Products",
     description:
-      "Leverage AI-powered tools and calculators. Get instant recommendations.",
-    image: "/landing images/feutures/f5.png",
-    accentColor: "#f59e0b", // amber-500
-    auroraColors: ["#f59e0b", "#fbbf24", "#d97706", "#ef4444"], // amber -> orange/red hint
+      "Find hot products before they explode. Real-time signals. High-velocity validation.",
+    image: "/landing images/feutures/f2.png",
+    accentColor: "#10b981",
+    auroraColors: ["#10b981", "#34d399", "#059669", "#14b8a6"],
     stats: [
-      { label: "AI Models", value: "8+" },
-      { label: "Accuracy", value: "96%" },
-      { label: "Processing", value: "Instant" },
+      { label: "Hot Score", value: "🔥 High" },
+      { label: "Refresh Rate", value: "Real-Time" },
+      { label: "Validation", value: "Instant" },
     ],
-    Icon: Cpu,
+    Icon: Flame,
   },
-  // {
-  //   id: "organize",
-  //   title: "Save &",
-  //   highlightText: "Organize",
-  //   description:
-  //     "Download media and organize findings. Keep track of strategies with cloud storage.",
-  //   image: "/landing images/feutures/f2.png",
-  //   accentColor: "#06b6d4", // cyan-500
-  //   auroraColors: ["#06b6d4", "#22d3ee", "#0891b2", "#3b82f6"], // cyan -> blue mix
-  //   stats: [
-  //     { label: "Downloads", value: "∞" },
-  //     { label: "Storage", value: "Cloud" },
-  //     { label: "Boards", value: "Custom" },
-  //   ],
-  //   Icon: Folder,
-  // },
+  {
+    id: "4",
+    title: "Profit Power Tools",
+    highlightText: "Calculators",
+    description:
+      "Maximize profit instantly. ROAS, margins, break-even, scaling… all auto-calculated.",
+    image: "/landing images/feutures/f5.png",
+    accentColor: "#f59e0b",
+    auroraColors: ["#f59e0b", "#fbbf24", "#d97706", "#ef4444"],
+    stats: [
+      { label: "Precision", value: "99.9%" },
+      { label: "Inputs", value: "All-In-One" },
+      { label: "Speed", value: "Instant" },
+    ],
+    Icon: Calculator,
+  },
 ];
 
 export const TrendingConfig = {
@@ -521,87 +513,86 @@ export const testimonials = {
   reviews: [
     {
       author: {
-        name: "Emma Thompson",
-        handle: "@emmaai",
+        name: "Chris D.",
+        handle: "@chrisd",
         avatar:
-          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
+          "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=150&h=150&fit=crop&crop=face",
       },
-      text: "Using this AI platform has transformed how we handle data analysis. The speed and accuracy are unprecedented.",
-      rating: 5, // ⭐ rating
-      href: "https://twitter.com/emmaai",
+      text: "Adlofy’s interface is incredibly intuitive. I found my next winning product in under an hour—something that used to take me all day with other platforms. Time is money, and Adlofy saves me both. A must-have tool!",
+      rating: 5,
+      href: "#",
       screenshot: "/landing images/review/1.png",
     },
     {
       author: {
-        name: "David Park",
-        handle: "@davidtech",
+        name: "Zara K.",
+        handle: "@zarak",
         avatar:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+          "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
       },
-      text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
+      text: "The influencer-tracking feature is priceless. I can see exactly which creators drive sales for competitors—giving me the perfect blueprint for my own strategy. My ROI has improved massively since tracking data accurately.",
       rating: 5,
-      href: "https://twitter.com/davidtech",
+      href: "#",
       screenshot: "/landing images/review/2.png",
     },
     {
       author: {
-        name: "Sofia Rodriguez",
-        handle: "@sofiaml",
+        name: "Omar F.",
+        handle: "@omarfx",
         avatar:
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
+          "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
       },
-      text: "Finally, an AI tool that actually understands context! The accuracy in natural language processing is impressive.",
-      href: "https://twitter.com/emmaai",
-
-      rating: 4,
+      text: "Before Adlofy, I was guessing which ads to run. Their data doesn’t just show what sells—it shows how and where it’s being promoted. It completely changed my strategy overnight and boosted my conversions.",
+      rating: 5,
+      href: "#",
       screenshot: "/landing images/review/3.png",
     },
     {
       author: {
-        name: "Emma Thompson",
-        handle: "@emmaai",
+        name: "Jessica H.",
+        handle: "@jessh",
         avatar:
-          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
+          "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop&crop=face",
       },
-      text: "Using this AI platform has transformed how we handle data analysis. The speed and accuracy are unprecedented.",
+      text: "I’ve been in e-commerce for years and tried every spy tool. Adlofy is simply the best product research solution out there. The constant updates show how dedicated the team is to staying ahead of the curve.",
       rating: 5,
-      href: "https://twitter.com/emmaai",
+      href: "#",
       screenshot: "/landing images/review/4.png",
     },
     {
       author: {
-        name: "David Park",
-        handle: "@davidtech",
+        name: "Malik",
+        handle: "@malik",
         avatar:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+          "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150&h=150&fit=crop&crop=face",
       },
-      text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
+      text: "Adlofy drastically cut my operational costs. I used to subscribe to multiple tools to get half the features Adlofy offers. Now, everything is in one place—and this month alone, I hit $30,971.74 in revenue. Incredible ROI!",
       rating: 5,
-      href: "https://twitter.com/davidtech",
+      href: "#",
       screenshot: "/landing images/review/5.png",
     },
     {
       author: {
-        name: "David Park",
-        handle: "@davidtech",
+        name: "Tom",
+        handle: "@tomcommerce",
         avatar:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+          "https://images.unsplash.com/photo-1520342868574-5fa3804e551c?w=150&h=150&fit=crop&crop=face",
       },
-      text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
-      rating: 4,
-      href: "https://twitter.com/davidtech",
+      text: "I rarely leave reviews, but Adlofy deserves it. A friend recommended it, and the free trial convinced me to try. As a beginner, it helped me tremendously—I earned $12,556.63 in two months and tripled my focus.",
+      rating: 5,
+      href: "#",
       screenshot: "/landing images/review/6.png",
     },
     {
       author: {
-        name: "David Park",
-        handle: "@davidtech",
+        name: "Triaina",
+        handle: "@triaina",
         avatar:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
       },
-      text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
+      text: "I’ve used adspy tools for years, and Adlofy is easily the best I’ve come across. The insights are next-level. My store crossed $2,71.247 this period thanks to the strategies I discovered here.",
       rating: 5,
-      href: "https://twitter.com/davidtech",
+      href: "#",
       screenshot: "/landing images/review/7.png",
     },
   ],
