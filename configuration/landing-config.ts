@@ -16,6 +16,7 @@ import {
   Flame,
   Folder,
   Globe,
+  KeyRound,
   Search,
   TrendingUp,
 } from "lucide-react";
@@ -449,33 +450,41 @@ export const analyticsConfig = {
       id: "1",
       label: "Analytics",
       icon: BarChart3,
-      color: "from-blue-500 to-cyan-500", // 🎨 Custom color for Overview
+      color: "from-purple-500 to-violet-500", // 🎨 core analytics / main feature
       image: "/landing images/analytics/1.png",
       alt: "Analytics Overview Dashboard",
     },
     {
       id: "2",
-      label: "Eu Stats",
+      label: "EU Stats",
       icon: ChartPie,
-      color: "from-green-500 to-emerald-500", // 🎨 Custom color for Performance
+      color: "from-blue-500 to-cyan-500", // 🎨 regional / data clarity
       image: "/landing images/analytics/2.png",
-      alt: "Performance Analytics",
+      alt: "European Performance Analytics",
     },
     {
       id: "3",
       label: "World Stats",
       icon: Earth,
-      color: "from-purple-500 to-violet-500", // 🎨 Custom color for Insights
+      color: "from-indigo-500 to-sky-500", // 🎨 global reach
       image: "/landing images/analytics/3.png",
-      alt: "AI-Powered Insights",
+      alt: "Worldwide Analytics Insights",
     },
     {
       id: "4",
       label: "AI Creative",
       icon: Bot,
-      color: "from-orange-500 to-red-500", // 🎨 Custom color for Reports
+      color: "from-fuchsia-500 to-pink-500", // 🎨 AI / creativity
       image: "/landing images/analytics/4.png",
-      alt: "Custom Reports",
+      alt: "AI-Powered Creative Insights",
+    },
+    {
+      id: "5",
+      label: "Keywords",
+      icon: KeyRound,
+      color: "from-emerald-500 to-green-500", // 🎨 growth / optimization
+      image: "/landing images/analytics/5.png",
+      alt: "Keyword analysis and focus word statistics",
     },
   ],
   stats: [
