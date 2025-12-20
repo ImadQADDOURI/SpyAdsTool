@@ -14,14 +14,14 @@ import {
 
 import { cn } from "@/lib/utils";
 
-type CODPieChartProps = {
+type CalculatorPieChartProps = {
   totalRevenue: number;
   netProfit: number;
   totalSpending: number;
   totalRefundCost: number;
 };
 
-const CODPieChart: React.FC<CODPieChartProps> = ({
+const CalculatorPieChart: React.FC<CalculatorPieChartProps> = ({
   totalRevenue,
   netProfit,
   totalSpending,
@@ -191,4 +191,4 @@ const CODPieChart: React.FC<CODPieChartProps> = ({
   );
 };
 
-export default CODPieChart;
+export default CalculatorPieChart;

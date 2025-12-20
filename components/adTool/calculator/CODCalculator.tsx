@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 
-import CODPieChart from "./CODPieChart";
+import CalculatorPieChart from "./CalculatorPieChart";
 
 // Types for Extra Charge
 type ExtraChargeType = {
@@ -534,7 +534,7 @@ const CODCalculator: React.FC = () => {
             <CardContent>
               <div className="h-[350px]">
                 {/* Increased height from 300px to 400px */}
-                <CODPieChart
+                <CalculatorPieChart
                   totalRevenue={totalRevenue}
                   netProfit={netProfit}
                   totalSpending={totalSpending}
