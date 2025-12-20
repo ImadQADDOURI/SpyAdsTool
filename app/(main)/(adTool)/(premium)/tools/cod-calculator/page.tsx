@@ -38,7 +38,7 @@ export default function CODCalculatorPage() {
       />
 
       {/* 📝 Description Section */}
-      <div className="mx-auto px-4 py-6">
+      <div className="mx-auto">
         {/* 🧮 Calculator Component */}
         <div className="mx-auto mb-8">
           <Suspense

@@ -36,7 +36,7 @@ export default function CalculatorPage() {
         description="Optimize your cost per action, track campaign ROI, and maximize ad profit."
       />
 
-      <div className="mx-auto px-4 py-6">
+      <div className="mx-auto">
         {/* 🧮 Calculator Component */}
         <div className="mb-8">
           <Suspense

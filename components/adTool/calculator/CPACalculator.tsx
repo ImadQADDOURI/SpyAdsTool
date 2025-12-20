@@ -1,24 +1,17 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import {
-  BarChart,
-  CreditCard,
   DollarSign,
   Info,
-  MousePointerClick,
-  Package,
-  Percent,
   Plus,
-  RefreshCcw,
-  ShoppingBag,
-  TicketX,
+  Sparkles,
+  Target,
   Trash2,
-  TrendingUp,
   Wallet,
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -32,9 +25,8 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 
-import CalculatorPieChart from "./CalculatorPieChart";
+import DonutChart, { type ChartDataItem } from "./DonutChart";
 
-// Types for Extra Charge
 type ExtraChargeType = {
   id: string;
   label: string;
@@ -43,189 +35,107 @@ type ExtraChargeType = {
   application: "perOrder" | "total";
 };
 
-// Enhanced Input Component with Icon Support
-type InputComponentProps = {
-  label: string;
-  value: number;
-  onChange: (value: number) => void;
-  type?: "text" | "number" | "percentage" | "currency";
-  min?: number;
-  max?: number;
-  step?: number;
-  icon?: React.ReactNode;
-  variant?: "primary" | "secondary" | "optional";
-  className?: string;
-};
+const PRESET_CHARGES = [
+  {
+    label: "Agency Fee",
+    type: "percentage" as const,
+    amount: 15,
+    application: "total" as const,
+  },
+  {
+    label: "Creative Cost",
+    type: "flat" as const,
+    amount: 200,
+    application: "total" as const,
+  },
+  {
+    label: "Landing Page",
+    type: "flat" as const,
+    amount: 100,
+    application: "total" as const,
+  },
+  {
+    label: "Tool Subscription",
+    type: "flat" as const,
+    amount: 50,
+    application: "total" as const,
+  },
+];
 
-const InputComponent: React.FC<InputComponentProps> = ({
-  label,
-  value,
-  onChange,
-  type = "number",
-  min = 0,
-  max = 100000,
-  step = 0.01,
-  icon,
-  variant = "primary",
-  className = "",
-}) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const numValue = Number(e.target.value);
-    if (numValue >= min && numValue <= max) {
-      onChange(numValue);
-    }
-  };
-
-  const variantStyles = {
-    primary:
-      "border-[#6566F1]/20 focus:ring-[#6566F1]/30 bg-white dark:bg-gray-900",
-    secondary:
-      "border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50",
-    optional:
-      "border-dashed border-gray-200 dark:border-gray-700 bg-white/30 dark:bg-gray-900/30",
-  };
-
-  return (
-    <div className={cn("group relative space-y-2", className)}>
-      <Label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-        {icon && (
-          <span className="transition-transform duration-300 group-hover:scale-110">
-            {icon}
-          </span>
-        )}
-        {label}
-      </Label>
-      <div className="relative transition-all duration-300 hover:translate-y-[-1px]">
-        <Input
-          type="number"
-          value={value}
-          onChange={handleChange}
-          min={min}
-          max={max}
-          step={step}
-          className={cn(
-            "w-full rounded-xl pl-10 transition-all duration-300",
-            "hover:shadow-md focus:shadow-lg",
-            variantStyles[variant],
-          )}
-        />
-        {type === "currency" && (
-          <DollarSign
-            className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400"
-            size={18}
-          />
-        )}
-        {type === "percentage" && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-400">
-            %
-          </span>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const SliderInput: React.FC<{
-  label: string;
-  value: number[];
-  onValueChange: (value: number[]) => void;
-  max?: number;
-  step?: number;
-  icon?: React.ReactNode;
-}> = ({ label, value, onValueChange, max = 100, step = 0.01, icon }) => (
-  <div className="group space-y-2">
-    <Label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-      {icon && (
-        <span className="transition-transform duration-300 group-hover:scale-110">
-          {icon}
-        </span>
-      )}
-      {label} ({value[0].toFixed(2)}%)
-    </Label>
-    <div className="flex items-center gap-4">
-      <Slider
-        defaultValue={value}
-        max={max}
-        step={step}
-        onValueChange={onValueChange}
-        className="flex-grow"
-      />
-      <Input
-        type="number"
-        value={value[0]}
-        onChange={(e) => onValueChange([Number(e.target.value)])}
-        step={step}
-        min={0}
-        max={max}
-        className="w-24 rounded-xl border-[#6566F1]/20 bg-white/50 text-center dark:bg-gray-900/50"
-      />
-    </div>
-  </div>
-);
+const STORAGE_KEY = "cpa-calculator-data";
 
 const CPACalculator: React.FC = () => {
-  // Primary Inputs
   const [adSpend, setAdSpend] = useState(0);
-  const [totalClicks, setTotalClicks] = useState(0);
-  const [averageOrderValue, setAverageOrderValue] = useState(0);
-  const [refundCost, setRefundCost] = useState(0);
-
-  // Percentage Inputs
-  const [conversionRate, setConversionRate] = useState([2]); // Default 2%
-  const [refundRate, setRefundRate] = useState([5]); // Default 5%
-
-  // Extra Charges
+  const [clicks, setClicks] = useState(0);
+  const [conversionRate, setConversionRate] = useState([2]);
+  const [orderValue, setOrderValue] = useState(0);
   const [extraCharges, setExtraCharges] = useState<ExtraChargeType[]>([]);
+  const [showPresets, setShowPresets] = useState(false);
 
-  // Calculations
-  const totalConversions = useMemo(() => {
-    return (conversionRate[0] / 100) * totalClicks;
-  }, [conversionRate, totalClicks]);
-
-  const totalRevenue = useMemo(() => {
-    return averageOrderValue * totalConversions;
-  }, [averageOrderValue, totalConversions]);
-
-  const totalRefundCost = useMemo(() => {
-    return (refundRate[0] / 100) * totalConversions * refundCost;
-  }, [refundRate, totalConversions, refundCost]);
-
-  const netRevenue = useMemo(() => {
-    return totalRevenue - totalRefundCost;
-  }, [totalRevenue, totalRefundCost]);
-
-  const cpa = useMemo(() => {
-    return totalConversions > 0 ? adSpend / totalConversions : 0;
-  }, [adSpend, totalConversions]);
-
-  const totalExtraCharges = useMemo(() => {
-    return extraCharges.reduce((total, charge) => {
-      if (charge.type === "flat") {
-        return (
-          total +
-          (charge.application === "perOrder"
-            ? charge.amount * totalConversions
-            : charge.amount)
-        );
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        setAdSpend(data.adSpend ?? 0);
+        setClicks(data.clicks ?? 0);
+        setConversionRate(data.conversionRate ?? [2]);
+        setOrderValue(data.orderValue ?? 0);
+        setExtraCharges(data.extraCharges ?? []);
+      } catch (e) {
+        console.error("Failed to load saved data");
       }
+    }
+  }, []);
+
+  useEffect(() => {
+    const data = { adSpend, clicks, conversionRate, orderValue, extraCharges };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }, [adSpend, clicks, conversionRate, orderValue, extraCharges]);
+
+  const conversions = clicks * (conversionRate[0] / 100);
+
+  const cpa = conversions > 0 ? adSpend / conversions : 0;
+
+  const totalRevenue = orderValue * conversions;
+
+  const totalExtraCharges = extraCharges.reduce((total, charge) => {
+    if (charge.type === "flat") {
       return (
         total +
-        (charge.amount / 100) *
-          totalRevenue *
-          (charge.application === "perOrder" ? 1 : 1)
+        (charge.application === "perOrder"
+          ? charge.amount * conversions
+          : charge.amount)
       );
-    }, 0);
-  }, [extraCharges, totalRevenue, totalConversions]);
+    }
+    const base =
+      charge.application === "perOrder" ? totalRevenue : totalRevenue;
+    return total + (charge.amount / 100) * base;
+  }, 0);
 
-  const netProfit = useMemo(() => {
-    return netRevenue - (adSpend + totalExtraCharges);
-  }, [netRevenue, adSpend, totalExtraCharges]);
+  const netProfit = totalRevenue - adSpend - totalExtraCharges;
 
-  const roi = useMemo(() => {
-    return adSpend > 0 ? (netProfit / adSpend) * 100 : 0;
-  }, [netProfit, adSpend]);
+  const roi = (() => {
+    const totalInvestment = adSpend + totalExtraCharges;
+    return totalInvestment > 0 ? (netProfit / totalInvestment) * 100 : 0;
+  })();
 
-  // Extra Charge Management
+  const chartData: ChartDataItem[] = [
+    { name: "Ad Spend", value: adSpend, color: "#FF6B6B", icon: Target },
+    {
+      name: "Extra Charges",
+      value: totalExtraCharges,
+      color: "#4ECDC4",
+      icon: DollarSign,
+    },
+    {
+      name: "Net Profit",
+      value: Math.max(0, netProfit),
+      color: "#45B7D1",
+      icon: Wallet,
+    },
+  ];
+
   const addExtraCharge = () => {
     setExtraCharges([
       ...extraCharges,
@@ -234,9 +144,20 @@ const CPACalculator: React.FC = () => {
         label: "",
         amount: 0,
         type: "flat",
-        application: "perOrder",
+        application: "total",
       },
     ]);
+  };
+
+  const addPresetCharge = (preset: (typeof PRESET_CHARGES)[0]) => {
+    setExtraCharges([
+      ...extraCharges,
+      {
+        id: `charge-${Date.now()}`,
+        ...preset,
+      },
+    ]);
+    setShowPresets(false);
   };
 
   const updateExtraCharge = (id: string, updates: Partial<ExtraChargeType>) => {
@@ -252,99 +173,127 @@ const CPACalculator: React.FC = () => {
   };
 
   return (
-    <div className="relative space-y-6 rounded-3xl bg-gradient-to-r from-[#6566F1]/5 to-[#B977F8]/5 p-6 backdrop-blur-sm dark:from-gray-900/50 dark:to-gray-800/50">
+    <div className="container mx-auto px-4">
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Inputs Column */}
-        <Card className="overflow-hidden border-0 bg-white/80 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl dark:bg-gray-900/80">
-          <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-            <CardTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-2xl font-bold text-transparent">
+        <Card className="shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <Target className="h-5 w-5 text-[#6566F1]" />
               CPA Calculator
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6 p-6">
-            {/* Primary Inputs */}
-            <div className="grid gap-4 md:grid-cols-2">
-              <InputComponent
-                label="Ad Spend"
-                value={adSpend}
-                onChange={setAdSpend}
-                type="currency"
-                icon={<BarChart size={20} />}
-                variant="primary"
-              />
-              <InputComponent
-                label="Total Clicks"
-                value={totalClicks}
-                onChange={setTotalClicks}
-                min={0}
-                icon={<MousePointerClick size={20} />}
-                variant="primary"
-              />
+          <CardContent className="space-y-5">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Ad Spend ($)</Label>
+                <Input
+                  type="number"
+                  value={adSpend}
+                  onChange={(e) => setAdSpend(Number(e.target.value))}
+                  min={0}
+                  className="h-10"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Total Clicks</Label>
+                <Input
+                  type="number"
+                  value={clicks}
+                  onChange={(e) => setClicks(Number(e.target.value))}
+                  min={0}
+                  className="h-10"
+                />
+              </div>
             </div>
 
-            {/* Conversion Metrics */}
-            <div className="grid gap-4 md:grid-cols-2">
-              <SliderInput
-                label="Conversion Rate"
-                value={conversionRate}
-                onValueChange={setConversionRate}
-                icon={<Percent size={20} />}
-              />
-              <InputComponent
-                label="Average Order Value"
-                value={averageOrderValue}
-                onChange={setAverageOrderValue}
-                type="currency"
-                icon={<ShoppingBag size={20} />}
-                variant="primary"
-              />
-            </div>
-
-            {/* Refund Metrics */}
-            <div className="grid gap-4 md:grid-cols-2">
-              <SliderInput
-                label="Refund Rate"
-                value={refundRate}
-                onValueChange={setRefundRate}
-                icon={<RefreshCcw size={20} />}
-              />
-              <InputComponent
-                label="Refund Cost"
-                value={refundCost}
-                onChange={setRefundCost}
-                type="currency"
-                icon={<TicketX size={20} />}
-                variant="secondary"
-              />
-            </div>
-
-            {/* Extra Charges */}
             <div className="space-y-2">
+              <Label className="text-sm font-medium">
+                Conversion Rate: {conversionRate[0].toFixed(1)}%
+              </Label>
+              <div className="flex items-center gap-3">
+                <Slider
+                  value={conversionRate}
+                  onValueChange={setConversionRate}
+                  max={100}
+                  step={0.1}
+                  className="flex-1"
+                />
+                <Input
+                  type="number"
+                  value={conversionRate[0]}
+                  onChange={(e) =>
+                    setConversionRate([
+                      Math.max(0, Math.min(100, Number(e.target.value))),
+                    ])
+                  }
+                  className="h-9 w-20 text-sm"
+                  step={0.1}
+                  min={0}
+                  max={100}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">
+                Average Order Value ($)
+              </Label>
+              <Input
+                type="number"
+                value={orderValue}
+                onChange={(e) => setOrderValue(Number(e.target.value))}
+                min={0}
+                className="h-10"
+              />
+            </div>
+
+            <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
-                  <Plus size={16} className="" />
-                  Extra Charges
-                </Label>
-                <Button
-                  onClick={addExtraCharge}
-                  variant="outline"
-                  size="sm"
-                  className="group border-[#6566F1]/20 bg-white/50 transition-all duration-300 hover:bg-[#6566F1]/10 dark:bg-gray-900/50"
-                >
-                  <Plus
-                    size={16}
-                    className="mr-2 transition-transform duration-300 group-hover:rotate-90"
-                  />
-                  Add Charge
-                </Button>
+                <Label className="text-sm font-medium">Extra Charges</Label>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => setShowPresets(!showPresets)}
+                    variant="outline"
+                    size="sm"
+                    className="h-8"
+                  >
+                    <Sparkles size={14} className="mr-1.5" />
+                    Presets
+                  </Button>
+                  <Button
+                    onClick={addExtraCharge}
+                    variant="outline"
+                    size="sm"
+                    className="h-8 bg-transparent"
+                  >
+                    <Plus size={14} className="mr-1.5" />
+                    Custom
+                  </Button>
+                </div>
               </div>
 
-              {/* Extra Charges List */}
+              {showPresets && (
+                <div className="space-y-1.5 rounded-lg border bg-gray-50/50 p-2 dark:bg-gray-900/30">
+                  {PRESET_CHARGES.map((preset, idx) => (
+                    <Button
+                      key={idx}
+                      onClick={() => addPresetCharge(preset)}
+                      variant="ghost"
+                      className="h-8 w-full justify-start text-left text-xs"
+                      size="sm"
+                    >
+                      {preset.label} ({preset.amount}
+                      {preset.type === "percentage" ? "%" : "$"})
+                    </Button>
+                  ))}
+                </div>
+              )}
+
               <div className="space-y-2">
                 {extraCharges.map((charge) => (
                   <div
                     key={charge.id}
-                    className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white/50 p-2 transition-all duration-300 hover:border-[#6566F1]/20 dark:border-gray-700 dark:bg-gray-900/50"
+                    className="flex items-center gap-2 rounded-lg border bg-white p-2 dark:bg-gray-900"
                   >
                     <Input
                       placeholder="Label"
@@ -352,7 +301,7 @@ const CPACalculator: React.FC = () => {
                       onChange={(e) =>
                         updateExtraCharge(charge.id, { label: e.target.value })
                       }
-                      className="flex-grow border-0 bg-transparent"
+                      className="h-9 flex-1 text-sm"
                     />
                     <Input
                       type="number"
@@ -362,7 +311,7 @@ const CPACalculator: React.FC = () => {
                           amount: Number(e.target.value),
                         })
                       }
-                      className="w-24 border-0 bg-transparent"
+                      className="h-9 w-20 text-sm"
                     />
                     <Select
                       value={charge.type}
@@ -370,12 +319,12 @@ const CPACalculator: React.FC = () => {
                         updateExtraCharge(charge.id, { type: value })
                       }
                     >
-                      <SelectTrigger className="w-32 border-0 bg-transparent">
+                      <SelectTrigger className="h-9 w-16 text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="flat">Flat</SelectItem>
-                        <SelectItem value="percentage">Percentage</SelectItem>
+                        <SelectItem value="flat">$</SelectItem>
+                        <SelectItem value="percentage">%</SelectItem>
                       </SelectContent>
                     </Select>
                     <Select
@@ -384,11 +333,11 @@ const CPACalculator: React.FC = () => {
                         updateExtraCharge(charge.id, { application: value })
                       }
                     >
-                      <SelectTrigger className="w-32 border-0 bg-transparent">
+                      <SelectTrigger className="h-9 w-24 text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="perOrder">Per Order</SelectItem>
+                        <SelectItem value="perOrder">Per Conv.</SelectItem>
                         <SelectItem value="total">Total</SelectItem>
                       </SelectContent>
                     </Select>
@@ -396,80 +345,95 @@ const CPACalculator: React.FC = () => {
                       variant="ghost"
                       size="icon"
                       onClick={() => removeExtraCharge(charge.id)}
-                      className="text-gray-400 hover:text-red-500"
+                      className="h-9 w-9"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={14} />
                     </Button>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* ℹ️ User Note */}
-            <div className="mx-auto mb-8 max-w-6xl rounded-xl bg-purple-50 p-2 shadow-sm dark:bg-gray-900/60">
-              <div className="flex items-center space-x-2 text-sm text-purple-700 dark:text-purple-300">
-                <Info className="h-5 w-5" />
-                <span className="font-medium">Note:</span>
-                <span>
-                  {" "}
-                  Refund costs are calculated only if a refund amount is entered
-                  (default: $0).
-                </span>
+            <div className="rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20">
+              <div className="flex items-start gap-2 text-xs text-blue-700 dark:text-blue-300">
+                <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                <p>
+                  Add agency fees, creative costs, and tools. Your data is
+                  automatically saved.
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Results Column */}
-        <div className="space-y-6">
-          {/* Summary Cards */}
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card className="overflow-hidden border-0 bg-gradient-to-br from-[#6566F1] to-[#B977F8] text-white shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Wallet size={20} />
+        <div className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Card className="border-[#6566F1]/20 bg-gradient-to-br from-[#6566F1] to-[#8B7DF8] text-white shadow-md">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base font-semibold">
+                  <Wallet size={18} />
                   Net Profit
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-3xl font-bold">${netProfit.toFixed(2)}</p>
-                <p className="text-sm opacity-80">ROI: {roi.toFixed(2)}%</p>
+                <p className="mt-1 text-xs opacity-90">
+                  ROI: {roi.toFixed(1)}%
+                </p>
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-transparent">
-                  <CreditCard size={20} className="text-[#6566F1]" />
+            <Card className="shadow-sm">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base font-semibold">
+                  <Target size={18} className="text-[#6566F1]" />
                   CPA
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                  ${cpa.toFixed(2)}
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {totalConversions.toFixed(0)} conversions
+                <p className="text-3xl font-bold">${cpa.toFixed(2)}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {conversions.toFixed(0)} conversions
                 </p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Pie Chart */}
-          <Card className="border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
-            <CardHeader>
-              <CardTitle className="bg-gradient-to-r from-[#6566F1] to-[#B977F8] bg-clip-text text-transparent">
-                Cost Breakdown
-              </CardTitle>
+          <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Financial Breakdown</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Total Revenue:</span>
+                <span className="font-semibold">
+                  ${totalRevenue.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Ad Spend:</span>
+                <span className="font-semibold">${adSpend.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Extra Charges:</span>
+                <span className="font-semibold">
+                  ${totalExtraCharges.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between border-t pt-2 text-sm font-bold">
+                <span>Total Costs:</span>
+                <span>${(adSpend + totalExtraCharges).toFixed(2)}</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Cost Breakdown</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-[350px]">
-                <CalculatorPieChart
-                  totalRevenue={totalRevenue}
-                  netProfit={netProfit}
-                  totalSpending={adSpend + totalExtraCharges}
-                  totalRefundCost={totalRefundCost}
-                />
+              <div className="h-[320px]">
+                <DonutChart data={chartData} />
               </div>
             </CardContent>
           </Card>
