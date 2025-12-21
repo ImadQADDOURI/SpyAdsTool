@@ -4,7 +4,7 @@ import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getAllProducts } from "@/actions/top-products";
+import { getAllProducts } from "@/actions/products";
 import { format } from "date-fns";
 import {
   ArrowUpDown,
@@ -226,7 +226,7 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 // 🧩 Main Component
-export default function TopProductsDisplay() {
+export default function ProductsDisplay() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");

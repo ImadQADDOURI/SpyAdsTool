@@ -4,12 +4,12 @@ import type React from "react";
 import { useRef, useState } from "react";
 import Image from "next/image";
 import {
-  createTopStore,
-  deleteTopStore,
-  getTopStores,
-  importTopStores,
-  updateTopStore,
-} from "@/actions/top-stores";
+  createStore,
+  deleteStore,
+  getStores,
+  importStores,
+  updateStore,
+} from "@/actions/stores";
 import { Download, Edit, Loader2, Plus, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 
@@ -55,10 +55,10 @@ type Store = {
   CTA: string;
 };
 
-export function TopStoresConfig({
+export function StoresConfig({
   initialStores,
 }: {
-  initialStores: Awaited<ReturnType<typeof getTopStores>>;
+  initialStores: Awaited<ReturnType<typeof getStores>>;
 }) {
   const [stores, setStores] = useState(initialStores);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -81,7 +81,7 @@ export function TopStoresConfig({
   // 🔄 Refresh stores
   const refreshStores = async () => {
     try {
-      const updatedStores = await getTopStores();
+      const updatedStores = await getStores();
       setStores(updatedStores);
     } catch (error) {
       toast.error("Failed to refresh stores");
@@ -132,7 +132,7 @@ export function TopStoresConfig({
           formDataObj.append(key, value.toString());
         });
 
-        await updateTopStore(editingStore.id, formDataObj);
+        await updateStore(editingStore.id, formDataObj);
         toast.success("Store updated successfully");
       } else {
         // Create FormData for server action
@@ -141,7 +141,7 @@ export function TopStoresConfig({
           formDataObj.append(key, value.toString());
         });
 
-        await createTopStore(formDataObj);
+        await createStore(formDataObj);
         toast.success("Store created successfully");
       }
 
@@ -162,7 +162,7 @@ export function TopStoresConfig({
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this store?")) {
       try {
-        await deleteTopStore(id);
+        await deleteStore(id);
         await refreshStores();
         toast.success("Store deleted successfully");
       } catch (error) {
@@ -219,7 +219,7 @@ export function TopStoresConfig({
       try {
         const json = JSON.parse(event.target?.result as string);
         setIsLoading(true);
-        const result = await importTopStores(json);
+        const result = await importStores(json);
         toast.success(`Imported: ${result.count}\nErrors: ${result.errors}`);
         await refreshStores();
       } catch (error) {

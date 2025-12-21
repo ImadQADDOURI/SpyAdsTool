@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getTopStores } from "@/actions/top-stores";
-import type { TopStore } from "@prisma/client";
+import { getStores } from "@/actions/stores";
+import type { Store } from "@prisma/client";
 import {
   ArrowUpDown,
   ArrowUpRight,
@@ -17,7 +17,7 @@ import {
   Search,
   ShoppingBag,
   Star,
-  Store,
+  StoreIcon,
   TrendingUp,
   X,
 } from "lucide-react";
@@ -38,12 +38,12 @@ import TitleSection from "../sharedComponents/TitleSection";
 // 🔄 Sort Options Type
 type SortOption = {
   label: string;
-  value: keyof TopStore | "conversionRate" | "aov";
+  value: keyof Store | "conversionRate" | "aov";
   icon: React.ReactNode;
   direction: "asc" | "desc";
 };
 // 🧩 Simplified Store Card Component
-function StoreCard({ store }: { store: TopStore }) {
+function StoreCard({ store }: { store: Store }) {
   const metrics = useMemo(() => {
     const conversionRate = (store.sales / 10000) * 100;
     const aov = store.revenue / store.sales;
@@ -138,15 +138,15 @@ function StoreCard({ store }: { store: TopStore }) {
 }
 
 // 🧩 Main Component
-export function TopStoresDisplay() {
-  const [stores, setStores] = useState<TopStore[]>([]);
+export function StoresDisplay() {
+  const [stores, setStores] = useState<Store[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchStores() {
       try {
         setIsLoading(true);
-        const data = await getTopStores();
+        const data = await getStores();
         setStores(data);
       } catch (error) {
         console.error("❌ Error loading stores:", error);
@@ -198,8 +198,8 @@ export function TopStoresDisplay() {
         return sortOption.direction === "desc" ? aovB - aovA : aovA - aovB;
       }
 
-      const valueA = a[sortOption.value as keyof TopStore];
-      const valueB = b[sortOption.value as keyof TopStore];
+      const valueA = a[sortOption.value as keyof Store];
+      const valueB = b[sortOption.value as keyof Store];
 
       if (typeof valueA === "string" && typeof valueB === "string") {
         return sortOption.direction === "desc"
@@ -266,7 +266,7 @@ export function TopStoresDisplay() {
   return (
     <div className="min-h-screen bg-gray-50 pb-16 dark:bg-gray-900">
       <TitleSection
-        icon={Store}
+        icon={StoreIcon}
         badgeText="Top Stores"
         image={Rocket}
         imageColor="text-blue-500 dark:text-blue-400"
@@ -446,7 +446,7 @@ export function TopStoresDisplay() {
             </div>
           ) : (
             <div className="col-span-full rounded-xl bg-white py-12 text-center shadow-sm dark:bg-gray-800">
-              <Store className="mx-auto h-12 w-12 text-gray-400" />
+              <StoreIcon className="mx-auto h-12 w-12 text-gray-400" />
               <h3 className="mt-4 text-xl font-medium text-gray-900 dark:text-gray-100">
                 No stores found
               </h3>

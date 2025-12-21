@@ -1,27 +1,27 @@
-// @/actions/top-stores.ts
+// @/actions/stores.ts
 "use server";
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { type TopStore } from "@prisma/client";
+import { type Store } from "@prisma/client";
 
 import { prisma } from "@/lib/db";
 
-const rPath = "/top-stores-config";
+const rPath = "/stores-config";
 
-// 🚀 Get all top stores
-export async function getTopStores(): Promise<TopStore[]> {
+// 🚀 Get all stores
+export async function getStores(): Promise<Store[]> {
   try {
-    return await prisma.topStore.findMany({
+    return await prisma.store.findMany({
       orderBy: { revenue: "desc" },
     });
   } catch (error) {
-    throw new Error("Failed to fetch top stores");
+    throw new Error("Failed to fetch stores");
   }
 }
 
-// ✨ Create a new top store
-export async function createTopStore(formData: FormData) {
+// ✨ Create a new store
+export async function createStore(formData: FormData) {
   const data = {
     image: formData.get("image") as string,
     name: formData.get("name") as string,
@@ -33,17 +33,17 @@ export async function createTopStore(formData: FormData) {
   };
 
   try {
-    await prisma.topStore.create({ data });
+    await prisma.store.create({ data });
   } catch (error) {
-    throw new Error("Failed to create top store");
+    throw new Error("Failed to create store");
   }
 
   revalidatePath(rPath);
   redirect(rPath);
 }
 
-// 🔄 Update a top store
-export async function updateTopStore(id: string, formData: FormData) {
+// 🔄 Update a store
+export async function updateStore(id: string, formData: FormData) {
   const data = {
     image: formData.get("image") as string,
     name: formData.get("name") as string,
@@ -55,24 +55,24 @@ export async function updateTopStore(id: string, formData: FormData) {
   };
 
   try {
-    await prisma.topStore.update({
+    await prisma.store.update({
       where: { id },
       data,
     });
   } catch (error) {
-    throw new Error(`Failed to update top store ${id}`);
+    throw new Error(`Failed to update store ${id}`);
   }
 
   revalidatePath(rPath);
   redirect(rPath);
 }
 
-// 🗑️ Delete a top store
-export async function deleteTopStore(id: string) {
+// 🗑️ Delete a store
+export async function deleteStore(id: string) {
   try {
-    await prisma.topStore.delete({ where: { id } });
+    await prisma.store.delete({ where: { id } });
   } catch (error) {
-    throw new Error(`Failed to delete top store ${id}`);
+    throw new Error(`Failed to delete store ${id}`);
   }
 
   revalidatePath(rPath);
@@ -84,7 +84,7 @@ export async function deleteTopStore(id: string) {
  * @param data - Array of store objects.
  * @returns Summary of import results.
  */
-export async function importTopStores(
+export async function importStores(
   data: any[],
 ): Promise<{ count: number; errors: number }> {
   console.log(`📦 Importing ${data.length} stores...`);
@@ -117,7 +117,7 @@ export async function importTopStores(
       };
     });
 
-    const result = await prisma.topStore.createMany({
+    const result = await prisma.store.createMany({
       data: storesToCreate,
     });
 

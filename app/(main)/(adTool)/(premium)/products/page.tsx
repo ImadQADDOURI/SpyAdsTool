@@ -1,14 +1,14 @@
-// app/admin/top-stores/page.tsx
+// app/admin/products/page.tsx
 import { Suspense } from "react";
 
+import ProductsDisplay from "@/components/adTool/products/products-display";
 import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
-import TopProductsDisplay from "@/components/adTool/topProducts/top-products-display";
 
-export default async function TopProductsPage() {
+export default async function ProductsPage() {
   return (
     <SubscriptionPageGuard>
       <Suspense>
-        <TopProductsDisplay />
+        <ProductsDisplay />
       </Suspense>
     </SubscriptionPageGuard>
   );

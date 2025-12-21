@@ -24,8 +24,8 @@ export const Links = [
   { title: "AdSearch", href: "/adsearch", icon: Search },
   { title: "Favorites", href: "/favorites", icon: Heart },
   { title: "Trend", href: "/trend", icon: TrendingUp },
-  { title: "Top Stores", href: "/top-stores", icon: Store },
-  { title: "Hot Products", href: "/top-products", icon: PackageOpen },
+  { title: "Stores", href: "/stores", icon: Store },
+  { title: "Products", href: "/products", icon: PackageOpen },
 ];
 
 export const Tools = [
@@ -111,18 +111,18 @@ export const AdminLinks = [
     color: "purple",
   },
   {
-    id: "top-products-config",
+    id: "products-config",
     title: "Products Config",
-    href: "/top-products-config",
+    href: "/products-config",
     description: "",
     icon: PackageOpen,
     isFree: false,
     color: "blue",
   },
   {
-    id: "top-stores-config",
+    id: "stores-config",
     title: "Stores Config",
-    href: "/top-stores-config",
+    href: "/stores-config",
     description: "",
     icon: Store,
     isFree: false,

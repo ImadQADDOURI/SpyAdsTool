@@ -1,4 +1,4 @@
-// actions/top-products.ts
+// actions/products.ts
 "use server";
 
 // 🚀 Mark this file as containing server actions

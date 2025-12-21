@@ -9,7 +9,7 @@ import {
   getAllProducts,
   importProducts,
   updateProduct,
-} from "@/actions/top-products";
+} from "@/actions/products";
 import { format } from "date-fns";
 import {
   BarChart3,
@@ -86,7 +86,7 @@ type Product = {
 };
 
 // 🧩 Main Component
-export default function TopProductsConfig() {
+export default function ProductsConfig() {
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);

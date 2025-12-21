@@ -123,9 +123,9 @@ model MetaGraphQLConfig {
 
 
 // ========================================
-//        ✨ Top Stores Model ✨
+//        ✨ Stores Model ✨
 // ========================================
-model TopStore {
+model Store {
   id       String   @id @default(uuid())
   image    String
   name     String
@@ -144,7 +144,7 @@ model TopStore {
 }
 
 // ========================================
-//        📦 Top Product Model 📦
+//        📦 Product Model 📦
 // ========================================
 model Product {
   
