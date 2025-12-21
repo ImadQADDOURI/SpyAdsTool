@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 
 import DonutChart, { type ChartDataItem } from "./DonutChart";
 
@@ -92,6 +93,8 @@ const CODCalculator: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [costPrice, setCostPrice] = useState(0);
   const [sellingPrice, setSellingPrice] = useState(0);
+  const [confirmationRate, setConfirmationRate] = useState([100]);
+  const [deliveryRate, setDeliveryRate] = useState([100]);
   const [extraCharges, setExtraCharges] = useState<ExtraChargeType[]>([]);
   const [showPresets, setShowPresets] = useState(false);
 
@@ -103,6 +106,8 @@ const CODCalculator: React.FC = () => {
         setQuantity(data.quantity ?? 1);
         setCostPrice(data.costPrice ?? 0);
         setSellingPrice(data.sellingPrice ?? 0);
+        setConfirmationRate(data.confirmationRate ?? [100]);
+        setDeliveryRate(data.deliveryRate ?? [100]);
         setExtraCharges(data.extraCharges ?? []);
       } catch (e) {
         console.error("Failed to load saved data");
@@ -111,25 +116,42 @@ const CODCalculator: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const data = { quantity, costPrice, sellingPrice, extraCharges };
+    const data = {
+      quantity,
+      costPrice,
+      sellingPrice,
+      confirmationRate,
+      deliveryRate,
+      extraCharges,
+    };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, [quantity, costPrice, sellingPrice, extraCharges]);
+  }, [
+    quantity,
+    costPrice,
+    sellingPrice,
+    confirmationRate,
+    deliveryRate,
+    extraCharges,
+  ]);
 
-  const totalCost = costPrice * quantity;
-  const totalRevenue = sellingPrice * quantity;
+  const confirmedOrders = quantity * (confirmationRate[0] / 100);
+  const deliveredOrders = confirmedOrders * (deliveryRate[0] / 100);
+
+  const totalCost = costPrice * confirmedOrders;
+  const totalRevenue = sellingPrice * deliveredOrders;
 
   const totalExtraCharges = extraCharges.reduce((total, charge) => {
     if (charge.type === "flat") {
       return (
         total +
         (charge.application === "perOrder"
-          ? charge.amount * quantity
+          ? charge.amount * confirmedOrders
           : charge.amount)
       );
     }
     const base =
       charge.application === "perOrder"
-        ? sellingPrice * quantity
+        ? sellingPrice * confirmedOrders
         : totalRevenue;
     return total + (charge.amount / 100) * base;
   }, 0);
@@ -234,6 +256,62 @@ const CODCalculator: React.FC = () => {
                   min={0}
                   step={0.01}
                   className="h-10"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">
+                Confirmation Rate: {confirmationRate[0].toFixed(1)}%
+              </Label>
+              <div className="flex items-center gap-3">
+                <Slider
+                  value={confirmationRate}
+                  onValueChange={setConfirmationRate}
+                  max={100}
+                  step={0.1}
+                  className="flex-1"
+                />
+                <Input
+                  type="number"
+                  value={confirmationRate[0]}
+                  onChange={(e) =>
+                    setConfirmationRate([
+                      Math.max(0, Math.min(100, Number(e.target.value))),
+                    ])
+                  }
+                  className="h-9 w-20 text-sm"
+                  step={0.1}
+                  min={0}
+                  max={100}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">
+                Delivery Rate: {deliveryRate[0].toFixed(1)}%
+              </Label>
+              <div className="flex items-center gap-3">
+                <Slider
+                  value={deliveryRate}
+                  onValueChange={setDeliveryRate}
+                  max={100}
+                  step={0.1}
+                  className="flex-1"
+                />
+                <Input
+                  type="number"
+                  value={deliveryRate[0]}
+                  onChange={(e) =>
+                    setDeliveryRate([
+                      Math.max(0, Math.min(100, Number(e.target.value))),
+                    ])
+                  }
+                  className="h-9 w-20 text-sm"
+                  step={0.1}
+                  min={0}
+                  max={100}
                 />
               </div>
             </div>
@@ -384,7 +462,7 @@ const CODCalculator: React.FC = () => {
               <CardContent>
                 <p className="text-3xl font-bold">${totalRevenue.toFixed(2)}</p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {quantity} orders
+                  {deliveredOrders.toFixed(0)} delivered orders
                 </p>
               </CardContent>
             </Card>
