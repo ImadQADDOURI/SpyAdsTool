@@ -77,3 +77,54 @@ export async function deleteTopStore(id: string) {
 
   revalidatePath(rPath);
 }
+
+/**
+ * 📦 Bulk imports stores from JSON data.
+ * Strips IDs, validates required fields, and inserts as new rows.
+ * @param data - Array of store objects.
+ * @returns Summary of import results.
+ */
+export async function importTopStores(
+  data: any[],
+): Promise<{ count: number; errors: number }> {
+  console.log(`📦 Importing ${data.length} stores...`);
+  try {
+    if (!Array.isArray(data)) {
+      throw new Error("Invalid JSON format: Expected an array of stores.");
+    }
+
+    // Validate and prepare data (Fail fast)
+    const storesToCreate = data.map((item, index) => {
+      // Strip ID and system fields (Safe by default)
+      const { id, createdAt, updatedAt, ...rest } = item;
+
+      // Basic validation
+      if (
+        !rest.name ||
+        !rest.image ||
+        !rest.link ||
+        !rest.niche ||
+        rest.revenue === undefined ||
+        rest.sales === undefined
+      ) {
+        throw new Error(`Item at index ${index} is missing required fields.`);
+      }
+
+      return {
+        ...rest,
+        revenue: Number(rest.revenue),
+        sales: Number(rest.sales),
+      };
+    });
+
+    const result = await prisma.topStore.createMany({
+      data: storesToCreate,
+    });
+
+    revalidatePath(rPath);
+    return { count: result.count, errors: 0 };
+  } catch (error) {
+    console.error("❌ Error importing stores:", error);
+    throw error;
+  }
+}

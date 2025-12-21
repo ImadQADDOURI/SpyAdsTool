@@ -209,3 +209,48 @@ export async function deleteProduct(id: string): Promise<Product> {
     throw new Error("Failed to delete product.");
   }
 }
+
+/**
+ * 📦 Bulk imports products from JSON data.
+ * Strips IDs, validates required fields, and inserts as new rows.
+ * @param data - Array of product objects.
+ * @returns Summary of import results.
+ */
+export async function importProducts(
+  data: any[],
+): Promise<{ count: number; errors: number }> {
+  console.log(`📦 Importing ${data.length} products...`);
+  try {
+    if (!Array.isArray(data)) {
+      throw new Error("Invalid JSON format: Expected an array of products.");
+    }
+
+    // Validate and prepare data (Fail fast)
+    const productsToCreate = data.map((item, index) => {
+      // Strip ID and system fields (Safe by default)
+      const { id, createdAt, updatedAt, ...rest } = item;
+
+      // Basic validation
+      if (!rest.title || !rest.image || !rest.link) {
+        throw new Error(
+          `Item at index ${index} is missing required fields (title, image, or link).`,
+        );
+      }
+
+      return {
+        ...rest,
+        uploadDate: rest.uploadDate ? new Date(rest.uploadDate) : null, // Handle date string
+      };
+    });
+
+    const result = await prisma.product.createMany({
+      data: productsToCreate,
+    });
+
+    revalidatePath("/products");
+    return { count: result.count, errors: 0 };
+  } catch (error) {
+    console.error("❌ Error importing products:", error);
+    throw error;
+  }
+}

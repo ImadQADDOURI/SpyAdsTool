@@ -1,15 +1,16 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import {
   createTopStore,
   deleteTopStore,
   getTopStores,
+  importTopStores,
   updateTopStore,
 } from "@/actions/top-stores";
-import { Edit, Loader2, Plus, Trash2 } from "lucide-react";
+import { Download, Edit, Loader2, Plus, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -62,7 +63,9 @@ export function TopStoresConfig({
   const [stores, setStores] = useState(initialStores);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [editingStore, setEditingStore] = useState<Store | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 📝 Form state
   const [formData, setFormData] = useState<Store>({
@@ -174,6 +177,60 @@ export function TopStoresConfig({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // 📤 Handle Export
+  const handleExport = () => {
+    if (stores.length === 0) {
+      toast.error("No stores to export");
+      return;
+    }
+
+    // Strip IDs and system fields
+    const exportData = stores.map(
+      ({ id, createdAt, updatedAt, ...rest }: any) => rest,
+    );
+
+    const jsonString = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `stores-export-${new Date().toISOString().split("T")[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success(`Exported ${stores.length} stores`);
+  };
+
+  // 📥 Handle Import Trigger
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  // 📂 Handle File Selection
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Reset input to allow selecting same file again
+    e.target.value = "";
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string);
+        setIsLoading(true);
+        const result = await importTopStores(json);
+        toast.success(`Imported: ${result.count}\nErrors: ${result.errors}`);
+        await refreshStores();
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Import failed");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className="space-y-6">
       {/* ✨ Header */}
@@ -186,151 +243,185 @@ export function TopStoresConfig({
             Add, edit, and manage featured stores
           </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              onClick={resetForm}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add Store
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>
-                {editingStore ? "Edit Store" : "Add New Store"}
-              </DialogTitle>
-              <DialogDescription>
-                {editingStore
-                  ? "Update store details"
-                  : "Fill in the details to add a new store"}
-              </DialogDescription>
-            </DialogHeader>
+        <div className="flex items-center gap-2">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+            accept=".json"
+          />
+          <Button
+            variant="outline"
+            onClick={handleImportClick}
+            disabled={isLoading}
+          >
+            <Upload className="mr-2 h-4 w-4" />
+            Import JSON
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleExport}
+            disabled={isLoading || stores.length === 0}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Export JSON
+          </Button>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {/* 🖼️ Image URL */}
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                onClick={resetForm}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Store
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>
+                  {editingStore ? "Edit Store" : "Add New Store"}
+                </DialogTitle>
+                <DialogDescription>
+                  {editingStore
+                    ? "Update store details"
+                    : "Fill in the details to add a new store"}
+                </DialogDescription>
+              </DialogHeader>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {/* 🖼️ Image URL */}
+                  <div className="space-y-2">
+                    <Label htmlFor="image">Image URL *</Label>
+                    <Input
+                      id="image"
+                      placeholder="https://example.com/image.jpg"
+                      value={formData.image}
+                      onChange={(e) =>
+                        handleInputChange("image", e.target.value)
+                      }
+                      required
+                    />
+                  </div>
+
+                  {/*  Store Name */}
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Store Name *</Label>
+                    <Input
+                      id="name"
+                      placeholder="Store name"
+                      value={formData.name}
+                      onChange={(e) =>
+                        handleInputChange("name", e.target.value)
+                      }
+                      required
+                    />
+                  </div>
+
+                  {/* 🎯 Niche */}
+                  <div className="space-y-2">
+                    <Label htmlFor="niche">Niche *</Label>
+                    <Input
+                      id="niche"
+                      placeholder="Store category"
+                      value={formData.niche}
+                      onChange={(e) =>
+                        handleInputChange("niche", e.target.value)
+                      }
+                      required
+                    />
+                  </div>
+
+                  {/* 🔗 Link */}
+                  <div className="space-y-2">
+                    <Label htmlFor="link">Store Link *</Label>
+                    <Input
+                      id="link"
+                      placeholder="https://example.com"
+                      value={formData.link}
+                      onChange={(e) =>
+                        handleInputChange("link", e.target.value)
+                      }
+                      required
+                    />
+                  </div>
+
+                  {/* 💰 Revenue */}
+                  <div className="space-y-2">
+                    <Label htmlFor="revenue">Revenue *</Label>
+                    <Input
+                      id="revenue"
+                      type="number"
+                      min="0"
+                      placeholder="50000"
+                      value={formData.revenue}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "revenue",
+                          Number.parseInt(e.target.value) || 0,
+                        )
+                      }
+                      required
+                    />
+                  </div>
+
+                  {/* 📈 Sales */}
+                  <div className="space-y-2">
+                    <Label htmlFor="sales">Sales *</Label>
+                    <Input
+                      id="sales"
+                      type="number"
+                      min="0"
+                      placeholder="1000"
+                      value={formData.sales}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "sales",
+                          Number.parseInt(e.target.value) || 0,
+                        )
+                      }
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* 📢 Call to Action */}
                 <div className="space-y-2">
-                  <Label htmlFor="image">Image URL *</Label>
+                  <Label htmlFor="CTA">Call to Action *</Label>
                   <Input
-                    id="image"
-                    placeholder="https://example.com/image.jpg"
-                    value={formData.image}
-                    onChange={(e) => handleInputChange("image", e.target.value)}
+                    id="CTA"
+                    placeholder="Visit Store"
+                    value={formData.CTA}
+                    onChange={(e) => handleInputChange("CTA", e.target.value)}
                     required
                   />
                 </div>
 
-                {/* 🏪 Store Name */}
-                <div className="space-y-2">
-                  <Label htmlFor="name">Store Name *</Label>
-                  <Input
-                    id="name"
-                    placeholder="Store name"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
-                    required
-                  />
-                </div>
-
-                {/* 🎯 Niche */}
-                <div className="space-y-2">
-                  <Label htmlFor="niche">Niche *</Label>
-                  <Input
-                    id="niche"
-                    placeholder="Store category"
-                    value={formData.niche}
-                    onChange={(e) => handleInputChange("niche", e.target.value)}
-                    required
-                  />
-                </div>
-
-                {/* 🔗 Link */}
-                <div className="space-y-2">
-                  <Label htmlFor="link">Store Link *</Label>
-                  <Input
-                    id="link"
-                    placeholder="https://example.com"
-                    value={formData.link}
-                    onChange={(e) => handleInputChange("link", e.target.value)}
-                    required
-                  />
-                </div>
-
-                {/* 💰 Revenue */}
-                <div className="space-y-2">
-                  <Label htmlFor="revenue">Revenue *</Label>
-                  <Input
-                    id="revenue"
-                    type="number"
-                    min="0"
-                    placeholder="50000"
-                    value={formData.revenue}
-                    onChange={(e) =>
-                      handleInputChange(
-                        "revenue",
-                        Number.parseInt(e.target.value) || 0,
-                      )
-                    }
-                    required
-                  />
-                </div>
-
-                {/* 📈 Sales */}
-                <div className="space-y-2">
-                  <Label htmlFor="sales">Sales *</Label>
-                  <Input
-                    id="sales"
-                    type="number"
-                    min="0"
-                    placeholder="1000"
-                    value={formData.sales}
-                    onChange={(e) =>
-                      handleInputChange(
-                        "sales",
-                        Number.parseInt(e.target.value) || 0,
-                      )
-                    }
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* 📢 Call to Action */}
-              <div className="space-y-2">
-                <Label htmlFor="CTA">Call to Action *</Label>
-                <Input
-                  id="CTA"
-                  placeholder="Visit Store"
-                  value={formData.CTA}
-                  onChange={(e) => handleInputChange("CTA", e.target.value)}
-                  required
-                />
-              </div>
-
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsDialogOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  {isSubmitting && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  {editingStore ? "Update Store" : "Add Store"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    {isSubmitting && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    {editingStore ? "Update Store" : "Add Store"}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <Separator />
