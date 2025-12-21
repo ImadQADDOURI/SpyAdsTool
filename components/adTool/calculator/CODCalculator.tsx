@@ -137,7 +137,7 @@ const CODCalculator: React.FC = () => {
   const confirmedOrders = quantity * (confirmationRate[0] / 100);
   const deliveredOrders = confirmedOrders * (deliveryRate[0] / 100);
 
-  const totalCost = costPrice * confirmedOrders;
+  const totalCost = costPrice * deliveredOrders;
   const totalRevenue = sellingPrice * deliveredOrders;
 
   const totalExtraCharges = extraCharges.reduce((total, charge) => {
@@ -462,7 +462,7 @@ const CODCalculator: React.FC = () => {
               <CardContent>
                 <p className="text-3xl font-bold">${totalRevenue.toFixed(2)}</p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {deliveredOrders.toFixed(0)} delivered orders
+                  {Number(deliveredOrders.toFixed(1))} delivered orders
                 </p>
               </CardContent>
             </Card>
