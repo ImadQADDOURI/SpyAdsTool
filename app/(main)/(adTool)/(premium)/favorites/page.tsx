@@ -1,15 +1,31 @@
 // src/app/(dashboard)/favorites/page.tsx
 "use client";
 
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Link from "next/link";
-import { ArrowRight, Folder, Heart, RefreshCw, Search } from "lucide-react";
+import {
+  ArrowRight,
+  Download,
+  Folder,
+  Heart,
+  RefreshCw,
+  Search,
+  Upload,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import BoardCard from "@/components/adTool/favorites/BoardCard";
 import { useSavedAds } from "@/components/adTool/favorites/SavedAdsContext";
+import { useSavedAdsActions } from "@/components/adTool/favorites/useSavedAdsActions";
 import { Loading } from "@/components/adTool/sharedComponents/Loading";
 import { ScrollButtons } from "@/components/adTool/sharedComponents/ScrollButtons";
 import TitleSection from "@/components/adTool/sharedComponents/TitleSection";
@@ -30,8 +46,12 @@ const FavoritesPage = () => {
 const FavoritesContent = () => {
   // 🎯 Optimized: Use only what we need from context
   const { boards, isLoading, refreshData, error } = useSavedAds();
+  const { exportAds, importAds } = useSavedAdsActions();
   const [searchQuery, setSearchQuery] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   // 🧮 Optimized: Memoized calculations to prevent unnecessary re-renders
   const totalSavedAds = useMemo(
@@ -64,6 +84,32 @@ const FavoritesContent = () => {
   const handleSearchClear = useCallback(() => {
     setSearchQuery("");
   }, []);
+
+  const handleExport = useCallback(async () => {
+    setIsExporting(true);
+    await exportAds();
+    setIsExporting(false);
+  }, [exportAds]);
+
+  const handleImportClick = useCallback(() => {
+    importInputRef.current?.click();
+  }, []);
+
+  const handleFileImport = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        setIsImporting(true);
+        await importAds(file);
+        setIsImporting(false);
+        // Reset the input value to allow importing the same file again
+        if (event.target) {
+          event.target.value = "";
+        }
+      }
+    },
+    [importAds],
+  );
 
   // Handle errors
   useEffect(() => {
@@ -153,6 +199,46 @@ const FavoritesContent = () => {
           />
           <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
             {isRefreshing ? "Refreshing..." : "Refresh"}
+          </span>
+        </button>
+
+        {/* Import Button */}
+        <button
+          className="group flex cursor-pointer items-center space-x-2 rounded-full bg-gray-200/70 px-4 py-1.5 transition-all hover:bg-gray-300/50 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-gray-700/50 dark:hover:bg-gray-600/50"
+          onClick={handleImportClick}
+          disabled={isLoading || isImporting}
+        >
+          <Upload
+            className={`h-5 w-5 text-gray-600 transition-all duration-300 group-hover:scale-110 dark:text-gray-300 ${
+              isImporting ? "animate-pulse" : ""
+            }`}
+          />
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+            {isImporting ? "Importing..." : "Import"}
+          </span>
+        </button>
+        <input
+          type="file"
+          ref={importInputRef}
+          onChange={handleFileImport}
+          accept="application/json"
+          className="hidden"
+          disabled={isImporting}
+        />
+
+        {/* Export Button */}
+        <button
+          className="group flex cursor-pointer items-center space-x-2 rounded-full bg-gray-200/70 px-4 py-1.5 transition-all hover:bg-gray-300/50 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-gray-700/50 dark:hover:bg-gray-600/50"
+          onClick={handleExport}
+          disabled={isLoading || isExporting || boards.length === 0}
+        >
+          <Download
+            className={`h-5 w-5 text-gray-600 transition-all duration-300 group-hover:scale-110 dark:text-gray-300 ${
+              isExporting ? "animate-pulse" : ""
+            }`}
+          />
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+            {isExporting ? "Exporting..." : "Export"}
           </span>
         </button>
       </div>

@@ -717,6 +717,147 @@ export async function moveAdsToBoard(sourceBoard: string, targetBoard: string) {
   }
 }
 
+// 📤 Export all ads for the current user
+export async function exportUserAds() {
+  try {
+    // 🔐 Authenticate user
+    const user = await getCurrentUser();
+    if (!user || !user.id) {
+      return { error: "Unauthorized" };
+    }
+
+    // 🔍 Fetch all saved ads for the user
+    const userAds = await prisma.savedAd.findMany({
+      where: { userId: user.id },
+      select: {
+        ad_archive_id: true,
+        board: true,
+        adData: true,
+        imageUrl: true,
+      },
+      orderBy: {
+        createdAt: "asc", // Keep a consistent order
+      },
+    });
+
+    // The client will handle file creation from this data
+    return { success: true, data: userAds };
+  } catch (error) {
+    console.error("🔥 Failed to export user ads:", error);
+    return { error: "An unknown error occurred during export." };
+  }
+}
+
+// Define a Zod schema for a single ad in the import file
+const ImportedAdSchema = z.object({
+  ad_archive_id: z.string(),
+  board: z.string(),
+  adData: z.any(), // Not strictly validating adData to be flexible
+  imageUrl: z.string().nullable(),
+});
+
+// Define the schema for the entire import file (an array of ads)
+const ImportFileSchema = z.array(ImportedAdSchema);
+
+// 📥 Import ads for the current user from a JSON file content
+export async function importUserAds(jsonContent: string) {
+  try {
+    // 🔐 Authenticate user
+    const user = await getCurrentUser();
+    if (!user || !user.id) {
+      return { error: "Unauthorized" };
+    }
+
+    // 1️⃣ Parse and Validate JSON
+    let adsToImport;
+    try {
+      const jsonData = JSON.parse(jsonContent);
+      adsToImport = ImportFileSchema.parse(jsonData);
+    } catch (error) {
+      console.error(
+        "🔥 Import failed: Invalid JSON format or structure.",
+        error,
+      );
+      return {
+        error:
+          "Import failed. The file is not a valid JSON or has an incorrect structure.",
+      };
+    }
+
+    if (adsToImport.length === 0) {
+      return {
+        success: true,
+        summary: {
+          imported: 0,
+          errors: 0,
+          message: "No ads found in the file to import.",
+        },
+      };
+    }
+
+    // 2️⃣ Check saved ads limit (for non-admin users)
+    if (user.role !== "ADMIN") {
+      const maxSavedAds = parseInt(process.env.MAX_SAVED_ADS_PER_USER || "100");
+      const userSavedAdsCount = await prisma.savedAd.count({
+        where: { userId: user.id },
+      });
+
+      if (userSavedAdsCount + adsToImport.length > maxSavedAds) {
+        return {
+          error: `Import would exceed your limit of ${maxSavedAds} saved ads. You have ${userSavedAdsCount} and tried to import ${adsToImport.length}.`,
+        };
+      }
+    }
+
+    // 3️⃣ Import ads one by one to handle duplicates gracefully
+    let importedCount = 0;
+    let duplicateCount = 0;
+    let errorCount = 0;
+
+    for (const ad of adsToImport) {
+      try {
+        await prisma.savedAd.create({
+          data: {
+            userId: user.id,
+            ad_archive_id: ad.ad_archive_id,
+            board: ad.board,
+            adData: ad.adData as Prisma.InputJsonValue,
+            imageUrl: ad.imageUrl,
+          },
+        });
+        importedCount++;
+      } catch (e) {
+        if (
+          e instanceof Prisma.PrismaClientKnownRequestError &&
+          e.code === "P2002"
+        ) {
+          duplicateCount++;
+        } else {
+          console.error(`🔥 Import error for ad ${ad.ad_archive_id}:`, e);
+          errorCount++;
+        }
+      }
+    }
+
+    // 4️⃣ Revalidate and return summary
+    revalidatePath("/favorites");
+    return {
+      success: true,
+      summary: {
+        imported: importedCount,
+        duplicates: duplicateCount,
+        errors: errorCount,
+      },
+    };
+  } catch (error) {
+    console.error("🔥 Failed to import ads:", error);
+    if (error instanceof Error) {
+      return { error: `Failed to import ads: ${error.message}` };
+    }
+    return { error: "An unknown error occurred during import." };
+  }
+}
+
 // Helper function to get trend admin user IDs
 async function getTrendAdminUserIds() {
   const trendAdminEmailsEnv = process.env.TREND_ADMIN_EMAILS;

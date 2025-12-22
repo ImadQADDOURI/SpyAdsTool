@@ -3,7 +3,10 @@
 
 import { useCallback } from "react";
 import {
+  // prettier-ignore
   deleteBoard,
+  exportUserAds,
+  importUserAds,
   moveAdsToBoard,
   removeAdFromBoard,
   renameBoard,
@@ -130,6 +133,87 @@ export const useSavedAdsActions = () => {
     [refreshData],
   );
 
+  // 📤 Export all ads
+  const exportAds = useCallback(async () => {
+    try {
+      toast.info("Preparing your export...");
+      const result = await exportUserAds();
+
+      if (result.error) {
+        toast.error(result.error);
+        return false;
+      }
+
+      if (!result.data || result.data.length === 0) {
+        toast.warning("You have no saved ads to export.");
+        return true; // Not an error, just nothing to do
+      }
+
+      const jsonString = JSON.stringify(result.data, null, 2);
+      const blob = new Blob([jsonString], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const date = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+      link.download = `saved-ads-export-${date}.json`;
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success("Export successful! Check your downloads.");
+      return true;
+    } catch (error) {
+      toast.error("Failed to export ads.");
+      console.error(error);
+      return false;
+    }
+  }, []);
+
+  // 📥 Import ads from a file
+  const importAds = useCallback(
+    async (file: File) => {
+      if (!file) return false;
+      if (file.type !== "application/json") {
+        toast.error("Invalid file type. Please select a JSON file.");
+        return false;
+      }
+
+      try {
+        toast.info("Importing ads... This may take a moment.");
+        const jsonContent = await file.text();
+        const result = await importUserAds(jsonContent);
+
+        if (result.error) {
+          toast.error(result.error);
+          return false;
+        }
+
+        if (result.success && result.summary) {
+          const { imported, duplicates, errors } = result.summary;
+          let message = `Import complete. Imported: ${imported}.`;
+          if (duplicates && duplicates > 0) {
+            message += ` Duplicates skipped: ${duplicates}.`;
+          }
+          if (errors > 0) {
+            // Now 'errors' refers to actual processing errors
+            message += ` Errors: ${errors}.`;
+          }
+          toast.success(message);
+          await refreshData();
+        } else if (result.summary?.message) {
+          toast.info(result.summary.message);
+        }
+        return true;
+      } catch (error) {
+        toast.error("An unexpected error occurred during import.");
+        console.error(error);
+        return false;
+      }
+    },
+    [refreshData],
+  );
+
   // 🔍 Check if an ad is saved to a specific board
   const isAdSaved = useCallback(
     (ad_archive_id: string, board?: string) => {
@@ -161,6 +245,8 @@ export const useSavedAdsActions = () => {
     deleteBoard: deleteABoard,
     moveAds,
     isAdSaved,
+    exportAds,
+    importAds,
     getAdBoards,
     boards,
   };
