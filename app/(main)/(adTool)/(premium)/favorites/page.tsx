@@ -15,6 +15,7 @@ import {
   Download,
   Folder,
   Heart,
+  Info,
   RefreshCw,
   Search,
   Upload,
@@ -51,6 +52,7 @@ const FavoritesContent = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const importInputRef = useRef<HTMLInputElement>(null);
 
   // 🧮 Optimized: Memoized calculations to prevent unnecessary re-renders
@@ -241,7 +243,73 @@ const FavoritesContent = () => {
             {isExporting ? "Exporting..." : "Export"}
           </span>
         </button>
+
+        {/* Help/Info Button */}
+        <button
+          className="group flex cursor-pointer items-center space-x-2 rounded-full bg-gray-200/70 px-4 py-1.5 transition-all hover:bg-gray-300/50 dark:bg-gray-700/50 dark:hover:bg-gray-600/50"
+          onClick={() => setShowInfo(!showInfo)}
+        >
+          <Info className="h-5 w-5 text-gray-600 transition-all duration-300 group-hover:scale-110 dark:text-gray-300" />
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+            Help
+          </span>
+        </button>
       </div>
+
+      {/* Info Section */}
+      {showInfo && (
+        <div className="mx-auto mt-6 max-w-3xl px-4 animate-in fade-in slide-in-from-top-2">
+          <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-6 text-sm text-blue-900 backdrop-blur-sm dark:border-blue-900/30 dark:bg-blue-900/10 dark:text-blue-100">
+            <h4 className="mb-3 flex items-center gap-2 font-semibold">
+              <Info className="h-4 w-4" />
+              Import / Export Guide
+            </h4>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div>
+                <h5 className="mb-2 font-medium text-blue-700 dark:text-blue-300">
+                  📥 Import Requirements
+                </h5>
+                <ul className="list-inside list-disc space-y-1.5 text-xs opacity-80">
+                  <li>
+                    <strong>Format:</strong> JSON Array (
+                    <code>
+                      [{`{...}`}, {`{...}`}]
+                    </code>
+                    )
+                  </li>
+                  <li>
+                    <strong>Required:</strong> <code>ad_archive_id</code>,{" "}
+                    <code>board</code>
+                  </li>
+                  <li>
+                    <strong>Safety:</strong> Duplicates are skipped
+                    automatically. No data is overwritten.
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h5 className="mb-2 font-medium text-blue-700 dark:text-blue-300">
+                  📤 Export Features
+                </h5>
+                <ul className="list-inside list-disc space-y-1.5 text-xs opacity-80">
+                  <li>
+                    <strong>Output:</strong> A single <code>.json</code> file
+                    with all saved ads.
+                  </li>
+                  <li>
+                    <strong>Content:</strong> Includes ad data, images, and
+                    board names.
+                  </li>
+                  <li>
+                    <strong>Use Case:</strong> Backups or transferring to
+                    another account.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* 🔍 Optimized Search - Only show when there are boards */}
