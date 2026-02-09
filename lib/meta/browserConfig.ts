@@ -26,7 +26,7 @@ export const BROWSER_CONFIG = {
 
   // ─── Browser Launch Options ────────────────────────────────────────────────
   /** Show browser UI (useful for debugging) */
-  headless: false,
+  headless: true,
 
   /** Initial warmup URL */
   warmupUrl:

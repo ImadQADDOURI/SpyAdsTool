@@ -4,7 +4,7 @@
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/db";
-import { fetchMeta } from "@/components/adTool/meta/fetchMeta";
+import { fetchMeta } from "@/lib/meta/fetchMeta";
 
 {
   /*

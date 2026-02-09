@@ -4,8 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Facebook, Star } from "lucide-react";
 
 import type { AdData } from "@/types/ad";
+import { fetchMeta } from "@/lib/meta/fetchMeta";
 
-import { fetchMeta } from "./meta/fetchMeta";
 import {
   SearchFilterProvider,
   useSearchFilters,

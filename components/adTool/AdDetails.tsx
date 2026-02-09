@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 import { AdData } from "@/types/ad";
+import { fetchMeta } from "@/lib/meta/fetchMeta";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -38,7 +39,6 @@ import { EuAdStatistic } from "./adInsights/EuAdStatistic";
 import AdCreativeGenerator from "./aiComponents/AdCreativeGenerator";
 import KeywordAnalysisTable from "./aiComponents/KeywordAnalysisTable";
 import WorldwideAdStatistics from "./aiComponents/WorldwideAdStatistics";
-import { fetchMeta } from "./meta/fetchMeta";
 import AdOptionsCard from "./sharedComponents/AdOptionsCard";
 
 interface AdDetailsProps {
