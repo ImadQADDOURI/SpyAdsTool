@@ -130,7 +130,7 @@ function overrideVariables(body: string, newVars: Record<string, any>): string {
     }
 
     const merged = { ...existingVars, ...newVars };
-    console.log("🧩 Final Variables:", merged);
+    // console.log("🧩 Final Variables:", merged);
 
     params.set("variables", JSON.stringify(merged));
     return params.toString();
