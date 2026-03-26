@@ -5,6 +5,8 @@ import { UserSubscriptionPlan } from "@/types";
 import { getCurrentUser } from "@/lib/session"; // Your existing session helper
 import { getUserSubscriptionPlan } from "@/lib/subscription"; // Import subscription helper
 
+export const dynamic = "force-dynamic";
+
 /**
  * ✨ API Route Handler for Chrome Extension Authentication Check (Final Version) ✨
  *

@@ -6,6 +6,8 @@ import { SubscriptionResponse } from "types"; // Assuming 'types' is a project a
 import { getCurrentUser } from "@/lib/session";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
 
+export const dynamic = "force-dynamic";
+
 /**
  * 🔒 Secure API route to fetch user subscription data.
  * This route prioritizes data freshness by not implementing caching.
