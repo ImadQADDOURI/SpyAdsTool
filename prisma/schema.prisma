@@ -197,3 +197,50 @@ model MetaGraphQLRequest {
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
 }
+
+
+// 🌍 GLOBAL ADS TABLE (For Trend Page & Filtering)// schema.prisma
+model Ad {
+  id              String    @id @default(cuid())
+  ad_archive_id   String    @unique
+  adData          Json
+
+  // 1. Strict Checkbox Arrays (Exact match only)
+  platforms       String[] 
+  countries       String[] 
+  ctaTypes        String[] 
+  displayFormat   String?
+
+  // 2. "Stringified" Lists (For partial text searching)
+  domain          String?   // e.g., "myshop.com store.myshop.com"
+  pageCategory    String?   // e.g., "Pet Supplies Animal Store"
+  pageName        String?   // e.g., "Dine New Zealand"   
+  pageId          String?   // 
+
+  // 3. Global Ad Copy (Strictly ad texts)
+  textContent     String?   // ONLY body, title, caption, link_description
+
+  // Core Fields
+  startDate       DateTime? 
+  endDate         DateTime? 
+  isActive        Boolean?  @default(false)
+  collationCount  Int?     
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // ==========================================
+  // INDEXES 
+  // ==========================================
+  @@index([startDate(sort: Desc)])
+  @@index([collationCount(sort: Desc)])
+  @@index([pageId])        
+  // Standard GIN indexes for exact array filtering
+  @@index([platforms], type: Gin)
+  @@index([countries], type: Gin)
+  @@index([ctaTypes], type: Gin)
+
+  // NOTE FOR FUTURE SCALING:
+  // CREATE INDEX textContent_trgm_idx ON "Ad" USING gin ("textContent" gin_trgm_ops);
+  // CREATE INDEX domain_trgm_idx ON "Ad" USING gin ("domain" gin_trgm_ops);
+}

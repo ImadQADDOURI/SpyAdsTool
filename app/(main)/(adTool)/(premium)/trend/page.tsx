@@ -2,13 +2,14 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
 
-import TrendAds from "@/components/adTool/favorites/TrendAds";
+import AdArchive from "@/components/adTool/AdArchive";
 import { Loading } from "@/components/adTool/sharedComponents/Loading";
 import { SubscriptionPageGuard } from "@/components/adTool/subscription/SubscriptionPageGuard";
 
 export const metadata: Metadata = {
   title: "Trending Ads",
-  description: "Discover trending and popular ads curated by our team",
+  description:
+    "Search, filter, and discover trending ads from the global database.",
 };
 
 export default function TrendingPage() {
@@ -17,7 +18,7 @@ export default function TrendingPage() {
       <Suspense
         fallback={<Loading message="Loading content..." size="large" />}
       >
-        <TrendAds />
+        <AdArchive />
       </Suspense>
     </SubscriptionPageGuard>
   );
