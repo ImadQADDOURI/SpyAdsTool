@@ -87,14 +87,7 @@ export function CollapsibleDropdownMobile({
                       <link.icon
                         className={cn(
                           "size-4",
-                          link.color === "purple" &&
-                            "text-purple-600 dark:text-purple-400",
-                          link.color === "blue" &&
-                            "text-blue-600 dark:text-blue-400",
-                          link.color === "yellow" &&
-                            "text-yellow-600 dark:text-yellow-400",
-                          link.color === "pink" &&
-                            "text-pink-600 dark:text-pink-400",
+                          link.color,
                         )}
                       />
                       <span className="flex-1">{link.title}</span>

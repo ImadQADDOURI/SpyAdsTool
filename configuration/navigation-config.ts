@@ -1,6 +1,7 @@
 import {
   Calculator,
   CloudLightning,
+  Database,
   DollarSign,
   Facebook,
   File,
@@ -99,7 +100,7 @@ export const AdminLinks = [
     description: "",
     icon: Facebook,
     isFree: false,
-    color: "purple",
+    color: "text-purple-600 dark:text-purple-400",
   },
   {
     id: "meta-graphql-configs",
@@ -108,7 +109,16 @@ export const AdminLinks = [
     description: "",
     icon: Facebook,
     isFree: false,
-    color: "purple",
+    color: "text-purple-600 dark:text-purple-400",
+  },
+  {
+    id: "ad-manager",
+    title: "Ad Manager",
+    href: "/ad-manager",
+    description: "",
+    icon: Database,
+    isFree: false,
+    color: "text-green-600 dark:text-green-400",
   },
   {
     id: "products-config",
@@ -117,7 +127,7 @@ export const AdminLinks = [
     description: "",
     icon: PackageOpen,
     isFree: false,
-    color: "blue",
+    color: "text-blue-600 dark:text-blue-400",
   },
   {
     id: "stores-config",
@@ -126,7 +136,7 @@ export const AdminLinks = [
     description: "",
     icon: Store,
     isFree: false,
-    color: "yellow",
+    color: "text-yellow-600 dark:text-yellow-400",
   },
   {
     id: "setup",
@@ -135,6 +145,6 @@ export const AdminLinks = [
     description: "setup and Documentation guide",
     icon: Settings,
     isFree: false,
-    color: "pink",
+    color: "text-pink-600 dark:text-pink-400",
   },
 ];
