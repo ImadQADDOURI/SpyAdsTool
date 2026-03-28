@@ -20,7 +20,7 @@ import type { AdData } from "@/types/ad";
 import { Button } from "@/components/ui/button";
 
 import { AdCard } from "../AdCard";
-import { SearchParams } from "../search/filter-config";
+// import { SearchParams } from "../search/filter-config";
 import SubscriptionAccessGuard from "../subscription/SubscriptionAccessGuard";
 import { Loading } from "./Loading";
 
@@ -33,7 +33,7 @@ interface SearchResultsProps {
   remainingCount: number | null;
   handleLoadMore: () => void;
   // 🎯  Search params for synchronization
-  searchParams?: SearchParams;
+  // searchParams?: SearchParams;
   // 🎯  Callback when sync issues detected
   onSyncIssue?: (issue: string) => void;
 }
@@ -200,7 +200,7 @@ export const SearchResults = memo(
     remainingCount,
     handleLoadMore,
     // searchParams and onSyncIssue are kept for potential future use or other logic
-    searchParams,
+    // searchParams,
     onSyncIssue,
   }: SearchResultsProps) => {
     const columns = useResponsiveColumns();
