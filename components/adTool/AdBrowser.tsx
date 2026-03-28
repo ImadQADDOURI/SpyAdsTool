@@ -1,166 +1,104 @@
+// @/components/adTool/AdBrowser.tsx
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Facebook, Star } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
+import { META_FILTERS } from "@/configuration/globalFilters";
+import { Facebook, LayoutGrid, Star } from "lucide-react";
 
 import type { AdData } from "@/types/ad";
 import { fetchMeta } from "@/lib/meta/fetchMeta";
 
-import {
-  SearchFilterProvider,
-  useSearchFilters,
-} from "./search/search-filter-context";
-import SearchFilters from "./search/search-filters";
+import SearchFilters from "./search/SearchFilters";
 import { ScrollButtons } from "./sharedComponents/ScrollButtons";
 import SearchResults from "./sharedComponents/SearchResults";
 import TitleSection from "./sharedComponents/TitleSection";
 
-// 🗂️ Define the shape of the GraphQL edge
 interface Edge {
-  node: {
-    collated_results?: AdData[];
-  };
+  node: { collated_results?: AdData[] };
 }
-
-// ✨ Helper: Extract and collate Ads from edges
-const extractCollatedAds = (
-  rawEdges: Edge[] | Edge | null | undefined,
-): { ads: AdData[]; searchCount: number } => {
+const extractCollatedAds = (rawEdges: Edge[] | Edge | null | undefined) => {
   let totalOriginalAds = 0;
-
-  // Normalize edges into an array
   const edges = Array.isArray(rawEdges) ? rawEdges : rawEdges ? [rawEdges] : [];
-
   const ads = edges
     .map((edge) => edge.node.collated_results ?? [])
     .filter((group) => group.length > 0)
     .map((group) => {
-      const groupCount = group.length;
-      totalOriginalAds += groupCount; // Count all original ads
-
+      totalOriginalAds += group.length;
       const maxOriginal = group.reduce(
         (max, ad) => Math.max(max, ad.collation_count ?? 0),
         0,
       );
-
-      const collation_count = Math.max(maxOriginal, groupCount, 1);
-      const [firstAd] = group;
-
-      return { ...firstAd, collation_count };
+      return {
+        ...group[0],
+        collation_count: Math.max(maxOriginal, group.length, 1),
+      };
     });
-
   return { ads, searchCount: totalOriginalAds };
 };
 
-/**
- * Inner component that uses the search filter context
- */
-const AdBrowserContent = () => {
-  const { getSearchParams } = useSearchFilters();
-
-  // Search state
+export default function AdBrowser() {
   const [searchResults, setSearchResults] = useState<AdData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Pagination state
   const [totalCount, setTotalCount] = useState<number | null>(null);
-  const [remainingCount, setRemainingCount] = useState<number | null>(null);
-  const [endCursor, setEndCursor] = useState<string | null>(null);
+  const [fetchedCount, setFetchedCount] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
 
-  // Track last search count
-  const [lastSearchCount, setLastSearchCount] = useState<number>(0);
-
-  // Current search params state for synchronization
-  const [currentSearchParams, setCurrentSearchParams] = useState<any>(null);
-
-  // Prevent concurrent searches
-  const isSearchInProgress = useRef(false);
-
-  // Scroll to top on component mount
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "auto" });
-  }, []);
-
-  // Handle sync issues
-  const handleSyncIssue = useCallback((issue: string) => {
-    console.warn("🔄 Sync Issue:", issue);
-  }, []);
+  const endCursorRef = useRef<string | null>(null);
+  const lastParamsRef = useRef<URLSearchParams | null>(null);
 
   const executeSearch = useCallback(
-    async (isLoadingMore = false) => {
-      if (!isLoadingMore && isSearchInProgress.current) return;
-
-      isSearchInProgress.current = true;
+    async (params: URLSearchParams, isLoadMore = false) => {
       setIsLoading(true);
       setError(null);
+      lastParamsRef.current = params;
 
       try {
-        const searchParams = getSearchParams();
-
-        // Store current search params for synchronization
-        if (!isLoadingMore) {
-          setCurrentSearchParams(searchParams);
+        const startDateParam = params.get("start_date");
+        let endDateParam = params.get("end_date");
+        if (endDateParam) {
+          const d = new Date(endDateParam);
+          d.setDate(d.getDate() + 1);
+          endDateParam = d.toISOString().split("T")[0];
         }
-
-        // Build query string
-        let queryString = searchParams.q || "";
-        const categoryAsKeyword = searchParams.category_as_keyword || "";
-        queryString = [queryString, categoryAsKeyword]
-          .filter(Boolean)
-          .join(", ");
-
-        // Process date range
-        const startDate = (() => {
-          const startDateParam = searchParams.start_date;
-          let endDateParam = searchParams.end_date;
-
-          if (endDateParam) {
-            const updatedDate = new Date(endDateParam);
-            updatedDate.setDate(updatedDate.getDate() + 1);
-            endDateParam = updatedDate.toISOString().split("T")[0];
-          }
-
-          return startDateParam || endDateParam
+        const startDate =
+          startDateParam || endDateParam
             ? { min: startDateParam || null, max: endDateParam || null }
             : null;
-        })();
-
-        // Choose fetch method based on whether loading more
-        const fetchName = isLoadingMore ? "ad-pagination" : "ad-refetch";
 
         const baseVariables = {
-          activeStatus: searchParams.active_status || "ACTIVE",
-          adType: searchParams.ad_type || "ALL",
+          activeStatus: params.get("active_status") || "ACTIVE",
+          adType: params.get("ad_type") || "ALL",
           bylines: [],
           collationToken: null,
-          contentLanguages: searchParams.content_languages || [],
-          countries: searchParams.countries || ["ALL"],
-          excludedIDs: isLoadingMore ? null : [],
+          contentLanguages: params.getAll("content_languages").length
+            ? params.getAll("content_languages")
+            : [],
+          countries: params.getAll("countries").length
+            ? params.getAll("countries")
+            : ["ALL"],
+          excludedIDs: isLoadMore ? null : [],
           isTargetedCountry: false,
           location: null,
-          mediaType: searchParams.media_type || "ALL",
+          mediaType: params.get("media_type") || "ALL",
           multiCountryFilterMode: null,
           pageIDs: [],
-          potentialReachInput: isLoadingMore ? null : [],
-          publisherPlatforms: searchParams.publisher_platforms || [],
-          queryString,
-          regions: isLoadingMore ? null : [],
-          searchType: searchParams.search_type || "KEYWORD_UNORDERED",
-          sortData: searchParams.sort_data || null,
+          potentialReachInput: isLoadMore ? null : [],
+          publisherPlatforms: params.getAll("publisher_platforms").length
+            ? params.getAll("publisher_platforms")
+            : [],
+          queryString: params.get("q") || "",
+          regions: isLoadMore ? null : [],
+          searchType: params.get("search_type") || "KEYWORD_UNORDERED",
+          sortData: null,
           source: null,
           startDate,
           viewAllPageID: "0",
         };
 
-        // Add specific variables based on fetch type
-        const variables = isLoadingMore
-          ? {
-              ...baseVariables,
-              cursor: endCursor,
-              first: 30,
-            }
+        const variables = isLoadMore
+          ? { ...baseVariables, cursor: endCursorRef.current, first: 30 }
           : {
               ...baseVariables,
               audienceTimeframe: "LAST_7_DAYS",
@@ -176,125 +114,91 @@ const AdBrowserContent = () => {
             };
 
         const result = await fetchMeta(
-          { name: fetchName },
-          {
-            variables,
-            includeRaw: false,
-          },
+          { name: isLoadMore ? "ad-pagination" : "ad-refetch" },
+          { variables, includeRaw: false },
         );
-        // Log diagnostics in browser console
-        console.log("🩺 Diagnostic:", result.diagnostics, "\n", {
-          name: result.name,
-        });
 
-        if (!result.success || !result.extracted) {
-          console.error("❌ FetchMeta failed or no data extracted");
-          throw new Error("Failed to fetch ads");
-        }
+        if (!result.success || !result.extracted)
+          throw new Error("Failed to fetch ads from Meta");
 
         const { edges, end_cursor, has_next_page, count } = result.extracted;
-
-        // Extract ads from edges and get search count
         const { ads: newAds, searchCount } = extractCollatedAds(edges || []);
 
-        // Update results
-        if (isLoadingMore && searchResults) {
-          setSearchResults((prevResults) => [
-            ...(prevResults ?? []),
-            ...newAds,
-          ]);
+        if (isLoadMore) {
+          setSearchResults((prev) => [...(prev || []), ...newAds]);
+          setFetchedCount((prev) => prev + searchCount);
         } else {
           setSearchResults(newAds);
           setTotalCount(count || 0);
+          setFetchedCount(searchCount);
         }
 
-        // Update last search count
-        setLastSearchCount(searchCount);
-
-        // Update pagination state
-        setEndCursor(end_cursor || null);
+        endCursorRef.current = end_cursor || null;
         setHasNextPage(has_next_page || false);
-
-        // Calculate remaining count
-        if (isLoadingMore) {
-          // Subtract last search count from remaining
-          setRemainingCount((prev) => Math.max(0, (prev || 0) - searchCount));
-        } else {
-          // Initial remaining count = total - first batch
-          setRemainingCount(Math.max(0, (count || 0) - searchCount));
-        }
-
-        console.log("📊 Load Stats:", {
-          total_count: count,
-          search_count: searchCount,
-          remaining: isLoadingMore
-            ? Math.max(0, (remainingCount || 0) - searchCount)
-            : Math.max(0, (count || 0) - searchCount),
-          has_next_page: has_next_page,
-        });
-      } catch (searchError) {
-        console.error("Search error:", searchError);
+      } catch (err) {
         setError("An error occurred while searching. Please try again.");
-        if (!isLoadingMore) {
-          setSearchResults(null);
-          setLastSearchCount(0);
-        }
+        if (!isLoadMore) setSearchResults(null);
       } finally {
         setIsLoading(false);
-        isSearchInProgress.current = false;
       }
     },
-    [getSearchParams, searchResults, endCursor, remainingCount],
+    [],
   );
 
   const handleLoadMore = useCallback(() => {
-    if (hasNextPage && !isLoading && !isSearchInProgress.current) {
-      executeSearch(true);
+    if (hasNextPage && !isLoading && lastParamsRef.current) {
+      executeSearch(lastParamsRef.current, true);
     }
-  }, [hasNextPage, executeSearch, isLoading]);
+  }, [hasNextPage, isLoading, executeSearch]);
+
+  const remainingCount =
+    totalCount !== null ? Math.max(0, totalCount - fetchedCount) : null;
+  const hasSearched = lastParamsRef.current !== null;
 
   return (
     <div className="min-h-screen space-y-2 bg-gradient-to-b from-gray-50 to-gray-100 pb-16 dark:from-gray-900 dark:to-gray-800">
       <TitleSection
         icon={Star}
-        iconColor="text-purple-500 dark:text-purple-400"
+        iconColor="text-purple-500"
         badgeText="Professional Ad Tools"
         image={Facebook}
-        imageColor="text-blue-600 dark:text-blue-400"
-        highlightedText="Ad Search"
-        remainingTitle="Data & Analytics"
+        imageColor="text-blue-600"
+        highlightedText="Meta Search"
+        remainingTitle="Live Ads"
         auroraColors={["#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4"]}
-        description="Search millions of ads with powerful filters, visual analytics and AI tools"
       />
 
-      <SearchFilters onSearch={executeSearch} isLoading={isLoading} />
-
-      <SearchResults
+      <SearchFilters
         isLoading={isLoading}
-        error={error}
-        totalCount={totalCount}
-        searchResults={searchResults}
-        hasNextPage={hasNextPage}
-        remainingCount={remainingCount}
-        handleLoadMore={handleLoadMore}
-        searchParams={currentSearchParams}
-        onSyncIssue={handleSyncIssue}
+        filters={META_FILTERS}
+        onSearch={(p) => executeSearch(p, false)}
       />
 
+      {!hasSearched ? (
+        <div className="mx-auto w-full px-4 md:px-6">
+          <div className="rounded-2xl border border-gray-200 bg-white py-24 text-center shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <LayoutGrid className="mx-auto mb-5 h-14 w-14 text-gray-300 dark:text-gray-600" />
+            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
+              Meta Ad Library
+            </h3>
+            <p className="mx-auto mt-2 max-w-sm text-gray-500">
+              Click "Search" to explore live active and inactive ads directly
+              from Meta.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <SearchResults
+          isLoading={isLoading}
+          error={error}
+          totalCount={totalCount}
+          searchResults={searchResults}
+          hasNextPage={hasNextPage}
+          remainingCount={remainingCount}
+          handleLoadMore={handleLoadMore}
+        />
+      )}
       <ScrollButtons />
     </div>
   );
-};
-
-/**
- * Main AdBrowser component with context provider
- */
-export const AdBrowser = () => {
-  return (
-    <SearchFilterProvider>
-      <AdBrowserContent />
-    </SearchFilterProvider>
-  );
-};
-
-export default AdBrowser;
+}

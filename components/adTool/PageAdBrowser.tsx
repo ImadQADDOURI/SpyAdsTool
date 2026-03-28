@@ -1,174 +1,169 @@
+// @/components/adTool/PageAdBrowser.tsx
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { META_FILTERS } from "@/configuration/globalFilters";
+import { Loader2 } from "lucide-react";
 
 import type { AdData } from "@/types/ad";
 import { fetchMeta } from "@/lib/meta/fetchMeta";
 
-import {
-  SearchFilterProvider,
-  useSearchFilters,
-} from "./search/search-filter-context";
-import SearchFilters from "./search/search-filters";
+import SearchFilters from "./search/SearchFilters";
 import PageInfoSection from "./sharedComponents/PageInfoSection";
 import { ScrollButtons } from "./sharedComponents/ScrollButtons";
 import SearchResults from "./sharedComponents/SearchResults";
 
-// 🗂️ Define the shape of the GraphQL edge
 interface Edge {
-  node: {
-    collated_results?: AdData[];
-  };
+  node: { collated_results?: AdData[] };
 }
-
-// ✨ Helper: Extract and collate Ads from edges
-const extractCollatedAds = (
-  rawEdges: Edge[] | Edge | null | undefined,
-): { ads: AdData[]; searchCount: number } => {
+const extractCollatedAds = (rawEdges: Edge[] | Edge | null | undefined) => {
   let totalOriginalAds = 0;
-
-  // Normalize edges into an array
   const edges = Array.isArray(rawEdges) ? rawEdges : rawEdges ? [rawEdges] : [];
-
   const ads = edges
     .map((edge) => edge.node.collated_results ?? [])
     .filter((group) => group.length > 0)
     .map((group) => {
-      const groupCount = group.length;
-      totalOriginalAds += groupCount; // Count all original ads
-
+      totalOriginalAds += group.length;
       const maxOriginal = group.reduce(
         (max, ad) => Math.max(max, ad.collation_count ?? 0),
         0,
       );
-
-      const collation_count = Math.max(maxOriginal, groupCount, 1);
-      const [firstAd] = group;
-
-      return { ...firstAd, collation_count };
+      return {
+        ...group[0],
+        collation_count: Math.max(maxOriginal, group.length, 1),
+      };
     });
-
   return { ads, searchCount: totalOriginalAds };
 };
 
-const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
-  const { getSearchParams } = useSearchFilters();
+export default function PageAdBrowser({ pageId }: { pageId: string }) {
+  const [pageInfo, setPageInfo] = useState<any>({});
+  const [isInfoLoading, setIsInfoLoading] = useState(true);
 
-  // Refs
-  const infoSectionRef = useRef<HTMLDivElement>(null);
-  const isSearchInProgress = useRef(false);
-  const initialLoadCompletedRef = useRef(false);
-
-  // Search state
   const [searchResults, setSearchResults] = useState<AdData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Pagination state
   const [totalCount, setTotalCount] = useState<number | null>(null);
-  const [remainingCount, setRemainingCount] = useState<number | null>(null);
-  const [endCursor, setEndCursor] = useState<string | null>(null);
+  const [fetchedCount, setFetchedCount] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
 
-  // Track last search count
-  const [lastSearchCount, setLastSearchCount] = useState<number>(0);
+  const endCursorRef = useRef<string | null>(null);
+  const lastParamsRef = useRef<URLSearchParams | null>(null);
 
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-
-  // Current search params state for synchronization
-  const [currentSearchParams, setCurrentSearchParams] = useState<any>(null);
-
-  // Page info state (set once on initial load)
-  const [pageInfo, setPageInfo] = useState<{
-    about_text?: string;
-    admin_country_counts?: any[];
-    history_items?: any[];
-    total_spend?: any;
-    page_info?: any[];
-    count?: number;
-  }>({});
-
-  // Scroll to top on component mount (except initial load)
+  // 🚀 ISOLATED ON-MOUNT FETCH (Only populates Page Info)
   useEffect(() => {
-    if (!isInitialLoad) {
-      window.scrollTo({ top: 0, behavior: "auto" });
-    }
-  }, [isInitialLoad]);
-
-  // Handle sync issues
-  const handleSyncIssue = useCallback((issue: string) => {
-    console.warn("🔄 Page Sync Issue:", issue);
-  }, []);
-
-  const executeSearch = useCallback(
-    async (isLoadingMore = false) => {
-      // Prevent concurrent searches for new searches
-      if (!isLoadingMore && isSearchInProgress.current && !isInitialLoad) {
-        return;
-      }
-
-      isSearchInProgress.current = true;
-      setIsLoading(true);
-      setError(null);
-
+    let isMounted = true;
+    const fetchPageInfo = async () => {
       try {
-        const searchParams = getSearchParams();
-
-        // Store current search params for synchronization
-        if (!isLoadingMore) {
-          setCurrentSearchParams({ ...searchParams, pageId });
-        }
-
-        // Build query string
-        let queryString = searchParams.q || "";
-        const categoryAsKeyword = searchParams.category_as_keyword || "";
-        queryString = [queryString, categoryAsKeyword]
-          .filter(Boolean)
-          .join(", ");
-
-        // Process date range
-        const startDate = (() => {
-          const startDateParam = searchParams.start_date;
-          let endDateParam = searchParams.end_date;
-
-          if (endDateParam) {
-            const updatedDate = new Date(endDateParam);
-            updatedDate.setDate(updatedDate.getDate() + 1);
-            endDateParam = updatedDate.toISOString().split("T")[0];
-          }
-
-          return startDateParam || endDateParam
-            ? { min: startDateParam || null, max: endDateParam || null }
-            : null;
-        })();
-
-        // Choose fetch method based on whether loading more
-        const fetchName = isLoadingMore ? "ad-pagination" : "ad-refetch";
-
-        const baseVariables = {
-          adType: searchParams.ad_type || "ALL",
+        const variables = {
+          viewAllPageID: pageId,
+          activeStatus: "ALL",
+          adType: "ALL",
           bylines: [],
           collationToken: null,
-          contentLanguages: searchParams.content_languages || [],
-          countries: searchParams.countries || ["ALL"],
-          mediaType: searchParams.media_type || "ALL",
+          contentLanguages: [],
+          countries: ["ALL"],
+          mediaType: "ALL",
           multiCountryFilterMode: null,
           pageIDs: [],
-          publisherPlatforms: searchParams.publisher_platforms || [],
-          queryString,
-          searchType: searchParams.search_type || "PAGE",
-          sortData: searchParams.sort_data || null,
+          publisherPlatforms: [],
+          queryString: "",
+          searchType: "PAGE",
+          sortData: null,
+          source: null,
+          startDate: null,
+          audienceTimeframe: "LAST_7_DAYS",
+          country: "ALL",
+          deeplinkAdID: null,
+          excludedIDs: [],
+          fetchPageInfo: true, // <--- GRABS INFO
+          fetchSharedDisclaimers: true,
+          hasDeeplinkAdID: false,
+          isAboutTab: true, // <--- GRABS INFO
+          isAudienceTab: false,
+          isLandingPage: false,
+          isTargetedCountry: false,
+          location: null,
+          potentialReachInput: [],
+          regions: [],
+          shouldFetchCount: true,
+        };
+        const result = await fetchMeta(
+          { name: "ad-refetch" },
+          { variables, includeRaw: false },
+        );
+        if (result.success && result.extracted && isMounted) {
+          setPageInfo({
+            about_text: result.extracted.about_text,
+            admin_country_counts: result.extracted.admin_country_counts,
+            history_items: result.extracted.history_items,
+            total_spend: result.extracted.total_spend,
+            page_info: result.extracted.page_info,
+            count: result.extracted.count,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch page info", err);
+      } finally {
+        if (isMounted) setIsInfoLoading(false);
+      }
+    };
+    fetchPageInfo();
+    return () => {
+      isMounted = false;
+    };
+  }, [pageId]);
+
+  // 🚀 EVENT-DRIVEN AD SEARCH
+  const executeSearch = useCallback(
+    async (params: URLSearchParams, isLoadMore = false) => {
+      setIsLoading(true);
+      setError(null);
+      lastParamsRef.current = params;
+
+      try {
+        const startDateParam = params.get("start_date");
+        let endDateParam = params.get("end_date");
+        if (endDateParam) {
+          const d = new Date(endDateParam);
+          d.setDate(d.getDate() + 1);
+          endDateParam = d.toISOString().split("T")[0];
+        }
+        const startDate =
+          startDateParam || endDateParam
+            ? { min: startDateParam || null, max: endDateParam || null }
+            : null;
+
+        const baseVariables = {
+          activeStatus: params.get("active_status") || "ACTIVE",
+          adType: params.get("ad_type") || "ALL",
+          bylines: [],
+          collationToken: null,
+          contentLanguages: params.getAll("content_languages").length
+            ? params.getAll("content_languages")
+            : [],
+          countries: params.getAll("countries").length
+            ? params.getAll("countries")
+            : ["ALL"],
+          mediaType: params.get("media_type") || "ALL",
+          multiCountryFilterMode: null,
+          pageIDs: [],
+          publisherPlatforms: params.getAll("publisher_platforms").length
+            ? params.getAll("publisher_platforms")
+            : [],
+          queryString: params.get("q") || "",
+          searchType: "PAGE",
+          sortData: null,
           source: null,
           startDate,
           viewAllPageID: pageId,
         };
 
-        // Add specific variables based on fetch type
-        const variables = isLoadingMore
+        const variables = isLoadMore
           ? {
               ...baseVariables,
-              activeStatus: searchParams.active_status || "ACTIVE",
-              cursor: endCursor,
+              cursor: endCursorRef.current,
               excludedIDs: null,
               first: 30,
               isTargetedCountry: false,
@@ -178,15 +173,14 @@ const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
             }
           : {
               ...baseVariables,
-              activeStatus: searchParams.active_status || "ALL",
               audienceTimeframe: "LAST_7_DAYS",
               country: "ALL",
               deeplinkAdID: null,
               excludedIDs: [],
-              fetchPageInfo: true,
-              fetchSharedDisclaimers: true,
+              fetchPageInfo: false,
+              fetchSharedDisclaimers: false,
               hasDeeplinkAdID: false,
-              isAboutTab: true,
+              isAboutTab: false,
               isAudienceTab: false,
               isLandingPage: false,
               isTargetedCountry: false,
@@ -197,126 +191,58 @@ const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
             };
 
         const result = await fetchMeta(
-          { name: fetchName },
-          {
-            variables,
-            includeRaw: false,
-          },
+          { name: isLoadMore ? "ad-pagination" : "ad-refetch" },
+          { variables, includeRaw: false },
         );
-        // Log diagnostics in browser console
-        console.log("🩺 Diagnostic:", result.diagnostics, "\n", {
-          name: result.name,
-        });
 
-        if (!result.success || !result.extracted) {
-          console.error("❌ FetchMeta failed or no data extracted");
+        if (!result.success || !result.extracted)
           throw new Error("Failed to fetch ads");
-        }
 
         const { edges, end_cursor, has_next_page, count } = result.extracted;
-
-        // Extract ads from edges and get search count
         const { ads: newAds, searchCount } = extractCollatedAds(edges || []);
 
-        // Update results
-        if (isLoadingMore && searchResults) {
-          setSearchResults((prevResults) => [
-            ...(prevResults ?? []),
-            ...newAds,
-          ]);
+        if (isLoadMore) {
+          setSearchResults((prev) => [...(prev || []), ...newAds]);
+          setFetchedCount((prev) => prev + searchCount);
         } else {
           setSearchResults(newAds);
           setTotalCount(count || 0);
+          setFetchedCount(searchCount);
         }
 
-        // Set page info once on initial load
-        if (isInitialLoad) {
-          setPageInfo({
-            about_text: result.extracted.about_text,
-            admin_country_counts: result.extracted.admin_country_counts,
-            history_items: result.extracted.history_items,
-            total_spend: result.extracted.total_spend,
-            page_info: result.extracted.page_info,
-            count: count,
-          });
-          setIsInitialLoad(false);
-          initialLoadCompletedRef.current = true;
-        }
-
-        // Update last search count
-        setLastSearchCount(searchCount);
-
-        // Update pagination state
-        setEndCursor(end_cursor || null);
+        endCursorRef.current = end_cursor || null;
         setHasNextPage(has_next_page || false);
-
-        // Calculate remaining count
-        if (isLoadingMore) {
-          // Subtract last search count from remaining
-          setRemainingCount((prev) => Math.max(0, (prev || 0) - searchCount));
-        } else {
-          // Initial remaining count = total - first batch
-          setRemainingCount(Math.max(0, (count || 0) - searchCount));
-        }
-
-        console.log("📊 Page Load Stats:", {
-          total_count: count,
-          search_count: searchCount,
-          remaining: isLoadingMore
-            ? Math.max(0, (remainingCount || 0) - searchCount)
-            : Math.max(0, (count || 0) - searchCount),
-          has_next_page: has_next_page,
-          pageId,
-        });
-      } catch (searchError) {
-        console.error("Error searching ads:", searchError);
-        setError(
-          "An error occurred while searching for ads. Please try again.",
-        );
-
-        // Clear results on error for new searches
-        if (!isLoadingMore && !isInitialLoad) {
-          setSearchResults(null);
-          setLastSearchCount(0);
-        }
+      } catch (err) {
+        setError("An error occurred while searching for ads.");
+        if (!isLoadMore) setSearchResults(null);
       } finally {
         setIsLoading(false);
-        isSearchInProgress.current = false;
       }
     },
-    [
-      getSearchParams,
-      searchResults,
-      endCursor,
-      pageId,
-      isInitialLoad,
-      remainingCount,
-    ],
+    [pageId],
   );
 
   const handleLoadMore = useCallback(() => {
-    if (hasNextPage && !isLoading && !isSearchInProgress.current) {
-      executeSearch(true);
+    if (hasNextPage && !isLoading && lastParamsRef.current) {
+      executeSearch(lastParamsRef.current, true);
     }
-  }, [hasNextPage, executeSearch, isLoading]);
+  }, [hasNextPage, isLoading, executeSearch]);
 
-  // Initial load effect
-  useEffect(() => {
-    if (initialLoadCompletedRef.current) return;
-
-    const initializePageData = async () => {
-      // Small delay to ensure component mounting is complete
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      executeSearch();
-    };
-
-    initializePageData();
-  }, [executeSearch]);
+  const remainingCount =
+    totalCount !== null ? Math.max(0, totalCount - fetchedCount) : null;
+  const hasSearched = lastParamsRef.current !== null;
 
   return (
     <div className="min-h-screen space-y-2 bg-gray-100 pb-8 dark:bg-gray-800">
-      {/* Page Info Section */}
-      <div ref={infoSectionRef}>
+      <div className="relative">
+        {isInfoLoading && (
+          <div className="absolute inset-0 z-10 mx-4 mt-4 flex items-center justify-center rounded-lg bg-white/60 backdrop-blur-[2px] dark:bg-gray-800/60">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+            <span className="ml-2 font-medium text-gray-700 dark:text-gray-300">
+              Fetching Page Data...
+            </span>
+          </div>
+        )}
         <PageInfoSection
           about_text={pageInfo.about_text}
           admin_country_counts={pageInfo.admin_country_counts}
@@ -327,44 +253,25 @@ const PageAdBrowserContent = ({ pageId }: { pageId: string }) => {
         />
       </div>
 
-      {/* Search Filters */}
       <SearchFilters
-        onSearch={executeSearch}
-        isLoading={isLoading}
-        defaultExpanded={false}
+        isLoading={isLoading || isInfoLoading} //🛡️ Combine isLoading AND isInfoLoading so filters are disabled until page data is ready
+        filters={META_FILTERS}
+        onSearch={(p) => executeSearch(p, false)}
       />
 
-      <SearchResults
-        isLoading={isLoading}
-        error={error}
-        totalCount={totalCount}
-        searchResults={searchResults}
-        hasNextPage={hasNextPage}
-        remainingCount={remainingCount}
-        handleLoadMore={handleLoadMore}
-        searchParams={currentSearchParams}
-        onSyncIssue={handleSyncIssue}
-      />
+      {hasSearched ? (
+        <SearchResults
+          isLoading={isLoading}
+          error={error}
+          totalCount={totalCount}
+          searchResults={searchResults}
+          hasNextPage={hasNextPage}
+          remainingCount={remainingCount}
+          handleLoadMore={handleLoadMore}
+        />
+      ) : null}
 
-      {/* Scroll Buttons */}
       <ScrollButtons />
     </div>
   );
-};
-
-/**
- * Main PageAdBrowser component with context provider
- */
-export const PageAdBrowser = ({ pageId }: { pageId: string }) => {
-  return (
-    <SearchFilterProvider
-      defaultValues={{
-        status: "ALL",
-      }}
-    >
-      <PageAdBrowserContent pageId={pageId} />
-    </SearchFilterProvider>
-  );
-};
-
-export default PageAdBrowser;
+}

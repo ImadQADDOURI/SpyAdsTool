@@ -75,6 +75,7 @@ export async function fetchMeta(
       config.id,
       config.is_active,
     );
+    console.log("✅ Variables:", options?.variables);
 
     console.log("🩺 Diagnostic:", diagnostics, "\n", {
       id: config.id,
