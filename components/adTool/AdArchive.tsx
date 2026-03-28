@@ -99,7 +99,7 @@ export default function AdArchive() {
   const hasSearched = lastParamsRef.current !== null;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-16 dark:bg-gray-900">
+    <div className="min-h-screen space-y-2 bg-gradient-to-b from-gray-50 to-gray-100 pb-16 dark:from-gray-900 dark:to-gray-800">
       <TitleSection
         icon={Database}
         badgeText="Global Archive"
@@ -116,29 +116,16 @@ export default function AdArchive() {
         onSearch={(p) => executeSearch(p, false)}
       />
 
-      <div className="mx-auto w-full px-4 md:px-6">
-        {!hasSearched ? (
-          <div className="rounded-2xl border border-gray-200 bg-white py-24 text-center shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <Database className="mx-auto mb-5 h-14 w-14 text-gray-300 dark:text-gray-600" />
-            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-              Ready to Search
-            </h3>
-            <p className="mx-auto mt-2 max-w-sm text-gray-500">
-              Click "Search" to explore the global ad database.
-            </p>
-          </div>
-        ) : (
-          <SearchResults
-            isLoading={isLoading}
-            error={error}
-            totalCount={totalCount}
-            searchResults={ads}
-            hasNextPage={hasNextPage}
-            remainingCount={remainingCount}
-            handleLoadMore={handleLoadMore}
-          />
-        )}
-      </div>
+      <SearchResults
+        isLoading={isLoading}
+        error={error}
+        totalCount={totalCount}
+        searchResults={ads}
+        hasNextPage={hasNextPage}
+        remainingCount={remainingCount}
+        handleLoadMore={handleLoadMore}
+      />
+
       <ScrollButtons />
     </div>
   );
