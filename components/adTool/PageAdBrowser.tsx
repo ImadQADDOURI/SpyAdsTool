@@ -259,17 +259,15 @@ export default function PageAdBrowser({ pageId }: { pageId: string }) {
         onSearch={(p) => executeSearch(p, false)}
       />
 
-      {hasSearched ? (
-        <SearchResults
-          isLoading={isLoading}
-          error={error}
-          totalCount={totalCount}
-          searchResults={searchResults}
-          hasNextPage={hasNextPage}
-          remainingCount={remainingCount}
-          handleLoadMore={handleLoadMore}
-        />
-      ) : null}
+      <SearchResults
+        isLoading={isLoading}
+        error={error}
+        totalCount={totalCount}
+        searchResults={searchResults}
+        hasNextPage={hasNextPage}
+        remainingCount={remainingCount}
+        handleLoadMore={handleLoadMore}
+      />
 
       <ScrollButtons />
     </div>

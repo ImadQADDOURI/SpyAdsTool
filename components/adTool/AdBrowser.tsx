@@ -174,30 +174,16 @@ export default function AdBrowser() {
         onSearch={(p) => executeSearch(p, false)}
       />
 
-      {!hasSearched ? (
-        <div className="mx-auto w-full px-4 md:px-6">
-          <div className="rounded-2xl border border-gray-200 bg-white py-24 text-center shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <LayoutGrid className="mx-auto mb-5 h-14 w-14 text-gray-300 dark:text-gray-600" />
-            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-              Meta Ad Library
-            </h3>
-            <p className="mx-auto mt-2 max-w-sm text-gray-500">
-              Click "Search" to explore live active and inactive ads directly
-              from Meta.
-            </p>
-          </div>
-        </div>
-      ) : (
-        <SearchResults
-          isLoading={isLoading}
-          error={error}
-          totalCount={totalCount}
-          searchResults={searchResults}
-          hasNextPage={hasNextPage}
-          remainingCount={remainingCount}
-          handleLoadMore={handleLoadMore}
-        />
-      )}
+      <SearchResults
+        isLoading={isLoading}
+        error={error}
+        totalCount={totalCount}
+        searchResults={searchResults}
+        hasNextPage={hasNextPage}
+        remainingCount={remainingCount}
+        handleLoadMore={handleLoadMore}
+      />
+
       <ScrollButtons />
     </div>
   );
