@@ -1,6 +1,7 @@
 // components/adsLibrary/EuAdStatistic.tsx
 import React from "react";
 import dynamic from "next/dynamic";
+import { countryOptions } from "@/configuration/globalFilters";
 import {
   Baby,
   ChartPie,
@@ -21,7 +22,6 @@ import {
 } from "@/components/ui/tooltip";
 
 import InsightItem from "../aiComponents/InsightItem";
-import { countryCodesAlpha2Flag } from "../search/filter-config";
 import { Loading } from "../sharedComponents/Loading";
 import SpendDisplay from "./SpendDisplay";
 
@@ -169,8 +169,7 @@ export const EuAdStatistic: React.FC<EuAdStatisticProps> = ({
   const countryBarChartData = sortedCountries.map(([countryCode, totals]) => ({
     countryCode,
     countryLabel:
-      countryCodesAlpha2Flag.find((c) => c.value === countryCode)?.label ||
-      countryCode,
+      countryOptions.find((c) => c.value === countryCode)?.label || countryCode,
     total: totals.total,
     male: totals.male,
     female: totals.female,

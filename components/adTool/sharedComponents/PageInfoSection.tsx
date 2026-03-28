@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { countryOptions } from "@/configuration/globalFilters";
 import {
   Calendar,
   DollarSign,
@@ -19,8 +20,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import FirefliesWrapper from "@/components/adTool/sharedComponents/FirefliesWrapper";
-
-import { countryCodesAlpha2Flag } from "../search/filter-config";
 
 export const PageInfoSection: React.FC<any> = ({
   about_text,
@@ -88,7 +87,7 @@ export const PageInfoSection: React.FC<any> = ({
           <MapPin className="h-4 w-4 text-[#6566F1] transition-transform duration-300 ease-in-out group-hover:scale-110 dark:text-[#B977F8]" />
           <div className="flex items-center space-x-1">
             {adminLocations.slice(0, 3).map((location, index) => {
-              const countryInfo = countryCodesAlpha2Flag.find(
+              const countryInfo = countryOptions.find(
                 (c) => c.label === location.country.iso_name,
               );
               return countryInfo ? (
