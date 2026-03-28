@@ -8,8 +8,8 @@ import { Database, Search } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdData } from "@/types/ad";
-import SearchFilters from "@/components/adTool/search/SearchFilters";
 import { ScrollButtons } from "@/components/adTool/sharedComponents/ScrollButtons";
+import SearchFilters from "@/components/adTool/sharedComponents/SearchFilters";
 import SearchResults from "@/components/adTool/sharedComponents/SearchResults";
 import TitleSection from "@/components/adTool/sharedComponents/TitleSection";
 

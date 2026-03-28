@@ -60,7 +60,7 @@ export interface GlobalFilterConfig {
 }
 
 // --- SHARED OPTIONS ---
-const countryOptions: FilterOption[] = [
+export const countryOptions: FilterOption[] = [
   //{ value: "ALL", label: "All Countries", icon: "/flags/un.svg" },
   { value: "BR", label: "Brazil", icon: "/flags/br.svg" },
   { value: "IN", label: "India", icon: "/flags/in.svg" },

@@ -10,6 +10,7 @@ import {
   importProducts,
   updateProduct,
 } from "@/actions/products";
+import { countryOptions } from "@/configuration/globalFilters";
 import { format } from "date-fns";
 import {
   BarChart3,
@@ -67,8 +68,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-import { countryCodesAlpha2Flag } from "../search/filter-config";
 
 // 📦 Simple Product Type
 type Product = {
@@ -246,7 +245,7 @@ export default function ProductsConfig() {
     return (
       <div className="flex flex-wrap gap-1">
         {countryCodes.slice(0, 3).map((code) => {
-          const country = countryCodesAlpha2Flag.find((c) => c.value === code);
+          const country = countryOptions.find((c) => c.value === code);
           return (
             <div
               key={code}
@@ -592,7 +591,7 @@ export default function ProductsConfig() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-80">
                       <ScrollArea className="h-72">
-                        {countryCodesAlpha2Flag.map((country) => (
+                        {countryOptions.map((country) => (
                           <DropdownMenuCheckboxItem
                             key={country.value}
                             checked={selectedCountries.includes(country.value)}
@@ -622,7 +621,7 @@ export default function ProductsConfig() {
                   {selectedCountries.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-2">
                       {selectedCountries.map((code) => {
-                        const country = countryCodesAlpha2Flag.find(
+                        const country = countryOptions.find(
                           (c) => c.value === code,
                         );
                         return (

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getAllProducts } from "@/actions/products";
+import { countryOptions } from "@/configuration/globalFilters";
 import { format } from "date-fns";
 import {
   ArrowUpDown,
@@ -38,7 +39,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { countryCodesAlpha2Flag } from "../search/filter-config";
 import { Loading } from "../sharedComponents/Loading";
 import TitleSection from "../sharedComponents/TitleSection";
 
@@ -126,9 +126,7 @@ function ProductCard({ product }: { product: Product }) {
         <div className="mb-3 flex flex-wrap gap-1.5">
           {product.countries && product.countries.length > 0 ? (
             product.countries.slice(0, 5).map((code) => {
-              const country = countryCodesAlpha2Flag.find(
-                (c) => c.value === code,
-              );
+              const country = countryOptions.find((c) => c.value === code);
               return (
                 <TooltipProvider key={code}>
                   <Tooltip>

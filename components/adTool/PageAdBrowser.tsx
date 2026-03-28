@@ -8,9 +8,9 @@ import { Loader2 } from "lucide-react";
 import type { AdData } from "@/types/ad";
 import { fetchMeta } from "@/lib/meta/fetchMeta";
 
-import SearchFilters from "./search/SearchFilters";
 import PageInfoSection from "./sharedComponents/PageInfoSection";
 import { ScrollButtons } from "./sharedComponents/ScrollButtons";
+import SearchFilters from "./sharedComponents/SearchFilters";
 import SearchResults from "./sharedComponents/SearchResults";
 
 interface Edge {
