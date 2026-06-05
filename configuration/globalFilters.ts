@@ -1547,7 +1547,7 @@ export const AD_ARCHIVE_FILTERS: GlobalFilterConfig[] = [
   },
   {
     id: "collationCount",
-    label: "Collation Count",
+    label: "Duplicate Count",
     type: "number-range",
     icon: Hash,
   },
