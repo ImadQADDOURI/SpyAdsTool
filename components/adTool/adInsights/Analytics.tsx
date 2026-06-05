@@ -54,8 +54,13 @@ const Analytics: React.FC<AnalyticsProps> = ({
 
     let activeCount = 0;
 
+    // guard against malformed ads array or undefined entries
+    if (!Array.isArray(ads) || ads.length === 0) {
+      return { chartData: [], activeAdsCount: 0 };
+    }
+
     ads.forEach((ad) => {
-      if (ad.start_date === undefined) return;
+      if (!ad || ad.start_date === undefined) return;
       // // display ads Dates
       // console.log(
       //   `Before : Start Date: ${new Date(ad.startDate * 1000).toLocaleDateString()}, End Date: ${ad.endDate ? new Date(ad.endDate * 1000).toLocaleDateString() : "Ongoing"}, Active: ${ad.isActive}`,

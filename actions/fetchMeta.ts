@@ -18,9 +18,9 @@ import { JSONPath } from "jsonpath-plus";
 
 import { prisma } from "@/lib/db";
 
-import { acquireContext, releaseContext } from "./browserPool";
-import { buildHeaders } from "./buildHeaders";
-import { executeMeta } from "./executeMeta";
+import { acquireContext, releaseContext } from "../lib/meta/browserPool";
+import { buildHeaders } from "../lib/meta/buildHeaders";
+import { executeMeta } from "../lib/meta/executeMeta";
 
 const AUTO_TOGGLE_ERRORS: Array<{ error?: number; errorSummary?: string }> = [
   { error: 1357001, errorSummary: "Log in to continue" },

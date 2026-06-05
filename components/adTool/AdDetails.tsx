@@ -8,6 +8,7 @@
  * @package components/adLibrary
  */
 import React, { useCallback, useRef, useState } from "react";
+import { fetchMeta } from "@/actions/fetchMeta";
 import { analyzeKeywords } from "@/actions/geminiAiService";
 import {
   BarChart3,
@@ -21,7 +22,6 @@ import {
 } from "lucide-react";
 
 import { AdData } from "@/types/ad";
-import { fetchMeta } from "@/lib/meta/fetchMeta";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

@@ -55,11 +55,7 @@ export default function BoardPage() {
 
   return (
     <SubscriptionPageGuard>
-      <Suspense
-        fallback={<Loading message="Loading content..." size="large" />}
-      >
-        <BoardContent boardName={boardName} />
-      </Suspense>
+      <BoardContent boardName={boardName} />
     </SubscriptionPageGuard>
   );
 }

@@ -2,9 +2,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { fetchMeta } from "@/actions/fetchMeta";
 
 import { prisma } from "@/lib/db";
-import { fetchMeta } from "@/lib/meta/fetchMeta";
 
 {
   /*

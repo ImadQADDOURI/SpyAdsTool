@@ -2,39 +2,17 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { fetchMeta } from "@/actions/fetchMeta";
 import { META_FILTERS } from "@/configuration/globalFilters";
 import { Loader2 } from "lucide-react";
 
 import type { AdData } from "@/types/ad";
-import { fetchMeta } from "@/lib/meta/fetchMeta";
+import { extractCollatedAds } from "@/lib/meta/metaUtils";
 
 import PageInfoSection from "./sharedComponents/PageInfoSection";
 import { ScrollButtons } from "./sharedComponents/ScrollButtons";
 import SearchFilters from "./sharedComponents/SearchFilters";
 import SearchResults from "./sharedComponents/SearchResults";
-
-interface Edge {
-  node: { collated_results?: AdData[] };
-}
-const extractCollatedAds = (rawEdges: Edge[] | Edge | null | undefined) => {
-  let totalOriginalAds = 0;
-  const edges = Array.isArray(rawEdges) ? rawEdges : rawEdges ? [rawEdges] : [];
-  const ads = edges
-    .map((edge) => edge.node.collated_results ?? [])
-    .filter((group) => group.length > 0)
-    .map((group) => {
-      totalOriginalAds += group.length;
-      const maxOriginal = group.reduce(
-        (max, ad) => Math.max(max, ad.collation_count ?? 0),
-        0,
-      );
-      return {
-        ...group[0],
-        collation_count: Math.max(maxOriginal, group.length, 1),
-      };
-    });
-  return { ads, searchCount: totalOriginalAds };
-};
 
 export default function PageAdBrowser({ pageId }: { pageId: string }) {
   const [pageInfo, setPageInfo] = useState<any>({});
