@@ -1,3 +1,4 @@
+// @/components/adTool/sharedComponents/SearchResults.tsx
 "use client";
 
 import type React from "react";
@@ -189,9 +190,41 @@ const EmptyState = memo(
 );
 EmptyState.displayName = "EmptyState";
 
+// 1️⃣ Extract Footer outside the main component so it maintains reference stability
+const GridFooter = memo(({ context }: { context: any }) => {
+  const { hasNextPage, isLoading, handleLoadMore, remainingCount } = context;
+
+  return (
+    <div className="mt-4 flex justify-center pb-8">
+      <SubscriptionAccessGuard>
+        {hasNextPage ? (
+          isLoading ? (
+            <Loading size="small" />
+          ) : (
+            <button
+              onClick={handleLoadMore}
+              disabled={isLoading}
+              className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-200 to-pink-200 px-6 py-3 font-bold text-purple-800 shadow-md transition-all duration-200 hover:scale-105"
+            >
+              <ChevronDown className="h-5 w-5" />
+              Load More +{remainingCount?.toLocaleString() || "0"} left
+            </button>
+          )
+        ) : (
+          <div className="flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 font-semibold text-white shadow-md">
+            <CheckCircle className="mr-2 h-6 w-6" />
+            <span>End of Results</span>
+          </div>
+        )}
+      </SubscriptionAccessGuard>
+    </div>
+  );
+});
+GridFooter.displayName = "GridFooter";
+
 // Main SearchResults Component
-export const SearchResults = memo(
-  ({
+export const SearchResults = memo((props: SearchResultsProps) => {
+  const {
     isLoading,
     error,
     totalCount,
@@ -199,152 +232,124 @@ export const SearchResults = memo(
     hasNextPage,
     remainingCount,
     handleLoadMore,
-    // searchParams and onSyncIssue are kept for potential future use or other logic
-    // searchParams,
-    onSyncIssue,
-  }: SearchResultsProps) => {
-    const columns = useResponsiveColumns();
+  } = props;
+  const columns = useResponsiveColumns();
 
-    // Memoize the chunking of search results into rows for Virtuoso.
-    // This is the core logic for creating the grid structure.
-    const rows = useMemo(() => {
-      if (!searchResults) return [];
-      // ✅ FIX: Explicitly type newRows as an array of AdData arrays.
-      const newRows: AdData[][] = [];
-      for (let i = 0; i < searchResults.length; i += columns) {
-        newRows.push(searchResults.slice(i, i + columns));
-      }
-      return newRows;
-    }, [searchResults, columns]);
+  // Memoize the chunking of search results into rows for Virtuoso.
+  // This is the core logic for creating the grid structure.
+  const rows = useMemo(() => {
+    if (!searchResults) return [];
+    // ✅ FIX: Explicitly type newRows as an array of AdData arrays.
+    const newRows: AdData[][] = [];
+    for (let i = 0; i < searchResults.length; i += columns) {
+      newRows.push(searchResults.slice(i, i + columns));
+    }
+    return newRows;
+  }, [searchResults, columns]);
 
-    const showInitialState = !isLoading && searchResults === null;
-    const showEmptyState = !isLoading && searchResults?.length === 0;
-    const showResults = Boolean(searchResults?.length);
+  // 2️⃣ Use Virtuoso Context to pass state to the Footer safely
+  const virtuosoContext = useMemo(
+    () => ({
+      isLoading,
+      hasNextPage,
+      handleLoadMore,
+      remainingCount,
+    }),
+    [isLoading, hasNextPage, handleLoadMore, remainingCount],
+  );
 
-    const formattedTotalCount = useMemo(() => {
-      if (totalCount === null) return null;
-      return totalCount > 50000 ? "50,000+" : totalCount?.toLocaleString();
-    }, [totalCount]);
+  const showInitialState = !isLoading && searchResults === null;
+  const showEmptyState = !isLoading && searchResults?.length === 0;
+  const showResults = Boolean(searchResults?.length);
 
-    // 💡 Memoize the callback to prevent EmptyState from re-rendering unnecessarily.
-    const handleResetFilters = useCallback(() => {
-      console.log("Reset filters clicked");
-    }, []);
+  const formattedTotalCount = useMemo(() => {
+    if (totalCount === null) return null;
+    return totalCount > 50000 ? "50,000+" : totalCount?.toLocaleString();
+  }, [totalCount]);
 
-    // The Footer component for Virtuoso, which contains the "Load More" button.
-    const Footer = useCallback(() => {
+  // 💡 Memoize the callback to prevent EmptyState from re-rendering unnecessarily.
+  const handleResetFilters = useCallback(() => {
+    console.log("Reset filters clicked");
+  }, []);
+
+  // This function renders each row in the Virtuoso list.
+  const renderRow = useCallback(
+    (index: number, row: AdData[]) => {
       return (
-        <div className="mt-2 flex justify-center">
-          <SubscriptionAccessGuard>
-            {hasNextPage ? (
-              isLoading ? (
-                <Loading size="small" />
-              ) : (
-                <button
-                  onClick={handleLoadMore}
-                  disabled={isLoading}
-                  className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-200 to-pink-200 px-6 py-3 font-bold text-purple-800 shadow-md transition-all duration-200 hover:scale-105 hover:from-purple-300 hover:to-pink-300 disabled:opacity-50"
-                >
-                  <ChevronDown className="h-5 w-5" />
-                  Load More +{remainingCount?.toLocaleString() || "0"} left
-                </button>
-              )
-            ) : (
-              <div className="flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 font-semibold text-white shadow-md">
-                <CheckCircle className="mr-2 h-6 w-6" />
-                <span>End of Results</span>
+        <div className="flex justify-center gap-4 px-4 pb-4" key={index}>
+          {row.map((ad, adIndex) => {
+            // Calculate global index across all ads (not just in current row)
+            const globalIndex = index * columns + adIndex;
+            // Show first ad normally, protect every second ad (even indices after 0)
+            const shouldProtect = globalIndex > 0 && globalIndex % 2 === 1;
+
+            return (
+              <div key={ad.ad_archive_id} className="min-w-0 flex-1">
+                {shouldProtect ? (
+                  <SubscriptionAccessGuard hideContent showIcon>
+                    <AdCard ad={ad} />
+                  </SubscriptionAccessGuard>
+                ) : (
+                  <AdCard ad={ad} />
+                )}
               </div>
-            )}
-          </SubscriptionAccessGuard>
+            );
+          })}
+          {/* Add placeholder divs to ensure the last row items align correctly */}
+          {Array.from({ length: columns - row.length }).map((_, i) => (
+            <div key={`placeholder-${i}`} className="min-w-0 flex-1" />
+          ))}
         </div>
       );
-    }, [hasNextPage, isLoading, handleLoadMore, remainingCount, showResults]);
+    },
+    [columns],
+  );
 
-    // This function renders each row in the Virtuoso list.
-    const renderRow = useCallback(
-      (index: number, row: AdData[]) => {
-        return (
-          <div className="flex justify-center gap-4 px-4 pb-4" key={index}>
-            {row.map((ad, adIndex) => {
-              // Calculate global index across all ads (not just in current row)
-              const globalIndex = index * columns + adIndex;
-              // Show first ad normally, protect every second ad (even indices after 0)
-              const shouldProtect = globalIndex > 0 && globalIndex % 2 === 1;
+  return (
+    <div className="mx-auto w-full">
+      {isLoading && !showResults && <Loading size="large" />}
 
-              return (
-                <div key={ad.ad_archive_id} className="min-w-0 flex-1">
-                  {shouldProtect ? (
-                    <SubscriptionAccessGuard hideContent showIcon>
-                      <AdCard ad={ad} />
-                    </SubscriptionAccessGuard>
-                  ) : (
-                    <AdCard ad={ad} />
-                  )}
-                </div>
-              );
-            })}
-            {/* Add placeholder divs to ensure the last row items align correctly */}
-            {Array.from({ length: columns - row.length }).map((_, i) => (
-              <div key={`placeholder-${i}`} className="min-w-0 flex-1" />
-            ))}
-          </div>
-        );
-      },
-      [columns],
-    );
+      {error && (
+        <div
+          className="mb-6 rounded-lg bg-red-50 p-4 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+          role="alert"
+        >
+          {error}
+        </div>
+      )}
 
-    return (
-      <div className="mx-auto w-full">
-        {/* ✅ global style for smooth scrolling */}
-        <style jsx global>{`
-          html {
-            scroll-behavior: smooth;
-          }
-        `}</style>
+      {showInitialState && <InitialState />}
+      {showEmptyState && <EmptyState onResetFilters={handleResetFilters} />}
 
-        {isLoading && !showResults && <Loading size="large" />}
+      {showResults && formattedTotalCount && (
+        <div className="mb-4 text-center">
+          {isLoading ? (
+            <Loading size="medium" />
+          ) : (
+            <span
+              className="inline-block rounded-full bg-gradient-to-r from-purple-100 to-pink-100 px-6 py-3 text-lg font-bold text-purple-700 shadow-lg dark:from-purple-900/50 dark:to-pink-900/50 dark:text-purple-300"
+              aria-live="polite"
+            >
+              {formattedTotalCount} ads found
+            </span>
+          )}
+        </div>
+      )}
 
-        {error && (
-          <div
-            className="mb-6 rounded-lg bg-red-50 p-4 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-            role="alert"
-          >
-            {error}
-          </div>
-        )}
-
-        {showInitialState && <InitialState />}
-        {showEmptyState && <EmptyState onResetFilters={handleResetFilters} />}
-
-        {showResults && formattedTotalCount && (
-          <div className="mb-4 text-center">
-            {isLoading ? (
-              <Loading size="medium" />
-            ) : (
-              <span
-                className="inline-block rounded-full bg-gradient-to-r from-purple-100 to-pink-100 px-6 py-3 text-lg font-bold text-purple-700 shadow-lg dark:from-purple-900/50 dark:to-pink-900/50 dark:text-purple-300"
-                aria-live="polite"
-              >
-                {formattedTotalCount} ads found
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* ✅ React Virtuoso Implementation */}
-        {showResults && (
-          <Virtuoso
-            useWindowScroll
-            data={rows}
-            itemContent={renderRow}
-            components={{ Footer }}
-            overscan={200}
-          />
-        )}
-      </div>
-    );
-  },
-);
+      {/* ✅ React Virtuoso Implementation */}
+      {showResults && (
+        <Virtuoso
+          useWindowScroll
+          data={rows}
+          itemContent={renderRow}
+          components={{ Footer: GridFooter }} // Passed as stable reference
+          context={virtuosoContext} // Passed dynamic state safely
+          overscan={600} // Increased overscan to preload images smoothly
+        />
+      )}
+    </div>
+  );
+});
 
 SearchResults.displayName = "SearchResults";
 

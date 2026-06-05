@@ -1,3 +1,4 @@
+// @/app/(main)/(adTool)/(premium)/favorites/[boardName]/page.tsx
 "use client";
 
 import { Suspense, useCallback, useEffect, useState } from "react";
@@ -64,7 +65,7 @@ export default function BoardPage() {
 }
 
 const BoardContent = ({ boardName }: BoardContentProps) => {
-  const [ads, setAds] = useState<AdData[]>([]);
+  const [ads, setAds] = useState<AdData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationResponse>({
@@ -99,7 +100,7 @@ const BoardContent = ({ boardName }: BoardContentProps) => {
 
           // Update state based on whether we're resetting or adding more ads
           setAds((prevAds) =>
-            reset ? extractedAds : [...prevAds, ...extractedAds],
+            reset ? extractedAds : [...(prevAds || []), ...extractedAds],
           );
           setPagination(result.pagination);
 
@@ -139,7 +140,7 @@ const BoardContent = ({ boardName }: BoardContentProps) => {
   }, [loadBoardAds]);
 
   // Calculate remaining count
-  const remainingCount = pagination.total - ads.length;
+  const remainingCount = pagination.total - (ads?.length ?? 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pb-16 dark:from-gray-900 dark:to-gray-800">

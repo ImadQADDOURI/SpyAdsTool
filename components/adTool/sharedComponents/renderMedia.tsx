@@ -1,3 +1,4 @@
+// @/components/adTool/sharedComponents/renderMedia.tsx
 import React, { memo, useCallback, useMemo, useState } from "react";
 import Image from "next/image";
 import { ExternalLink, Play } from "lucide-react";
@@ -151,14 +152,17 @@ export const RenderMedia: React.FC<RenderMediaProps> = memo(
                         ? {
                             width: 0,
                             height: 0,
-                            sizes: "100vw",
+                            sizes:
+                              "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
                             style: { width: "100%", height: "auto" },
                           }
                         : {
                             fill: true,
+                            sizes:
+                              "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
                             style: { objectFit: "contain" },
                           })}
-                      unoptimized
+                      // unoptimized // ❌ REMOVED unoptimized={true} to stop massive RAM spikes
                       priority={index === 0} // Only prioritize first image
                     />
                   ) : null}
