@@ -310,7 +310,7 @@ export default function SearchFilters({
                                     alt=""
                                     width={16}
                                     height={12}
-                                    className="rounded-sm"
+                                    className="h-5 w-5 rounded-sm"
                                   />
                                 ) : opt.icon ? (
                                   <opt.icon className="h-4 w-4 text-gray-500" />

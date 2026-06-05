@@ -1,3 +1,4 @@
+// @/components/adTool/sharedComponents/PageNameWithPopover.tsx
 import React, { memo, useMemo } from "react";
 import Image from "next/image";
 import { ExternalLink, Eye, Globe, ThumbsUp } from "lucide-react";

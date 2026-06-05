@@ -1,3 +1,4 @@
+// @/components/adTool/sharedComponents/expandableText.tsx
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import parse, {
   domToReact,

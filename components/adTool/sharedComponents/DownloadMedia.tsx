@@ -1,4 +1,4 @@
-// @components\adLibrary\microComponents\DownloadMedia.tsx
+// @/components/adTool/sharedComponents/DownloadMedia.tsx
 import React from "react";
 import { DownloadCloud, Image, Video } from "lucide-react";
 
