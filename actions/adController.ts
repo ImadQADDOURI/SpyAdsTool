@@ -1,9 +1,15 @@
+// @/actions/adController.ts
 "use server";
 
 import { Prisma } from "@prisma/client";
 
 import { AdData } from "@/types/ad";
 import { prisma } from "@/lib/db";
+import {
+  deleteMultipleMediaFromR2,
+  extractR2KeysFromAdData,
+  processAdMediaForR2,
+} from "@/lib/r2";
 
 // ============================================================================
 // 📑 TYPES & INTERFACES
@@ -151,7 +157,14 @@ export async function upsertAdRecord(
   incomingCountry?: string | null,
 ) {
   try {
-    const extractedFields = parseAdDataToFields(rawAdData);
+    // ✨ Deep copy the raw data to modify it safely
+    const adDataToProcess = JSON.parse(JSON.stringify(rawAdData)) as AdData;
+
+    // ✨ Process media (Download from FB -> Upload to R2 -> Replace URLs)
+    await processAdMediaForR2(adDataToProcess, ad_archive_id);
+
+    // ✨ Parse extracted fields from the PROCESSED ad data
+    const extractedFields = parseAdDataToFields(adDataToProcess);
 
     let validCountry: string | null = null;
     if (incomingCountry && incomingCountry.toUpperCase() !== "ALL") {
@@ -172,13 +185,13 @@ export async function upsertAdRecord(
     const ad = await prisma.ad.upsert({
       where: { ad_archive_id },
       update: {
-        adData: rawAdData,
+        adData: adDataToProcess as unknown as Prisma.InputJsonValue, // ✨ UPDATE: Use processed data
         countries: updatedCountriesArray,
         ...extractedFields,
       },
       create: {
         ad_archive_id,
-        adData: rawAdData,
+        adData: adDataToProcess as unknown as Prisma.InputJsonValue, // ✨ UPDATE: Use processed data
         countries: updatedCountriesArray,
         ...extractedFields,
       },
@@ -305,7 +318,39 @@ export async function getAdDatabaseStats() {
 
 export async function deleteAdByArchiveId(ad_archive_id: string) {
   try {
+    // ✨ Fetch the ad first to get its data for R2 key extraction
+    const ad = await prisma.ad.findUnique({
+      where: { ad_archive_id },
+      select: { adData: true },
+    });
+
+    if (!ad) return { success: false, error: "Ad not found in database." };
+
+    // ✨ Extract R2 keys from the ad data
+    const keysToDelete = extractR2KeysFromAdData(
+      ad.adData as unknown as AdData,
+    );
+
+    // ✨ Attempt to delete files from R2
+    if (keysToDelete.length > 0) {
+      console.log(
+        `[Delete Global Ad] Attempting R2 deletion for ${keysToDelete.length} keys for ad ${ad_archive_id}...`,
+      );
+      const r2DeletionSuccess = await deleteMultipleMediaFromR2(keysToDelete);
+
+      if (!r2DeletionSuccess) {
+        console.error(
+          `🚨 [AdController: deleteAdByArchiveId] R2 deletion partially failed for ad ${ad_archive_id}. Proceeding with DB deletion.`,
+        );
+      }
+    }
+
+    // ✨ Delete the ad from the database
     await prisma.ad.delete({ where: { ad_archive_id } });
+    console.log(
+      `✅ 🗑️ _ [Delete Global Ad] Successfully deleted ad ${ad_archive_id} from DB.`,
+    );
+
     return {
       success: true,
       message: `Ad ${ad_archive_id} deleted successfully.`,
