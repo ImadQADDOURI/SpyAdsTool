@@ -32,6 +32,12 @@ export const BROWSER_CONFIG = {
   warmupUrl:
     "https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ALL&is_targeted_country=false&media_type=all&q=azerty123456789",
 
+  /** URL to check for GraphQL readiness during warmup */
+  graphqlReadinessUrl: "facebook.com/api/graphql",
+
+  /** Timeout for GraphQL readiness check during warmup (ms) */
+  graphqlTimeout: 15000, // 15 seconds
+
   // ─── Resource Blocking ─────────────────────────────────────────────────────
   /** Resource types to allow (all others blocked) */
   allowedResourceTypes: ["document", "script", "xhr", "fetch"] as const,

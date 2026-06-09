@@ -190,13 +190,20 @@ async function restartBrowser(): Promise<void> {
  *   • Wait for DOMContentLoaded
  *   • Wait for first successful GraphQL request as readiness signal
  *   • No timers, no idle detection, no guessing
+ *
+ * If Meta blocks your VPS, the network drops, or the DOM changes:
+ *   •graphqlReadyPromise hits the BROWSER_CONFIG.graphqlTimeout limit.
+ *   •Playwright securely throws a TimeoutError.
+ *   •Execution instantly jumps to the catch block.
+ *   •The dangling headless browser context is safely destroyed.
+ *   •The semaphore slot is released so the rest of your app keeps humming.
+ *   •The error bubbles up to your main logic so your app can retry via proxy or log the failure.
  */
 export async function acquireContext(): Promise<{
   context: BrowserContext;
   page: Page;
 }> {
   // Check if restart is needed BEFORE acquiring semaphore
-  // This prevents deadlock where restart waits for semaphore to be released
   if (browserState && shouldRestartBrowser(browserState)) {
     console.log(
       "🔄 Browser restart threshold reached, initiating graceful restart...",
@@ -213,12 +220,15 @@ export async function acquireContext(): Promise<{
   // Acquire semaphore slot (enforces concurrency limit)
   await semaphore.acquire();
 
+  // 1. Declare context OUTSIDE the try block so the catch block can clean it up
+  let context: BrowserContext | undefined;
+
   try {
     const b = await getBrowser();
-    const context = await b.newContext();
+    context = await b.newContext();
     const page = await context.newPage();
 
-    // Block everything except: document, script, xhr, fetch
+    // Block everything except allowed resource types
     await page.route("**/*", (route) => {
       const type = route.request().resourceType();
       if (BROWSER_CONFIG.allowedResourceTypes.includes(type as any)) {
@@ -228,27 +238,23 @@ export async function acquireContext(): Promise<{
       }
     });
 
-    // ── GraphQL Readiness Detection ────────────────────────────────────────
-    // Wait for the first successful Meta GraphQL request as the readiness signal.
-    // This ensures the execution context is stable and auth tokens are set.
-    const graphqlReadyPromise = new Promise<void>((resolve) => {
-      page.on("response", async (response) => {
-        if (
-          response.url().includes("facebook.com/api/graphql") &&
-          response.ok()
-        ) {
-          resolve();
-        }
-      });
-    });
+    // ── GraphQL Readiness Detection (Playwright Native) ────────────────────
 
-    // Navigate to a search URL to trigger GraphQL requests
+    // Step 1: Tell Playwright to start listening for the GraphQL response
+    const graphqlReadyPromise = page.waitForResponse(
+      (response) =>
+        response.url().includes(BROWSER_CONFIG.graphqlReadinessUrl) &&
+        response.ok(),
+      { timeout: BROWSER_CONFIG.graphqlTimeout },
+    );
+
+    // Step 2: Navigate to a search URL to trigger the GraphQL requests
     await page.goto(BROWSER_CONFIG.warmupUrl, {
       waitUntil: "domcontentloaded",
       timeout: BROWSER_CONFIG.navigationTimeout,
     });
 
-    // Wait for GraphQL readiness
+    // Step 3: Await the response. If it takes longer than graphqlTimeout, it throws safely!
     await graphqlReadyPromise;
 
     // Increment request counter
@@ -258,7 +264,13 @@ export async function acquireContext(): Promise<{
 
     return { context, page };
   } catch (error) {
-    // Release semaphore on error
+    // Prevent memory leaks by safely closing the orphaned context
+    if (context) {
+      // The empty catch prevents masking the original timeout error if close() also fails
+      await context.close().catch(() => {});
+    }
+
+    // Release semaphore on error to prevent deadlocks
     semaphore.release();
     throw error;
   }
