@@ -5,6 +5,7 @@
  * • Concurrency limit (semaphore at 10)
  * • Controlled browser restart (3h OR 300 requests)
  * • Graceful restart handling
+ * • Rock-solid network routing and timeout handling
  */
 
 import {
@@ -192,12 +193,10 @@ async function restartBrowser(): Promise<void> {
  *   • No timers, no idle detection, no guessing
  *
  * If Meta blocks your VPS, the network drops, or the DOM changes:
- *   •graphqlReadyPromise hits the BROWSER_CONFIG.graphqlTimeout limit.
- *   •Playwright securely throws a TimeoutError.
- *   •Execution instantly jumps to the catch block.
- *   •The dangling headless browser context is safely destroyed.
- *   •The semaphore slot is released so the rest of your app keeps humming.
- *   •The error bubbles up to your main logic so your app can retry via proxy or log the failure.
+ *   • Playwright securely throws a TimeoutError.
+ *   • Execution instantly jumps to the catch block.
+ *   • The dangling headless browser context is safely destroyed.
+ *   • The semaphore slot is released so the rest of your app keeps humming.
  */
 export async function acquireContext(): Promise<{
   context: BrowserContext;
@@ -220,7 +219,7 @@ export async function acquireContext(): Promise<{
   // Acquire semaphore slot (enforces concurrency limit)
   await semaphore.acquire();
 
-  // 1. Declare context OUTSIDE the try block so the catch block can clean it up
+  // 1. Declare context OUTSIDE the try block so the catch block can clean it up safely
   let context: BrowserContext | undefined;
 
   try {
@@ -232,30 +231,31 @@ export async function acquireContext(): Promise<{
     await page.route("**/*", (route) => {
       const type = route.request().resourceType();
       if (BROWSER_CONFIG.allowedResourceTypes.includes(type as any)) {
-        route.continue();
+        // .catch() prevents Unhandled Promise Rejections if context closes mid-load
+        route.continue().catch(() => {});
       } else {
-        route.abort();
+        route.abort().catch(() => {});
       }
     });
 
     // ── GraphQL Readiness Detection (Playwright Native) ────────────────────
 
-    // Step 1: Tell Playwright to start listening for the GraphQL response
-    const graphqlReadyPromise = page.waitForResponse(
-      (response) =>
-        response.url().includes(BROWSER_CONFIG.graphqlReadinessUrl) &&
-        response.ok(),
-      { timeout: BROWSER_CONFIG.graphqlTimeout },
-    );
-
-    // Step 2: Navigate to a search URL to trigger the GraphQL requests
-    await page.goto(BROWSER_CONFIG.warmupUrl, {
-      waitUntil: "domcontentloaded",
-      timeout: BROWSER_CONFIG.navigationTimeout,
-    });
-
-    // Step 3: Await the response. If it takes longer than graphqlTimeout, it throws safely!
-    await graphqlReadyPromise;
+    // Use Promise.all to run the navigation and the listener at the exact same time.
+    // This prevents Node.js UnhandledPromiseRejection if goto takes longer than the timeout.
+    await Promise.all([
+      // Await the native Playwright response. (Throws TimeoutError if it takes >15s)
+      page.waitForResponse(
+        (response) =>
+          response.url().includes(BROWSER_CONFIG.graphqlReadinessUrl) &&
+          response.ok(),
+        { timeout: BROWSER_CONFIG.graphqlTimeout },
+      ),
+      // Trigger the actual navigation
+      page.goto(BROWSER_CONFIG.warmupUrl, {
+        waitUntil: "domcontentloaded",
+        timeout: BROWSER_CONFIG.navigationTimeout,
+      }),
+    ]);
 
     // Increment request counter
     if (browserState) {
@@ -264,13 +264,13 @@ export async function acquireContext(): Promise<{
 
     return { context, page };
   } catch (error) {
-    // Prevent memory leaks by safely closing the orphaned context
+    // Prevent memory leaks by safely closing the orphaned context.
+    // The empty catch() prevents masking the original timeout error if close() also fails.
     if (context) {
-      // The empty catch prevents masking the original timeout error if close() also fails
       await context.close().catch(() => {});
     }
 
-    // Release semaphore on error to prevent deadlocks
+    // Release semaphore on error to prevent total application deadlocks
     semaphore.release();
     throw error;
   }
@@ -348,4 +348,38 @@ export function getPoolStats() {
     queuedRequests: semaphore.getQueueLength(),
     maxConcurrency: BROWSER_CONFIG.maxConcurrentContexts,
   };
+}
+
+// ─── Next.js Graceful Shutdown Hooks ─────────────────────────────────────────
+
+// Prevent attaching multiple listeners during Next.js Hot Module Replacement (HMR)
+const globalNode = global as unknown as {
+  __browserCleanupRegistered?: boolean;
+};
+
+if (!globalNode.__browserCleanupRegistered && typeof process !== "undefined") {
+  globalNode.__browserCleanupRegistered = true;
+
+  const handleShutdown = async (signal: string) => {
+    console.log(
+      `\n⚠️ ${signal} received by Next.js. Shutting down browser pool...`,
+    );
+    try {
+      await shutdownBrowser();
+    } catch (err) {
+      console.error("❌ Error during browser shutdown:", err);
+    } finally {
+      // Allow the Node.js process to exit gracefully after our cleanup is done
+      process.exit(0);
+    }
+  };
+
+  // Catch CTRL+C (Terminal)
+  process.on("SIGINT", () => handleShutdown("SIGINT"));
+
+  // Catch Docker / PM2 stop commands (Standard VPS deployments)
+  process.on("SIGTERM", () => handleShutdown("SIGTERM"));
+
+  // Note: We deliberately leave out "uncaughtException" here because
+  // Next.js has its own robust error boundary and routing handlers for that.
 }
