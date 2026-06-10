@@ -41,4 +41,28 @@ export const BROWSER_CONFIG = {
   // ─── Resource Blocking ─────────────────────────────────────────────────────
   /** Resource types to allow (all others blocked) */
   allowedResourceTypes: ["document", "script", "xhr", "fetch"] as const,
+
+  // ─── VPS & Performance Arguments ───────────────────────────────────────────
+  browserArgs: [
+    // 1. MANDATORY FOR VPS / DOCKER: Prevents "Aw, Snap!" crashes caused by
+    // Linux running out of shared memory space (/dev/shm).
+    "--disable-dev-shm-usage",
+
+    // 2. MANDATORY FOR LINUX: Disables the Chromium sandbox. Many VPS environments
+    // (especially Docker) do not have the required kernel privileges to run it.
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+
+    // 3. PERFORMANCE: Servers don't have monitors or GPUs. This prevents Chromium
+    // from wasting CPU cycles trying to render graphics.
+    "--disable-gpu",
+    "--disable-software-rasterizer",
+
+    // 4. META EVASION: Helps hide the fact that this is an automated browser.
+    "--disable-blink-features=AutomationControlled",
+
+    // 5. RESOURCE SAVING: Disables background features we don't need for scraping.
+    "--disable-extensions",
+    "--disable-default-apps",
+  ],
 } as const;

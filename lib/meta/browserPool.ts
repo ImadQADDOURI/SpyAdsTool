@@ -81,8 +81,13 @@ export async function getBrowser(): Promise<Browser> {
   // Create browser if not exists
   if (!browserState || !browserState.instance.isConnected()) {
     console.log("🚀 Launching new browser instance...");
+
     const instance = await chromium.launch({
       headless: BROWSER_CONFIG.headless,
+      args: [...BROWSER_CONFIG.browserArgs],
+
+      // Ignore the default "Chrome is being controlled by automated software" infobar
+      ignoreDefaultArgs: ["--enable-automation"],
     });
 
     browserState = {
