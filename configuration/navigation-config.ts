@@ -11,6 +11,7 @@ import {
   LucideIcon,
   PackageOpen,
   PocketKnife,
+  Puzzle,
   Search,
   Settings,
   ShoppingBag,
@@ -110,6 +111,15 @@ export const AdminLinks = [
     icon: Database,
     isFree: false,
     color: "text-green-600 dark:text-green-400",
+  },
+  {
+    id: "extension-tester",
+    title: "Extension Tester",
+    href: "/extension-tester",
+    description: "",
+    icon: Puzzle,
+    isFree: false,
+    color: "text-red-600 dark:text-red-400",
   },
   {
     id: "products-config",
